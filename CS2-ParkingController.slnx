@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Solution/">
+    <File Path=".editorconfig" />
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path="LICENSE" />
+  </Folder>
+  <Project Path="Code/Code.csproj" />
+</Solution>
