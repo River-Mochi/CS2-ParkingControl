@@ -26,6 +26,8 @@ namespace ParkingControl
                 GetComponentLookup<Game.Prefabs.BicycleData>(true);
             ComponentLookup<Game.Buildings.Building> buildingLookup =
                 GetComponentLookup<Game.Buildings.Building>(true);
+            ComponentLookup<Game.Buildings.CarParkingFacility> carParkingFacilityLookup =
+                GetComponentLookup<Game.Buildings.CarParkingFacility>(true);
             ComponentLookup<Game.Vehicles.CarCurrentLane> currentLaneLookup =
                 GetComponentLookup<Game.Vehicles.CarCurrentLane>(true);
             ComponentLookup<Game.Net.Curve> curveLookup = GetComponentLookup<Game.Net.Curve>(true);
@@ -49,6 +51,8 @@ namespace ParkingControl
                 GetComponentLookup<Game.Prefabs.ParkingLaneData>(true);
             ComponentLookup<Game.Vehicles.PersonalCar> personalCarLookup =
                 GetComponentLookup<Game.Vehicles.PersonalCar>(true);
+            ComponentLookup<Game.Routes.CarParking> carParkingLookup =
+                GetComponentLookup<Game.Routes.CarParking>(true);
             ComponentLookup<Game.Prefabs.PrefabRef> prefabRefLookup =
                 GetComponentLookup<Game.Prefabs.PrefabRef>(true);
             ComponentLookup<Game.Buildings.PropertyRenter> propertyRenterLookup =
@@ -172,6 +176,15 @@ namespace ParkingControl
                     bool ownerExists = vehicleOwner != Entity.Null && EntityManager.Exists(vehicleOwner);
                     bool householdOwner =
                         ownerExists && householdLookup.HasComponent(vehicleOwner);
+                    bool touristHousehold = householdOwner &&
+                        (householdLookup[vehicleOwner].m_Flags &
+                            Game.Citizens.HouseholdFlags.Tourist) != 0;
+                    bool commuterHousehold = householdOwner &&
+                        (householdLookup[vehicleOwner].m_Flags &
+                            Game.Citizens.HouseholdFlags.Commuter) != 0;
+                    bool residentMovedIn = householdOwner &&
+                        (householdLookup[vehicleOwner].m_Flags &
+                            Game.Citizens.HouseholdFlags.MovedIn) != 0;
                     bool ownerDeleted =
                         ownerExists && deletedLookup.HasComponent(vehicleOwner);
                     bool ownerMovingAway =
@@ -201,6 +214,23 @@ namespace ParkingControl
                     else if (householdOwner)
                     {
                         snapshot.HouseholdOwnerVehicles++;
+                        if (touristHousehold)
+                        {
+                            snapshot.TouristHouseholdVehicles++;
+                        }
+                        else if (commuterHousehold)
+                        {
+                            snapshot.CommuterHouseholdVehicles++;
+                        }
+                        else
+                        {
+                            snapshot.ResidentHouseholdVehicles++;
+                            if (!residentMovedIn)
+                            {
+                                snapshot.ResidentNotMovedInVehicles++;
+                            }
+                        }
+
                         if (ownerDeleted)
                         {
                             snapshot.DeletedHouseholdOwnerVehicles++;
@@ -264,6 +294,24 @@ namespace ParkingControl
                         case VehicleLocation.VisibleOffStreet:
                             snapshot.ParkedVehicles++;
                             snapshot.VisibleOffStreet++;
+                            switch (GetVisibleParkingKind(
+                                parkedLane,
+                                carParkingFacilityLookup,
+                                carParkingLookup,
+                                buildingLookup,
+                                ownerLookup))
+                            {
+                                case VisibleParkingKind.Facility:
+                                    snapshot.VisibleFacilityParking++;
+                                    break;
+                                case VisibleParkingKind.Building:
+                                    snapshot.VisibleBuildingParking++;
+                                    break;
+                                default:
+                                    snapshot.VisibleOtherParking++;
+                                    break;
+                            }
+
                             break;
                         case VehicleLocation.HiddenInBuilding:
                             snapshot.ParkedVehicles++;
@@ -272,6 +320,26 @@ namespace ParkingControl
                         case VehicleLocation.OutsideConnection:
                             snapshot.ParkedVehicles++;
                             snapshot.OutsideConnection++;
+                            if (householdOwner)
+                            {
+                                if (touristHousehold)
+                                {
+                                    snapshot.OutsideTouristHousehold++;
+                                }
+                                else if (commuterHousehold)
+                                {
+                                    snapshot.OutsideCommuterHousehold++;
+                                }
+                                else
+                                {
+                                    snapshot.OutsideResidentHousehold++;
+                                    if (!residentMovedIn)
+                                    {
+                                        snapshot.OutsideResidentNotMovedIn++;
+                                    }
+                                }
+                            }
+
                             if (dummyTraffic)
                             {
                                 snapshot.OutsideDummyTraffic++;

@@ -167,7 +167,7 @@ namespace ParkingControl
                 $"{Format(snapshot.DisabledCurbLanes)}/{Format(snapshot.CurbLanes)} disabled | " +
                 $"{Format(snapshot.OccupiedCurbLanes)} occupied | {status}";
             VehicleRow =
-                $"{Format(snapshot.StreetParked)} street | {Format(snapshot.VisibleOffStreet)} off-street | " +
+                $"{Format(snapshot.StreetParked)} street | {Format(snapshot.VisibleOffStreet)} visible | " +
                 $"{Format(snapshot.HiddenInBuildings)} hidden | {Format(snapshot.OutsideConnection)} outside";
             SupplyRow =
                 $"{Format(snapshot.OfficialParkingOccupied)}/{Format(snapshot.OfficialParkingCapacity)} public | " +

@@ -200,6 +200,40 @@ namespace ParkingControl
         }
 
         /// <summary>
+        /// Separates visible parking facilities and building lots for log diagnostics.
+        /// </summary>
+        private static VisibleParkingKind GetVisibleParkingKind(
+            Entity lane,
+            ComponentLookup<Game.Buildings.CarParkingFacility> carParkingFacilityLookup,
+            ComponentLookup<Game.Routes.CarParking> carParkingLookup,
+            ComponentLookup<Game.Buildings.Building> buildingLookup,
+            ComponentLookup<Game.Common.Owner> ownerLookup)
+        {
+            Entity current = lane;
+            bool foundBuilding = false;
+            for (int i = 0; i < 16 && current != Entity.Null; i++)
+            {
+                if (carParkingFacilityLookup.HasComponent(current) ||
+                    carParkingLookup.HasComponent(current))
+                {
+                    return VisibleParkingKind.Facility;
+                }
+
+                foundBuilding |= buildingLookup.HasComponent(current);
+                if (!ownerLookup.TryGetComponent(current, out Game.Common.Owner owner))
+                {
+                    break;
+                }
+
+                current = owner.m_Owner;
+            }
+
+            return foundBuilding
+                ? VisibleParkingKind.Building
+                : VisibleParkingKind.Other;
+        }
+
+        /// <summary>
         /// Returns the final reachable owner for Scene Explorer's LaneRoot entity ID.
         /// </summary>
         private static Entity GetTopOwner(

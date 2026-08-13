@@ -38,6 +38,9 @@ namespace ParkingControl
         public int UnlocatedVehicles;
         public int StreetParked;
         public int VisibleOffStreet;
+        public int VisibleFacilityParking;
+        public int VisibleBuildingParking;
+        public int VisibleOtherParking;
         public int HiddenInBuildings;
         public int OutsideConnection;
         public int OutsideConnectionHidden;
@@ -45,8 +48,16 @@ namespace ParkingControl
         public int OutsideHouseholdOwnershipInvalid;
         public int OutsideDummyTraffic;
         public int OutsideOtherOrUnowned;
+        public int OutsideResidentHousehold;
+        public int OutsideTouristHousehold;
+        public int OutsideCommuterHousehold;
+        public int OutsideResidentNotMovedIn;
         public int UnassignedOrUnknownParked;
         public int HouseholdOwnerVehicles;
+        public int ResidentHouseholdVehicles;
+        public int TouristHouseholdVehicles;
+        public int CommuterHouseholdVehicles;
+        public int ResidentNotMovedInVehicles;
         public int LiveHouseholdOwnerVehicles;
         public int DeletedHouseholdOwnerVehicles;
         public int OwnedVehicleMatches;
@@ -124,5 +135,15 @@ namespace ParkingControl
         VisibleOffStreet,
         HiddenInBuilding,
         OutsideConnection,
+    }
+
+    /// <summary>
+    /// Splits rendered non-street parking into useful log-only categories.
+    /// </summary>
+    internal enum VisibleParkingKind
+    {
+        Other,
+        Facility,
+        Building,
     }
 }

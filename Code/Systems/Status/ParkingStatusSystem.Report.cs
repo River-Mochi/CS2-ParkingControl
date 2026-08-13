@@ -155,15 +155,30 @@ namespace ParkingControl
                 $"OwnedVehicleBufferMatched={snapshot.OwnedVehicleMatches}, Missing={snapshot.OwnedVehicleMissing}), " +
                 $"MissingOwner={snapshot.MissingOwnerVehicles}, DummyTraffic={snapshot.DummyTrafficVehicles}, " +
                 $"OtherOrUnowned={snapshot.OtherOrUnownedVehicles}");
+            text.AppendLine(
+                $"PersonalVehicleKinds=ResidentHousehold={snapshot.ResidentHouseholdVehicles} " +
+                $"(NotMovedIn={snapshot.ResidentNotMovedInVehicles}), " +
+                $"TouristHousehold={snapshot.TouristHouseholdVehicles}, " +
+                $"CommuterHousehold={snapshot.CommuterHouseholdVehicles}, " +
+                $"DummyTraffic={snapshot.DummyTrafficVehicles}, OtherOrUnowned={snapshot.OtherOrUnownedVehicles}");
             text.AppendLine($"ParkedOnStreetCurbs={snapshot.StreetParked}");
             text.AppendLine(
                 $"ParkedElsewhere={snapshot.ParkedElsewhere} " +
                 $"(VisibleOffStreet={snapshot.VisibleOffStreet}, HiddenInBuildings={snapshot.HiddenInBuildings}, " +
                 $"OutsideConnection={snapshot.OutsideConnection}, UnassignedOrUnknown={snapshot.UnassignedOrUnknownParked})");
+            text.AppendLine(
+                $"VisibleParkingKinds=Facility={snapshot.VisibleFacilityParking}, " +
+                $"BuildingLot={snapshot.VisibleBuildingParking}, Other={snapshot.VisibleOtherParking}");
             text.AppendLine($"OutsideConnectionHiddenUnspawned={snapshot.OutsideConnectionHidden}");
             text.AppendLine(
                 $"OutsideConnectionOwnership=ValidLiveHousehold={snapshot.OutsideValidHouseholdOwned}, " +
                 $"HouseholdInvalid={snapshot.OutsideHouseholdOwnershipInvalid}, " +
+                $"DummyTraffic={snapshot.OutsideDummyTraffic}, OtherOrUnowned={snapshot.OutsideOtherOrUnowned}");
+            text.AppendLine(
+                $"OutsideConnectionKinds=ResidentHousehold={snapshot.OutsideResidentHousehold} " +
+                $"(NotMovedIn={snapshot.OutsideResidentNotMovedIn}), " +
+                $"TouristHousehold={snapshot.OutsideTouristHousehold}, " +
+                $"CommuterHousehold={snapshot.OutsideCommuterHousehold}, " +
                 $"DummyTraffic={snapshot.OutsideDummyTraffic}, OtherOrUnowned={snapshot.OutsideOtherOrUnowned}");
             text.AppendLine(
                 $"VanillaRoadsInfoviewParking={snapshot.OfficialParkingOccupied}/{snapshot.OfficialParkingCapacity} " +
@@ -183,6 +198,9 @@ namespace ParkingControl
                 "Valid household-owned cars at that location are legitimate and must not be deleted.");
             text.AppendLine(
                 "Note: HiddenInBuildings means a non-border GarageLane, or an unspawned vehicle on a lane owned by a building.");
+            text.AppendLine(
+                "Note: VisibleOffStreet means a rendered parked car that is not on an eligible public street, " +
+                "inside hidden storage, or at an outside connection; VisibleParkingKinds provides the narrower split.");
             text.AppendLine(
                 "Note: VanillaRoadsInfoviewParking excludes ordinary street curbs and most implicit residential storage; " +
                 "continuous unslotted lanes have no exact capacity.");

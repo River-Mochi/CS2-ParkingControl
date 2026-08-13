@@ -46,20 +46,19 @@ namespace ParkingControl
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutDiagnosticsGroup), "Diagnostics" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NoStreetParking)), "No street parking (whole city)" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.NoStreetParking)),
-                    "Prevents new personal motor vehicles, including motorcycles, from choosing ordinary curb parking.\n" +
+                    "Prevents new personal motor vehicles, including motorcycles, from choosing ordinary street parking.\n" +
                     "Parking lots, garages, building parking, bicycle parking, taxi and boarding spaces, and special-vehicle spaces stay available.\n" +
                     "Existing parked vehicles are not removed. Make sure the city has adequate off-street parking." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Street parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "Disabled/eligible public-road curb lanes.\n" +
-                    "Occupied counts curb lane entities that still contain at least one parked personal vehicle.\n" +
-                    "OK means the setting and lane flags agree." },
+                    "Disabled/eligible street-parking lanes.\n" +
+                    "Occupied = lanes still holding at least one parked personal vehicle.\n" +
+                    "OK = the setting and lane flags agree." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Car Locations" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VehicleStatus)),
-                    "Current non-bicycle personal vehicles. Street means public curbs.\n" +
-                    "Off-street means visible parking.\n" +
-                    "Hidden = stored in a building or garage\n" +
-                    "Outside = hidden at an outside connection."
+                    "Street = parked on public roads.\n" +
+                    "Visible = cars you can see in lots or other parking.\n" +
+                    "Hidden = building or garage storage. Outside = stored at the city border."
                 },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
@@ -67,7 +66,7 @@ namespace ParkingControl
                     "Garages also include building garage lanes and can overlap the public total, so do not add the two totals together." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Street share" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "Percentage of parked personal vehicles on public street curbs\n" +
+                    "Percentage of parked personal vehicles on public streets,\n" +
                     "followed by active vehicles and the last update time.\n" +
                     "Status refreshes after the simulation advances."
                 },
@@ -77,7 +76,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenParadox)), "Open the author's page on Paradox Mods." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ReportToLog)), "Write parking report" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ReportToLog)),
-                    "Write curb, parking-supply, ownership, and personal-vehicle location\n" +
+                    "Write street-parking, supply, ownership, and vehicle-location\n" +
                     "details to <ParkingControl.log>\n" +
                     "A second report in the same loaded city tracks the same street-car entity IDs." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenLog)), "Open log" },

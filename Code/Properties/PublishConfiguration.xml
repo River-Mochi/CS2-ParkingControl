@@ -8,7 +8,17 @@
 	<!--Long description of the mod. Single line or multi line. Supports minimal markdown subset-->
 	<!--LongDescription Value="No Street Parking" /-->
 	<LongDescription>
-No Street Parking
+## Options
+- No Street Parking [x]
+
+
+### Good to know
+
+
+###  Thanks for the support
+River-mochi - mod author
+
+
 </LongDescription>
 	<!--Thumbnail-->
 	<Thumbnail Value="Properties/Thumbnail.png" />

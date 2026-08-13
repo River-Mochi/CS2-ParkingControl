@@ -87,9 +87,9 @@ namespace ParkingControl
 
             s_BannerLogged = true;
 #if DEBUG
-            LogUtils.Info($"{ModName} v{ModVersion} DEBUG loaded");
+            LogUtils.Info($"{ModName} v{ModVersion} DEBUG");
 #else
-            LogUtils.Info($"{ModName} v{ModVersion} loaded");
+            LogUtils.Info($"{ModName} v{ModVersion} RELEASE");
 #endif
         }
 
