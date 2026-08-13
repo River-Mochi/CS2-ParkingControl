@@ -8,11 +8,15 @@
 	<!--Long description of the mod. Single line or multi line. Supports minimal markdown subset-->
 	<!--LongDescription Value="No Street Parking" /-->
 	<LongDescription>
+Stops personal cars and motorcycles from choosing ordinary street parking. Parking lots, parking buildings, and parking included with buildings stay available.
+
 ## Options
-- No Street Parking [x]
+- No Street Parking [x] - enabled by default for the whole city.
 
 
 ### Good to know
+- Cars that are already parked on streets are not removed. They leave naturally when they are used again, so streets may take a long time to clear.
+- If local parking is unavailable, Cities: Skylines II handles extra cars through its normal vanilla parking behavior, including hidden storage at outside connections. The mod does not delete cars or create a separate fallback.
 
 
 ###  Thanks for the support

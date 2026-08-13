@@ -51,14 +51,15 @@ namespace ParkingControl
                     "Existing parked vehicles are not removed. Make sure the city has adequate off-street parking." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Street parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "Disabled/eligible street-parking lanes.\n" +
-                    "Occupied = lanes still holding at least one parked personal vehicle.\n" +
+                    "Disabled/eligible street-parking lane entities, not individual spaces.\n" +
+                    "One lane can hold several cars. See Car Locations for the number parked on streets.\n" +
                     "OK = the setting and lane flags agree." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Car Locations" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VehicleStatus)),
-                    "Street = parked on public roads.\n" +
-                    "Visible = cars you can see in lots or other parking.\n" +
-                    "Hidden = building or garage storage. Outside = stored at the city border."
+                    "<Street> = parked on public roads.\n" +
+                    "<Visible> = cars you can see and click in open-air lots, rooftop parking, or outdoor parking included with buildings.\n" +
+                    "<Hidden> = inside buildings or garages.\n" +
+                    "<Outside> = Outside connection, stored at the city border; some incoming household cars start there."
                 },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
@@ -66,9 +67,9 @@ namespace ParkingControl
                     "Garages also include building garage lanes and can overlap the public total, so do not add the two totals together." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Street share" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "Percentage of parked personal vehicles on public streets,\n" +
-                    "followed by active vehicles and the last update time.\n" +
-                    "Status refreshes after the simulation advances."
+                    "Percentage of parked personal vehicles on public streets.\n" +
+                    "Active vehicles = moving, transporting.\n"
+
                 },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NameText)), "Mod name" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VersionText)), "Version" },

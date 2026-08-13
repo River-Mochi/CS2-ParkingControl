@@ -11,6 +11,7 @@
 namespace ParkingControl
 {
     using System;
+    using System.Collections.Generic;
     using System.Text;
     using CS2Shared.RiverMochi;
     using Game.Common;
@@ -20,6 +21,7 @@ namespace ParkingControl
     public sealed partial class ParkingStatusSystem
     {
         private const int kOutsideSampleCount = 10;
+        private const int kStreetVehicleLimit = 100;
 
         /// <summary>
         /// Records one vehicle in the manual report's identity and transition collections.
@@ -120,7 +122,7 @@ namespace ParkingControl
             string deltaLine = m_HasPreviousReport
                 ? "ChangeSincePrevious: " +
                     $"PersonalMotorVehicles={FormatDelta(snapshot.TotalVehicles - m_PreviousReport.TotalVehicles)}, " +
-                    $"StreetCurbs={FormatDelta(snapshot.StreetParked - m_PreviousReport.StreetParked)}, " +
+                    $"StreetParking={FormatDelta(snapshot.StreetParked - m_PreviousReport.StreetParked)}, " +
                     $"ParkedElsewhere={FormatDelta(snapshot.ParkedElsewhere - m_PreviousReport.ParkedElsewhere)}, " +
                     $"OutsideConnection={FormatDelta(snapshot.OutsideConnection - m_PreviousReport.OutsideConnection)}, " +
                     $"OutsideHidden={FormatDelta(snapshot.OutsideConnectionHidden - m_PreviousReport.OutsideConnectionHidden)}"
@@ -132,19 +134,19 @@ namespace ParkingControl
             text.AppendLine($"Mod={Mod.ModName} v{Mod.ModVersion}");
             text.AppendLine($"SimulationFrame={snapshot.SimulationFrame}");
             text.AppendLine($"WholeCityNoStreetParking={snapshot.RestrictionEnabled}");
-            text.AppendLine($"OrdinaryCarCurbLanes={snapshot.CurbLanes}");
+            text.AppendLine($"EligibleStreetParkingLanes={snapshot.CurbLanes}");
             text.AppendLine(
-                $"DisabledCurbLanes={snapshot.DisabledCurbLanes} " +
+                $"DisabledStreetParkingLanes={snapshot.DisabledCurbLanes} " +
                 $"(ParkingControlTracked={snapshot.TrackedCurbLanes}, VanillaOrOther={otherDisabledCurbLanes})");
             text.AppendLine($"EnforcementStatus={enforcementStatus}");
             text.AppendLine(
-                $"CurbLaneOccupancy={snapshot.OccupiedCurbLanes}/{snapshot.CurbLanes} " +
-                $"({FormatPercent(snapshot.OccupiedCurbLanes, snapshot.CurbLanes)} of lane entities; not a curb-space percentage)");
+                $"OccupiedStreetParkingLanes={snapshot.OccupiedCurbLanes}/{snapshot.CurbLanes} " +
+                $"({FormatPercent(snapshot.OccupiedCurbLanes, snapshot.CurbLanes)} of lane entities; not a parking-space percentage)");
             text.AppendLine(
-                $"FixedSlotCurbParking={snapshot.FixedSlotCurbParked}/{snapshot.FixedSlotCurbCapacity} " +
+                $"FixedSlotStreetParking={snapshot.FixedSlotCurbParked}/{snapshot.FixedSlotCurbCapacity} " +
                 $"across {snapshot.FixedSlotCurbLanes} fixed-slot lane entities");
             text.AppendLine(
-                $"ContinuousCurbParking={snapshot.ContinuousCurbParked} vehicles across " +
+                $"ContinuousStreetParking={snapshot.ContinuousCurbParked} vehicles across " +
                 $"{snapshot.ContinuousCurbLanes} continuous lane entities (no exact slot capacity)");
             text.AppendLine(
                 $"PersonalMotorVehicles={snapshot.TotalVehicles} " +
@@ -161,7 +163,8 @@ namespace ParkingControl
                 $"TouristHousehold={snapshot.TouristHouseholdVehicles}, " +
                 $"CommuterHousehold={snapshot.CommuterHouseholdVehicles}, " +
                 $"DummyTraffic={snapshot.DummyTrafficVehicles}, OtherOrUnowned={snapshot.OtherOrUnownedVehicles}");
-            text.AppendLine($"ParkedOnStreetCurbs={snapshot.StreetParked}");
+            text.AppendLine($"ParkedOnStreets={snapshot.StreetParked}");
+            AppendStreetVehicleEntities(text, snapshot, details);
             text.AppendLine(
                 $"ParkedElsewhere={snapshot.ParkedElsewhere} " +
                 $"(VisibleOffStreet={snapshot.VisibleOffStreet}, HiddenInBuildings={snapshot.HiddenInBuildings}, " +
@@ -212,6 +215,40 @@ namespace ParkingControl
             m_PreviousReport = snapshot;
             m_PreviousStreetVehicles = details.CurrentStreetVehicles;
             m_HasPreviousReport = true;
+        }
+
+        /// <summary>
+        /// Lists current street-parked cars so they can be opened directly in Scene Explorer.
+        /// </summary>
+        private static void AppendStreetVehicleEntities(
+            StringBuilder text,
+            ParkingSnapshot snapshot,
+            ParkingReportDetails details)
+        {
+            if (!snapshot.RestrictionEnabled)
+            {
+                text.AppendLine(
+                    $"StreetParkedVehicleEntities=<restriction off; {snapshot.StreetParked} IDs omitted>");
+                return;
+            }
+
+            List<Entity> vehicles = new List<Entity>(details.CurrentStreetVehicles);
+            vehicles.Sort((left, right) =>
+            {
+                int indexOrder = left.Index.CompareTo(right.Index);
+                return indexOrder != 0
+                    ? indexOrder
+                    : left.Version.CompareTo(right.Version);
+            });
+
+            int count = Math.Min(kStreetVehicleLimit, vehicles.Count);
+            text.AppendLine(
+                $"StreetParkedVehicleEntities={vehicles.Count} " +
+                $"(showing {count}; enter Vehicle Index:Version in Scene Explorer)");
+            for (int i = 0; i < count; i++)
+            {
+                text.AppendLine($"  Vehicle={FormatEntity(vehicles[i])}");
+            }
         }
 
         private void AppendStreetTransitions(
@@ -279,14 +316,7 @@ namespace ParkingControl
             for (int i = 0; i < count; i++)
             {
                 OutsideVehicleSample sample = details.OutsideSamples[i];
-                text.AppendLine(
-                    $"  Vehicle={FormatEntity(sample.Vehicle)} Lane={FormatEntity(sample.Lane)} " +
-                    $"LaneRoot={FormatEntity(sample.LaneRoot)} Owner={FormatEntity(sample.Owner)} " +
-                    $"Keeper={FormatEntity(sample.Keeper)} Flags={sample.Flags} Unspawned={sample.Unspawned} " +
-                    $"OwnerExists={sample.OwnerExists} HouseholdOwner={sample.HouseholdOwner} " +
-                    $"OwnerDeleted={sample.OwnerDeleted} OwnerMovingAway={sample.OwnerMovingAway} " +
-                    $"OwnerHasProperty={sample.OwnerHasProperty} OwnedVehicleMatch={sample.OwnedVehicleMatch} " +
-                    $"KeeperExists={sample.KeeperExists} WasStreetPrevious={sample.WasStreetPrevious}");
+                text.AppendLine($"  Vehicle={FormatEntity(sample.Vehicle)}");
             }
         }
 
