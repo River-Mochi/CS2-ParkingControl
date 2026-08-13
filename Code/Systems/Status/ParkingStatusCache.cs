@@ -164,17 +164,17 @@ namespace ParkingControl
                 snapshot.DisabledCurbLanes,
                 snapshot.TrackedCurbLanes);
             EnforcementRow =
-                $"{Format(snapshot.DisabledCurbLanes)} / {Format(snapshot.CurbLanes)} eligible curb lanes disabled | " +
-                $"{Format(snapshot.OccupiedCurbLanes)} lane entities still occupied | {status}";
+                $"{Format(snapshot.DisabledCurbLanes)}/{Format(snapshot.CurbLanes)} disabled | " +
+                $"{Format(snapshot.OccupiedCurbLanes)} occupied | {status}";
             VehicleRow =
-                $"{Format(snapshot.StreetParked)} street | {Format(snapshot.VisibleOffStreet)} visible off-street | " +
-                $"{Format(snapshot.HiddenInBuildings)} hidden in buildings | {Format(snapshot.OutsideConnection)} outside";
+                $"{Format(snapshot.StreetParked)} street | {Format(snapshot.VisibleOffStreet)} off-street | " +
+                $"{Format(snapshot.HiddenInBuildings)} hidden | {Format(snapshot.OutsideConnection)} outside";
             SupplyRow =
-                $"Roads infoview parking: {Format(snapshot.OfficialParkingOccupied)} / {Format(snapshot.OfficialParkingCapacity)} | " +
-                $"non-border garage lanes: {Format(snapshot.GarageOccupied)} / {Format(snapshot.GarageCapacity)}";
+                $"{Format(snapshot.OfficialParkingOccupied)}/{Format(snapshot.OfficialParkingCapacity)} public | " +
+                $"{Format(snapshot.GarageOccupied)}/{Format(snapshot.GarageCapacity)} garages";
             ShareRow =
-                $"{FormatPercent(snapshot.StreetParked, snapshot.ParkedVehicles)} of parked personal vehicles are on street | " +
-                $"{Format(snapshot.ActiveVehicles)} active | updated {snapshot.CapturedAtLocal:HH:mm:ss}";
+                $"{FormatPercent(snapshot.StreetParked, snapshot.ParkedVehicles)} street | " +
+                $"{Format(snapshot.ActiveVehicles)} active | {snapshot.CapturedAtLocal:HH:mm:ss}";
 
             s_HasSnapshot = true;
             s_ForceRefresh = false;
