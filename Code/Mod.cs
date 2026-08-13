@@ -6,12 +6,12 @@
 // all copies or substantial portions of this code.
 // ================= </copyright> ======================
 
-// Purpose: Loads Parking Control settings, localization, logging, and the street-parking policy system.
+// Purpose: Registers Parking Control settings, localization, logging, and ECS systems.
 
 namespace ParkingControl
 {
+    using System;
     using System.Reflection;
-    using Colossal;
     using Colossal.IO.AssetDatabase;
     using Colossal.Localization;
     using Colossal.Logging;
@@ -20,99 +20,139 @@ namespace ParkingControl
     using Game.Modding;
     using Game.Pathfind;
     using Game.SceneFlow;
-    using Game.Settings;
-    using Game.Simulation;
-    using Unity.Entities;
-    using static Game.UI.Menu.AssetUploadPanelUISystem;
+    using Game.Serialization;
 
-
+    /// <summary>
+    /// Parking Control mod entry point.
+    /// </summary>
     public sealed class Mod : IMod
     {
         public const string ModName = "Parking Control";
         public const string ModId = "ParkingControl";
         public const string ModTag = "[PC]";
 
-    /// <summary>
-    /// Gets the mod version from the built assembly.
-    /// </summary>
-        public static readonly string ModVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "1.0.0";
+        public static readonly string ModVersion =
+            Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "1.0.0";
 
-        private static readonly ILog s_Log = LogManager.GetLogger(ModId).SetShowsErrorsInUI(false);
+        public static readonly ILog s_Log =
+            LogManager.GetLogger(ModId).SetShowsErrorsInUI(false);
+
         private static bool s_BannerLogged;
 
-    /// <summary>
-    /// Gets the current options settings instance.
-    /// </summary>
+        /// <summary>
+        /// Gets the active Options UI settings instance.
+        /// </summary>
         public static PCSettings? Settings { get; private set; }
 
-    /// <inheritdoc/>
+        /// <inheritdoc/>
         public void OnLoad(UpdateSystem updateSystem)
         {
-            LogUtils.Configure(ModId, s_Log);
+            // ShellOpen also configures LogUtils with this mod's exact log file.
+            ShellOpen.Configure(s_Log, ModId, ModTag);
+            ParkingStatusCache.InvalidateCache();
+            LogBanner();
 
-            if (!s_BannerLogged)
+            if (GameManager.instance == null)
             {
-                s_BannerLogged = true;
-                LogUtils.Info($"{ModTag} {ModName} {ModVersion} loading.");
-            }
-
-            if (GameManager.instance?.gameMode is not GameMode.Game)
-            {
-                LogUtils.Warn($"{ModTag} Not loading outside a game session.");
+                LogUtils.Warn($"{ModTag} GameManager.instance is null; initialization stopped.");
                 return;
             }
 
-            PCSettings settings = new PCSettings(this);
+            PCSettings settings = new(this);
             Settings = settings;
+
             RegisterLocalization(settings);
-            AssetDatabase.global.LoadSettings(ModId, settings, new PCSettings(this));
-            settings.RegisterInOptionsUI();
+            LoadSettings(settings);
+            RegisterOptions(settings);
+            RegisterSystems(updateSystem);
 
-            updateSystem.UpdateAfter<NoStreetParkingSystem, ParkingLaneDataSystem>(SystemUpdatePhase.ModificationEnd);
-            updateSystem.UpdateBefore<NoStreetParkingSystem, LanesModifiedSystem>(SystemUpdatePhase.ModificationEnd);
-            World.DefaultGameObjectInjectionWorld.GetOrCreateSystemManaged<NoStreetParkingSystem>();
-            NoStreetParkingSystem.RequestReconcile();
-
-            LogUtils.Info($"{ModTag} Loaded. Whole-city street parking: {settings.NoStreetParking}.");
+            LogUtils.Info($"{ModTag} Loaded. Whole-city street parking restriction: {settings.NoStreetParking}.");
         }
 
-    /// <inheritdoc/>
+        /// <inheritdoc/>
         public void OnDispose()
         {
-            if (Settings is not null)
+            Settings?.UnregisterInOptionsUI();
+            Settings = null;
+            ParkingStatusCache.InvalidateCache();
+            LogUtils.Info($"{ModTag} Disposed.");
+        }
+
+        private static void LogBanner()
+        {
+            if (s_BannerLogged)
             {
-                Settings.UnregisterInOptionsUI();
-                Settings = null;
+                return;
             }
 
-            LogUtils.Info($"{ModTag} Disposed.");
+            s_BannerLogged = true;
+#if DEBUG
+            LogUtils.Info($"{ModName} v{ModVersion} DEBUG loaded");
+#else
+            LogUtils.Info($"{ModName} v{ModVersion} loaded");
+#endif
         }
 
         private static void RegisterLocalization(PCSettings settings)
         {
-            LocalizationManager? localizationManager = GameManager.instance?.localizationManager;
-            if (localizationManager == null)
+            try
             {
-                LogUtils.Warn($"{ModTag} LocalizationManager is null; Options labels were not registered.");
-                return;
-            }
+                LocalizationManager? localizationManager = GameManager.instance?.localizationManager;
+                if (localizationManager == null)
+                {
+                    LogUtils.Warn($"{ModTag} LocalizationManager is null; locale sources were not registered.");
+                    return;
+                }
 
-                // Register localization before Options UI reads setting labels.
+                // Localization must exist before the Options UI reads setting labels.
                 localizationManager.AddSource("en-US", new LocaleEN(settings));
-            // Future to be added, uncomment as needed:
-               // localizationManager.AddSource("fr-FR", new LocaleFR(setting));
-               // localizationManager.AddSource("es-ES", new LocaleES(setting));
-               // localizationManager.AddSource("de-DE", new LocaleDE(setting));
-               // localizationManager.AddSource("it-IT", new LocaleIT(setting));
-              //  localizationManager.AddSource("ja-JP", new LocaleJA(setting));
-              //  localizationManager.AddSource("ko-KR", new LocaleKO(setting));
-              //  localizationManager.AddSource("pl-PL", new LocalePL(setting));
-              //  localizationManager.AddSource("pt-BR", new LocalePT_BR(setting));
-              //  localizationManager.AddSource("zh-HANS", new LocaleZH_HANS(setting));
-             //   localizationManager.AddSource("zh-HANT", new LocaleZH_HANT(setting));
+            }
+            catch (Exception ex)
+            {
+                LogUtils.Error($"{ModTag} Localization registration failed: {ex.GetType().Name}: {ex.Message}", ex);
+            }
+        }
 
+        private void LoadSettings(PCSettings settings)
+        {
+            try
+            {
+                AssetDatabase.global.LoadSettings(ModId, settings, new PCSettings(this));
+            }
+            catch (Exception ex)
+            {
+                LogUtils.Error($"{ModTag} Settings load failed: {ex.GetType().Name}: {ex.Message}", ex);
+            }
+        }
 
+        private static void RegisterOptions(PCSettings settings)
+        {
+            try
+            {
+                settings.RegisterInOptionsUI();
+            }
+            catch (Exception ex)
+            {
+                LogUtils.Error($"{ModTag} Options UI registration failed: {ex.GetType().Name}: {ex.Message}", ex);
+            }
+        }
 
+        private static void RegisterSystems(UpdateSystem updateSystem)
+        {
+            try
+            {
+                updateSystem.UpdateBefore<StreetParkingBaselineSystem, ParkingLaneDataSystem>(SystemUpdatePhase.ModificationEnd);
+                updateSystem.UpdateAfter<NoStreetParkingSystem, ParkingLaneDataSystem>(SystemUpdatePhase.ModificationEnd);
+                updateSystem.UpdateAfter<ParkingStatusSystem, NoStreetParkingSystem>(SystemUpdatePhase.ModificationEnd);
+                updateSystem.UpdateBefore<StreetParkingSaveSystem, SerializerSystem>(SystemUpdatePhase.Serialize);
+                updateSystem.UpdateAfter<StreetParkingRestoreSystem, SerializerSystem>(SystemUpdatePhase.Serialize);
+                StreetParkingBaselineSystem.RequestScan();
+                NoStreetParkingSystem.RequestReconcile();
+            }
+            catch (Exception ex)
+            {
+                LogUtils.Error($"{ModTag} System scheduling failed: {ex.GetType().Name}: {ex.Message}", ex);
+            }
         }
     }
 }

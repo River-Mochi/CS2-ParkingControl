@@ -6,11 +6,10 @@
 // all copies or substantial portions of this code.
 // ================= </copyright> ======================
 
-// Purpose: Applies the whole-city policy by disabling only ordinary car curb-parking lanes.
+// Purpose: Disables ordinary car curb-parking lanes while the citywide option is enabled.
 
 namespace ParkingControl
 {
-    using Colossal.Serialization.Entities;
     using CS2Shared.RiverMochi;
     using Game;
     using Game.Common;
@@ -24,304 +23,309 @@ namespace ParkingControl
     using RoadTypes = Game.Net.RoadTypes;
     using Temp = Game.Tools.Temp;
 
-/// <summary>
-/// Keeps ordinary car curb-parking lanes in sync with the whole-city no-street-parking option.
-/// </summary>
+    /// <summary>
+    /// Keeps ordinary car curb-parking lanes synchronized with the whole-city option.
+    /// </summary>
     public sealed partial class NoStreetParkingSystem : GameSystemBase
     {
         private static bool s_ReconcileRequested = true;
+        private static bool s_SaveRecoveryRequested;
 
         private EntityQuery m_AllParkingLanesQuery;
         private EntityQuery m_ChangedParkingLanesQuery;
-        private EntityQuery m_StreetParkingStateQuery;
+        private EntityQuery m_ModifiedParkingLanesQuery;
         private bool m_Initialized;
         private bool m_LastEnabled;
 
-    /// <summary>
-    /// Requests a full reconciliation during the next modification pass.
-    /// </summary>
+        /// <summary>
+        /// Requests a full reconciliation during the next modification pass.
+        /// </summary>
         public static void RequestReconcile()
         {
             s_ReconcileRequested = true;
         }
 
-    /// <inheritdoc/>
+        /// <summary>
+        /// Requests a fallback reconciliation in case post-save restoration cannot run.
+        /// </summary>
+        internal static void RequestSaveRecovery()
+        {
+            s_SaveRecoveryRequested = true;
+        }
+
+        /// <summary>
+        /// Confirms that the post-save system restored the live runtime flags.
+        /// </summary>
+        internal static void CompleteSaveRestore()
+        {
+            s_SaveRecoveryRequested = false;
+        }
+
+        /// <inheritdoc/>
         protected override void OnCreate()
         {
-        base.OnCreate();
+            base.OnCreate();
 
-        m_AllParkingLanesQuery = SystemAPI.QueryBuilder()
-            .WithAll<ParkingLane, Owner, PrefabRef>()
-            .WithNone<Deleted, Temp>()
-            .Build();
-        m_ChangedParkingLanesQuery = SystemAPI.QueryBuilder()
-            .WithAll<ParkingLane, Owner, PrefabRef>()
-            .WithAny<Created, Updated, PathfindUpdated>()
-            .WithNone<Deleted, Temp>()
-            .Build();
-        m_StreetParkingStateQuery = SystemAPI.QueryBuilder()
-            .WithAll<ParkingLane, Owner, PrefabRef, StreetParkingState>()
-            .WithNone<Deleted, Temp>()
-            .Build();
+            m_AllParkingLanesQuery = SystemAPI.QueryBuilder()
+                .WithAll<ParkingLane, Owner, PrefabRef>()
+                .WithNone<Deleted, Temp>()
+                .Build();
+            m_ChangedParkingLanesQuery = SystemAPI.QueryBuilder()
+                .WithAll<ParkingLane, Owner, PrefabRef>()
+                .WithAny<Created, Updated, PathfindUpdated>()
+                .WithNone<Deleted, Temp>()
+                .Build();
+            m_ModifiedParkingLanesQuery = SystemAPI.QueryBuilder()
+                .WithAll<ParkingLane, StreetParkingState>()
+                .WithNone<Deleted, Temp>()
+                .Build();
         }
 
-    /// <inheritdoc/>
-        protected override void OnGameLoadingComplete(Purpose purpose, GameMode mode)
+        /// <inheritdoc/>
+        protected override void OnGameLoadingComplete(
+            Colossal.Serialization.Entities.Purpose purpose,
+            GameMode mode)
         {
-        base.OnGameLoadingComplete(purpose, mode);
+            base.OnGameLoadingComplete(purpose, mode);
 
-        if (mode == GameMode.Game && (purpose == Purpose.NewGame || purpose == Purpose.LoadGame))
-        {
-            m_Initialized = false;
-            RequestReconcile();
-        }
+            if (mode == GameMode.Game &&
+                (purpose == Colossal.Serialization.Entities.Purpose.NewGame ||
+                    purpose == Colossal.Serialization.Entities.Purpose.LoadGame))
+            {
+                m_Initialized = false;
+                StreetParkingBaselineSystem.RequestScan();
+                RequestReconcile();
+            }
         }
 
-    /// <inheritdoc/>
+        /// <inheritdoc/>
         protected override void OnUpdate()
         {
-        bool enabled = Mod.Settings?.NoStreetParking ?? false;
-        bool fullReconcile = s_ReconcileRequested || !m_Initialized || enabled != m_LastEnabled;
+            bool enabled = Mod.Settings?.NoStreetParking ?? false;
+            bool fullReconcile = s_ReconcileRequested || s_SaveRecoveryRequested || !m_Initialized || enabled != m_LastEnabled;
 
-        if (!fullReconcile)
-        {
-            if (enabled && m_ChangedParkingLanesQuery.IsEmptyIgnoreFilter)
+            if (!fullReconcile && (!enabled || m_ChangedParkingLanesQuery.IsEmptyIgnoreFilter))
             {
                 return;
             }
 
-            if (!enabled && m_StreetParkingStateQuery.IsEmptyIgnoreFilter)
+            Dependency.Complete();
+
+            ReconcileResult result = enabled
+                ? DisableStreetParking(fullReconcile)
+                : RestoreStreetParking();
+
+            m_Initialized = true;
+            m_LastEnabled = enabled;
+            s_ReconcileRequested = false;
+            s_SaveRecoveryRequested = false;
+
+            if (fullReconcile)
             {
-                return;
+                string action = enabled ? "blocked" : "restored";
+                int ownedLanes = m_ModifiedParkingLanesQuery.CalculateEntityCount();
+                LogUtils.Info($"{Mod.ModTag} Street parking {action}: {result.m_Changed} lane flags changed, {ownedLanes} lanes owned by Parking Control.");
             }
         }
 
-        Dependency.Complete();
-
-        ComponentLookup<ParkingLane> parkingLaneLookup = SystemAPI.GetComponentLookup<ParkingLane>();
-        ComponentLookup<Owner> ownerLookup = SystemAPI.GetComponentLookup<Owner>(true);
-        ComponentLookup<PrefabRef> prefabRefLookup = SystemAPI.GetComponentLookup<PrefabRef>(true);
-        ComponentLookup<ParkingLaneData> parkingLaneDataLookup = SystemAPI.GetComponentLookup<ParkingLaneData>(true);
-        ComponentLookup<Road> roadLookup = SystemAPI.GetComponentLookup<Road>(true);
-        ComponentLookup<StreetParkingState> stateLookup = SystemAPI.GetComponentLookup<StreetParkingState>(true);
-        ComponentLookup<Created> createdLookup = SystemAPI.GetComponentLookup<Created>(true);
-        ComponentLookup<Updated> updatedLookup = SystemAPI.GetComponentLookup<Updated>(true);
-        ComponentLookup<PathfindUpdated> pathfindUpdatedLookup = SystemAPI.GetComponentLookup<PathfindUpdated>(true);
-
-        ReconcileResult result = Reconcile(
-            enabled,
-            fullReconcile,
-            parkingLaneLookup,
-            ownerLookup,
-            prefabRefLookup,
-            parkingLaneDataLookup,
-            roadLookup,
-            stateLookup,
-            createdLookup,
-            updatedLookup,
-            pathfindUpdatedLookup);
-
-        m_Initialized = true;
-        m_LastEnabled = enabled;
-        s_ReconcileRequested = false;
-
-        if (fullReconcile)
+        private ReconcileResult DisableStreetParking(bool fullReconcile)
         {
-            string action = enabled ? "blocked" : "restored";
-            LogUtils.Info($"{Mod.ModTag} Street parking {action}: {result.m_Changed} lane flags changed, {result.m_StateAdded} lanes tracked, {result.m_StateRemoved} lanes untracked.");
-        }
-        }
+            ComponentLookup<ParkingLane> parkingLaneLookup = SystemAPI.GetComponentLookup<ParkingLane>();
+            ComponentLookup<Owner> ownerLookup = SystemAPI.GetComponentLookup<Owner>(true);
+            ComponentLookup<PrefabRef> prefabRefLookup = SystemAPI.GetComponentLookup<PrefabRef>(true);
+            ComponentLookup<ParkingLaneData> parkingLaneDataLookup = SystemAPI.GetComponentLookup<ParkingLaneData>(true);
+            ComponentLookup<Road> roadLookup = SystemAPI.GetComponentLookup<Road>(true);
+            ComponentLookup<StreetParkingState> stateLookup = SystemAPI.GetComponentLookup<StreetParkingState>(true);
+            ComponentLookup<Created> createdLookup = SystemAPI.GetComponentLookup<Created>(true);
+            ComponentLookup<Updated> updatedLookup = SystemAPI.GetComponentLookup<Updated>(true);
+            ComponentLookup<PathfindUpdated> pathfindUpdatedLookup = SystemAPI.GetComponentLookup<PathfindUpdated>(true);
 
-        private ReconcileResult Reconcile(
-        bool enabled,
-        bool fullReconcile,
-        ComponentLookup<ParkingLane> parkingLaneLookup,
-        ComponentLookup<Owner> ownerLookup,
-        ComponentLookup<PrefabRef> prefabRefLookup,
-        ComponentLookup<ParkingLaneData> parkingLaneDataLookup,
-        ComponentLookup<Road> roadLookup,
-        ComponentLookup<StreetParkingState> stateLookup,
-        ComponentLookup<Created> createdLookup,
-        ComponentLookup<Updated> updatedLookup,
-        ComponentLookup<PathfindUpdated> pathfindUpdatedLookup)
-        {
-        NativeList<Entity> addStateEntities = new(Allocator.Temp);
-        NativeList<StreetParkingState> addStateValues = new(Allocator.Temp);
-        NativeList<Entity> removeStateEntities = new(Allocator.Temp);
-        NativeList<Entity> pathfindUpdateEntities = new(Allocator.Temp);
-        ReconcileResult result = default;
+            NativeList<Entity> addStateEntities = new(Allocator.Temp);
+            NativeList<Entity> removeStateEntities = new(Allocator.Temp);
+            NativeList<Entity> pathfindUpdateEntities = new(Allocator.Temp);
+            ReconcileResult result = default;
 
-        if (enabled && fullReconcile)
-        {
-            NativeArray<Entity> trackedEntities = m_StreetParkingStateQuery.ToEntityArray(Allocator.Temp);
-            foreach (Entity entity in trackedEntities)
-            {
-                ParkingLane parkingLane = parkingLaneLookup[entity];
-                if (IsStreetCarParkingLane(entity, parkingLane, ownerLookup, prefabRefLookup, parkingLaneDataLookup, roadLookup))
-                {
-                    continue;
-                }
-
-                if (RestoreParkingDisabled(entity, parkingLane, stateLookup[entity], ref parkingLaneLookup))
-                {
-                    QueuePathfindUpdate(entity, createdLookup, updatedLookup, pathfindUpdatedLookup, ref pathfindUpdateEntities);
-                    result.m_Changed++;
-                }
-
-                removeStateEntities.Add(entity);
-                result.m_StateRemoved++;
-            }
-
-            trackedEntities.Dispose();
-        }
-
-        if (enabled)
-        {
             EntityQuery sourceQuery = fullReconcile ? m_AllParkingLanesQuery : m_ChangedParkingLanesQuery;
-            NativeArray<Entity> parkingLaneEntities = sourceQuery.ToEntityArray(Allocator.Temp);
-            foreach (Entity entity in parkingLaneEntities)
+            using (NativeArray<Entity> parkingLaneEntities = sourceQuery.ToEntityArray(Allocator.Temp))
             {
-                ParkingLane parkingLane = parkingLaneLookup[entity];
-                if (!IsStreetCarParkingLane(entity, parkingLane, ownerLookup, prefabRefLookup, parkingLaneDataLookup, roadLookup))
+                foreach (Entity entity in parkingLaneEntities)
                 {
-                    continue;
-                }
+                    ParkingLane parkingLane = parkingLaneLookup[entity];
+                    bool hasState = stateLookup.HasComponent(entity);
+                    bool recalculatedByVanilla =
+                        createdLookup.HasComponent(entity) ||
+                        updatedLookup.HasComponent(entity) ||
+                        pathfindUpdatedLookup.HasComponent(entity);
+                    bool isStreetParking = IsStreetCarParkingLane(
+                        entity,
+                        parkingLane,
+                        ownerLookup,
+                        prefabRefLookup,
+                        parkingLaneDataLookup,
+                        roadLookup);
 
-                if (!stateLookup.HasComponent(entity))
-                {
-                    bool wasParkingDisabled = (parkingLane.m_Flags & ParkingLaneFlags.ParkingDisabled) != 0;
-                    addStateEntities.Add(entity);
-                    addStateValues.Add(new StreetParkingState(wasParkingDisabled));
-                    result.m_StateAdded++;
-                }
+                    if (!isStreetParking)
+                    {
+                        if (hasState)
+                        {
+                            // A changed lane has already been recalculated by vanilla this pass.
+                            // Otherwise clear the temporary flag we previously owned.
+                            if (!recalculatedByVanilla &&
+                                (parkingLane.m_Flags & ParkingLaneFlags.ParkingDisabled) != 0)
+                            {
+                                parkingLane.m_Flags &= ~ParkingLaneFlags.ParkingDisabled;
+                                parkingLaneLookup[entity] = parkingLane;
+                                result.m_Changed++;
+                                QueuePathfindUpdate(
+                                    entity,
+                                    createdLookup,
+                                    updatedLookup,
+                                    pathfindUpdatedLookup,
+                                    ref pathfindUpdateEntities);
+                            }
 
-                if ((parkingLane.m_Flags & ParkingLaneFlags.ParkingDisabled) == 0)
-                {
+                            removeStateEntities.Add(entity);
+                        }
+
+                        continue;
+                    }
+
+                    // Vanilla recalculates changed lanes before this system. If it now disables
+                    // a lane we tracked, vanilla owns that restriction from this point forward.
+                    if ((parkingLane.m_Flags & ParkingLaneFlags.ParkingDisabled) != 0)
+                    {
+                        if (hasState && recalculatedByVanilla)
+                        {
+                            removeStateEntities.Add(entity);
+                        }
+
+                        continue;
+                    }
+
                     parkingLane.m_Flags |= ParkingLaneFlags.ParkingDisabled;
                     parkingLaneLookup[entity] = parkingLane;
-                    QueuePathfindUpdate(entity, createdLookup, updatedLookup, pathfindUpdatedLookup, ref pathfindUpdateEntities);
                     result.m_Changed++;
+
+                    if (!hasState)
+                    {
+                        addStateEntities.Add(entity);
+                    }
+
+                    QueuePathfindUpdate(
+                        entity,
+                        createdLookup,
+                        updatedLookup,
+                        pathfindUpdatedLookup,
+                        ref pathfindUpdateEntities);
                 }
             }
 
-            parkingLaneEntities.Dispose();
-        }
-        else
-        {
-            NativeArray<Entity> trackedEntities = m_StreetParkingStateQuery.ToEntityArray(Allocator.Temp);
-            foreach (Entity entity in trackedEntities)
+            if (addStateEntities.Length > 0)
             {
-                ParkingLane parkingLane = parkingLaneLookup[entity];
-                if (RestoreParkingDisabled(entity, parkingLane, stateLookup[entity], ref parkingLaneLookup))
+                EntityManager.AddComponent<StreetParkingState>(addStateEntities.AsArray());
+            }
+
+            if (removeStateEntities.Length > 0)
+            {
+                EntityManager.RemoveComponent<StreetParkingState>(removeStateEntities.AsArray());
+            }
+
+            if (pathfindUpdateEntities.Length > 0)
+            {
+                EntityManager.AddComponent<PathfindUpdated>(pathfindUpdateEntities.AsArray());
+            }
+
+            addStateEntities.Dispose();
+            removeStateEntities.Dispose();
+            pathfindUpdateEntities.Dispose();
+            return result;
+        }
+
+        private ReconcileResult RestoreStreetParking()
+        {
+            ComponentLookup<ParkingLane> parkingLaneLookup = SystemAPI.GetComponentLookup<ParkingLane>();
+            ComponentLookup<Created> createdLookup = SystemAPI.GetComponentLookup<Created>(true);
+            ComponentLookup<Updated> updatedLookup = SystemAPI.GetComponentLookup<Updated>(true);
+            ComponentLookup<PathfindUpdated> pathfindUpdatedLookup = SystemAPI.GetComponentLookup<PathfindUpdated>(true);
+            NativeList<Entity> pathfindUpdateEntities = new(Allocator.Temp);
+            ReconcileResult result = default;
+
+            using (NativeArray<Entity> modifiedEntities = m_ModifiedParkingLanesQuery.ToEntityArray(Allocator.Temp))
+            {
+                foreach (Entity entity in modifiedEntities)
                 {
-                    QueuePathfindUpdate(entity, createdLookup, updatedLookup, pathfindUpdatedLookup, ref pathfindUpdateEntities);
-                    result.m_Changed++;
+                    ParkingLane parkingLane = parkingLaneLookup[entity];
+                    if ((parkingLane.m_Flags & ParkingLaneFlags.ParkingDisabled) != 0)
+                    {
+                        parkingLane.m_Flags &= ~ParkingLaneFlags.ParkingDisabled;
+                        parkingLaneLookup[entity] = parkingLane;
+                        result.m_Changed++;
+                        QueuePathfindUpdate(
+                            entity,
+                            createdLookup,
+                            updatedLookup,
+                            pathfindUpdatedLookup,
+                            ref pathfindUpdateEntities);
+                    }
                 }
-
-                removeStateEntities.Add(entity);
-                result.m_StateRemoved++;
             }
 
-            trackedEntities.Dispose();
-        }
-
-        if (addStateEntities.Length > 0)
-        {
-            EntityManager.AddComponent<StreetParkingState>(addStateEntities.AsArray());
-            for (int index = 0; index < addStateEntities.Length; index++)
+            if (!m_ModifiedParkingLanesQuery.IsEmptyIgnoreFilter)
             {
-                EntityManager.SetComponentData(addStateEntities[index], addStateValues[index]);
+                EntityManager.RemoveComponent<StreetParkingState>(m_ModifiedParkingLanesQuery);
             }
+
+            if (pathfindUpdateEntities.Length > 0)
+            {
+                EntityManager.AddComponent<PathfindUpdated>(pathfindUpdateEntities.AsArray());
+            }
+
+            pathfindUpdateEntities.Dispose();
+            return result;
         }
 
-        if (removeStateEntities.Length > 0)
+        internal static bool IsStreetCarParkingLane(
+            Entity entity,
+            ParkingLane parkingLane,
+            ComponentLookup<Owner> ownerLookup,
+            ComponentLookup<PrefabRef> prefabRefLookup,
+            ComponentLookup<ParkingLaneData> parkingLaneDataLookup,
+            ComponentLookup<Road> roadLookup)
         {
-            EntityManager.RemoveComponent<StreetParkingState>(removeStateEntities.AsArray());
-        }
+            if ((parkingLane.m_Flags & (ParkingLaneFlags.VirtualLane | ParkingLaneFlags.SpecialVehicles)) != 0)
+            {
+                return false;
+            }
 
-        if (pathfindUpdateEntities.Length > 0)
-        {
-            EntityManager.AddComponent<PathfindUpdated>(pathfindUpdateEntities.AsArray());
-        }
+            Owner owner = ownerLookup[entity];
+            if (!roadLookup.HasComponent(owner.m_Owner))
+            {
+                return false;
+            }
 
-        addStateEntities.Dispose();
-        addStateValues.Dispose();
-        removeStateEntities.Dispose();
-        pathfindUpdateEntities.Dispose();
-        return result;
-        }
-
-        private static bool IsStreetCarParkingLane(
-        Entity entity,
-        ParkingLane parkingLane,
-        ComponentLookup<Owner> ownerLookup,
-        ComponentLookup<PrefabRef> prefabRefLookup,
-        ComponentLookup<ParkingLaneData> parkingLaneDataLookup,
-        ComponentLookup<Road> roadLookup)
-        {
-        if ((parkingLane.m_Flags & (ParkingLaneFlags.VirtualLane | ParkingLaneFlags.SpecialVehicles)) != 0)
-        {
-            return false;
-        }
-
-        Owner owner = ownerLookup[entity];
-        if (!roadLookup.HasComponent(owner.m_Owner))
-        {
-            return false;
-        }
-
-        PrefabRef prefabRef = prefabRefLookup[entity];
-        if (!parkingLaneDataLookup.TryGetComponent(prefabRef.m_Prefab, out ParkingLaneData parkingLaneData))
-        {
-            return false;
-        }
-
-        return (parkingLaneData.m_RoadTypes & RoadTypes.Car) != 0;
-        }
-
-        private static bool RestoreParkingDisabled(
-        Entity entity,
-        ParkingLane parkingLane,
-        StreetParkingState state,
-        ref ComponentLookup<ParkingLane> parkingLaneLookup)
-        {
-        bool parkingDisabled = (parkingLane.m_Flags & ParkingLaneFlags.ParkingDisabled) != 0;
-        if (parkingDisabled == state.m_WasParkingDisabled)
-        {
-            return false;
-        }
-
-        if (state.m_WasParkingDisabled)
-        {
-            parkingLane.m_Flags |= ParkingLaneFlags.ParkingDisabled;
-        }
-        else
-        {
-            parkingLane.m_Flags &= ~ParkingLaneFlags.ParkingDisabled;
-        }
-
-        parkingLaneLookup[entity] = parkingLane;
-        return true;
+            PrefabRef prefabRef = prefabRefLookup[entity];
+            return parkingLaneDataLookup.TryGetComponent(prefabRef.m_Prefab, out ParkingLaneData parkingLaneData) &&
+                (parkingLaneData.m_RoadTypes & RoadTypes.Car) != 0;
         }
 
         private static void QueuePathfindUpdate(
-        Entity entity,
-        ComponentLookup<Created> createdLookup,
-        ComponentLookup<Updated> updatedLookup,
-        ComponentLookup<PathfindUpdated> pathfindUpdatedLookup,
-        ref NativeList<Entity> pathfindUpdateEntities)
+            Entity entity,
+            ComponentLookup<Created> createdLookup,
+            ComponentLookup<Updated> updatedLookup,
+            ComponentLookup<PathfindUpdated> pathfindUpdatedLookup,
+            ref NativeList<Entity> pathfindUpdateEntities)
         {
-        if (!createdLookup.HasComponent(entity) && !updatedLookup.HasComponent(entity) && !pathfindUpdatedLookup.HasComponent(entity))
-        {
-            pathfindUpdateEntities.Add(entity);
-        }
+            if (!createdLookup.HasComponent(entity) &&
+                !updatedLookup.HasComponent(entity) &&
+                !pathfindUpdatedLookup.HasComponent(entity))
+            {
+                pathfindUpdateEntities.Add(entity);
+            }
         }
 
         private struct ReconcileResult
         {
-        public int m_Changed;
-        public int m_StateAdded;
-        public int m_StateRemoved;
+            public int m_Changed;
         }
     }
 }
