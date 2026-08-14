@@ -9,7 +9,7 @@
 <!--LongDescription Value="No Street Parking" /-->
 <LongDescription>
 
-Stops cars and motorcycles from choosing street parking in the city.
+Stops cars and motorcycles from choosing street parking in the whole city.
 
 ## Features
 - Enabled with the Options menu [x] toggle.
@@ -18,9 +18,9 @@ Stops cars and motorcycles from choosing street parking in the city.
 ## Good to know
 - It could take a few city months for already parked cars to move. Vanilla road upgrades that remove street parking clear the affected road faster.
 - A few cars may remain temporarily after road construction while the game updates parking lanes and paths.
-- If the city does not have enough parking facilities, CS2 handles the overflow normally, including use of outside-connection (hidden) storage.
+- If the city does not have enough parking facilities, the game handles the overflow normally, including use of outside-connection (hidden) storage.
 - Safe to remove: streets return to vanilla parking.
-- This does not delete cars or affect bicycle parking, it just prevents street parking.
+- This does not delete cars or affect bicycles, it just prevents street parking.
 
 ## Support and Feedback
 - Please consider using the like button if the mod is useful.
@@ -32,7 +32,7 @@ River-mochi - mod author
 
 </LongDescription>
 <!--Thumbnail-->
-<Thumbnail Value="Properties/Thumbnail.png" />
+<Thumbnail Value="Properties/thumbnail-NoParking02.jpg" />
 <!--Screenshot, can be set multiple times-->
 <Screenshot Value="Properties/10-image-Options.jpg" />
 <Screenshot Value="Properties/20-image-Before-After.jpg" />
