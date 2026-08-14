@@ -214,9 +214,9 @@ namespace ParkingControl
         }
 
         /// <summary>
-        /// Separates visible parking facilities and building lots for log diagnostics.
+        /// Separates vanilla public parking from parking included with other buildings.
         /// </summary>
-        private static VisibleParkingKind GetVisibleParkingKind(
+        private static VisibleParkingKind GetParkingKind(
             Entity lane,
             ComponentLookup<Game.Buildings.CarParkingFacility> carParkingFacilityLookup,
             ComponentLookup<Game.Routes.CarParking> carParkingLookup,

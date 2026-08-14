@@ -171,11 +171,13 @@ namespace ParkingControl
                 $"{Format(snapshot.StreetParked)} street | {Format(snapshot.VisibleOffStreet)} visible | " +
                 $"{Format(snapshot.HiddenInBuildings)} hidden | {Format(snapshot.OutsideConnection)} OC";
             SupplyRow =
+                $"{FormatPercent(snapshot.OfficialParkingOccupied, snapshot.OfficialParkingCapacity)} - " +
                 $"{Format(snapshot.OfficialParkingOccupied)}/{Format(snapshot.OfficialParkingCapacity)} public | " +
-                $"{Format(snapshot.ResidentialGarageOccupied)}/{Format(snapshot.ResidentialGarageCapacity)} residential";
+                $"{FormatPercent(snapshot.BuildingParkingOccupied, snapshot.BuildingParkingCapacity)} - " +
+                $"{Format(snapshot.BuildingParkingOccupied)}/{Format(snapshot.BuildingParkingCapacity)} building";
             ShareRow =
                 $"{FormatPercent(snapshot.StreetParked, snapshot.ParkedVehicles)} street parked | " +
-                $"{Format(snapshot.ActiveVehicles)} moving | {snapshot.CapturedAtLocal:HH:mm:ss}";
+                $"{Format(snapshot.ActiveVehicles)} moving | updated {snapshot.CapturedAtLocal:HH:mm:ss}";
 
             s_HasSnapshot = true;
             s_ForceRefresh = false;

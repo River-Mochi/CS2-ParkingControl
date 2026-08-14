@@ -57,7 +57,7 @@ namespace ParkingControl
                     "<OK> = No Street Parking is on and working.\n" +
                     "<OFF> = No Street Parking is off; cars may park freely on ordinary streets.\n" +
                     "<CHECK> = roads may still be updating. Wait a moment; write a log report if it remains.\n" +
-                    "**A few cars can remain after enabling the rule or changing roads. They leave naturally.**" },
+                    "**Some cars can remain after enabling the rule or changing roads. They leave naturally if the citizen uses the car.**" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Car Locations" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VehicleStatus)),
                     "<Street> = parked on public roads.\n" +
@@ -65,16 +65,16 @@ namespace ParkingControl
                     "<Hidden> = inside buildings or garages.\n" +
                     "<OC> = outside connection storage at the city border; some incoming household cars start there."
                 },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Parking Facilities" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "<Public> = occupied / total spaces in designated parking facilities.\n" +
-                    "<Residential> = occupied / total hidden garage spaces in residential and mixed-use buildings.\n" +
-                    "**Cars in visible outdoor parking included with buildings are shown under Car Locations.**" },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Street share" },
+                    "<Public> = usage and occupied / total spaces counted by the vanilla Parking InfoView.\n" +
+                    "<Building> = usage and occupied / total parking included with homes and workplaces.\n" +
+                    "**Building parking includes visible outdoor spaces and hidden storage.**" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Street usage" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
                     "<Street parked> = percentage of parked personal vehicles currently on streets.\n" +
                     "<Moving> = personal vehicles driving or waiting in traffic.\n" +
-                    "<Time> = when this status was last updated."
+                    "<Updated> = when this status was last refreshed."
                 },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NameText)), "Mod name" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VersionText)), "Version" },

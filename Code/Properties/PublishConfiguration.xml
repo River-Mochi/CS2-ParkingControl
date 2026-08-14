@@ -8,7 +8,10 @@
 <!--Long description of the mod. Single line or multi line. Supports minimal markdown subset-->
 <!--LongDescription Value="No Street Parking" /-->
 <LongDescription>
-Stops personal cars and motorcycles from choosing street parking. Parking lots, parking buildings, parking included with buildings stays available.
+
+- Stops personal cars and motorcycles from choosing street parking.
+- For visually cleaner streets, or just a little more control over car parking.
+- They can still park in: parking lots/buildings, or parking included with some buildings.
 
 ## Options
 - No Street Parking [x] - enabled by default for the whole city.
@@ -20,9 +23,9 @@ Stops personal cars and motorcycles from choosing street parking. Parking lots, 
 - Parking Control’s temporary restriction is not written permanently into the city.
 - Vanilla road upgrades remain saved normally.
 - Safe to remove: removing the mod lets regular streets return to vanilla parking behavior.
-- If you run out of parking lot space, then normal vanilla behavior handles the overflow, including hidden storage at outside connections.
-- The mod does not delete cars.
-
+- If you run out of parking spaces, then normal vanilla behavior handles the overflow, including hidden storage at outside connections.
+- Note that not providing enough parking spaces can cause excess driving aroundm this is vanilla behavior (recommend also getting Realistic Parking mod).
+- The mod does not delete cars. In testing, most existing cars cleared over several in-game months, but cars whose owners rarely drive may remain longer. Upgrading a road with vanilla road tools can clear that curb immediately.
 
 ###  Thanks for the support
 River-mochi - mod author

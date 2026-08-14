@@ -68,12 +68,16 @@ namespace ParkingControl
         public int OfficialParkingFacilities;
         public int OfficialParkingCapacity;
         public int OfficialParkingOccupied;
+        public int BuildingParkingLanes;
+        public int BuildingParkingCapacity;
+        public int BuildingParkingOccupied;
+        public int BuildingFixedSlotLanes;
+        public int BuildingGarageLanes;
+        public int BuildingContinuousLanes;
+        public int BuildingContinuousOccupied;
         public int GarageLanes;
         public int GarageCapacity;
         public int GarageOccupied;
-        public int ResidentialGarageLanes;
-        public int ResidentialGarageCapacity;
-        public int ResidentialGarageOccupied;
 
         public readonly int ParkedElsewhere =>
             VisibleOffStreet + HiddenInBuildings + OutsideConnection + UnassignedOrUnknownParked;

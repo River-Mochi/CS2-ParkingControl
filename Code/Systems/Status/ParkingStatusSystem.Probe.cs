@@ -26,12 +26,12 @@ namespace ParkingControl
                 GetComponentLookup<Game.Prefabs.BicycleData>(true);
             ComponentLookup<Game.Buildings.Building> buildingLookup =
                 GetComponentLookup<Game.Buildings.Building>(true);
-            ComponentLookup<Game.Prefabs.BuildingPropertyData> buildingPropertyDataLookup =
-                GetComponentLookup<Game.Prefabs.BuildingPropertyData>(true);
             ComponentLookup<Game.Buildings.CarParkingFacility> carParkingFacilityLookup =
                 GetComponentLookup<Game.Buildings.CarParkingFacility>(true);
             ComponentLookup<Game.Vehicles.CarCurrentLane> currentLaneLookup =
                 GetComponentLookup<Game.Vehicles.CarCurrentLane>(true);
+            ComponentLookup<Game.Net.ConnectionLane> connectionLaneLookup =
+                GetComponentLookup<Game.Net.ConnectionLane>(true);
             ComponentLookup<Game.Net.Curve> curveLookup = GetComponentLookup<Game.Net.Curve>(true);
             ComponentLookup<Game.Common.Deleted> deletedLookup =
                 GetComponentLookup<Game.Common.Deleted>(true);
@@ -84,14 +84,55 @@ namespace ParkingControl
                 foreach (Entity lane in lanes)
                 {
                     Game.Net.ParkingLane parkingLane = parkingLaneLookup[lane];
-                    if (!NoStreetParkingSystem.IsStreetCarParkingLane(
+                    bool isStreetParking = NoStreetParkingSystem.IsStreetCarParkingLane(
                         lane,
                         parkingLane,
                         ownerLookup,
                         prefabRefLookup,
                         parkingLaneDataLookup,
-                        roadLookup))
+                        roadLookup);
+                    if (!isStreetParking)
                     {
+                        VisibleParkingKind parkingKind = GetParkingKind(
+                            lane,
+                            carParkingFacilityLookup,
+                            carParkingLookup,
+                            buildingLookup,
+                            ownerLookup);
+                        Entity buildingLanePrefab = prefabRefLookup[lane].m_Prefab;
+                        if (parkingKind == VisibleParkingKind.Building &&
+                            (parkingLane.m_Flags & Game.Net.ParkingLaneFlags.VirtualLane) == 0 &&
+                            parkingLaneDataLookup.TryGetComponent(
+                                buildingLanePrefab,
+                                out Game.Prefabs.ParkingLaneData buildingLaneData) &&
+                            (buildingLaneData.m_RoadTypes & Game.Net.RoadTypes.Car) != 0)
+                        {
+                            int occupied = CountParkedCarsOnLane(
+                                lane,
+                                laneObjectLookup,
+                                parkedCarLookup);
+                            if (buildingLaneData.m_SlotInterval != 0f &&
+                                curveLookup.TryGetComponent(lane, out Game.Net.Curve buildingCurve))
+                            {
+                                // Visible lots use fixed geometry, so do not infer extra spaces.
+                                snapshot.BuildingParkingLanes++;
+                                snapshot.BuildingFixedSlotLanes++;
+                                snapshot.BuildingParkingCapacity += Math.Max(
+                                    0,
+                                    Game.Net.NetUtils.GetParkingSlotCount(
+                                        buildingCurve,
+                                        parkingLane,
+                                        buildingLaneData));
+                                snapshot.BuildingParkingOccupied += occupied;
+                            }
+                            else
+                            {
+                                // Continuous lanes have no honest slot capacity and stay log-only.
+                                snapshot.BuildingContinuousLanes++;
+                                snapshot.BuildingContinuousOccupied += occupied;
+                            }
+                        }
+
                         continue;
                     }
 
@@ -140,24 +181,22 @@ namespace ParkingControl
                     snapshot.GarageCapacity += garageLane.m_VehicleCapacity;
                     snapshot.GarageOccupied += garageLane.m_VehicleCount;
 
-                    // Residential and mixed-use buildings expose their residential
-                    // property count on the owning building prefab.
-                    if (TryGetOwningBuilding(
+                    // GarageLane is shared by cars and bicycles; this status is motor vehicles only.
+                    if (connectionLaneLookup.TryGetComponent(
                             lane,
+                            out Game.Net.ConnectionLane connectionLane) &&
+                        (connectionLane.m_RoadTypes & Game.Net.RoadTypes.Car) != 0 &&
+                        GetParkingKind(
+                            lane,
+                            carParkingFacilityLookup,
+                            carParkingLookup,
                             buildingLookup,
-                            ownerLookup,
-                            out Entity building) &&
-                        prefabRefLookup.TryGetComponent(
-                            building,
-                            out Game.Prefabs.PrefabRef buildingPrefab) &&
-                        buildingPropertyDataLookup.TryGetComponent(
-                            buildingPrefab.m_Prefab,
-                            out Game.Prefabs.BuildingPropertyData properties) &&
-                        properties.m_ResidentialProperties > 0)
+                            ownerLookup) == VisibleParkingKind.Building)
                     {
-                        snapshot.ResidentialGarageLanes++;
-                        snapshot.ResidentialGarageCapacity += garageLane.m_VehicleCapacity;
-                        snapshot.ResidentialGarageOccupied += garageLane.m_VehicleCount;
+                        snapshot.BuildingParkingLanes++;
+                        snapshot.BuildingGarageLanes++;
+                        snapshot.BuildingParkingCapacity += garageLane.m_VehicleCapacity;
+                        snapshot.BuildingParkingOccupied += garageLane.m_VehicleCount;
                     }
                 }
             }
@@ -308,7 +347,7 @@ namespace ParkingControl
                         case VehicleLocation.VisibleOffStreet:
                             snapshot.ParkedVehicles++;
                             snapshot.VisibleOffStreet++;
-                            switch (GetVisibleParkingKind(
+                            switch (GetParkingKind(
                                 parkedLane,
                                 carParkingFacilityLookup,
                                 carParkingLookup,
@@ -465,6 +504,33 @@ namespace ParkingControl
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Counts only parked cars on a fixed-slot lane; other lane objects are ignored.
+        /// </summary>
+        private static int CountParkedCarsOnLane(
+            Entity lane,
+            BufferLookup<Game.Net.LaneObject> laneObjectLookup,
+            ComponentLookup<Game.Vehicles.ParkedCar> parkedCarLookup)
+        {
+            if (!laneObjectLookup.TryGetBuffer(
+                    lane,
+                    out DynamicBuffer<Game.Net.LaneObject> laneObjects))
+            {
+                return 0;
+            }
+
+            int count = 0;
+            foreach (Game.Net.LaneObject laneObject in laneObjects)
+            {
+                if (parkedCarLookup.HasComponent(laneObject.m_LaneObject))
+                {
+                    count++;
+                }
+            }
+
+            return count;
         }
     }
 }

@@ -98,15 +98,6 @@ namespace ParkingControl
             int otherDisabledCurbLanes = Math.Max(
                 0,
                 snapshot.DisabledCurbLanes - snapshot.TrackedCurbLanes);
-            int otherGarageLanes = Math.Max(
-                0,
-                snapshot.GarageLanes - snapshot.ResidentialGarageLanes);
-            int otherGarageCapacity = Math.Max(
-                0,
-                snapshot.GarageCapacity - snapshot.ResidentialGarageCapacity);
-            int otherGarageOccupied = Math.Max(
-                0,
-                snapshot.GarageOccupied - snapshot.ResidentialGarageOccupied);
             string enforcementStatus = GetOwnershipStatus(
                 snapshot.RestrictionEnabled,
                 snapshot.CurbLanes,
@@ -186,15 +177,15 @@ namespace ParkingControl
                 $"VanillaRoadsInfoviewParking={snapshot.OfficialParkingOccupied}/{snapshot.OfficialParkingCapacity} " +
                 $"across {snapshot.OfficialParkingFacilities} facility entities");
             text.AppendLine(
+                $"BuildingParking={snapshot.BuildingParkingOccupied}/{snapshot.BuildingParkingCapacity} " +
+                $"occupied/capacity across {snapshot.BuildingParkingLanes} exact-capacity lane entities " +
+                $"(VisibleFixedSlot={snapshot.BuildingFixedSlotLanes}, HiddenGarage={snapshot.BuildingGarageLanes})");
+            text.AppendLine(
+                $"BuildingContinuousParking={snapshot.BuildingContinuousOccupied} parked cars across " +
+                $"{snapshot.BuildingContinuousLanes} unslotted lane entities excluded from capacity percentage");
+            text.AppendLine(
                 $"NonBorderGarageLanes={snapshot.GarageOccupied}/{snapshot.GarageCapacity} occupied/capacity " +
                 $"across {snapshot.GarageLanes} garage lane entities");
-            text.AppendLine(
-                $"ResidentialBuildingGarageLanes={snapshot.ResidentialGarageOccupied}/" +
-                $"{snapshot.ResidentialGarageCapacity} occupied/capacity across " +
-                $"{snapshot.ResidentialGarageLanes} residential or mixed-use garage lane entities");
-            text.AppendLine(
-                $"OtherNonBorderGarageLanes={otherGarageOccupied}/{otherGarageCapacity} occupied/capacity " +
-                $"across {otherGarageLanes} public, commercial, industrial, or other garage lane entities");
             text.AppendLine(deltaLine);
             AppendStreetTransitions(text, snapshot, details);
             AppendVehicleEntitySamples(text, snapshot, details);
@@ -213,6 +204,9 @@ namespace ParkingControl
             text.AppendLine(
                 "Note: VanillaRoadsInfoviewParking excludes ordinary street curbs and most implicit residential storage; " +
                 "continuous unslotted lanes have no exact capacity.");
+            text.AppendLine(
+                "Note: BuildingParking excludes vanilla public parking and includes car spaces owned by residential, " +
+                "mixed, commercial, office, industrial, and specialized-industry buildings.");
             text.AppendLine(
                 "Note: Entity IDs use Index:Version for Scene Explorer and are valid only within this loaded city session.");
             text.Append("===================================================================");
