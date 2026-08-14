@@ -49,28 +49,32 @@ namespace ParkingControl
                     "Prevents new personal motor vehicles, including motorcycles, from choosing ordinary street parking.\n" +
                     "Parking lots, garages, building parking, bicycle parking, taxi and boarding spaces, and special-vehicle spaces stay available.\n" +
                     "Existing parked vehicles are not removed. Make sure the city has adequate off-street parking." },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Street cars" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Street Parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Parked (lanes)> = cars still parked on streets and the lane entities holding them. One lane can hold several cars.\n" +
-                    "<Disabled> = eligible lanes whose vanilla parking flags are off; lanes are not individual spaces.\n" +
-                    "<OK> = the setting and parking flags agree.\n" +
-                    "A few cars may remain after enabling the rule or changing roads while the game updates parking and paths. They leave naturally." },
+                    "<Parked> = cars still parked on streets.\n" +
+                    "<Lanes> = roadside parking sections holding those cars. One lane can hold several cars.\n" +
+                    "<Disabled> = street-parking lanes closed to new parking.\n" +
+                    "<OK> = No Street Parking is on and working.\n" +
+                    "<OFF> = No Street Parking is off; cars may park freely on ordinary streets.\n" +
+                    "<CHECK> = roads may still be updating. Wait a moment; write a log report if it remains.\n" +
+                    "**A few cars can remain after enabling the rule or changing roads. They leave naturally.**" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Car Locations" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VehicleStatus)),
                     "<Street> = parked on public roads.\n" +
                     "<Visible> = cars you can see and click in open-air lots, rooftop parking, or outdoor parking included with buildings.\n" +
                     "<Hidden> = inside buildings or garages.\n" +
-                    "<Outside> = Outside connection, stored at the city border; some incoming household cars start there."
+                    "<OC> = outside connection storage at the city border; some incoming household cars start there."
                 },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Parking" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Parking Facilities" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "Occupied/capacity. Public covers designated parking facilities reported by the game.\n" +
-                    "Garages also include building garage lanes and can overlap the public total, so do not add the two totals together." },
+                    "<Public> = occupied / total spaces in designated parking facilities.\n" +
+                    "<Residential> = occupied / total hidden garage spaces in residential and mixed-use buildings.\n" +
+                    "**Cars in visible outdoor parking included with buildings are shown under Car Locations.**" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Street share" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "Percentage of parked personal vehicles on public streets.\n" +
-                    "Active vehicles = moving, transporting.\n"
-
+                    "<Street parked> = percentage of parked personal vehicles currently on streets.\n" +
+                    "<Moving> = personal vehicles driving or waiting in traffic.\n" +
+                    "<Time> = when this status was last updated."
                 },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NameText)), "Mod name" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VersionText)), "Version" },

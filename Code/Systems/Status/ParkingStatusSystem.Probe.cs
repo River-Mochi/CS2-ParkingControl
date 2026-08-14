@@ -26,6 +26,8 @@ namespace ParkingControl
                 GetComponentLookup<Game.Prefabs.BicycleData>(true);
             ComponentLookup<Game.Buildings.Building> buildingLookup =
                 GetComponentLookup<Game.Buildings.Building>(true);
+            ComponentLookup<Game.Prefabs.BuildingPropertyData> buildingPropertyDataLookup =
+                GetComponentLookup<Game.Prefabs.BuildingPropertyData>(true);
             ComponentLookup<Game.Buildings.CarParkingFacility> carParkingFacilityLookup =
                 GetComponentLookup<Game.Buildings.CarParkingFacility>(true);
             ComponentLookup<Game.Vehicles.CarCurrentLane> currentLaneLookup =
@@ -137,6 +139,26 @@ namespace ParkingControl
                     snapshot.GarageLanes++;
                     snapshot.GarageCapacity += garageLane.m_VehicleCapacity;
                     snapshot.GarageOccupied += garageLane.m_VehicleCount;
+
+                    // Residential and mixed-use buildings expose their residential
+                    // property count on the owning building prefab.
+                    if (TryGetOwningBuilding(
+                            lane,
+                            buildingLookup,
+                            ownerLookup,
+                            out Entity building) &&
+                        prefabRefLookup.TryGetComponent(
+                            building,
+                            out Game.Prefabs.PrefabRef buildingPrefab) &&
+                        buildingPropertyDataLookup.TryGetComponent(
+                            buildingPrefab.m_Prefab,
+                            out Game.Prefabs.BuildingPropertyData properties) &&
+                        properties.m_ResidentialProperties > 0)
+                    {
+                        snapshot.ResidentialGarageLanes++;
+                        snapshot.ResidentialGarageCapacity += garageLane.m_VehicleCapacity;
+                        snapshot.ResidentialGarageOccupied += garageLane.m_VehicleCount;
+                    }
                 }
             }
 

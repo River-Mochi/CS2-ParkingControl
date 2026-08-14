@@ -98,7 +98,21 @@ namespace ParkingControl
             int otherDisabledCurbLanes = Math.Max(
                 0,
                 snapshot.DisabledCurbLanes - snapshot.TrackedCurbLanes);
+            int otherGarageLanes = Math.Max(
+                0,
+                snapshot.GarageLanes - snapshot.ResidentialGarageLanes);
+            int otherGarageCapacity = Math.Max(
+                0,
+                snapshot.GarageCapacity - snapshot.ResidentialGarageCapacity);
+            int otherGarageOccupied = Math.Max(
+                0,
+                snapshot.GarageOccupied - snapshot.ResidentialGarageOccupied);
             string enforcementStatus = GetOwnershipStatus(
+                snapshot.RestrictionEnabled,
+                snapshot.CurbLanes,
+                snapshot.DisabledCurbLanes,
+                snapshot.TrackedCurbLanes);
+            string enforcementDetails = GetOwnershipDetails(
                 snapshot.RestrictionEnabled,
                 snapshot.CurbLanes,
                 snapshot.DisabledCurbLanes,
@@ -123,6 +137,7 @@ namespace ParkingControl
                 $"DisabledStreetParkingLanes={snapshot.DisabledCurbLanes} " +
                 $"(ParkingControlTracked={snapshot.TrackedCurbLanes}, VanillaOrOther={otherDisabledCurbLanes})");
             text.AppendLine($"EnforcementStatus={enforcementStatus}");
+            text.AppendLine($"EnforcementDetails={enforcementDetails}");
             text.AppendLine(
                 $"OccupiedStreetParkingLanes={snapshot.OccupiedCurbLanes}/{snapshot.CurbLanes} " +
                 $"({FormatPercent(snapshot.OccupiedCurbLanes, snapshot.CurbLanes)} of lane entities; not a parking-space percentage)");
@@ -173,6 +188,13 @@ namespace ParkingControl
             text.AppendLine(
                 $"NonBorderGarageLanes={snapshot.GarageOccupied}/{snapshot.GarageCapacity} occupied/capacity " +
                 $"across {snapshot.GarageLanes} garage lane entities");
+            text.AppendLine(
+                $"ResidentialBuildingGarageLanes={snapshot.ResidentialGarageOccupied}/" +
+                $"{snapshot.ResidentialGarageCapacity} occupied/capacity across " +
+                $"{snapshot.ResidentialGarageLanes} residential or mixed-use garage lane entities");
+            text.AppendLine(
+                $"OtherNonBorderGarageLanes={otherGarageOccupied}/{otherGarageCapacity} occupied/capacity " +
+                $"across {otherGarageLanes} public, commercial, industrial, or other garage lane entities");
             text.AppendLine(deltaLine);
             AppendStreetTransitions(text, snapshot, details);
             AppendVehicleEntitySamples(text, snapshot, details);
@@ -312,26 +334,60 @@ namespace ParkingControl
             if (!restrictionEnabled)
             {
                 return trackedCurbLanes == 0
-                    ? "OK (restriction off and no mod-owned lanes)"
-                    : "WARNING (restriction off but mod-owned lanes remain)";
+                    ? "OFF"
+                    : "CHECK";
             }
 
             if (curbLanes > 0 && trackedCurbLanes == 0)
             {
-                return "WARNING (restriction on but no lanes are owned by Parking Control)";
+                return "CHECK";
             }
 
             if (disabledCurbLanes < curbLanes)
             {
-                return "WARNING (some eligible curb lanes are not disabled)";
+                return "CHECK";
             }
 
             if (disabledCurbLanes < trackedCurbLanes)
             {
-                return "WARNING (some mod-owned lanes are not disabled)";
+                return "CHECK";
             }
 
             return "OK";
+        }
+
+        /// <summary>
+        /// Keeps technical enforcement details in the manual log rather than the Options value.
+        /// </summary>
+        private static string GetOwnershipDetails(
+            bool restrictionEnabled,
+            int curbLanes,
+            int disabledCurbLanes,
+            int trackedCurbLanes)
+        {
+            if (!restrictionEnabled)
+            {
+                return trackedCurbLanes == 0
+                    ? "Restriction off; no Parking Control lanes remain"
+                    : "Restriction off but Parking Control lanes remain";
+            }
+
+            if (curbLanes > 0 && trackedCurbLanes == 0)
+            {
+                return "Restriction on but Parking Control owns no eligible lanes";
+            }
+
+            if (disabledCurbLanes < curbLanes)
+            {
+                return "Some eligible street-parking lanes are not disabled";
+            }
+
+            if (disabledCurbLanes < trackedCurbLanes)
+            {
+                return "Some Parking Control lanes are not disabled";
+            }
+
+            return "Restriction on and eligible street-parking lanes are disabled";
         }
 
         private static string FormatDelta(int value)

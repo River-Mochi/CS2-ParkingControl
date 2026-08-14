@@ -180,11 +180,25 @@ namespace ParkingControl
             ComponentLookup<Game.Buildings.Building> buildingLookup,
             ComponentLookup<Game.Common.Owner> ownerLookup)
         {
+            return TryGetOwningBuilding(entity, buildingLookup, ownerLookup, out _);
+        }
+
+        /// <summary>
+        /// Finds the building that owns a nested lane without assuming a fixed owner depth.
+        /// </summary>
+        private static bool TryGetOwningBuilding(
+            Entity entity,
+            ComponentLookup<Game.Buildings.Building> buildingLookup,
+            ComponentLookup<Game.Common.Owner> ownerLookup,
+            out Entity building)
+        {
+            building = Entity.Null;
             Entity current = entity;
             for (int i = 0; i < 16 && current != Entity.Null; i++)
             {
                 if (buildingLookup.HasComponent(current))
                 {
+                    building = current;
                     return true;
                 }
 

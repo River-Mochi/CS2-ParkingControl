@@ -10,6 +10,7 @@
 
 namespace ParkingControl
 {
+    using System;
     using System.Globalization;
     using Game;
     using Game.SceneFlow;
@@ -168,13 +169,13 @@ namespace ParkingControl
                 $"{Format(snapshot.DisabledCurbLanes)}/{Format(snapshot.CurbLanes)} disabled | {status}";
             VehicleRow =
                 $"{Format(snapshot.StreetParked)} street | {Format(snapshot.VisibleOffStreet)} visible | " +
-                $"{Format(snapshot.HiddenInBuildings)} hidden | {Format(snapshot.OutsideConnection)} outside";
+                $"{Format(snapshot.HiddenInBuildings)} hidden | {Format(snapshot.OutsideConnection)} OC";
             SupplyRow =
                 $"{Format(snapshot.OfficialParkingOccupied)}/{Format(snapshot.OfficialParkingCapacity)} public | " +
-                $"{Format(snapshot.GarageOccupied)}/{Format(snapshot.GarageCapacity)} garages";
+                $"{Format(snapshot.ResidentialGarageOccupied)}/{Format(snapshot.ResidentialGarageCapacity)} residential";
             ShareRow =
-                $"{FormatPercent(snapshot.StreetParked, snapshot.ParkedVehicles)} street | " +
-                $"{Format(snapshot.ActiveVehicles)} active | {snapshot.CapturedAtLocal:HH:mm:ss}";
+                $"{FormatPercent(snapshot.StreetParked, snapshot.ParkedVehicles)} street parked | " +
+                $"{Format(snapshot.ActiveVehicles)} moving | {snapshot.CapturedAtLocal:HH:mm:ss}";
 
             s_HasSnapshot = true;
             s_ForceRefresh = false;
@@ -195,18 +196,35 @@ namespace ParkingControl
 
         private static string Format(int value)
         {
+            // Keep four-digit values exact; abbreviate only when space savings matter.
+            long magnitude = Math.Abs((long)value);
+            if (magnitude >= 1_000_000)
+            {
+                return FormatScaled(value, 1_000_000, "m");
+            }
+
+            if (magnitude >= 10_000)
+            {
+                return FormatScaled(value, 1_000, "k");
+            }
+
             return value.ToString("N0", CultureInfo.CurrentCulture);
+        }
+
+        private static string FormatScaled(int value, int divisor, string suffix)
+        {
+            return (value / (double)divisor).ToString("0.#", CultureInfo.CurrentCulture) + suffix;
         }
 
         private static string FormatPercent(int numerator, int denominator)
         {
             if (denominator <= 0)
             {
-                return "0.00%";
+                return "0.0%";
             }
 
             double value = numerator * 100d / denominator;
-            return value.ToString("0.00", CultureInfo.CurrentCulture) + "%";
+            return value.ToString("0.0", CultureInfo.CurrentCulture) + "%";
         }
 
         private static void PublishMessage(string message)
