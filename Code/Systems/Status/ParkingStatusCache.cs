@@ -171,12 +171,14 @@ namespace ParkingControl
                 $"{Format(snapshot.StreetParked)} street | {Format(snapshot.VisibleOffStreet)} visible | " +
                 $"{Format(snapshot.HiddenInBuildings)} hidden | {Format(snapshot.OutsideConnection)} OC";
             SupplyRow =
-                $"{FormatPercent(snapshot.OfficialParkingOccupied, snapshot.OfficialParkingCapacity)} - " +
-                $"{Format(snapshot.OfficialParkingOccupied)}/{Format(snapshot.OfficialParkingCapacity)} public | " +
-                $"{FormatPercent(snapshot.BuildingParkingOccupied, snapshot.BuildingParkingCapacity)} - " +
-                $"{Format(snapshot.BuildingParkingOccupied)}/{Format(snapshot.BuildingParkingCapacity)} building";
+                $"{FormatPercent(snapshot.OfficialParkingOccupied, snapshot.OfficialParkingCapacity)}  " +
+                $"{FormatSupply(snapshot.OfficialParkingOccupied)} / " +
+                $"{FormatSupply(snapshot.OfficialParkingCapacity)} public | " +
+                $"{FormatPercent(snapshot.BuildingParkingOccupied, snapshot.BuildingParkingCapacity)}  " +
+                $"{FormatSupply(snapshot.BuildingParkingOccupied)} / " +
+                $"{FormatSupply(snapshot.BuildingParkingCapacity)} building";
             ShareRow =
-                $"{FormatPercent(snapshot.StreetParked, snapshot.ParkedVehicles)} street parked | " +
+                $"{FormatPercent(snapshot.StreetParked, snapshot.KnownInCityParking)} street parked | " +
                 $"{Format(snapshot.ActiveVehicles)} moving | updated {snapshot.CapturedAtLocal:HH:mm:ss}";
 
             s_HasSnapshot = true;
@@ -216,6 +218,29 @@ namespace ParkingControl
         private static string FormatScaled(int value, int divisor, string suffix)
         {
             return (value / (double)divisor).ToString("0.#", CultureInfo.CurrentCulture) + suffix;
+        }
+
+        private static string FormatSupply(int value)
+        {
+            long magnitude = Math.Abs((long)value);
+            if (magnitude >= 1_000_000)
+            {
+                return FormatTruncated(value, 1_000_000, "m");
+            }
+
+            if (magnitude >= 1_000)
+            {
+                // The Options row is deliberately approximate; the manual log keeps exact totals.
+                return FormatTruncated(value, 1_000, "k");
+            }
+
+            return value.ToString("N0", CultureInfo.CurrentCulture);
+        }
+
+        private static string FormatTruncated(int value, int divisor, string suffix)
+        {
+            double scaled = Math.Truncate(value * 10d / divisor) / 10d;
+            return scaled.ToString("0.0", CultureInfo.CurrentCulture) + suffix;
         }
 
         private static string FormatPercent(int numerator, int denominator)

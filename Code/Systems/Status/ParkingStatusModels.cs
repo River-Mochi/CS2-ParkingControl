@@ -53,6 +53,23 @@ namespace ParkingControl
         public int OutsideCommuterHousehold;
         public int OutsideResidentNotMovedIn;
         public int UnassignedOrUnknownParked;
+        public int UnknownNullLane;
+        public int UnknownMissingLane;
+        public int UnknownUnspawned;
+        public int UnknownWithTripSource;
+        public int UnknownWithoutTripSource;
+        public int UnknownTripSourceOutside;
+        public int UnknownTripSourceBuilding;
+        public int UnknownTripSourceOther;
+        public int UnknownTripSourceMissing;
+        public int UnknownValidHouseholdOwned;
+        public int UnknownHouseholdOwnershipInvalid;
+        public int UnknownDummyTraffic;
+        public int UnknownOtherOrUnowned;
+        public int UnknownResidentHousehold;
+        public int UnknownTouristHousehold;
+        public int UnknownCommuterHousehold;
+        public int UnknownResidentNotMovedIn;
         public int HouseholdOwnerVehicles;
         public int ResidentHouseholdVehicles;
         public int TouristHouseholdVehicles;
@@ -81,6 +98,11 @@ namespace ParkingControl
 
         public readonly int ParkedElsewhere =>
             VisibleOffStreet + HiddenInBuildings + OutsideConnection + UnassignedOrUnknownParked;
+
+        // This excludes outside-connection and unassigned staging because neither is
+        // a known parking place inside the city.
+        public readonly int KnownInCityParking =>
+            StreetParked + OfficialParkingOccupied + BuildingParkingOccupied;
     }
 
     /// <summary>
@@ -97,6 +119,16 @@ namespace ParkingControl
         public List<Entity> OutsideSamples { get; } = new List<Entity>();
 
         public List<Entity> UnknownSamples { get; } = new List<Entity>();
+
+        public List<Entity> UnknownOutsideSourceSamples { get; } = new List<Entity>();
+
+        public List<Entity> UnknownBuildingSourceSamples { get; } = new List<Entity>();
+
+        public List<Entity> UnknownOtherSourceSamples { get; } = new List<Entity>();
+
+        public List<Entity> UnknownMissingSourceSamples { get; } = new List<Entity>();
+
+        public List<Entity> UnknownNoSourceSamples { get; } = new List<Entity>();
 
         public int SeenPreviousStreet { get; set; }
 

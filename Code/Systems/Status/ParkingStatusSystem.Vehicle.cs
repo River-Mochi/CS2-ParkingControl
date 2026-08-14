@@ -173,6 +173,35 @@ namespace ParkingControl
         }
 
         /// <summary>
+        /// Recognizes both network and object outside connections through nested ownership.
+        /// </summary>
+        private static bool IsOutsideConnectionEntity(
+            Entity entity,
+            ComponentLookup<Game.Net.OutsideConnection> outsideConnectionLookup,
+            ComponentLookup<Game.Objects.OutsideConnection> objectOutsideConnectionLookup,
+            ComponentLookup<Game.Common.Owner> ownerLookup)
+        {
+            Entity current = entity;
+            for (int i = 0; i < 16 && current != Entity.Null; i++)
+            {
+                if (outsideConnectionLookup.HasComponent(current) ||
+                    objectOutsideConnectionLookup.HasComponent(current))
+                {
+                    return true;
+                }
+
+                if (!ownerLookup.TryGetComponent(current, out Game.Common.Owner owner))
+                {
+                    return false;
+                }
+
+                current = owner.m_Owner;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Follows nested lane owners to distinguish hidden building storage.
         /// </summary>
         private static bool IsOwnedByBuilding(

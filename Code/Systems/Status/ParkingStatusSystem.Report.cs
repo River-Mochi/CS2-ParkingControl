@@ -117,7 +117,7 @@ namespace ParkingControl
                     $"OutsideHidden={FormatDelta(snapshot.OutsideConnectionHidden - m_PreviousReport.OutsideConnectionHidden)}"
                 : "ChangeSincePrevious=<first report for this loaded city>";
 
-            StringBuilder text = new StringBuilder(6144);
+            StringBuilder text = new StringBuilder(8192);
             text.AppendLine();
             text.AppendLine($"==================== {Mod.ModTag} PARKING REPORT ====================");
             text.AppendLine($"Mod={Mod.ModName} v{Mod.ModVersion}");
@@ -159,6 +159,26 @@ namespace ParkingControl
                 $"(VisibleOffStreet={snapshot.VisibleOffStreet}, HiddenInBuildings={snapshot.HiddenInBuildings}, " +
                 $"OutsideConnection={snapshot.OutsideConnection}, UnassignedOrUnknown={snapshot.UnassignedOrUnknownParked})");
             text.AppendLine(
+                $"UnknownParkedDetails={snapshot.UnassignedOrUnknownParked} total " +
+                $"(NullLane={snapshot.UnknownNullLane}, MissingLaneEntity={snapshot.UnknownMissingLane}, " +
+                $"Unspawned={snapshot.UnknownUnspawned})");
+            text.AppendLine(
+                $"UnknownOwnership=ValidLiveHousehold={snapshot.UnknownValidHouseholdOwned}, " +
+                $"HouseholdInvalid={snapshot.UnknownHouseholdOwnershipInvalid}, " +
+                $"DummyTraffic={snapshot.UnknownDummyTraffic}, " +
+                $"OtherOrUnowned={snapshot.UnknownOtherOrUnowned}");
+            text.AppendLine(
+                $"UnknownVehicleKinds=ResidentHousehold={snapshot.UnknownResidentHousehold} " +
+                $"(NotMovedIn={snapshot.UnknownResidentNotMovedIn}), " +
+                $"TouristHousehold={snapshot.UnknownTouristHousehold}, " +
+                $"CommuterHousehold={snapshot.UnknownCommuterHousehold}");
+            text.AppendLine(
+                $"UnknownTripSources=Present={snapshot.UnknownWithTripSource}, " +
+                $"Absent={snapshot.UnknownWithoutTripSource} " +
+                $"(OutsideConnection={snapshot.UnknownTripSourceOutside}, " +
+                $"Building={snapshot.UnknownTripSourceBuilding}, " +
+                $"Other={snapshot.UnknownTripSourceOther}, MissingEntity={snapshot.UnknownTripSourceMissing})");
+            text.AppendLine(
                 $"VisibleParkingKinds=Facility={snapshot.VisibleFacilityParking}, " +
                 $"BuildingLot={snapshot.VisibleBuildingParking}, Other={snapshot.VisibleOtherParking}");
             text.AppendLine($"OutsideConnectionHiddenUnspawned={snapshot.OutsideConnectionHidden}");
@@ -184,6 +204,11 @@ namespace ParkingControl
                 $"BuildingContinuousParking={snapshot.BuildingContinuousOccupied} parked cars across " +
                 $"{snapshot.BuildingContinuousLanes} unslotted lane entities excluded from capacity percentage");
             text.AppendLine(
+                $"KnownInCityParking={snapshot.KnownInCityParking} " +
+                $"(Street={snapshot.StreetParked}, Public={snapshot.OfficialParkingOccupied}, " +
+                $"Building={snapshot.BuildingParkingOccupied}); " +
+                $"StreetUsage={FormatPercent(snapshot.StreetParked, snapshot.KnownInCityParking)}");
+            text.AppendLine(
                 $"NonBorderGarageLanes={snapshot.GarageOccupied}/{snapshot.GarageCapacity} occupied/capacity " +
                 $"across {snapshot.GarageLanes} garage lane entities");
             text.AppendLine(deltaLine);
@@ -197,6 +222,9 @@ namespace ParkingControl
                 "Note: OutsideConnection describes the parking lane/root location, not the vehicle Owner. " +
                 "Valid household-owned cars at that location are legitimate and must not be deleted.");
             text.AppendLine(
+                "Note: Unknown parked cars have no usable concrete lane. Vanilla can leave an unspawned car " +
+                "at its trip source when initial parking assignment fails; TripSource may later be removed.");
+            text.AppendLine(
                 "Note: HiddenInBuildings means a non-border GarageLane, or an unspawned vehicle on a lane owned by a building.");
             text.AppendLine(
                 "Note: VisibleOffStreet means a rendered parked car that is not on an eligible public street, " +
@@ -207,6 +235,9 @@ namespace ParkingControl
             text.AppendLine(
                 "Note: BuildingParking excludes vanilla public parking and includes car spaces owned by residential, " +
                 "mixed, commercial, office, industrial, and specialized-industry buildings.");
+            text.AppendLine(
+                "Note: StreetUsage compares street cars only with known street, public, and building parking; " +
+                "outside-connection and unknown staging are excluded.");
             text.AppendLine(
                 "Note: Entity IDs use Index:Version for Scene Explorer and are valid only within this loaded city session.");
             text.Append("===================================================================");
@@ -237,6 +268,31 @@ namespace ParkingControl
                 "Unknown",
                 snapshot.UnassignedOrUnknownParked,
                 details.UnknownSamples);
+            AppendEntitySampleLine(
+                text,
+                "Unknown-OCSource",
+                snapshot.UnknownTripSourceOutside,
+                details.UnknownOutsideSourceSamples);
+            AppendEntitySampleLine(
+                text,
+                "Unknown-BuildingSource",
+                snapshot.UnknownTripSourceBuilding,
+                details.UnknownBuildingSourceSamples);
+            AppendEntitySampleLine(
+                text,
+                "Unknown-OtherSource",
+                snapshot.UnknownTripSourceOther,
+                details.UnknownOtherSourceSamples);
+            AppendEntitySampleLine(
+                text,
+                "Unknown-MissingSource",
+                snapshot.UnknownTripSourceMissing,
+                details.UnknownMissingSourceSamples);
+            AppendEntitySampleLine(
+                text,
+                "Unknown-NoTripSource",
+                snapshot.UnknownWithoutTripSource,
+                details.UnknownNoSourceSamples);
         }
 
         private static void AppendEntitySampleLine(

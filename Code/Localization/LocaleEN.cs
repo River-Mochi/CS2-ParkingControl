@@ -63,18 +63,21 @@ namespace ParkingControl
                     "<Street> = parked on public roads.\n" +
                     "<Visible> = cars you can see and click in open-air lots, rooftop parking, or outdoor parking included with buildings.\n" +
                     "<Hidden> = inside buildings or garages.\n" +
-                    "<OC> = outside connection storage at the city border; some incoming household cars start there."
+                    "<OC> = outside connection storage at the city border; some incoming household cars start there.\n" +
+                    "**Unassigned vanilla staging is log-only.**"
                 },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "<Public> = usage and occupied / total spaces counted by the vanilla Parking InfoView.\n" +
-                    "<Building> = usage and occupied / total parking included with homes and workplaces.\n" +
+                    "<Percent> and <used / total> show parking occupancy.\n" +
+                    "<Public> = facilities counted by the vanilla Parking InfoView.\n" +
+                    "<Building> = parking included with homes and workplaces.\n" +
                     "**Building parking includes visible outdoor spaces and hidden storage.**" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Street usage" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "<Street parked> = percentage of parked personal vehicles currently on streets.\n" +
+                    "<Street parked> = share of cars using known street, public, or building parking.\n" +
                     "<Moving> = personal vehicles driving or waiting in traffic.\n" +
-                    "<Updated> = when this status was last refreshed."
+                    "<Updated> = when this status was last refreshed.\n" +
+                    "**OC and unassigned staging are excluded.**"
                 },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NameText)), "Mod name" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VersionText)), "Version" },

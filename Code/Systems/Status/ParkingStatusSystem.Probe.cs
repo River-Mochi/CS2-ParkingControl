@@ -60,6 +60,8 @@ namespace ParkingControl
             ComponentLookup<Game.Net.Road> roadLookup = GetComponentLookup<Game.Net.Road>(true);
             ComponentLookup<StreetParkingState> stateLookup =
                 GetComponentLookup<StreetParkingState>(true);
+            ComponentLookup<Game.Objects.TripSource> tripSourceLookup =
+                GetComponentLookup<Game.Objects.TripSource>(true);
             ComponentLookup<Game.Objects.Unspawned> unspawnedLookup =
                 GetComponentLookup<Game.Objects.Unspawned>(true);
             BufferLookup<Game.Net.LaneObject> laneObjectLookup =
@@ -427,10 +429,35 @@ namespace ParkingControl
 
                             break;
                         default:
-                            if (parkedCarLookup.HasComponent(vehicle))
+                            if (parkedCarLookup.TryGetComponent(
+                                    vehicle,
+                                    out Game.Vehicles.ParkedCar unknownParkedCar))
                             {
                                 snapshot.ParkedVehicles++;
                                 snapshot.UnassignedOrUnknownParked++;
+                                if (details != null)
+                                {
+                                    // Vanilla can stage a valid household car at its trip
+                                    // source without finding a concrete parking lane.
+                                    AddUnknownDiagnostics(
+                                        ref snapshot,
+                                        details,
+                                        vehicle,
+                                        unknownParkedCar,
+                                        householdOwner,
+                                        touristHousehold,
+                                        commuterHousehold,
+                                        residentMovedIn,
+                                        ownerDeleted,
+                                        ownedVehicleMatch,
+                                        dummyTraffic,
+                                        tripSourceLookup,
+                                        unspawnedLookup,
+                                        outsideConnectionLookup,
+                                        objectOutsideConnectionLookup,
+                                        buildingLookup,
+                                        ownerLookup);
+                                }
                             }
                             else
                             {
@@ -453,6 +480,116 @@ namespace ParkingControl
 
             snapshot.OccupiedCurbLanes = occupiedCurbLanes.Count;
             return snapshot;
+        }
+
+        /// <summary>
+        /// Breaks down parked cars without a usable lane for the manual log report.
+        /// </summary>
+        private void AddUnknownDiagnostics(
+            ref ParkingSnapshot snapshot,
+            ParkingReportDetails details,
+            Entity vehicle,
+            Game.Vehicles.ParkedCar parkedCar,
+            bool householdOwner,
+            bool touristHousehold,
+            bool commuterHousehold,
+            bool residentMovedIn,
+            bool ownerDeleted,
+            bool ownedVehicleMatch,
+            bool dummyTraffic,
+            ComponentLookup<Game.Objects.TripSource> tripSourceLookup,
+            ComponentLookup<Game.Objects.Unspawned> unspawnedLookup,
+            ComponentLookup<Game.Net.OutsideConnection> outsideConnectionLookup,
+            ComponentLookup<Game.Objects.OutsideConnection> objectOutsideConnectionLookup,
+            ComponentLookup<Game.Buildings.Building> buildingLookup,
+            ComponentLookup<Game.Common.Owner> ownerLookup)
+        {
+            if (parkedCar.m_Lane == Entity.Null)
+            {
+                snapshot.UnknownNullLane++;
+            }
+            else if (!EntityManager.Exists(parkedCar.m_Lane))
+            {
+                snapshot.UnknownMissingLane++;
+            }
+
+            if (unspawnedLookup.HasComponent(vehicle))
+            {
+                snapshot.UnknownUnspawned++;
+            }
+
+            if (dummyTraffic)
+            {
+                snapshot.UnknownDummyTraffic++;
+            }
+            else if (householdOwner)
+            {
+                if (!ownerDeleted && ownedVehicleMatch)
+                {
+                    snapshot.UnknownValidHouseholdOwned++;
+                }
+                else
+                {
+                    snapshot.UnknownHouseholdOwnershipInvalid++;
+                }
+
+                if (touristHousehold)
+                {
+                    snapshot.UnknownTouristHousehold++;
+                }
+                else if (commuterHousehold)
+                {
+                    snapshot.UnknownCommuterHousehold++;
+                }
+                else
+                {
+                    snapshot.UnknownResidentHousehold++;
+                    if (!residentMovedIn)
+                    {
+                        snapshot.UnknownResidentNotMovedIn++;
+                    }
+                }
+            }
+            else
+            {
+                snapshot.UnknownOtherOrUnowned++;
+            }
+
+            if (!tripSourceLookup.TryGetComponent(
+                    vehicle,
+                    out Game.Objects.TripSource tripSource))
+            {
+                snapshot.UnknownWithoutTripSource++;
+                details.UnknownNoSourceSamples.Add(vehicle);
+                return;
+            }
+
+            snapshot.UnknownWithTripSource++;
+            Entity source = tripSource.m_Source;
+            if (source == Entity.Null || !EntityManager.Exists(source))
+            {
+                snapshot.UnknownTripSourceMissing++;
+                details.UnknownMissingSourceSamples.Add(vehicle);
+            }
+            else if (IsOutsideConnectionEntity(
+                         source,
+                         outsideConnectionLookup,
+                         objectOutsideConnectionLookup,
+                         ownerLookup))
+            {
+                snapshot.UnknownTripSourceOutside++;
+                details.UnknownOutsideSourceSamples.Add(vehicle);
+            }
+            else if (IsOwnedByBuilding(source, buildingLookup, ownerLookup))
+            {
+                snapshot.UnknownTripSourceBuilding++;
+                details.UnknownBuildingSourceSamples.Add(vehicle);
+            }
+            else
+            {
+                snapshot.UnknownTripSourceOther++;
+                details.UnknownOtherSourceSamples.Add(vehicle);
+            }
         }
 
         /// <summary>
