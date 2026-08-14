@@ -93,7 +93,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenLog)), "Otwórz log" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)), "Otwórz <ParkingControl.log> albo folder Logs, jeśli plik jeszcze nie istnieje." },
                 // Live status rows use these localized strings.
-                { ParkingStatusLocale.kLoadCity, "Wczytaj lub rozpocznij miasto, aby zobaczyć stan parkowania." },
+                { ParkingStatusLocale.kLoadCity, "Nie wczytano miasta." },
                 { ParkingStatusLocale.kCollecting, "Trwa zbieranie stanu parkowania..." },
                 { ParkingStatusLocale.kUnavailable, "Stan parkowania jest niedostępny." },
                 { ParkingStatusLocale.kCollectionFailed, "Nie udało się zebrać stanu parkowania; zobacz ParkingControl.log." },

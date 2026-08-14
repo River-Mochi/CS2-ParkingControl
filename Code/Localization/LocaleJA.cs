@@ -93,7 +93,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenLog)), "ログを開く" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)), "<ParkingControl.log> を開きます。まだ存在しない場合は Logs フォルダーを開きます。" },
                 // Live status rows use these localized strings.
-                { ParkingStatusLocale.kLoadCity, "駐車状況を表示するには、都市を読み込むか開始してください。" },
+                { ParkingStatusLocale.kLoadCity, "都市はまだ読み込まれていません。" },
                 { ParkingStatusLocale.kCollecting, "駐車状況を収集中..." },
                 { ParkingStatusLocale.kUnavailable, "駐車状況を取得できません。" },
                 { ParkingStatusLocale.kCollectionFailed, "駐車状況を収集できませんでした。ParkingControl.log を確認してください。" },
