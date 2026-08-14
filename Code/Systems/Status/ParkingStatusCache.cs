@@ -22,7 +22,7 @@ namespace ParkingControl
     /// </summary>
     internal static class ParkingStatusCache
     {
-        private const string kLoadCityFallback = "Load or start a city to view parking status.";
+        private const string kLoadCityFallback = "No city loaded yet.";
         private const string kCollectingFallback = "Parking status is being collected...";
         private const string kUnavailableFallback = "Parking status is unavailable.";
         private const string kCollectionFailedFallback =
