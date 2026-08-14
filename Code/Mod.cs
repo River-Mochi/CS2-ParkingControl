@@ -21,8 +21,6 @@ namespace ParkingControl
     using Game.Pathfind;
     using Game.SceneFlow;
     using Game.Serialization;
-    using Game.Settings;
-    using static Game.UI.Menu.AssetUploadPanelUISystem;
 
     /// <summary>
     /// Parking Control mod entry point.
@@ -52,23 +50,72 @@ namespace ParkingControl
             // ShellOpen also configures LogUtils with this mod's exact log file.
             ShellOpen.Configure(s_Log, ModId, ModTag);
             ParkingStatusCache.InvalidateCache();
-            LogBanner();
 
-            if (GameManager.instance == null)
+            if (!s_BannerLogged)
             {
-                LogUtils.Warn($"{ModTag} GameManager.instance is null; initialization stopped.");
-                return;
+                s_BannerLogged = true;
+#if DEBUG
+                LogUtils.Info($"{ModName} v{ModVersion} DEBUG");
+#else
+                LogUtils.Info($"{ModName} v{ModVersion} RELEASE");
+#endif
             }
 
             PCSettings settings = new(this);
             Settings = settings;
 
-            RegisterLocalization(settings);
-            LoadSettings(settings);
-            RegisterOptions(settings);
-            RegisterSystems(updateSystem);
+            try
+            {
+                LocalizationManager? localizationManager =
+                    GameManager.instance?.localizationManager;
 
-            LogUtils.Info($"{ModTag} Loaded. Whole-city street parking restriction: {settings.NoStreetParking}.");
+                if (localizationManager == null)
+                {
+                    LogUtils.Warn(
+                        $"{ModTag} LocalizationManager is null; locale sources were not registered.");
+                }
+                else
+                {
+                    // Localization must exist before the Options UI reads setting labels.
+                    localizationManager.AddSource("en-US", new LocaleEN(settings));
+                    localizationManager.AddSource("fr-FR", new LocaleFR(settings));
+                    localizationManager.AddSource("es-ES", new LocaleES(settings));
+                    localizationManager.AddSource("de-DE", new LocaleDE(settings));
+                    localizationManager.AddSource("it-IT", new LocaleIT(settings));
+                    localizationManager.AddSource("ja-JP", new LocaleJA(settings));
+                    localizationManager.AddSource("ko-KR", new LocaleKO(settings));
+                    localizationManager.AddSource("pl-PL", new LocalePL(settings));
+                    localizationManager.AddSource("pt-BR", new LocalePT_BR(settings));
+                    localizationManager.AddSource("zh-HANS", new LocaleZH_HANS(settings));
+                    localizationManager.AddSource("zh-HANT", new LocaleZH_HANT(settings));
+                }
+            }
+            catch (Exception ex)
+            {
+                LogUtils.Warn(
+                    $"{ModTag} Localization registration failed: {ex.GetType().Name}: {ex.Message}",
+                    ex);
+            }
+
+            AssetDatabase.global.LoadSettings(ModId, settings, new PCSettings(this));
+            settings.RegisterInOptionsUI();
+
+            updateSystem.UpdateBefore<StreetParkingBaselineSystem, ParkingLaneDataSystem>(
+                SystemUpdatePhase.ModificationEnd);
+            updateSystem.UpdateAfter<NoStreetParkingSystem, ParkingLaneDataSystem>(
+                SystemUpdatePhase.ModificationEnd);
+            updateSystem.UpdateAfter<ParkingStatusSystem, NoStreetParkingSystem>(
+                SystemUpdatePhase.ModificationEnd);
+            updateSystem.UpdateBefore<StreetParkingSaveSystem, SerializerSystem>(
+                SystemUpdatePhase.Serialize);
+            updateSystem.UpdateAfter<StreetParkingRestoreSystem, SerializerSystem>(
+                SystemUpdatePhase.Serialize);
+
+            StreetParkingBaselineSystem.RequestScan();
+            NoStreetParkingSystem.RequestReconcile();
+
+            LogUtils.Info(
+                $"{ModTag} Loaded. Whole-city street parking restriction: {settings.NoStreetParking}.");
         }
 
         /// <inheritdoc/>
@@ -77,94 +124,6 @@ namespace ParkingControl
             Settings?.UnregisterInOptionsUI();
             Settings = null;
             ParkingStatusCache.InvalidateCache();
-        }
-
-        private static void LogBanner()
-        {
-            if (s_BannerLogged)
-            {
-                return;
-            }
-
-            s_BannerLogged = true;
-#if DEBUG
-            LogUtils.Info($"{ModName} v{ModVersion} DEBUG");
-#else
-            LogUtils.Info($"{ModName} v{ModVersion} RELEASE");
-#endif
-        }
-
-        private static void RegisterLocalization(PCSettings settings)
-        {
-            try
-            {
-                LocalizationManager? localizationManager = GameManager.instance?.localizationManager;
-                if (localizationManager == null)
-                {
-                    LogUtils.Warn($"{ModTag} LocalizationManager is null; locale sources were not registered.");
-                    return;
-                }
-
-                // Localization must exist before the Options UI reads setting labels.
-                localizationManager.AddSource("en-US", new LocaleEN(settings));
-                localizationManager.AddSource("fr-FR", new LocaleFR(settings));
-                localizationManager.AddSource("es-ES", new LocaleES(settings));
-                localizationManager.AddSource("de-DE", new LocaleDE(settings));
-                localizationManager.AddSource("it-IT", new LocaleIT(settings));
-                localizationManager.AddSource("ja-JP", new LocaleJA(settings));
-                localizationManager.AddSource("ko-KR", new LocaleKO(settings));
-                localizationManager.AddSource("pl-PL", new LocalePL(settings));
-                localizationManager.AddSource("pt-BR", new LocalePT_BR(settings));
-                localizationManager.AddSource("zh-HANS", new LocaleZH_HANS(settings));
-                localizationManager.AddSource("zh-HANT", new LocaleZH_HANT(settings));
-
-            }
-            catch (Exception ex)
-            {
-                LogUtils.Error($"{ModTag} Localization registration failed: {ex.GetType().Name}: {ex.Message}", ex);
-            }
-        }
-
-        private void LoadSettings(PCSettings settings)
-        {
-            try
-            {
-                AssetDatabase.global.LoadSettings(ModId, settings, new PCSettings(this));
-            }
-            catch (Exception ex)
-            {
-                LogUtils.Error($"{ModTag} Settings load failed: {ex.GetType().Name}: {ex.Message}", ex);
-            }
-        }
-
-        private static void RegisterOptions(PCSettings settings)
-        {
-            try
-            {
-                settings.RegisterInOptionsUI();
-            }
-            catch (Exception ex)
-            {
-                LogUtils.Error($"{ModTag} Options UI registration failed: {ex.GetType().Name}: {ex.Message}", ex);
-            }
-        }
-
-        private static void RegisterSystems(UpdateSystem updateSystem)
-        {
-            try
-            {
-                updateSystem.UpdateBefore<StreetParkingBaselineSystem, ParkingLaneDataSystem>(SystemUpdatePhase.ModificationEnd);
-                updateSystem.UpdateAfter<NoStreetParkingSystem, ParkingLaneDataSystem>(SystemUpdatePhase.ModificationEnd);
-                updateSystem.UpdateAfter<ParkingStatusSystem, NoStreetParkingSystem>(SystemUpdatePhase.ModificationEnd);
-                updateSystem.UpdateBefore<StreetParkingSaveSystem, SerializerSystem>(SystemUpdatePhase.Serialize);
-                updateSystem.UpdateAfter<StreetParkingRestoreSystem, SerializerSystem>(SystemUpdatePhase.Serialize);
-                StreetParkingBaselineSystem.RequestScan();
-                NoStreetParkingSystem.RequestReconcile();
-            }
-            catch (Exception ex)
-            {
-                LogUtils.Error($"{ModTag} System scheduling failed: {ex.GetType().Name}: {ex.Message}", ex);
-            }
         }
     }
 }

@@ -1,0 +1,103 @@
+// <copyright file="LocalePL.cs" company="River-Mochi">
+// Copyright (c) 2026 River-Mochi. All rights reserved.
+// Licensed under the MIT License. You may not use this file except in compliance with this License.
+// See LICENSE file in the project root for full license information.
+// This notice and the MIT License notice must be kept with
+// all copies or substantial portions of this code.
+// ================= </copyright> ======================
+
+// Purpose: Provides the Polish text for Parking Control's Options UI.
+
+namespace ParkingControl
+{
+    using System.Collections.Generic;
+    using Colossal;
+
+    /// <summary>
+    /// Polish localization entries for <see cref="PCSettings"/>.
+    /// </summary>
+    public sealed class LocalePL : IDictionarySource
+    {
+        private readonly PCSettings m_Settings;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LocalePL"/> class.
+        /// </summary>
+        /// <param name="settings"> Options settings whose localization IDs are used.</param>
+        public LocalePL(PCSettings settings)
+        {
+            m_Settings = settings;
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<KeyValuePair<string, string>> ReadEntries(
+            IList<IDictionaryEntryError> errors,
+            Dictionary<string, int> indexCounts)
+        {
+            return new Dictionary<string, string>
+            {
+                { m_Settings.GetSettingsLocaleID(), Mod.ModName },
+                { m_Settings.GetOptionTabLocaleID(PCSettings.kActionsTab), "Działania" },
+                { m_Settings.GetOptionTabLocaleID(PCSettings.kAboutTab), "O modzie" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kStreetParkingGroup), "Parkowanie przy ulicy" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kStatusGroup), "Stan pojazdów prywatnych" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "Informacje o modzie" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "Linki" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutDiagnosticsGroup), "Diagnostyka" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NoStreetParking)), "Zakaz parkowania przy ulicy (całe miasto)" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.NoStreetParking)),
+                    "- Uniemożliwia pojazdom prywatnym i motocyklom korzystanie w przyszłości z parkowania przy ulicy.\n" +
+                    "- Parkingi i miejsca parkingowe w budynkach pozostają dostępne.\n" +
+                    "- Już zaparkowane pojazdy nie są usuwane. Odjadą naturalnie, gdy obywatel następnym razem użyje samochodu.\n" +
+                    "- Upewnij się, że miasto ma wystarczająco dużo miejsc poza ulicami, inaczej samochody mogą długo jeździć w poszukiwaniu miejsca." },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Parkowanie przy ulicy" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
+                    "<Zaparkowane> = samochody nadal zaparkowane na ulicach.\n" +
+                    "<Pasy> = odcinki parkingowe przy drodze zajęte przez te samochody. Jeden pas może pomieścić kilka samochodów.\n" +
+                    "<Wyłączone> = pasy parkowania przy ulicy zamknięte dla nowych pojazdów.\n" +
+                    "<OK> = Zakaz parkowania przy ulicy jest włączony i działa.\n" +
+                    "<WYŁ.> = Zakaz parkowania przy ulicy jest wyłączony; samochody mogą swobodnie parkować na zwykłych ulicach.\n" +
+                    "<SPRAWDŹ> = drogi mogą być jeszcze aktualizowane. Poczekaj chwilę; jeśli stan się utrzymuje, zapisz raport do logu.\n" +
+                    "**Niektóre samochody mogą pozostać po włączeniu zakazu parkowania przy ulicy lub po zmianie dróg. Odjadą naturalnie, gdy obywatel użyje samochodu.**" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Położenie samochodów" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VehicleStatus)),
+                    "<Ulica> = zaparkowane na drogach publicznych.\n" +
+                    "<Widoczne> = samochody, które można zobaczyć i kliknąć na otwartych parkingach lub zewnętrznych miejscach parkingowych przy budynkach.\n" +
+                    "<Ukryte> = wewnątrz budynków lub garaży.\n" +
+                    "<OC> = magazyn połączenia zewnętrznego na granicy miasta; niektóre samochody przybywających gospodarstw domowych zaczynają tam.\n" +
+                    "**Nieprzypisany obszar oczekiwania gry bazowej jest rejestrowany tylko w logu.**"
+                },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Parkowanie" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
+                    "<Procent> i <użyte / łącznie> pokazują zajętość miejsc parkingowych.\n" +
+                    "<Publiczne> = obiekty liczone przez podstawowy widok informacji o parkowaniu.\n" +
+                    "<Budynek> = miejsca parkingowe należące do domów i miejsc pracy.\n" +
+                    "**Parking budynków obejmuje widoczne miejsca zewnętrzne i parking wewnętrzny.**"
+                },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Wykorzystanie ulic" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
+                    "<Zaparkowane na ulicy> = udział samochodów korzystających ze znanego parkowania ulicznego, publicznego lub przy budynkach.\n" +
+                    "<W ruchu> = pojazdy prywatne jadące lub czekające w ruchu ulicznym.\n" +
+                    "<Zaktualizowano> = ostatnie odświeżenie stanu.\n" +
+                    "**Połączenia zewnętrzne (OC) i nieprzypisany obszar oczekiwania są wykluczone.**"
+                },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NameText)), "Nazwa moda" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VersionText)), "Wersja" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenParadox)), "Link Paradox Mods" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenParadox)), "Otwórz stronę autora w Paradox Mods." },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ReportToLog)), "Zapisz raport parkowania" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ReportToLog)),
+                    "Zapisz szczegóły parkowania przy ulicy, podaży miejsc, własności i położenia pojazdów\n" +
+                    "do <ParkingControl.log>\n" +
+                    "Drugi raport w tym samym wczytanym mieście śledzi te same identyfikatory encji samochodów zaparkowanych przy ulicy." },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenLog)), "Otwórz log" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)), "Otwórz <ParkingControl.log> albo folder Logs, jeśli plik jeszcze nie istnieje." },
+            };
+        }
+
+        /// <inheritdoc/>
+        public void Unload()
+        {
+        }
+    }
+}
