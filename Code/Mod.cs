@@ -21,6 +21,8 @@ namespace ParkingControl
     using Game.Pathfind;
     using Game.SceneFlow;
     using Game.Serialization;
+    using Game.Settings;
+    using static Game.UI.Menu.AssetUploadPanelUISystem;
 
     /// <summary>
     /// Parking Control mod entry point.
@@ -75,7 +77,6 @@ namespace ParkingControl
             Settings?.UnregisterInOptionsUI();
             Settings = null;
             ParkingStatusCache.InvalidateCache();
-            LogUtils.Info($"{ModTag} Disposed.");
         }
 
         private static void LogBanner()
@@ -106,6 +107,17 @@ namespace ParkingControl
 
                 // Localization must exist before the Options UI reads setting labels.
                 localizationManager.AddSource("en-US", new LocaleEN(settings));
+                localizationManager.AddSource("fr-FR", new LocaleFR(settings));
+                localizationManager.AddSource("es-ES", new LocaleES(settings));
+                localizationManager.AddSource("de-DE", new LocaleDE(settings));
+                localizationManager.AddSource("it-IT", new LocaleIT(settings));
+                localizationManager.AddSource("ja-JP", new LocaleJA(settings));
+                localizationManager.AddSource("ko-KR", new LocaleKO(settings));
+                localizationManager.AddSource("pl-PL", new LocalePL(settings));
+                localizationManager.AddSource("pt-BR", new LocalePT_BR(settings));
+                localizationManager.AddSource("zh-HANS", new LocaleZH_HANS(settings));
+                localizationManager.AddSource("zh-HANT", new LocaleZH_HANT(settings));
+
             }
             catch (Exception ex)
             {

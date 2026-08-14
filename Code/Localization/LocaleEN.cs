@@ -23,7 +23,7 @@ namespace ParkingControl
         /// <summary>
         /// Initializes a new instance of the <see cref="LocaleEN"/> class.
         /// </summary>
-        /// <param name="settings">The Options settings whose localization IDs are used.</param>
+        /// <param name="settings"> Options settings whose localization IDs are used.</param>
         public LocaleEN(PCSettings settings)
         {
             m_Settings = settings;
