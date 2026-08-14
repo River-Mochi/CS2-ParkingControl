@@ -164,7 +164,8 @@ namespace ParkingControl
                 snapshot.DisabledCurbLanes,
                 snapshot.TrackedCurbLanes);
             EnforcementRow =
-                $"{Format(snapshot.DisabledCurbLanes)}/{Format(snapshot.CurbLanes)} lanes disabled | {status}";
+                $"{Format(snapshot.StreetParked)} parked ({Format(snapshot.OccupiedCurbLanes)} lanes) | " +
+                $"{Format(snapshot.DisabledCurbLanes)}/{Format(snapshot.CurbLanes)} disabled | {status}";
             VehicleRow =
                 $"{Format(snapshot.StreetParked)} street | {Format(snapshot.VisibleOffStreet)} visible | " +
                 $"{Format(snapshot.HiddenInBuildings)} hidden | {Format(snapshot.OutsideConnection)} outside";

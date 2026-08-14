@@ -49,11 +49,12 @@ namespace ParkingControl
                     "Prevents new personal motor vehicles, including motorcycles, from choosing ordinary street parking.\n" +
                     "Parking lots, garages, building parking, bicycle parking, taxi and boarding spaces, and special-vehicle spaces stay available.\n" +
                     "Existing parked vehicles are not removed. Make sure the city has adequate off-street parking." },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Street parking" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Street cars" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "Disabled/eligible street-parking lane entities, not individual spaces.\n" +
-                    "One lane can hold several cars. See Car Locations for the number parked on streets.\n" +
-                    "OK = the setting and lane flags agree." },
+                    "<Parked (lanes)> = cars still parked on streets and the lane entities holding them. One lane can hold several cars.\n" +
+                    "<Disabled> = eligible lanes whose vanilla parking flags are off; lanes are not individual spaces.\n" +
+                    "<OK> = the setting and parking flags agree.\n" +
+                    "A few cars may remain after enabling the rule or changing roads while the game updates parking and paths. They leave naturally." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Car Locations" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VehicleStatus)),
                     "<Street> = parked on public roads.\n" +

@@ -16,6 +16,7 @@ Stops personal cars and motorcycles from choosing ordinary street parking. Parki
 
 ### Good to know
 - Cars that are already parked on streets are not removed. They leave naturally when they are used again, so streets may take a long time to clear.
+- A few cars may remain after roads are built or upgraded while the game finishes updating their parking lanes and paths. This is temporary and they leave naturally.
 - If local parking is unavailable, Cities: Skylines II handles extra cars through its normal vanilla parking behavior, including hidden storage at outside connections. The mod does not delete cars or create a separate fallback.
 
 

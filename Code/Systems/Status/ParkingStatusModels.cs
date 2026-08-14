@@ -12,7 +12,6 @@ namespace ParkingControl
 {
     using System;
     using System.Collections.Generic;
-    using Game.Vehicles;
     using Unity.Entities;
 
     /// <summary>
@@ -46,6 +45,7 @@ namespace ParkingControl
         public int OutsideConnectionHidden;
         public int OutsideValidHouseholdOwned;
         public int OutsideHouseholdOwnershipInvalid;
+        public int OutsideConnectionOwner;
         public int OutsideDummyTraffic;
         public int OutsideOtherOrUnowned;
         public int OutsideResidentHousehold;
@@ -83,7 +83,13 @@ namespace ParkingControl
     {
         public HashSet<Entity> CurrentStreetVehicles { get; } = new HashSet<Entity>();
 
-        public List<OutsideVehicleSample> OutsideSamples { get; } = new List<OutsideVehicleSample>();
+        public List<Entity> VisibleSamples { get; } = new List<Entity>();
+
+        public List<Entity> HiddenSamples { get; } = new List<Entity>();
+
+        public List<Entity> OutsideSamples { get; } = new List<Entity>();
+
+        public List<Entity> UnknownSamples { get; } = new List<Entity>();
 
         public int SeenPreviousStreet { get; set; }
 
@@ -100,28 +106,6 @@ namespace ParkingControl
         public int NowAtOutsideConnection { get; set; }
 
         public int NowUnassignedOrUnknown { get; set; }
-    }
-
-    /// <summary>
-    /// Identifies one outside-connection vehicle for Scene Explorer inspection.
-    /// </summary>
-    internal struct OutsideVehicleSample
-    {
-        public Entity Vehicle;
-        public Entity Lane;
-        public Entity LaneRoot;
-        public Entity Owner;
-        public Entity Keeper;
-        public PersonalCarFlags Flags;
-        public bool OwnerExists;
-        public bool HouseholdOwner;
-        public bool OwnerDeleted;
-        public bool OwnerMovingAway;
-        public bool OwnerHasProperty;
-        public bool OwnedVehicleMatch;
-        public bool KeeperExists;
-        public bool Unspawned;
-        public bool WasStreetPrevious;
     }
 
     /// <summary>

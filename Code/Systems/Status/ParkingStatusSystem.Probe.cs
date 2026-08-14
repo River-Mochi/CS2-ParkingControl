@@ -37,10 +37,10 @@ namespace ParkingControl
                 GetComponentLookup<Game.Net.GarageLane>(true);
             ComponentLookup<Game.Citizens.Household> householdLookup =
                 GetComponentLookup<Game.Citizens.Household>(true);
-            ComponentLookup<Game.Agents.MovingAway> movingAwayLookup =
-                GetComponentLookup<Game.Agents.MovingAway>(true);
             ComponentLookup<Game.Net.OutsideConnection> outsideConnectionLookup =
                 GetComponentLookup<Game.Net.OutsideConnection>(true);
+            ComponentLookup<Game.Objects.OutsideConnection> objectOutsideConnectionLookup =
+                GetComponentLookup<Game.Objects.OutsideConnection>(true);
             ComponentLookup<Game.Common.Owner> ownerLookup =
                 GetComponentLookup<Game.Common.Owner>(true);
             ComponentLookup<Game.Vehicles.ParkedCar> parkedCarLookup =
@@ -55,8 +55,6 @@ namespace ParkingControl
                 GetComponentLookup<Game.Routes.CarParking>(true);
             ComponentLookup<Game.Prefabs.PrefabRef> prefabRefLookup =
                 GetComponentLookup<Game.Prefabs.PrefabRef>(true);
-            ComponentLookup<Game.Buildings.PropertyRenter> propertyRenterLookup =
-                GetComponentLookup<Game.Buildings.PropertyRenter>(true);
             ComponentLookup<Game.Net.Road> roadLookup = GetComponentLookup<Game.Net.Road>(true);
             ComponentLookup<StreetParkingState> stateLookup =
                 GetComponentLookup<StreetParkingState>(true);
@@ -187,17 +185,11 @@ namespace ParkingControl
                             Game.Citizens.HouseholdFlags.MovedIn) != 0;
                     bool ownerDeleted =
                         ownerExists && deletedLookup.HasComponent(vehicleOwner);
-                    bool ownerMovingAway =
-                        ownerExists && movingAwayLookup.HasComponent(vehicleOwner);
-                    bool ownerHasProperty = HasLiveProperty(
-                        vehicleOwner,
-                        ownerExists,
-                        propertyRenterLookup,
-                        deletedLookup);
-                    bool keeperExists =
-                        personalCar.m_Keeper != Entity.Null && EntityManager.Exists(personalCar.m_Keeper);
                     bool ownedVehicleMatch = householdOwner &&
                         HasOwnedVehicle(vehicleOwner, vehicle, ownedVehicleLookup);
+                    bool outsideConnectionOwner = ownerExists &&
+                        (objectOutsideConnectionLookup.HasComponent(vehicleOwner) ||
+                            outsideConnectionLookup.HasComponent(vehicleOwner));
                     bool dummyTraffic =
                         (personalCar.m_State & Game.Vehicles.PersonalCarFlags.DummyTraffic) != 0;
 
@@ -344,7 +336,8 @@ namespace ParkingControl
                             {
                                 snapshot.OutsideDummyTraffic++;
                             }
-                            else if (householdOwner)
+
+                            if (householdOwner)
                             {
                                 // A moving-away household can still validly own its car; deletion
                                 // or a missing OwnedVehicle link is the ownership-health failure.
@@ -356,6 +349,10 @@ namespace ParkingControl
                                 {
                                     snapshot.OutsideHouseholdOwnershipInvalid++;
                                 }
+                            }
+                            else if (outsideConnectionOwner)
+                            {
+                                snapshot.OutsideConnectionOwner++;
                             }
                             else
                             {
@@ -388,18 +385,7 @@ namespace ParkingControl
                             details,
                             vehicle,
                             location,
-                            parkedLane,
-                            vehicleOwner,
-                            personalCar,
-                            ownerExists,
-                            householdOwner,
-                            ownerDeleted,
-                            ownerMovingAway,
-                            ownerHasProperty,
-                            ownedVehicleMatch,
-                            keeperExists,
-                            unspawnedLookup.HasComponent(vehicle),
-                            ownerLookup);
+                            parkedCarLookup.HasComponent(vehicle));
                     }
                 }
             }

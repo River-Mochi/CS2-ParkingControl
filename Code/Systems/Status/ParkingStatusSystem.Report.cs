@@ -14,14 +14,11 @@ namespace ParkingControl
     using System.Collections.Generic;
     using System.Text;
     using CS2Shared.RiverMochi;
-    using Game.Common;
-    using Game.Vehicles;
     using Unity.Entities;
 
     public sealed partial class ParkingStatusSystem
     {
-        private const int kOutsideSampleCount = 10;
-        private const int kStreetVehicleLimit = 100;
+        private const int kVehicleSampleCount = 10;
 
         /// <summary>
         /// Records one vehicle in the manual report's identity and transition collections.
@@ -30,18 +27,7 @@ namespace ParkingControl
             ParkingReportDetails details,
             Entity vehicle,
             VehicleLocation location,
-            Entity parkedLane,
-            Entity vehicleOwner,
-            PersonalCar personalCar,
-            bool ownerExists,
-            bool householdOwner,
-            bool ownerDeleted,
-            bool ownerMovingAway,
-            bool ownerHasProperty,
-            bool ownedVehicleMatch,
-            bool keeperExists,
-            bool unspawned,
-            ComponentLookup<Owner> ownerLookup)
+            bool isParked)
         {
             // Index:Version is stable only for this loaded city session, so history is
             // cleared on every new/load callback in the main partial.
@@ -81,29 +67,27 @@ namespace ParkingControl
                 }
             }
 
-            if (location != VehicleLocation.OutsideConnection)
+            // Store IDs by location only for an on-demand report. The writer prints
+            // at most ten from each group so Scene Explorer samples stay practical.
+            switch (location)
             {
-                return;
-            }
+                case VehicleLocation.VisibleOffStreet:
+                    details.VisibleSamples.Add(vehicle);
+                    break;
+                case VehicleLocation.HiddenInBuilding:
+                    details.HiddenSamples.Add(vehicle);
+                    break;
+                case VehicleLocation.OutsideConnection:
+                    details.OutsideSamples.Add(vehicle);
+                    break;
+                default:
+                    if (isParked && location != VehicleLocation.StreetCurb)
+                    {
+                        details.UnknownSamples.Add(vehicle);
+                    }
 
-            details.OutsideSamples.Add(new OutsideVehicleSample
-            {
-                Vehicle = vehicle,
-                Lane = parkedLane,
-                LaneRoot = GetTopOwner(parkedLane, ownerLookup),
-                Owner = vehicleOwner,
-                Keeper = personalCar.m_Keeper,
-                Flags = personalCar.m_State,
-                OwnerExists = ownerExists,
-                HouseholdOwner = householdOwner,
-                OwnerDeleted = ownerDeleted,
-                OwnerMovingAway = ownerMovingAway,
-                OwnerHasProperty = ownerHasProperty,
-                OwnedVehicleMatch = ownedVehicleMatch,
-                KeeperExists = keeperExists,
-                Unspawned = unspawned,
-                WasStreetPrevious = wasStreetPrevious,
-            });
+                    break;
+            }
         }
 
         /// <summary>
@@ -164,7 +148,6 @@ namespace ParkingControl
                 $"CommuterHousehold={snapshot.CommuterHouseholdVehicles}, " +
                 $"DummyTraffic={snapshot.DummyTrafficVehicles}, OtherOrUnowned={snapshot.OtherOrUnownedVehicles}");
             text.AppendLine($"ParkedOnStreets={snapshot.StreetParked}");
-            AppendStreetVehicleEntities(text, snapshot, details);
             text.AppendLine(
                 $"ParkedElsewhere={snapshot.ParkedElsewhere} " +
                 $"(VisibleOffStreet={snapshot.VisibleOffStreet}, HiddenInBuildings={snapshot.HiddenInBuildings}, " +
@@ -176,13 +159,14 @@ namespace ParkingControl
             text.AppendLine(
                 $"OutsideConnectionOwnership=ValidLiveHousehold={snapshot.OutsideValidHouseholdOwned}, " +
                 $"HouseholdInvalid={snapshot.OutsideHouseholdOwnershipInvalid}, " +
-                $"DummyTraffic={snapshot.OutsideDummyTraffic}, OtherOrUnowned={snapshot.OutsideOtherOrUnowned}");
+                $"DirectOutsideConnectionOwner={snapshot.OutsideConnectionOwner}, " +
+                $"OtherOrUnowned={snapshot.OutsideOtherOrUnowned}");
             text.AppendLine(
-                $"OutsideConnectionKinds=ResidentHousehold={snapshot.OutsideResidentHousehold} " +
+                $"OutsideConnectionVehicleKinds=ResidentHousehold={snapshot.OutsideResidentHousehold} " +
                 $"(NotMovedIn={snapshot.OutsideResidentNotMovedIn}), " +
                 $"TouristHousehold={snapshot.OutsideTouristHousehold}, " +
                 $"CommuterHousehold={snapshot.OutsideCommuterHousehold}, " +
-                $"DummyTraffic={snapshot.OutsideDummyTraffic}, OtherOrUnowned={snapshot.OutsideOtherOrUnowned}");
+                $"DummyTraffic={snapshot.OutsideDummyTraffic}");
             text.AppendLine(
                 $"VanillaRoadsInfoviewParking={snapshot.OfficialParkingOccupied}/{snapshot.OfficialParkingCapacity} " +
                 $"across {snapshot.OfficialParkingFacilities} facility entities");
@@ -191,7 +175,7 @@ namespace ParkingControl
                 $"across {snapshot.GarageLanes} garage lane entities");
             text.AppendLine(deltaLine);
             AppendStreetTransitions(text, snapshot, details);
-            AppendOutsideSamples(text, details);
+            AppendVehicleEntitySamples(text, snapshot, details);
             text.AppendLine(
                 "Note: existing curb-parked cars leave when a keeper next uses them; this is not limited to a workday event.");
             text.AppendLine(
@@ -218,37 +202,61 @@ namespace ParkingControl
         }
 
         /// <summary>
-        /// Lists current street-parked cars so they can be opened directly in Scene Explorer.
+        /// Lists a small sample from each parked location for Scene Explorer inspection.
         /// </summary>
-        private static void AppendStreetVehicleEntities(
+        private static void AppendVehicleEntitySamples(
             StringBuilder text,
             ParkingSnapshot snapshot,
             ParkingReportDetails details)
         {
-            if (!snapshot.RestrictionEnabled)
+            List<Entity> vehicles = new List<Entity>(details.CurrentStreetVehicles);
+            text.AppendLine(
+                "VehicleEntitySamples=<up to 10 per parked location; enter Index:Version in Scene Explorer>");
+            AppendEntitySampleLine(text, "Street", snapshot.StreetParked, vehicles);
+            AppendEntitySampleLine(text, "Visible", snapshot.VisibleOffStreet, details.VisibleSamples);
+            AppendEntitySampleLine(text, "Hidden", snapshot.HiddenInBuildings, details.HiddenSamples);
+            AppendEntitySampleLine(text, "Outside", snapshot.OutsideConnection, details.OutsideSamples);
+            AppendEntitySampleLine(
+                text,
+                "Unknown",
+                snapshot.UnassignedOrUnknownParked,
+                details.UnknownSamples);
+        }
+
+        private static void AppendEntitySampleLine(
+            StringBuilder text,
+            string label,
+            int total,
+            List<Entity> vehicles)
+        {
+            vehicles.Sort(CompareEntities);
+            int count = Math.Min(kVehicleSampleCount, vehicles.Count);
+            text.Append($"  {label}={total} total; samples=");
+            if (count == 0)
             {
-                text.AppendLine(
-                    $"StreetParkedVehicleEntities=<restriction off; {snapshot.StreetParked} IDs omitted>");
+                text.AppendLine("<none>");
                 return;
             }
 
-            List<Entity> vehicles = new List<Entity>(details.CurrentStreetVehicles);
-            vehicles.Sort((left, right) =>
-            {
-                int indexOrder = left.Index.CompareTo(right.Index);
-                return indexOrder != 0
-                    ? indexOrder
-                    : left.Version.CompareTo(right.Version);
-            });
-
-            int count = Math.Min(kStreetVehicleLimit, vehicles.Count);
-            text.AppendLine(
-                $"StreetParkedVehicleEntities={vehicles.Count} " +
-                $"(showing {count}; enter Vehicle Index:Version in Scene Explorer)");
             for (int i = 0; i < count; i++)
             {
-                text.AppendLine($"  Vehicle={FormatEntity(vehicles[i])}");
+                if (i != 0)
+                {
+                    text.Append(", ");
+                }
+
+                text.Append(FormatEntity(vehicles[i]));
             }
+
+            text.AppendLine();
+        }
+
+        private static int CompareEntities(Entity left, Entity right)
+        {
+            int indexOrder = left.Index.CompareTo(right.Index);
+            return indexOrder != 0
+                ? indexOrder
+                : left.Version.CompareTo(right.Version);
         }
 
         private void AppendStreetTransitions(
@@ -290,34 +298,6 @@ namespace ParkingControl
             text.AppendLine(
                 $"  TransitionClassification={(classifiedLeft == leftStreetTotal ? "OK" : "WARNING")} " +
                 $"(Classified={classifiedLeft})");
-        }
-
-        private static void AppendOutsideSamples(StringBuilder text, ParkingReportDetails details)
-        {
-            // Previous curb occupants are most useful when tracing a transition in Scene Explorer.
-            details.OutsideSamples.Sort((left, right) =>
-            {
-                int previousOrder = right.WasStreetPrevious.CompareTo(left.WasStreetPrevious);
-                if (previousOrder != 0)
-                {
-                    return previousOrder;
-                }
-
-                int indexOrder = left.Vehicle.Index.CompareTo(right.Vehicle.Index);
-                return indexOrder != 0
-                    ? indexOrder
-                    : left.Vehicle.Version.CompareTo(right.Vehicle.Version);
-            });
-
-            int count = Math.Min(kOutsideSampleCount, details.OutsideSamples.Count);
-            text.AppendLine(
-                $"OutsideConnectionEntitySamples={count} " +
-                "(previous-street matches first; IDs are Index:Version)");
-            for (int i = 0; i < count; i++)
-            {
-                OutsideVehicleSample sample = details.OutsideSamples[i];
-                text.AppendLine($"  Vehicle={FormatEntity(sample.Vehicle)}");
-            }
         }
 
         /// <summary>
