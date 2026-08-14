@@ -9,25 +9,24 @@
 <!--LongDescription Value="No Street Parking" /-->
 <LongDescription>
 
-- Stops personal cars and motorcycles from choosing street parking.
-- For visually cleaner streets, or just a little more control over car parking.
-- They can still park in: parking lots/buildings, or parking included with some buildings.
+Stops personal cars and motorcycles from choosing ordinary street parking across the whole city.
 
-## Options
-- No Street Parking [x] - enabled by default for the whole city.
--Future options may include per district street parking control.
+## Features
+- Enabled by default with an Options toggle.
+- Parking lots, parking buildings, and parking included with buildings remain available.
+- Does not delete cars or affect bicycle parking.
 
-### Good to know
-- Cars already parked on streets leave naturally when used again. Clearing can take several in-game months, and cars whose owners rarely drive may remain longer. A vanilla road upgrade that rebuilds or removes curb parking can clear that curb immediately.
-- A few cars may remain after roads are built or upgraded while the game finishes updating parking lanes and paths. This is temporary and they leave naturally.
-- Parking Control’s temporary restriction is not written permanently into the city.
-- Vanilla road upgrades remain saved normally.
-- Safe to remove: removing the mod lets regular streets return to vanilla parking behavior.
-- If you run out of parking spaces, then normal vanilla behavior handles the overflow, including hidden storage at outside connections.
-- Note that not providing enough parking spaces can cause excess driving aroundm this is vanilla behavior (recommend also getting Realistic Parking mod).
-- The mod does not delete cars. In testing, most existing cars cleared over several in-game months, but cars whose owners rarely drive may remain longer. Upgrading a road with vanilla road tools can clear that curb immediately.
+## Good to know
+- Existing street cars leave when used again. This can take several in-game months. Vanilla road upgrades that remove street parking clear the affected road faster.
+- A few cars may briefly remain after road construction while the game updates parking lanes and paths.
+- If parking is insufficient, CS2 handles the overflow normally, including outside-connection storage.
+- Safe to remove: the restriction is not stored permanently, so eligible streets return to vanilla parking.
 
-###  Thanks for the support
+## Support and Feedback
+- Please consider using the like button if the mod is useful.
+- Feedback and pull requests are welcome through the GitHub and Discord links.
+
+## Credits
 River-mochi - mod author
 
 
@@ -41,7 +40,7 @@ River-mochi - mod author
 <!--Link to the forum post where the mod can be discussed-->
 <ForumLink Value="" />
 <!--Version of the mod-->
-<ModVersion Value="0.1.2" />
+<ModVersion Value="0.2.0" />
 <!--Recommended version of the base game to use the mod-->
 <GameVersion Value="1.6.*" />
 <!--Dependency for the mod, can be set multiple times-->
@@ -52,8 +51,9 @@ River-mochi - mod author
 <ChangeLog Value="" />
 <!--<ChangeLog>
 </ChangeLog>-->
-<!--External link, can be set multiple times. supported types are "discord", "github", "youtube", "twitch", "x", "paypal", "patreon", "buymeacoffee", "kofi", "crowdin", "gitlab", "gofundme"-->
-<ExternalLink Type="" Url="" />
+<!--External link, can be set multiple times. supported types are "discord", "github", "youtube", "twitch", "paypal", "patreon", "buymeacoffee", "kofi", "crowdin", "gitlab", "gofundme"-->
+<ExternalLink Type="discord" Url="https://discord.gg/gwXgvtyhjc" />
+<ExternalLink Type="github" Url="https://github.com/River-Mochi/CS2-ParkingControl" />
 <!--Supported values Public, Private, Unlisted-->
 <AccessLevel Value="Public" />
 </Publish>

@@ -173,6 +173,9 @@ namespace ParkingControl
                 $"TouristHousehold={snapshot.UnknownTouristHousehold}, " +
                 $"CommuterHousehold={snapshot.UnknownCommuterHousehold}");
             text.AppendLine(
+                $"UnknownLikelyIncomingStaging={snapshot.UnknownResidentNotMovedIn} " +
+                "(inference: valid resident household without MovedIn)");
+            text.AppendLine(
                 $"UnknownTripSources=Present={snapshot.UnknownWithTripSource}, " +
                 $"Absent={snapshot.UnknownWithoutTripSource} " +
                 $"(OutsideConnection={snapshot.UnknownTripSourceOutside}, " +
@@ -224,6 +227,9 @@ namespace ParkingControl
             text.AppendLine(
                 "Note: Unknown parked cars have no usable concrete lane. Vanilla can leave an unspawned car " +
                 "at its trip source when initial parking assignment fails; TripSource may later be removed.");
+            text.AppendLine(
+                "Note: UnknownLikelyIncomingStaging is inferred from household state because the original " +
+                "TripSource is no longer retained; it is not proof of the car's exact location.");
             text.AppendLine(
                 "Note: HiddenInBuildings means a non-border GarageLane, or an unspawned vehicle on a lane owned by a building.");
             text.AppendLine(
