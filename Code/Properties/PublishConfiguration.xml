@@ -15,7 +15,7 @@
 
 ## Options
 - No Street Parking [x] - enabled by default for the whole city.
-
+-Future options may include per district street parking control.
 
 ### Good to know
 - Cars already parked on streets leave naturally when used again. Clearing can take several in-game months, and cars whose owners rarely drive may remain longer. A vanilla road upgrade that rebuilds or removes curb parking can clear that curb immediately.
