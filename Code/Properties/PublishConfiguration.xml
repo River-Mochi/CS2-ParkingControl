@@ -9,18 +9,18 @@
 <!--LongDescription Value="No Street Parking" /-->
 <LongDescription>
 
-Stops personal cars and motorcycles from choosing ordinary street parking across the whole city.
+Stops cars and motorcycles from choosing street parking in the city.
 
 ## Features
-- Enabled by default with an Options toggle.
-- Parking lots, parking buildings, and parking included with buildings remain available.
-- Does not delete cars or affect bicycle parking.
+- Enabled with the Options menu [x] toggle.
+- Private vehicles still park in parking lots and spaces included with some buildings.
 
 ## Good to know
-- Existing street cars leave when used again. This can take several in-game months. Vanilla road upgrades that remove street parking clear the affected road faster.
-- A few cars may briefly remain after road construction while the game updates parking lanes and paths.
-- If parking is insufficient, CS2 handles the overflow normally, including outside-connection storage.
-- Safe to remove: the restriction is not stored permanently, so eligible streets return to vanilla parking.
+- It could take a few city months for already parked cars to move. Vanilla road upgrades that remove street parking clear the affected road faster.
+- A few cars may remain temporarily after road construction while the game updates parking lanes and paths.
+- If the city does not have enough parking facilities, CS2 handles the overflow normally, including use of outside-connection (hidden) storage.
+- Safe to remove: streets return to vanilla parking.
+- This does not delete cars or affect bicycle parking, it just prevents street parking.
 
 ## Support and Feedback
 - Please consider using the like button if the mod is useful.
@@ -34,7 +34,8 @@ River-mochi - mod author
 <!--Thumbnail-->
 <Thumbnail Value="Properties/Thumbnail.png" />
 <!--Screenshot, can be set multiple times-->
-<Screenshot Value="" />
+<Screenshot Value="Properties/10-image-ASC-cap-fees.jpg" />
+<Screenshot Value="Properties/20-image-Before-After.jpg" />
 <!--Tag, can be set multiple times-->
 <Tag Value="" />
 <!--Link to the forum post where the mod can be discussed-->

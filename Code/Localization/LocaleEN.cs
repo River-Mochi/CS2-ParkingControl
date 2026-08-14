@@ -46,9 +46,10 @@ namespace ParkingControl
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutDiagnosticsGroup), "Diagnostics" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NoStreetParking)), "No street parking (whole city)" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.NoStreetParking)),
-                    "Prevents new personal motor vehicles, including motorcycles, from choosing ordinary street parking.\n" +
-                    "Parking lots, garages, building parking, bicycle parking, taxi and boarding spaces, and special-vehicle spaces stay available.\n" +
-                    "Existing parked vehicles are not removed. Make sure the city has adequate off-street parking." },
+                    "- Prevents future personal vehicles + motorcycles, from using street parking.\n" +
+                    "- Parking lots, building parking stay available.\n" +
+                    "- Existing parked vehicles are not removed. They naturally leave the next time a citizen uses the car. \n" +
+                    "- Make sure the city has adequate off-street parking or cars may drive a lot looking for a space." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Street Parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "<Parked> = cars still parked on streets.\n" +
@@ -57,11 +58,11 @@ namespace ParkingControl
                     "<OK> = No Street Parking is on and working.\n" +
                     "<OFF> = No Street Parking is off; cars may park freely on ordinary streets.\n" +
                     "<CHECK> = roads may still be updating. Wait a moment; write a log report if it remains.\n" +
-                    "**Some cars can remain after enabling the rule or changing roads. They leave naturally if the citizen uses the car.**" },
+                    "**Some cars can remain after enabling the no-street rule or changing roads. They leave naturally if the citizen uses the car.**" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Car Locations" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VehicleStatus)),
                     "<Street> = parked on public roads.\n" +
-                    "<Visible> = cars you can see and click in open-air lots, rooftop parking, or outdoor parking included with buildings.\n" +
+                    "<Visible> = cars you can see and click in open-air lots or outdoor parking included with buildings.\n" +
                     "<Hidden> = inside buildings or garages.\n" +
                     "<OC> = outside connection storage at the city border; some incoming household cars start there.\n" +
                     "**Unassigned vanilla staging is log-only.**"
@@ -71,13 +72,14 @@ namespace ParkingControl
                     "<Percent> and <used / total> show parking occupancy.\n" +
                     "<Public> = facilities counted by the vanilla Parking InfoView.\n" +
                     "<Building> = parking included with homes and workplaces.\n" +
-                    "**Building parking includes visible outdoor spaces and hidden storage.**" },
+                    "**Building parking includes visible outdoor spaces and internal parking.**"
+                },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Street usage" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
                     "<Street parked> = share of cars using known street, public, or building parking.\n" +
                     "<Moving> = personal vehicles driving or waiting in traffic.\n" +
-                    "<Updated> = when this status was last refreshed.\n" +
-                    "**OC and unassigned staging are excluded.**"
+                    "<Updated> = last refresh of Status.\n" +
+                    "**Outside connection (OC) and unassigned staging are excluded.**"
                 },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NameText)), "Mod name" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VersionText)), "Version" },
