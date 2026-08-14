@@ -356,7 +356,8 @@ namespace ParkingControl
 
         private static void PublishMessage(string message)
         {
-            PublishRows(message, message, message, message);
+            // One temporary message is enough; repeating it in all four rows clutters Options.
+            PublishRows(message, string.Empty, string.Empty, string.Empty);
         }
     }
 }

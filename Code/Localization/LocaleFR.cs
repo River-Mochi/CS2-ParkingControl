@@ -52,12 +52,12 @@ namespace ParkingControl
                     "- Assurez-vous que la ville dispose de suffisamment de stationnement hors rue, sinon les voitures risquent de beaucoup rouler pour trouver une place." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Stationnement sur rue" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Stationnés> = voitures encore stationnées dans les rues.\n" +
+                    "<Garées> = voitures encore stationnées dans les rues.\n" +
                     "<Voies> = sections de stationnement en bord de route contenant ces voitures. Une voie peut contenir plusieurs voitures.\n" +
-                    "<Désactivées> = voies de stationnement sur rue fermées aux nouveaux stationnements.\n" +
+                    "<Fermées> = voies de stationnement sur rue fermées aux nouveaux stationnements.\n" +
                     "<OK> = Aucun stationnement sur rue est activé et fonctionne.\n" +
-                    "<DÉSACTIVÉ> = Aucun stationnement sur rue est désactivé ; les voitures peuvent se garer librement dans les rues ordinaires.\n" +
-                    "<VÉRIFIER> = les routes sont peut-être encore en cours de mise à jour. Attendez un moment ; écrivez un rapport dans le journal si cela persiste.\n" +
+                    "<OFF> = Aucun stationnement sur rue est désactivé ; les voitures peuvent se garer librement dans les rues ordinaires.\n" +
+                    "<VÉRIF.> = les routes sont peut-être encore en cours de mise à jour. Attendez un moment ; écrivez un rapport dans le journal si cela persiste.\n" +
                     "**Certaines voitures peuvent rester après l'activation de la règle sans stationnement sur rue ou après une modification des routes. Elles partent naturellement si le citoyen utilise la voiture.**" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Emplacement des voitures" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VehicleStatus)),
@@ -76,9 +76,9 @@ namespace ParkingControl
                 },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Utilisation des rues" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "<Stationnées dans la rue> = part des voitures utilisant un stationnement connu sur rue, public ou de bâtiment.\n" +
-                    "<En déplacement> = véhicules personnels qui roulent ou attendent dans la circulation.\n" +
-                    "<Mis à jour> = dernière actualisation de l'état.\n" +
+                    "<Rue> = part des voitures utilisant un stationnement connu sur rue, public ou de bâtiment.\n" +
+                    "<Roulent> = véhicules personnels qui roulent ou attendent dans la circulation.\n" +
+                    "<Màj> = dernière actualisation de l'état.\n" +
                     "**Les connexions extérieures (OC) et la zone d'attente non attribuée sont exclues.**"
                 },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NameText)), "Nom du mod" },
@@ -97,13 +97,13 @@ namespace ParkingControl
                 { ParkingStatusLocale.kCollecting, "Collecte de l'état du stationnement..." },
                 { ParkingStatusLocale.kUnavailable, "L'état du stationnement n'est pas disponible." },
                 { ParkingStatusLocale.kCollectionFailed, "Impossible de collecter l'état du stationnement ; consultez ParkingControl.log." },
-                { ParkingStatusLocale.kEnforcementFormat, "{0} stationnées ({1} voies) | {2}/{3} désactivées | {4}" },
+                { ParkingStatusLocale.kEnforcementFormat, "{0} garées ({1} voies) | {2}/{3} fermées | {4}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} rue | {1} visibles | {2} cachées | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0}  {1} / {2} public | {3}  {4} / {5} bâtiment" },
-                { ParkingStatusLocale.kShareFormat, "{0} stationnées dans la rue | {1} en déplacement | mis à jour {2}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} {1}/{2} public | {3} {4}/{5} bâtiment" },
+                { ParkingStatusLocale.kShareFormat, "{0} rue | {1} roulent | màj {2}" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
-                { ParkingStatusLocale.kStatusOff, "DÉSACTIVÉ" },
-                { ParkingStatusLocale.kStatusCheck, "VÉRIFIER" },
+                { ParkingStatusLocale.kStatusOff, "OFF" },
+                { ParkingStatusLocale.kStatusCheck, "VÉRIF." },
             };
         }
 

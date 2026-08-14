@@ -52,11 +52,11 @@ namespace ParkingControl
                     "- Asegúrate de que la ciudad tenga suficiente estacionamiento fuera de la calle o los coches pueden recorrer mucho buscando un espacio." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Estacionamiento en la calle" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Estacionados> = coches que siguen estacionados en las calles.\n" +
-                    "<Carriles> = secciones de estacionamiento junto a la calle que contienen esos coches. Un carril puede contener varios coches.\n" +
-                    "<Desactivados> = carriles de estacionamiento en la calle cerrados a nuevos vehículos.\n" +
+                    "<Aparc.> = coches que siguen estacionados en las calles.\n" +
+                    "<Carr.> = secciones de estacionamiento junto a la calle que contienen esos coches. Un carril puede contener varios coches.\n" +
+                    "<Cerrados> = carriles de estacionamiento en la calle cerrados a nuevos vehículos.\n" +
                     "<OK> = Sin estacionamiento en la calle está activado y funcionando.\n" +
-                    "<DESACTIVADO> = Sin estacionamiento en la calle está desactivado; los coches pueden estacionar libremente en calles normales.\n" +
+                    "<OFF> = Sin estacionamiento en la calle está desactivado; los coches pueden estacionar libremente en calles normales.\n" +
                     "<REVISAR> = es posible que las carreteras aún se estén actualizando. Espera un momento; escribe un informe en el registro si continúa.\n" +
                     "**Algunos coches pueden permanecer después de activar la regla sin estacionamiento en la calle o de cambiar carreteras. Se van de forma natural si el ciudadano usa el coche.**" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Ubicación de los coches" },
@@ -76,9 +76,9 @@ namespace ParkingControl
                 },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Uso de la calle" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "<Estacionados en la calle> = proporción de coches que usan estacionamiento conocido en la calle, público o de edificios.\n" +
-                    "<En movimiento> = vehículos personales circulando o esperando en el tráfico.\n" +
-                    "<Actualizado> = última actualización del estado.\n" +
+                    "<Calle> = proporción de coches que usan estacionamiento conocido en la calle, público o de edificios.\n" +
+                    "<En marcha> = vehículos personales circulando o esperando en el tráfico.\n" +
+                    "<Act.> = última actualización del estado.\n" +
                     "**Se excluyen la conexión exterior (OC) y la zona de espera sin asignar.**"
                 },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NameText)), "Nombre del mod" },
@@ -97,12 +97,12 @@ namespace ParkingControl
                 { ParkingStatusLocale.kCollecting, "Recopilando el estado del estacionamiento..." },
                 { ParkingStatusLocale.kUnavailable, "El estado del estacionamiento no está disponible." },
                 { ParkingStatusLocale.kCollectionFailed, "No se pudo recopilar el estado del estacionamiento; consulta ParkingControl.log." },
-                { ParkingStatusLocale.kEnforcementFormat, "{0} estacionados ({1} carriles) | {2}/{3} desactivados | {4}" },
+                { ParkingStatusLocale.kEnforcementFormat, "{0} aparc. ({1} carr.) | {2}/{3} cerrados | {4}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} calle | {1} visibles | {2} ocultos | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0}  {1} / {2} público | {3}  {4} / {5} edificio" },
-                { ParkingStatusLocale.kShareFormat, "{0} estacionados en la calle | {1} en movimiento | actualizado {2}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} {1}/{2} público | {3} {4}/{5} edificio" },
+                { ParkingStatusLocale.kShareFormat, "{0} calle | {1} en marcha | act. {2}" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
-                { ParkingStatusLocale.kStatusOff, "DESACTIVADO" },
+                { ParkingStatusLocale.kStatusOff, "OFF" },
                 { ParkingStatusLocale.kStatusCheck, "REVISAR" },
             };
         }
