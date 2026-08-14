@@ -92,6 +92,18 @@ namespace ParkingControl
                     "Um segundo relatório na mesma cidade carregada acompanha os mesmos IDs de entidade dos carros estacionados na rua." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenLog)), "Abrir log" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)), "Abra <ParkingControl.log> ou a pasta Logs se o arquivo ainda não existir." },
+                // Live status rows use these localized strings.
+                { ParkingStatusLocale.kLoadCity, "Carregue ou inicie uma cidade para ver o status do estacionamento." },
+                { ParkingStatusLocale.kCollecting, "Coletando o status do estacionamento..." },
+                { ParkingStatusLocale.kUnavailable, "O status do estacionamento não está disponível." },
+                { ParkingStatusLocale.kCollectionFailed, "Não foi possível coletar o status do estacionamento; consulte ParkingControl.log." },
+                { ParkingStatusLocale.kEnforcementFormat, "{0} estacionados ({1} faixas) | {2}/{3} desativadas | {4}" },
+                { ParkingStatusLocale.kVehicleFormat, "{0} rua | {1} visíveis | {2} ocultos | {3} OC" },
+                { ParkingStatusLocale.kSupplyFormat, "{0}  {1} / {2} público | {3}  {4} / {5} edifício" },
+                { ParkingStatusLocale.kShareFormat, "{0} estacionados na rua | {1} em movimento | atualizado {2}" },
+                { ParkingStatusLocale.kStatusOk, "OK" },
+                { ParkingStatusLocale.kStatusOff, "DESLIGADO" },
+                { ParkingStatusLocale.kStatusCheck, "VERIFICAR" },
             };
         }
 

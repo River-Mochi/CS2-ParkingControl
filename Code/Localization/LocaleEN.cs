@@ -93,6 +93,18 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenLog)), "Open log" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)),
                     "Open <ParkingControl.log>, or the Logs folder if the file does not exist yet." },
+                // Live status rows use these localized strings.
+                { ParkingStatusLocale.kLoadCity, "Load or start a city to view parking status." },
+                { ParkingStatusLocale.kCollecting, "Parking status is being collected..." },
+                { ParkingStatusLocale.kUnavailable, "Parking status is unavailable." },
+                { ParkingStatusLocale.kCollectionFailed, "Parking status could not be collected; see ParkingControl.log." },
+                { ParkingStatusLocale.kEnforcementFormat, "{0} parked ({1} lanes) | {2}/{3} disabled | {4}" },
+                { ParkingStatusLocale.kVehicleFormat, "{0} street | {1} visible | {2} hidden | {3} OC" },
+                { ParkingStatusLocale.kSupplyFormat, "{0}  {1} / {2} public | {3}  {4} / {5} building" },
+                { ParkingStatusLocale.kShareFormat, "{0} street parked | {1} moving | updated {2}" },
+                { ParkingStatusLocale.kStatusOk, "OK" },
+                { ParkingStatusLocale.kStatusOff, "OFF" },
+                { ParkingStatusLocale.kStatusCheck, "CHECK" },
             };
         }
 

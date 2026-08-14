@@ -92,6 +92,18 @@ namespace ParkingControl
                     "在同一已加载城市中生成第二份报告时，会跟踪相同的路边停车车辆实体 ID。" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenLog)), "打开日志" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)), "打开 <ParkingControl.log>；如果文件尚不存在，则打开 Logs 文件夹。" },
+                // Live status rows use these localized strings.
+                { ParkingStatusLocale.kLoadCity, "加载或开始一个城市以查看停车状态。" },
+                { ParkingStatusLocale.kCollecting, "正在收集停车状态..." },
+                { ParkingStatusLocale.kUnavailable, "停车状态不可用。" },
+                { ParkingStatusLocale.kCollectionFailed, "无法收集停车状态；请查看 ParkingControl.log。" },
+                { ParkingStatusLocale.kEnforcementFormat, "{0} 已停放（{1} 车道） | {2}/{3} 已禁用 | {4}" },
+                { ParkingStatusLocale.kVehicleFormat, "{0} 路边 | {1} 可见 | {2} 隐藏 | {3} OC" },
+                { ParkingStatusLocale.kSupplyFormat, "{0}  {1} / {2} 公共 | {3}  {4} / {5} 建筑" },
+                { ParkingStatusLocale.kShareFormat, "{0} 路边停放 | {1} 行驶中 | 更新 {2}" },
+                { ParkingStatusLocale.kStatusOk, "正常" },
+                { ParkingStatusLocale.kStatusOff, "关闭" },
+                { ParkingStatusLocale.kStatusCheck, "检查" },
             };
         }
 

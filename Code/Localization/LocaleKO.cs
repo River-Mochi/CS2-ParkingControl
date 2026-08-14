@@ -92,6 +92,18 @@ namespace ParkingControl
                     "같은 도시에서 두 번째 보고서를 작성하면 동일한 노상 주차 차량 엔티티 ID를 추적합니다." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenLog)), "로그 열기" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)), "<ParkingControl.log>를 열거나, 파일이 아직 없으면 Logs 폴더를 엽니다." },
+                // Live status rows use these localized strings.
+                { ParkingStatusLocale.kLoadCity, "주차 상태를 보려면 도시를 불러오거나 시작하세요." },
+                { ParkingStatusLocale.kCollecting, "주차 상태를 수집하는 중..." },
+                { ParkingStatusLocale.kUnavailable, "주차 상태를 사용할 수 없습니다." },
+                { ParkingStatusLocale.kCollectionFailed, "주차 상태를 수집하지 못했습니다. ParkingControl.log를 확인하세요." },
+                { ParkingStatusLocale.kEnforcementFormat, "{0} 주차됨 ({1} 차선) | {2}/{3} 비활성 | {4}" },
+                { ParkingStatusLocale.kVehicleFormat, "{0} 도로 | {1} 표시 | {2} 숨김 | {3} OC" },
+                { ParkingStatusLocale.kSupplyFormat, "{0}  {1} / {2} 공공 | {3}  {4} / {5} 건물" },
+                { ParkingStatusLocale.kShareFormat, "{0} 노상 주차 | {1} 이동 중 | 업데이트 {2}" },
+                { ParkingStatusLocale.kStatusOk, "정상" },
+                { ParkingStatusLocale.kStatusOff, "꺼짐" },
+                { ParkingStatusLocale.kStatusCheck, "확인" },
             };
         }
 

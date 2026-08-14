@@ -22,8 +22,19 @@ namespace ParkingControl
     /// </summary>
     internal static class ParkingStatusCache
     {
-        private const string kLoadCity = "Load or start a city to view parking status.";
-        private const string kPending = "Parking status is being collected...";
+        private const string kLoadCityFallback = "Load or start a city to view parking status.";
+        private const string kCollectingFallback = "Parking status is being collected...";
+        private const string kUnavailableFallback = "Parking status is unavailable.";
+        private const string kCollectionFailedFallback =
+            "Parking status could not be collected; see ParkingControl.log.";
+        private const string kEnforcementFormatFallback =
+            "{0} parked ({1} lanes) | {2}/{3} disabled | {4}";
+        private const string kVehicleFormatFallback =
+            "{0} street | {1} visible | {2} hidden | {3} OC";
+        private const string kSupplyFormatFallback =
+            "{0}  {1} / {2} public | {3}  {4} / {5} building";
+        private const string kShareFormatFallback =
+            "{0} street parked | {1} moving | updated {2}";
 
         private static bool s_ForceRefresh = true;
         private static bool s_HasRequestedSimulationFrame;
@@ -33,26 +44,30 @@ namespace ParkingControl
         private static int s_LastUiFrame = -1;
         private static uint s_LastRequestedSimulationFrame;
         private static int s_Version;
+        private static string s_LastLocaleId = string.Empty;
+        private static string s_LastMessageId = ParkingStatusLocale.kLoadCity;
+        private static string s_LastMessageFallback = kLoadCityFallback;
+        private static ParkingSnapshot s_LastSnapshot;
 
         /// <summary>
         /// Gets the cached enforcement summary.
         /// </summary>
-        internal static string EnforcementRow { get; private set; } = kLoadCity;
+        internal static string EnforcementRow { get; private set; } = kLoadCityFallback;
 
         /// <summary>
         /// Gets the cached personal-vehicle location summary.
         /// </summary>
-        internal static string VehicleRow { get; private set; } = kLoadCity;
+        internal static string VehicleRow { get; private set; } = kLoadCityFallback;
 
         /// <summary>
         /// Gets the cached parking-supply summary.
         /// </summary>
-        internal static string SupplyRow { get; private set; } = kLoadCity;
+        internal static string SupplyRow { get; private set; } = kLoadCityFallback;
 
         /// <summary>
         /// Gets the cached street share and update time.
         /// </summary>
-        internal static string ShareRow { get; private set; } = kLoadCity;
+        internal static string ShareRow { get; private set; } = kLoadCityFallback;
 
         /// <summary>
         /// Requests one snapshot after the simulation advances and returns the published UI version.
@@ -68,6 +83,7 @@ namespace ParkingControl
             }
 
             s_LastUiFrame = uiFrame;
+
             GameManager? gameManager = GameManager.instance;
             bool isGame = gameManager != null && gameManager.gameMode == GameMode.Game;
             if (isGame != s_WasInGame)
@@ -76,9 +92,11 @@ namespace ParkingControl
                 InvalidateCache();
             }
 
+            RefreshLocalizedTextIfNeeded();
+
             if (!isGame)
             {
-                PublishMessage(kLoadCity);
+                PublishLocalizedMessage(ParkingStatusLocale.kLoadCity, kLoadCityFallback);
                 return s_Version;
             }
 
@@ -87,7 +105,7 @@ namespace ParkingControl
                 World? world = World.DefaultGameObjectInjectionWorld;
                 if (world == null || !world.IsCreated)
                 {
-                    PublishMessage("Parking status is unavailable.");
+                    PublishLocalizedMessage(ParkingStatusLocale.kUnavailable, kUnavailableFallback);
                     return s_Version;
                 }
 
@@ -96,7 +114,7 @@ namespace ParkingControl
                 ParkingStatusSystem? statusSystem = world.GetExistingSystemManaged<ParkingStatusSystem>();
                 if (simulationSystem == null || statusSystem == null)
                 {
-                    PublishMessage("Parking status is unavailable.");
+                    PublishLocalizedMessage(ParkingStatusLocale.kUnavailable, kUnavailableFallback);
                     return s_Version;
                 }
 
@@ -116,7 +134,7 @@ namespace ParkingControl
                 s_RequestPending = true;
                 if (!s_HasSnapshot)
                 {
-                    PublishMessage(kPending);
+                    PublishLocalizedMessage(ParkingStatusLocale.kCollecting, kCollectingFallback);
                 }
 
                 statusSystem.ScheduleStatus();
@@ -125,7 +143,7 @@ namespace ParkingControl
             {
                 // The attempted simulation frame remains cached to prevent a retry every UI frame.
                 s_RequestPending = false;
-                PublishMessage("Parking status is unavailable.");
+                PublishLocalizedMessage(ParkingStatusLocale.kUnavailable, kUnavailableFallback);
             }
 
             return s_Version;
@@ -150,7 +168,8 @@ namespace ParkingControl
             s_RequestPending = false;
             s_LastRequestedSimulationFrame = 0;
             s_LastUiFrame = -1;
-            PublishMessage(kLoadCity);
+            s_LastSnapshot = default;
+            PublishLocalizedMessage(ParkingStatusLocale.kLoadCity, kLoadCityFallback);
         }
 
         /// <summary>
@@ -159,34 +178,14 @@ namespace ParkingControl
         /// <param name="snapshot">The snapshot built in the scheduled ECS system.</param>
         internal static void Publish(ParkingSnapshot snapshot)
         {
-            string status = ParkingStatusSystem.GetOwnershipStatus(
-                snapshot.RestrictionEnabled,
-                snapshot.CurbLanes,
-                snapshot.DisabledCurbLanes,
-                snapshot.TrackedCurbLanes);
-            EnforcementRow =
-                $"{Format(snapshot.StreetParked)} parked ({Format(snapshot.OccupiedCurbLanes)} lanes) | " +
-                $"{Format(snapshot.DisabledCurbLanes)}/{Format(snapshot.CurbLanes)} disabled | {status}";
-            VehicleRow =
-                $"{Format(snapshot.StreetParked)} street | {Format(snapshot.VisibleOffStreet)} visible | " +
-                $"{Format(snapshot.HiddenInBuildings)} hidden | {Format(snapshot.OutsideConnection)} OC";
-            SupplyRow =
-                $"{FormatPercent(snapshot.OfficialParkingOccupied, snapshot.OfficialParkingCapacity)}  " +
-                $"{FormatSupply(snapshot.OfficialParkingOccupied)} / " +
-                $"{FormatSupply(snapshot.OfficialParkingCapacity)} public | " +
-                $"{FormatPercent(snapshot.BuildingParkingOccupied, snapshot.BuildingParkingCapacity)}  " +
-                $"{FormatSupply(snapshot.BuildingParkingOccupied)} / " +
-                $"{FormatSupply(snapshot.BuildingParkingCapacity)} building";
-            ShareRow =
-                $"{FormatPercent(snapshot.StreetParked, snapshot.KnownInCityParking)} street parked | " +
-                $"{Format(snapshot.ActiveVehicles)} moving | updated {snapshot.CapturedAtLocal:HH:mm:ss}";
+            s_LastSnapshot = snapshot;
+            PublishSnapshotRows(snapshot);
 
             s_HasSnapshot = true;
             s_ForceRefresh = false;
             s_RequestPending = false;
             s_HasRequestedSimulationFrame = true;
             s_LastRequestedSimulationFrame = snapshot.SimulationFrame;
-            s_Version++;
         }
 
         /// <summary>
@@ -195,7 +194,80 @@ namespace ParkingControl
         internal static void PublishFailure()
         {
             s_RequestPending = false;
-            PublishMessage("Parking status could not be collected; see ParkingControl.log.");
+            PublishLocalizedMessage(ParkingStatusLocale.kCollectionFailed, kCollectionFailedFallback);
+        }
+
+        private static void RefreshLocalizedTextIfNeeded()
+        {
+            string localeId = ParkingStatusLocale.ActiveLocaleId;
+            if (string.Equals(s_LastLocaleId, localeId, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            s_LastLocaleId = localeId;
+            if (s_HasSnapshot)
+            {
+                // Reuse the cached snapshot; changing language must not trigger another ECS scan.
+                PublishSnapshotRows(s_LastSnapshot);
+                return;
+            }
+
+            PublishLocalizedMessage(s_LastMessageId, s_LastMessageFallback);
+        }
+
+        private static void PublishSnapshotRows(ParkingSnapshot snapshot)
+        {
+            string status = LocalizeOwnershipStatus(
+                ParkingStatusSystem.GetOwnershipStatus(
+                    snapshot.RestrictionEnabled,
+                    snapshot.CurbLanes,
+                    snapshot.DisabledCurbLanes,
+                    snapshot.TrackedCurbLanes));
+
+            string enforcement = ParkingStatusLocale.Format(
+                ParkingStatusLocale.kEnforcementFormat,
+                kEnforcementFormatFallback,
+                Format(snapshot.StreetParked),
+                Format(snapshot.OccupiedCurbLanes),
+                Format(snapshot.DisabledCurbLanes),
+                Format(snapshot.CurbLanes),
+                status);
+            string vehicles = ParkingStatusLocale.Format(
+                ParkingStatusLocale.kVehicleFormat,
+                kVehicleFormatFallback,
+                Format(snapshot.StreetParked),
+                Format(snapshot.VisibleOffStreet),
+                Format(snapshot.HiddenInBuildings),
+                Format(snapshot.OutsideConnection));
+            string supply = ParkingStatusLocale.Format(
+                ParkingStatusLocale.kSupplyFormat,
+                kSupplyFormatFallback,
+                FormatPercent(snapshot.OfficialParkingOccupied, snapshot.OfficialParkingCapacity),
+                FormatSupply(snapshot.OfficialParkingOccupied),
+                FormatSupply(snapshot.OfficialParkingCapacity),
+                FormatPercent(snapshot.BuildingParkingOccupied, snapshot.BuildingParkingCapacity),
+                FormatSupply(snapshot.BuildingParkingOccupied),
+                FormatSupply(snapshot.BuildingParkingCapacity));
+            string share = ParkingStatusLocale.Format(
+                ParkingStatusLocale.kShareFormat,
+                kShareFormatFallback,
+                FormatPercent(snapshot.StreetParked, snapshot.KnownInCityParking),
+                Format(snapshot.ActiveVehicles),
+                snapshot.CapturedAtLocal.ToString("HH:mm:ss", CultureInfo.CurrentCulture));
+
+            PublishRows(enforcement, vehicles, supply, share);
+        }
+
+        private static string LocalizeOwnershipStatus(string status)
+        {
+            return status switch
+            {
+                "OK" => ParkingStatusLocale.Get(ParkingStatusLocale.kStatusOk, "OK"),
+                "OFF" => ParkingStatusLocale.Get(ParkingStatusLocale.kStatusOff, "OFF"),
+                "CHECK" => ParkingStatusLocale.Get(ParkingStatusLocale.kStatusCheck, "CHECK"),
+                _ => status,
+            };
         }
 
         private static string Format(int value)
@@ -254,21 +326,37 @@ namespace ParkingControl
             return value.ToString("0.0", CultureInfo.CurrentCulture) + "%";
         }
 
-        private static void PublishMessage(string message)
+        private static void PublishLocalizedMessage(string localeId, string fallback)
         {
-            if (EnforcementRow == message &&
-                VehicleRow == message &&
-                SupplyRow == message &&
-                ShareRow == message)
+            s_LastMessageId = localeId;
+            s_LastMessageFallback = fallback;
+            PublishMessage(ParkingStatusLocale.Get(localeId, fallback));
+        }
+
+        private static void PublishRows(
+            string enforcement,
+            string vehicles,
+            string supply,
+            string share)
+        {
+            if (EnforcementRow == enforcement &&
+                VehicleRow == vehicles &&
+                SupplyRow == supply &&
+                ShareRow == share)
             {
                 return;
             }
 
-            EnforcementRow = message;
-            VehicleRow = message;
-            SupplyRow = message;
-            ShareRow = message;
+            EnforcementRow = enforcement;
+            VehicleRow = vehicles;
+            SupplyRow = supply;
+            ShareRow = share;
             s_Version++;
+        }
+
+        private static void PublishMessage(string message)
+        {
+            PublishRows(message, message, message, message);
         }
     }
 }

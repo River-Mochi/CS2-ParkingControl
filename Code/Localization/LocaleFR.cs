@@ -92,6 +92,18 @@ namespace ParkingControl
                     "Un second rapport dans la même ville chargée suit les mêmes ID d'entités des voitures stationnées dans la rue." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenLog)), "Ouvrir le journal" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)), "Ouvrir <ParkingControl.log>, ou le dossier Logs si le fichier n'existe pas encore." },
+                // Live status rows use these localized strings.
+                { ParkingStatusLocale.kLoadCity, "Chargez ou démarrez une ville pour afficher l'état du stationnement." },
+                { ParkingStatusLocale.kCollecting, "Collecte de l'état du stationnement..." },
+                { ParkingStatusLocale.kUnavailable, "L'état du stationnement n'est pas disponible." },
+                { ParkingStatusLocale.kCollectionFailed, "Impossible de collecter l'état du stationnement ; consultez ParkingControl.log." },
+                { ParkingStatusLocale.kEnforcementFormat, "{0} stationnées ({1} voies) | {2}/{3} désactivées | {4}" },
+                { ParkingStatusLocale.kVehicleFormat, "{0} rue | {1} visibles | {2} cachées | {3} OC" },
+                { ParkingStatusLocale.kSupplyFormat, "{0}  {1} / {2} public | {3}  {4} / {5} bâtiment" },
+                { ParkingStatusLocale.kShareFormat, "{0} stationnées dans la rue | {1} en déplacement | mis à jour {2}" },
+                { ParkingStatusLocale.kStatusOk, "OK" },
+                { ParkingStatusLocale.kStatusOff, "DÉSACTIVÉ" },
+                { ParkingStatusLocale.kStatusCheck, "VÉRIFIER" },
             };
         }
 

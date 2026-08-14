@@ -92,6 +92,18 @@ namespace ParkingControl
                     "Drugi raport w tym samym wczytanym mieście śledzi te same identyfikatory encji samochodów zaparkowanych przy ulicy." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenLog)), "Otwórz log" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)), "Otwórz <ParkingControl.log> albo folder Logs, jeśli plik jeszcze nie istnieje." },
+                // Live status rows use these localized strings.
+                { ParkingStatusLocale.kLoadCity, "Wczytaj lub rozpocznij miasto, aby zobaczyć stan parkowania." },
+                { ParkingStatusLocale.kCollecting, "Trwa zbieranie stanu parkowania..." },
+                { ParkingStatusLocale.kUnavailable, "Stan parkowania jest niedostępny." },
+                { ParkingStatusLocale.kCollectionFailed, "Nie udało się zebrać stanu parkowania; zobacz ParkingControl.log." },
+                { ParkingStatusLocale.kEnforcementFormat, "{0} zaparkowane ({1} pasy) | {2}/{3} wyłączone | {4}" },
+                { ParkingStatusLocale.kVehicleFormat, "{0} ulica | {1} widoczne | {2} ukryte | {3} OC" },
+                { ParkingStatusLocale.kSupplyFormat, "{0}  {1} / {2} publiczne | {3}  {4} / {5} budynek" },
+                { ParkingStatusLocale.kShareFormat, "{0} zaparkowane na ulicy | {1} w ruchu | zaktualizowano {2}" },
+                { ParkingStatusLocale.kStatusOk, "OK" },
+                { ParkingStatusLocale.kStatusOff, "WYŁ." },
+                { ParkingStatusLocale.kStatusCheck, "SPRAWDŹ" },
             };
         }
 
