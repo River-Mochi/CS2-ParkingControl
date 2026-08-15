@@ -67,6 +67,8 @@ namespace ParkingControl
                     "Roads outside selected districts keep normal street parking." },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
                 { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "No Street Parking" },
+                { $"Policy.DESCRIPTION[{ParkingPolicySystem.PrefabName}]",
+                    "In By District mode, new street parking is blocked here. Existing parked cars leave naturally." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Street Parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "<Parked> = cars still parked on streets covered by the selected mode.\n" +

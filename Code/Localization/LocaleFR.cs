@@ -63,6 +63,9 @@ namespace ParkingControl
                     "Le stationnement normal reste permis hors des quartiers sélectionnés." },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
                 { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "Stationnement sur rue interdit" },
+                { $"Policy.DESCRIPTION[{ParkingPolicySystem.PrefabName}]",
+                    "En mode Par quartier, empêche tout nouveau stationnement sur rue ici. " +
+                    "Les voitures déjà garées partent naturellement." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Stationnement sur rue" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "<Garées> = voitures dans les rues couvertes par le mode choisi.\n" +

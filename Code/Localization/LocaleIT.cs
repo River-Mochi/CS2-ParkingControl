@@ -63,6 +63,9 @@ namespace ParkingControl
                     "Fuori dai distretti selezionati resta il parcheggio normale." },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
                 { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "Niente parcheggio su strada" },
+                { $"Policy.DESCRIPTION[{ParkingPolicySystem.PrefabName}]",
+                    "In modalità Per distretto, impedisce nuovi parcheggi su strada qui. " +
+                    "Le auto già parcheggiate se ne vanno naturalmente." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Parcheggio su strada" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "<Parcheggiate> = auto sulle strade coperte dalla modalità scelta.\n" +

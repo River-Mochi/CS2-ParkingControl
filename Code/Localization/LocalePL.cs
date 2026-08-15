@@ -63,6 +63,9 @@ namespace ParkingControl
                     "Poza wybranymi dzielnicami pozostaje zwykłe parkowanie." },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
                 { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "Zakaz parkowania przy ulicy" },
+                { $"Policy.DESCRIPTION[{ParkingPolicySystem.PrefabName}]",
+                    "W trybie Według dzielnic blokuje tu nowe parkowanie przy ulicy. " +
+                    "Już zaparkowane auta odjadą po użyciu." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Parkowanie przy ulicy" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "<Zaparkowane> = auta na ulicach objętych wybranym trybem.\n" +

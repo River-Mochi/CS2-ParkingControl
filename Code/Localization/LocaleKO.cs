@@ -63,6 +63,8 @@ namespace ParkingControl
                     "선택하지 않은 구역의 도로는 일반 노상 주차를 유지합니다." },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
                 { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "노상 주차 금지" },
+                { $"Policy.DESCRIPTION[{ParkingPolicySystem.PrefabName}]",
+                    "구역별 모드에서 이 구역의 새 노상 주차를 막습니다. 기존 주차 차량은 사용될 때 이동합니다." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "노상 주차" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "<주차됨> = 선택한 모드가 적용되는 도로에 주차된 차량.\n" +

@@ -100,13 +100,4 @@
 	<ItemGroup>
 	  <Folder Include="Systems\Status\" />
 	</ItemGroup>
-
-    <!-- Copy the policy SVG directly; a React/Node UI build is not needed. -->
-    <Target Name="CopySvgFiles" AfterTargets="DeployWIP" Condition="Exists('$(ProjectDir)UI\images')">
-        <ItemGroup>
-            <SvgFiles Include="$(ProjectDir)UI\images\*.*" />
-        </ItemGroup>
-        <Copy SourceFiles="@(SvgFiles)" DestinationFiles="@(SvgFiles->'$(DeployDir)\images\%(RecursiveDir)%(Filename)%(Extension)')" />
-    </Target>
-
 </Project>

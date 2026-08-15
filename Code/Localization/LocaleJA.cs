@@ -63,6 +63,8 @@ namespace ParkingControl
                     "選択していない地区では通常の路上駐車が残ります。" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
                 { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "路上駐車禁止" },
+                { $"Policy.DESCRIPTION[{ParkingPolicySystem.PrefabName}]",
+                    "地区ごとモードでは、この地区で新たな路上駐車を禁止します。既に駐車中の車は使用時に移動します。" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "路上駐車" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "<駐車中> = 選択したモードの対象道路に駐車している車。\n" +

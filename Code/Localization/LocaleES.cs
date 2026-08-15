@@ -63,6 +63,9 @@ namespace ParkingControl
                     "Las calles fuera de los distritos seleccionados conservan el estacionamiento normal." },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
                 { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "Sin estacionamiento en la calle" },
+                { $"Policy.DESCRIPTION[{ParkingPolicySystem.PrefabName}]",
+                    "En el modo Por distrito, impide nuevos estacionamientos en la calle aquí. " +
+                    "Los coches ya aparcados se van de forma natural." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Estacionamiento en la calle" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "<Aparc.> = coches en calles cubiertas por el modo seleccionado.\n" +

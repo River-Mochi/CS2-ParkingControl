@@ -63,6 +63,9 @@ namespace ParkingControl
                     "Außerhalb ausgewählter Bezirke bleibt normales Straßenparken erlaubt." },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
                 { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "Kein Straßenparken" },
+                { $"Policy.DESCRIPTION[{ParkingPolicySystem.PrefabName}]",
+                    "Im Modus Nach Bezirk wird hier neues Straßenparken verhindert. " +
+                    "Bereits geparkte Autos fahren nach und nach weg." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Straßenparken" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "<Geparkt> = Autos auf Straßen, die vom gewählten Modus erfasst werden.\n" +

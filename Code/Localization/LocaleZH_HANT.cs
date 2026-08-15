@@ -63,6 +63,8 @@ namespace ParkingControl
                     "未選擇的行政區仍保留一般路邊停車。" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
                 { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "禁止路邊停車" },
+                { $"Policy.DESCRIPTION[{ParkingPolicySystem.PrefabName}]",
+                    "在按行政區模式下，禁止此處新增路邊停車。已停放車輛會在使用時離開。" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "路邊停車" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "<已停放> = 停在所選模式涵蓋道路上的車輛。\n" +
