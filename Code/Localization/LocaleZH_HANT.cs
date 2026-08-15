@@ -52,6 +52,9 @@ namespace ParkingControl
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "關閉" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "顯示說明" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)), "顯示行政區模式的使用方法。" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "顯示狀態" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowStatus)),
+                    "在下方顯示停車統計。僅在顯示時收集資料。" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.DistrictInstructions)),
                     "<行政區模式>\n" +
                     "1. 在上方選擇<按行政區>。\n" +

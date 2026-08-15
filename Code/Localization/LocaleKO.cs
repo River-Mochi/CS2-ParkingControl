@@ -52,6 +52,9 @@ namespace ParkingControl
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "꺼짐" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "사용법 표시" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)), "구역 모드 사용법을 표시합니다." },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "상태 표시" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowStatus)),
+                    "주차 합계를 아래에 표시합니다. 표시할 때만 집계합니다." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.DistrictInstructions)),
                     "<구역 모드>\n" +
                     "1. 위에서 <구역별>을 선택합니다.\n" +

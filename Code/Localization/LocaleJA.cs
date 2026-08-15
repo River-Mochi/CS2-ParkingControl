@@ -52,6 +52,9 @@ namespace ParkingControl
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "オフ" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "手順を表示" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)), "地区モードの使い方を表示します。" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "状況を表示" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowStatus)),
+                    "駐車状況を下に表示します。表示中のみ集計します。" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.DistrictInstructions)),
                     "<地区モード>\n" +
                     "1. 上で<地区ごと>を選びます。\n" +

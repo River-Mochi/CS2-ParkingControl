@@ -52,6 +52,9 @@ namespace ParkingControl
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "Disattivato" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Mostra istruzioni" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)), "Mostra come usare la modalità per distretto." },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "Mostra stato" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowStatus)),
+                    "Mostra i totali dei parcheggi. I dati vengono raccolti solo se visibili." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.DistrictInstructions)),
                     "<Modalità per distretto>\n" +
                     "1. Scegli <Per distretto> qui sopra.\n" +

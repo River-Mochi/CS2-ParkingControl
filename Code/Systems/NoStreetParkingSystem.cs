@@ -299,21 +299,48 @@ namespace ParkingControl
                 return false;
             }
 
+            Entity district = GetLaneDistrict(
+                lane,
+                parkingLane,
+                ownerLookup,
+                borderDistrictLookup);
+            return IsDistrictPolicyActive(district, policyEntity, policyLookup);
+        }
+
+        /// <summary>
+        /// Gets the district governing this side of a road parking lane.
+        /// </summary>
+        internal static Entity GetLaneDistrict(
+            Entity lane,
+            ParkingLane parkingLane,
+            ComponentLookup<Owner> ownerLookup,
+            ComponentLookup<Game.Areas.BorderDistrict> borderDistrictLookup)
+        {
             Entity road = ownerLookup[lane].m_Owner;
             if (!borderDistrictLookup.TryGetComponent(
                     road,
                     out Game.Areas.BorderDistrict borderDistrict))
             {
-                return false;
+                return Entity.Null;
             }
 
             // Match vanilla roadside parking fees: RightSide uses the road's right
             // district; every other ordinary parking lane uses its left district.
-            Entity district =
-                (parkingLane.m_Flags & ParkingLaneFlags.RightSide) != 0
-                    ? borderDistrict.m_Right
-                    : borderDistrict.m_Left;
+            return (parkingLane.m_Flags & ParkingLaneFlags.RightSide) != 0
+                ? borderDistrict.m_Right
+                : borderDistrict.m_Left;
+        }
+
+        /// <summary>
+        /// Returns whether a district has Parking Control's policy enabled.
+        /// </summary>
+        internal static bool IsDistrictPolicyActive(
+            Entity district,
+            Entity policyEntity,
+            BufferLookup<Game.Policies.Policy> policyLookup)
+        {
             if (district == Entity.Null ||
+                policyEntity == Entity.Null ||
                 !policyLookup.TryGetBuffer(
                     district,
                     out DynamicBuffer<Game.Policies.Policy> policies))

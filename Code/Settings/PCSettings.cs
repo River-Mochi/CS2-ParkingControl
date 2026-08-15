@@ -71,6 +71,12 @@ namespace ParkingControl
         public bool ShowInstructions { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether live parking status rows are shown.
+        /// </summary>
+        [SettingsUISection(kActionsTab, kStatusGroup)]
+        public bool ShowStatus { get; set; }
+
+        /// <summary>
         /// Gets the localized district-mode instructions shown by the multiline widget.
         /// </summary>
         [SettingsUIMultilineText]
@@ -82,6 +88,7 @@ namespace ParkingControl
         /// Gets the cached lane-enforcement status.
         /// </summary>
         [Exclude]
+        [SettingsUIHideByCondition(typeof(PCSettings), nameof(HideStatus))]
         [SettingsUIValueVersion(typeof(ParkingStatusCache), nameof(ParkingStatusCache.GetUiVersion))]
         [SettingsUISection(kActionsTab, kStatusGroup)]
         public string EnforcementStatus => ParkingStatusCache.EnforcementRow;
@@ -90,6 +97,7 @@ namespace ParkingControl
         /// Gets the cached personal-vehicle location status.
         /// </summary>
         [Exclude]
+        [SettingsUIHideByCondition(typeof(PCSettings), nameof(HideStatus))]
         [SettingsUIValueVersion(typeof(ParkingStatusCache), nameof(ParkingStatusCache.GetUiVersion))]
         [SettingsUISection(kActionsTab, kStatusGroup)]
         public string VehicleStatus => ParkingStatusCache.VehicleRow;
@@ -98,6 +106,7 @@ namespace ParkingControl
         /// Gets the cached parking-supply status.
         /// </summary>
         [Exclude]
+        [SettingsUIHideByCondition(typeof(PCSettings), nameof(HideStatus))]
         [SettingsUIValueVersion(typeof(ParkingStatusCache), nameof(ParkingStatusCache.GetUiVersion))]
         [SettingsUISection(kActionsTab, kStatusGroup)]
         public string SupplyStatus => ParkingStatusCache.SupplyRow;
@@ -106,6 +115,7 @@ namespace ParkingControl
         /// Gets the cached street share and update time.
         /// </summary>
         [Exclude]
+        [SettingsUIHideByCondition(typeof(PCSettings), nameof(HideStatus))]
         [SettingsUIValueVersion(typeof(ParkingStatusCache), nameof(ParkingStatusCache.GetUiVersion))]
         [SettingsUISection(kActionsTab, kStatusGroup)]
         public string ShareStatus => ParkingStatusCache.ShareRow;
@@ -187,7 +197,7 @@ namespace ParkingControl
                 return;
             }
 
-            // Instruction visibility is also a setting change, but it must not rescan lanes.
+            // Visibility-only setting changes must not rescan lanes.
             m_AppliedScope = m_ParkingScope;
             if (m_ParkingScope != ParkingScope.Off)
             {
@@ -203,11 +213,17 @@ namespace ParkingControl
         {
             m_ParkingScope = ParkingScope.WholeCity;
             ShowInstructions = false;
+            ShowStatus = false;
         }
 
         private bool HideInstructions()
         {
             return !ShowInstructions;
+        }
+
+        private bool HideStatus()
+        {
+            return !ShowStatus;
         }
 
         private static void ReportToLogAction()

@@ -14,6 +14,7 @@ namespace ParkingControl
     using CS2Shared.RiverMochi;
     using Game;
     using Game.Prefabs;
+    using Unity.Collections;
     using Unity.Entities;
 
     /// <summary>
@@ -85,8 +86,32 @@ namespace ParkingControl
             options.m_Options = Array.Empty<Game.Areas.DistrictOption>();
 
             UIObject uiObject = prefab.AddOrGetComponent<UIObject>();
-            uiObject.m_Icon = "Media/Game/Policies/PaidParking.svg";
+            uiObject.m_Icon = "coui://ui-mods/images/NoStreetParking_Blue.svg";
             uiObject.m_Priority = 50;
+
+            // Place this directly after Roadside Parking Fee when vanilla metadata is available.
+            EntityQuery parkingFeeQuery = EntityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<DistrictOptionData>(),
+                ComponentType.ReadOnly<PolicySliderData>(),
+                ComponentType.ReadOnly<UIObjectData>());
+            using (NativeArray<Entity> policies = parkingFeeQuery.ToEntityArray(Allocator.Temp))
+            {
+                foreach (Entity policy in policies)
+                {
+                    DistrictOptionData optionsData =
+                        EntityManager.GetComponentData<DistrictOptionData>(policy);
+                    if (Game.Areas.AreaUtils.HasOption(
+                            optionsData,
+                            Game.Areas.DistrictOption.PaidParking))
+                    {
+                        uiObject.m_Priority =
+                            EntityManager.GetComponentData<UIObjectData>(policy).m_Priority + 1;
+                        break;
+                    }
+                }
+            }
+
+            parkingFeeQuery.Dispose();
 
             if (!m_PrefabSystem.AddPrefab(prefab))
             {
@@ -97,7 +122,9 @@ namespace ParkingControl
             PolicyEntity = m_PrefabSystem.GetEntity(prefab);
             m_Installed = true;
             NoStreetParkingSystem.RequestReconcile();
-            LogUtils.Info($"{Mod.ModTag} District policy registered as {PrefabName}.");
+            LogUtils.Info(
+                $"{Mod.ModTag} District policy registered as {PrefabName} " +
+                $"(priority {uiObject.m_Priority}).");
         }
     }
 }

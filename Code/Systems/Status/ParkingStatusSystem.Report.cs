@@ -140,6 +140,7 @@ namespace ParkingControl
                 $"(Disabled={snapshot.DisabledTargetCurbLanes}, " +
                 $"Occupied={snapshot.OccupiedTargetCurbLanes}, " +
                 $"ParkedCars={snapshot.TargetStreetParked})");
+            AppendDistrictStreetParking(text, snapshot, details);
             text.AppendLine(
                 $"DisabledStreetParkingLanes={snapshot.DisabledCurbLanes} " +
                 $"(ParkingControlTracked={snapshot.TrackedCurbLanes}, VanillaOrOther={otherDisabledCurbLanes})");
@@ -266,8 +267,77 @@ namespace ParkingControl
             LogUtils.Info(text.ToString());
 
             m_PreviousReport = snapshot;
+            m_PreviousDistrictStreetCars = new Dictionary<Entity, int>();
+            foreach (DistrictParkingStats district in details.DistrictParking.Values)
+            {
+                m_PreviousDistrictStreetCars[district.District] = district.StreetCars;
+            }
+
             m_PreviousStreetVehicles = details.CurrentStreetVehicles;
             m_HasPreviousReport = true;
+        }
+
+        /// <summary>
+        /// Lists each district by player-facing name so repeated reports show local trends.
+        /// </summary>
+        private void AppendDistrictStreetParking(
+            StringBuilder text,
+            ParkingSnapshot snapshot,
+            ParkingReportDetails details)
+        {
+            List<DistrictParkingStats> districts =
+                new List<DistrictParkingStats>(details.DistrictParking.Values);
+            districts.Sort((left, right) => string.Compare(
+                GetDistrictName(left.District),
+                GetDistrictName(right.District),
+                StringComparison.CurrentCultureIgnoreCase));
+
+            text.AppendLine(
+                "DistrictStreetParking=<lane counts are road-side parking sections, not spaces>");
+            foreach (DistrictParkingStats district in districts)
+            {
+                bool effective = snapshot.Scope == PCSettings.ParkingScope.WholeCity ||
+                    (snapshot.Scope == PCSettings.ParkingScope.ByDistrict && district.PolicyActive);
+                string status = GetOwnershipStatus(
+                    effective,
+                    district.EligibleLanes,
+                    district.DisabledLanes,
+                    district.TrackedLanes);
+                string change = "<first>";
+                if (m_HasPreviousReport)
+                {
+                    change = m_PreviousDistrictStreetCars.TryGetValue(
+                        district.District,
+                        out int previousCars)
+                        ? FormatDelta(district.StreetCars - previousCars)
+                        : "<new>";
+                }
+
+                text.AppendLine(
+                    $"  {GetDistrictName(district.District)} [{FormatEntity(district.District)}] | " +
+                    $"Policy={(district.PolicyActive ? "ON" : "OFF")} | " +
+                    $"{district.StreetCars} parked ({district.OccupiedLanes.Count} lanes) | " +
+                    $"{district.DisabledLanes}/{district.EligibleLanes} disabled | " +
+                    $"{status} | Change={change}");
+            }
+        }
+
+        private string GetDistrictName(Entity district)
+        {
+            if (district == Entity.Null)
+            {
+                return "<No district>";
+            }
+
+            if (!EntityManager.Exists(district))
+            {
+                return "<Missing district>";
+            }
+
+            string name = m_NameSystem.GetRenderedLabelName(district);
+            return string.IsNullOrWhiteSpace(name)
+                ? $"District {FormatEntity(district)}"
+                : name.Replace('\r', ' ').Replace('\n', ' ').Replace('|', '/');
         }
 
         /// <summary>

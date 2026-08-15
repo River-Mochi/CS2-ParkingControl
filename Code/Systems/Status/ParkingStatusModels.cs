@@ -118,6 +118,9 @@ namespace ParkingControl
     /// </summary>
     internal sealed class ParkingReportDetails
     {
+        public Dictionary<Entity, DistrictParkingStats> DistrictParking { get; } =
+            new Dictionary<Entity, DistrictParkingStats>();
+
         public HashSet<Entity> CurrentStreetVehicles { get; } = new HashSet<Entity>();
 
         public List<Entity> VisibleSamples { get; } = new List<Entity>();
@@ -153,6 +156,32 @@ namespace ParkingControl
         public int NowAtOutsideConnection { get; set; }
 
         public int NowUnassignedOrUnknown { get; set; }
+    }
+
+    /// <summary>
+    /// Log-only street-parking counters for one district side, or Entity.Null outside districts.
+    /// </summary>
+    internal sealed class DistrictParkingStats
+    {
+        public DistrictParkingStats(Entity district, bool policyActive)
+        {
+            District = district;
+            PolicyActive = policyActive;
+        }
+
+        public Entity District { get; }
+
+        public bool PolicyActive { get; set; }
+
+        public int EligibleLanes { get; set; }
+
+        public int DisabledLanes { get; set; }
+
+        public int TrackedLanes { get; set; }
+
+        public int StreetCars { get; set; }
+
+        public HashSet<Entity> OccupiedLanes { get; } = new HashSet<Entity>();
     }
 
     /// <summary>

@@ -27,10 +27,12 @@ namespace ParkingControl
         private EntityQuery m_GarageLaneQuery;
         private EntityQuery m_ParkingFacilityQuery;
         private EntityQuery m_PersonalVehicleQuery;
+        private Game.UI.NameSystem m_NameSystem = null!;
         private SimulationSystem m_SimulationSystem = null!;
         private bool m_HasPreviousReport;
         private bool m_ReportRequested;
         private bool m_StatusRequested;
+        private Dictionary<Entity, int> m_PreviousDistrictStreetCars = new();
         private HashSet<Entity> m_PreviousStreetVehicles = new();
         private ParkingSnapshot m_PreviousReport;
 
@@ -56,6 +58,7 @@ namespace ParkingControl
         protected override void OnCreate()
         {
             base.OnCreate();
+            m_NameSystem = World.GetOrCreateSystemManaged<Game.UI.NameSystem>();
             m_SimulationSystem = World.GetOrCreateSystemManaged<SimulationSystem>();
 
             // Fully qualified query types prevent similarly named Game components from
@@ -185,6 +188,7 @@ namespace ParkingControl
         {
             m_HasPreviousReport = false;
             m_PreviousReport = default;
+            m_PreviousDistrictStreetCars = new Dictionary<Entity, int>();
             m_PreviousStreetVehicles = new HashSet<Entity>();
         }
     }

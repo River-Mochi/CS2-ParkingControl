@@ -75,6 +75,13 @@ namespace ParkingControl
         /// <returns>The version of the currently published strings.</returns>
         public static int GetUiVersion()
         {
+            // Hidden status widgets receive one initial UI update. Gate here as well so
+            // keeping Show Status off never schedules an ECS parking probe.
+            if (!(Mod.Settings?.ShowStatus ?? false))
+            {
+                return s_Version;
+            }
+
             // Four status widgets ask for the version each UI frame; perform the check only once.
             int uiFrame = Time.frameCount;
             if (uiFrame == s_LastUiFrame)
