@@ -13,18 +13,18 @@ Stops cars and motorcycles from choosing street parking in the whole city.
 
 ## Features
 - Enabled with the Options menu [x] toggle.
-- Private vehicles still park in parking lots and spaces included with some buildings.
+- Private vehicles still park in parking lots and buildings that allow parking.
 
 ## Good to know
-- It could take a few city months for already parked cars to move. Vanilla road upgrades that remove street parking clear the affected road faster.
+- It could take a few city months for already parked cars to move. Some vanilla road upgrades clear the affected road faster.
 - A few cars may remain temporarily after road construction while the game updates parking lanes and paths.
-- If the city does not have enough parking facilities, the game handles the overflow normally, including use of outside-connection (hidden) storage.
+- If the city does not have enough parking facilities, the game handles the overflow including use of outside-connection (hidden) storage/staging area.
 - Safe to remove: streets return to vanilla parking.
 - This does not delete cars or affect bicycles, it just prevents street parking.
 
 ## Support and Feedback
-- Please consider using the like button if the mod is useful.
-- Feedback and pull requests are welcome through the GitHub and Discord links.
+- Consider using the like button (top right) to show support for mods.
+- Feedback and pull requests are welcome through the GitHub and Discord links (icons on the right).
 
 ## Credits
 River-mochi - mod author
