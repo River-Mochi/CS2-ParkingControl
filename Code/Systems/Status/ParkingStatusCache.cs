@@ -29,6 +29,8 @@ namespace ParkingControl
             "Parking status could not be collected; see ParkingControl.log.";
         private const string kEnforcementFormatFallback =
             "{0} parked ({1} lanes) | {2}/{3} disabled | {4}";
+        private const string kDistrictEnforcementFormatFallback =
+            "{0} parked ({1}/{2} lanes) | {3}/{4} disabled | {5}/{6} districts | {7}";
         private const string kVehicleFormatFallback =
             "{0} street | {1} visible | {2} hidden | {3} OC";
         private const string kSupplyFormatFallback =
@@ -241,14 +243,27 @@ namespace ParkingControl
                     disabledLanes,
                     snapshot.TrackedCurbLanes));
 
-            string enforcement = ParkingStatusLocale.Format(
-                ParkingStatusLocale.kEnforcementFormat,
-                kEnforcementFormatFallback,
-                Format(parked),
-                Format(occupiedLanes),
-                Format(disabledLanes),
-                Format(targetLanes),
-                status);
+            string enforcement = districtScope
+                ? ParkingStatusLocale.Format(
+                    ParkingStatusLocale.kDistrictEnforcementFormat,
+                    kDistrictEnforcementFormatFallback,
+                    // District mode compares the targeted subset with citywide totals.
+                    Format(parked),
+                    Format(occupiedLanes),
+                    Format(snapshot.OccupiedCurbLanes),
+                    Format(disabledLanes),
+                    Format(snapshot.CurbLanes),
+                    Format(snapshot.DistrictsWithPolicy),
+                    Format(snapshot.Districts),
+                    status)
+                : ParkingStatusLocale.Format(
+                    ParkingStatusLocale.kEnforcementFormat,
+                    kEnforcementFormatFallback,
+                    Format(parked),
+                    Format(occupiedLanes),
+                    Format(disabledLanes),
+                    Format(targetLanes),
+                    status);
             string vehicles = ParkingStatusLocale.Format(
                 ParkingStatusLocale.kVehicleFormat,
                 kVehicleFormatFallback,

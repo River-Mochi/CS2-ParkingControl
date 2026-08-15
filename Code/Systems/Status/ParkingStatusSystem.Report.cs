@@ -128,12 +128,15 @@ namespace ParkingControl
             StringBuilder text = new StringBuilder(8192);
             text.AppendLine();
             text.AppendLine($"==================== {Mod.ModTag} PARKING REPORT ====================");
+            text.AppendLine("-------------------- SUMMARY --------------------");
             text.AppendLine($"Mod={Mod.ModName} v{Mod.ModVersion}");
             text.AppendLine($"SimulationFrame={snapshot.SimulationFrame}");
             text.AppendLine($"ParkingScope={snapshot.Scope}");
             text.AppendLine(
                 $"DistrictPolicy=ActiveIn{snapshot.DistrictsWithPolicy}/{snapshot.Districts}Districts " +
                 $"(PolicyEntity={FormatEntity(ParkingPolicySystem.PolicyEntity)})");
+            text.AppendLine();
+            text.AppendLine("-------------------- STREET PARKING ENFORCEMENT --------------------");
             text.AppendLine($"EligibleStreetParkingLanes={snapshot.CurbLanes}");
             text.AppendLine(
                 $"TargetStreetParkingLanes={snapshot.TargetCurbLanes} " +
@@ -155,6 +158,8 @@ namespace ParkingControl
             text.AppendLine(
                 $"ContinuousStreetParking={snapshot.ContinuousCurbParked} vehicles across " +
                 $"{snapshot.ContinuousCurbLanes} continuous lane entities (no exact slot capacity)");
+            text.AppendLine();
+            text.AppendLine("-------------------- PERSONAL VEHICLES --------------------");
             text.AppendLine(
                 $"PersonalMotorVehicles={snapshot.TotalVehicles} " +
                 $"(Parked={snapshot.ParkedVehicles}, Active={snapshot.ActiveVehicles}, Neither={snapshot.UnlocatedVehicles})");
@@ -170,6 +175,8 @@ namespace ParkingControl
                 $"TouristHousehold={snapshot.TouristHouseholdVehicles}, " +
                 $"CommuterHousehold={snapshot.CommuterHouseholdVehicles}, " +
                 $"DummyTraffic={snapshot.DummyTrafficVehicles}, OtherOrUnowned={snapshot.OtherOrUnownedVehicles}");
+            text.AppendLine();
+            text.AppendLine("-------------------- PARKING LOCATIONS --------------------");
             text.AppendLine($"ParkedOnStreets={snapshot.StreetParked}");
             text.AppendLine(
                 $"ParkedElsewhere={snapshot.ParkedElsewhere} " +
@@ -213,6 +220,8 @@ namespace ParkingControl
                 $"TouristHousehold={snapshot.OutsideTouristHousehold}, " +
                 $"CommuterHousehold={snapshot.OutsideCommuterHousehold}, " +
                 $"DummyTraffic={snapshot.OutsideDummyTraffic}");
+            text.AppendLine();
+            text.AppendLine("-------------------- PARKING SUPPLY --------------------");
             text.AppendLine(
                 $"VanillaRoadsInfoviewParking={snapshot.OfficialParkingOccupied}/{snapshot.OfficialParkingCapacity} " +
                 $"across {snapshot.OfficialParkingFacilities} facility entities");
@@ -231,16 +240,22 @@ namespace ParkingControl
             text.AppendLine(
                 $"NonBorderGarageLanes={snapshot.GarageOccupied}/{snapshot.GarageCapacity} occupied/capacity " +
                 $"across {snapshot.GarageLanes} garage lane entities");
+            text.AppendLine();
+            text.AppendLine("-------------------- CHANGES SINCE PREVIOUS REPORT --------------------");
             text.AppendLine(deltaLine);
             AppendStreetTransitions(text, snapshot, details);
+            text.AppendLine();
+            text.AppendLine("-------------------- SAMPLE ENTITY IDS --------------------");
             AppendVehicleEntitySamples(text, snapshot, details);
+            text.AppendLine();
+            text.AppendLine("-------------------- NOTES --------------------");
             text.AppendLine(
-                "Note: existing curb-parked cars leave when a keeper next uses them; this is not limited to a workday event.");
+                "Note: existing curb-parked cars leave when a keeper next uses them.");
             text.AppendLine(
                 "Note: PersonalCar.m_Keeper is the current reserver/user, not the persistent vehicle owner.");
             text.AppendLine(
                 "Note: OutsideConnection describes the parking lane/root location, not the vehicle Owner. " +
-                "Valid household-owned cars at that location are legitimate and must not be deleted.");
+                "Valid household-owned cars at that location are legit and should probably not all be deleted.");
             text.AppendLine(
                 "Note: Unknown parked cars have no usable concrete lane. Vanilla can leave an unspawned car " +
                 "at its trip source when initial parking assignment fails; TripSource may later be removed.");
@@ -262,8 +277,8 @@ namespace ParkingControl
                 "Note: StreetUsage compares street cars only with known street, public, and building parking; " +
                 "outside-connection and unknown staging are excluded.");
             text.AppendLine(
-                "Note: Entity IDs use Index:Version for Scene Explorer and are valid only within this loaded city session.");
-            text.Append("===================================================================");
+                "Note: Entity IDs use Index:Version for Scene Explorer mod use.");
+            text.Append($"==================== {Mod.ModTag} END OF PARKING REPORT ====================");
             LogUtils.Info(text.ToString());
 
             m_PreviousReport = snapshot;
@@ -350,7 +365,7 @@ namespace ParkingControl
         {
             List<Entity> vehicles = new List<Entity>(details.CurrentStreetVehicles);
             text.AppendLine(
-                "VehicleEntitySamples=<up to 10 per parked location; enter Index:Version in Scene Explorer>");
+                "Samples=<up to 10 per parked location; enter Index:Version in Scene Explorer>");
             AppendEntitySampleLine(text, "Street", snapshot.StreetParked, vehicles);
             AppendEntitySampleLine(text, "Visible", snapshot.VisibleOffStreet, details.VisibleSamples);
             AppendEntitySampleLine(text, "Hidden", snapshot.HiddenInBuildings, details.HiddenSamples);
