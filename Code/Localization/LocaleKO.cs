@@ -44,15 +44,25 @@ namespace ParkingControl
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "모드 정보" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "링크" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutDiagnosticsGroup), "진단" },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NoStreetParking)), "노상 주차 금지 (도시 전체)" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.NoStreetParking)),
-                    "- 앞으로 개인 차량과 오토바이가 노상 주차를 사용하지 못하게 합니다.\n" +
-                    "- 주차장과 건물에 포함된 주차 공간은 계속 사용할 수 있습니다.\n" +
-                    "- 이미 주차된 차량은 제거되지 않습니다. 시민이 다음에 해당 차량을 사용하면 자연스럽게 떠납니다.\n" +
-                    "- 도시의 노상 외 주차 공간이 충분한지 확인하세요. 부족하면 차량이 빈자리를 찾느라 오래 돌아다닐 수 있습니다." },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "노상 주차 금지" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
+                    "새 노상 주차를 막을 범위를 선택합니다. 이미 주차된 차량은 자연스럽게 떠나며 주차장과 건물 주차는 계속 이용할 수 있습니다." },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "도시 전체" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "구역별" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "꺼짐" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "사용법 표시" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)), "구역 모드 사용법을 표시합니다." },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.DistrictInstructions)),
+                    "<구역 모드>\n" +
+                    "1. 위에서 <구역별>을 선택합니다.\n" +
+                    "2. 도시에서 구역을 만들거나 선택합니다.\n" +
+                    "3. <정책>을 열고 <노상 주차 금지>를 켭니다.\n" +
+                    "선택하지 않은 구역의 도로는 일반 노상 주차를 유지합니다." },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
+                { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "노상 주차 금지" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "노상 주차" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<주차됨> = 아직 도로에 주차되어 있는 차량.\n" +
+                    "<주차됨> = 선택한 모드가 적용되는 도로에 주차된 차량.\n" +
                     "<차선> = 해당 차량이 있는 도로변 주차 구간. 한 차선에 여러 차량이 주차될 수 있습니다.\n" +
                     "<비활성> = 새 차량이 주차할 수 없도록 닫힌 노상 주차 차선.\n" +
                     "<정상> = 노상 주차 금지가 켜져 있고 정상 작동 중입니다.\n" +

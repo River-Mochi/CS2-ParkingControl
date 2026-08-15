@@ -44,15 +44,25 @@ namespace ParkingControl
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "Informations sur le mod" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "Liens" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutDiagnosticsGroup), "Diagnostic" },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NoStreetParking)), "Aucun stationnement sur rue (ville entière)" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.NoStreetParking)),
-                    "- Empêche les véhicules personnels et les motos de se garer dans la rue à l'avenir.\n" +
-                    "- Les parkings et le stationnement inclus dans les bâtiments restent disponibles.\n" +
-                    "- Les véhicules déjà stationnés ne sont pas supprimés. Ils partent naturellement la prochaine fois qu'un citoyen utilise la voiture.\n" +
-                    "- Assurez-vous que la ville dispose de suffisamment de stationnement hors rue, sinon les voitures risquent de beaucoup rouler pour trouver une place." },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "Stationnement sur rue interdit" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
+                    "Choisissez où interdire tout nouveau stationnement sur rue. Les voitures déjà garées partent naturellement ; les parkings et bâtiments restent disponibles." },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Ville entière" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "Par quartier" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "Désactivé" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Afficher les instructions" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)), "Afficher comment utiliser le mode par quartier." },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.DistrictInstructions)),
+                    "<Mode par quartier>\n" +
+                    "1. Choisissez <Par quartier> ci-dessus.\n" +
+                    "2. Créez ou sélectionnez un quartier dans la ville.\n" +
+                    "3. Ouvrez <Politiques> et activez <Stationnement sur rue interdit>.\n" +
+                    "Le stationnement normal reste permis hors des quartiers sélectionnés." },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
+                { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "Stationnement sur rue interdit" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Stationnement sur rue" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Garées> = voitures encore stationnées dans les rues.\n" +
+                    "<Garées> = voitures dans les rues couvertes par le mode choisi.\n" +
                     "<Voies> = sections de stationnement en bord de route contenant ces voitures. Une voie peut contenir plusieurs voitures.\n" +
                     "<Fermées> = voies de stationnement sur rue fermées aux nouveaux stationnements.\n" +
                     "<OK> = Aucun stationnement sur rue est activé et fonctionne.\n" +

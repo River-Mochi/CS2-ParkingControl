@@ -44,15 +44,25 @@ namespace ParkingControl
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "模组信息" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "链接" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutDiagnosticsGroup), "诊断" },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NoStreetParking)), "全城禁止路边停车" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.NoStreetParking)),
-                    "- 阻止之后的私人车辆和摩托车使用路边停车位。\n" +
-                    "- 停车场和建筑物附带的停车位仍可使用。\n" +
-                    "- 已经停放的车辆不会被移除。市民下次使用车辆时，它们会自然驶离。\n" +
-                    "- 请确保城市有足够的非路边停车位，否则车辆可能会长时间寻找空位。" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "禁止路边停车" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
+                    "选择禁止新车辆路边停车的范围。已停放车辆会自然驶离；停车场和建筑停车位仍可使用。" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "全城" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "按行政区" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "关闭" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "显示说明" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)), "显示行政区模式的使用方法。" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.DistrictInstructions)),
+                    "<行政区模式>\n" +
+                    "1. 在上方选择<按行政区>。\n" +
+                    "2. 在城市中创建或选择行政区。\n" +
+                    "3. 打开<政策>并启用<禁止路边停车>。\n" +
+                    "未选择的行政区仍保留普通路边停车。" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
+                { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "禁止路边停车" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "路边停车" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<已停放> = 仍停在道路上的车辆。\n" +
+                    "<已停放> = 停在所选模式覆盖道路上的车辆。\n" +
                     "<车道> = 停放这些车辆的路边停车路段。一条停车车道可停多辆车。\n" +
                     "<已禁用> = 已禁止新车辆停车的路边停车车道。\n" +
                     "<正常> = 禁止路边停车已开启并正常工作。\n" +

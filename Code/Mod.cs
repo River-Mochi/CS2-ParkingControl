@@ -100,6 +100,7 @@ namespace ParkingControl
             AssetDatabase.global.LoadSettings(ModId, settings, new PCSettings(this));
             settings.RegisterInOptionsUI();
 
+            updateSystem.UpdateAt<ParkingPolicySystem>(SystemUpdatePhase.PrefabUpdate);
             updateSystem.UpdateBefore<StreetParkingBaselineSystem, ParkingLaneDataSystem>(
                 SystemUpdatePhase.ModificationEnd);
             updateSystem.UpdateAfter<NoStreetParkingSystem, ParkingLaneDataSystem>(
@@ -115,7 +116,7 @@ namespace ParkingControl
             NoStreetParkingSystem.RequestReconcile();
 
             LogUtils.Info(
-                $"{ModTag} Loaded. Whole-city street parking restriction: {settings.NoStreetParking}.");
+                $"{ModTag} Loaded. No-street-parking scope: {settings.Scope}.");
         }
 
         /// <inheritdoc/>

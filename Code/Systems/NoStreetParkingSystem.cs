@@ -6,7 +6,7 @@
 // all copies or substantial portions of this code.
 // ================= </copyright> ======================
 
-// Purpose: Disables ordinary car curb-parking lanes while the citywide option is enabled.
+// Purpose: Disables ordinary street-parking lanes citywide or in opted-in districts.
 
 namespace ParkingControl
 {
@@ -24,7 +24,7 @@ namespace ParkingControl
     using Temp = Game.Tools.Temp;
 
     /// <summary>
-    /// Keeps ordinary car curb-parking lanes synchronized with the whole-city option.
+    /// Keeps ordinary street-parking lanes synchronized with the selected coverage.
     /// </summary>
     public sealed partial class NoStreetParkingSystem : GameSystemBase
     {
@@ -34,8 +34,9 @@ namespace ParkingControl
         private EntityQuery m_AllParkingLanesQuery;
         private EntityQuery m_ChangedParkingLanesQuery;
         private EntityQuery m_ModifiedParkingLanesQuery;
+        private EntityQuery m_PolicyModifyQuery;
         private bool m_Initialized;
-        private bool m_LastEnabled;
+        private PCSettings.ParkingScope m_LastScope;
 
         /// <summary>
         /// Requests a full reconciliation during the next modification pass.
@@ -79,6 +80,9 @@ namespace ParkingControl
                 .WithAll<ParkingLane, StreetParkingState>()
                 .WithNone<Deleted, Temp>()
                 .Build();
+            m_PolicyModifyQuery = SystemAPI.QueryBuilder()
+                .WithAll<Game.Common.Event, Game.Policies.Modify>()
+                .Build();
         }
 
         /// <inheritdoc/>
@@ -101,44 +105,66 @@ namespace ParkingControl
         /// <inheritdoc/>
         protected override void OnUpdate()
         {
-            bool enabled = Mod.Settings?.NoStreetParking ?? false;
-            bool fullReconcile = s_ReconcileRequested || s_SaveRecoveryRequested || !m_Initialized || enabled != m_LastEnabled;
+            PCSettings.ParkingScope scope =
+                Mod.Settings?.Scope ?? PCSettings.ParkingScope.Off;
+            Entity policyEntity = ParkingPolicySystem.PolicyEntity;
+            bool policyChanged =
+                scope == PCSettings.ParkingScope.ByDistrict &&
+                HasPolicyChange(policyEntity);
+            bool fullReconcile =
+                s_ReconcileRequested ||
+                s_SaveRecoveryRequested ||
+                !m_Initialized ||
+                scope != m_LastScope ||
+                policyChanged;
 
-            if (!fullReconcile && (!enabled || m_ChangedParkingLanesQuery.IsEmptyIgnoreFilter))
+            if (!fullReconcile &&
+                (scope == PCSettings.ParkingScope.Off ||
+                    m_ChangedParkingLanesQuery.IsEmptyIgnoreFilter))
             {
                 return;
             }
 
             Dependency.Complete();
 
-            ReconcileResult result = enabled
-                ? DisableStreetParking(fullReconcile)
+            ReconcileResult result = scope != PCSettings.ParkingScope.Off
+                ? ReconcileStreetParking(scope, policyEntity, fullReconcile)
                 : RestoreStreetParking();
 
             m_Initialized = true;
-            m_LastEnabled = enabled;
+            m_LastScope = scope;
             s_ReconcileRequested = false;
             s_SaveRecoveryRequested = false;
 
             if (fullReconcile)
             {
-                string action = enabled ? "blocked" : "restored";
+                string action = scope == PCSettings.ParkingScope.Off ? "restored" : "blocked";
                 int ownedLanes = m_ModifiedParkingLanesQuery.CalculateEntityCount();
-                LogUtils.Info($"{Mod.ModTag} Street parking {action}: {result.m_Changed} lane flags changed, {ownedLanes} lanes owned by Parking Control.");
+                LogUtils.Info(
+                    $"{Mod.ModTag} Street parking {action} ({scope}): " +
+                    $"{result.m_Changed} lane flags changed, " +
+                    $"{ownedLanes} lanes owned by Parking Control.");
             }
         }
 
-        private ReconcileResult DisableStreetParking(bool fullReconcile)
+        private ReconcileResult ReconcileStreetParking(
+            PCSettings.ParkingScope scope,
+            Entity policyEntity,
+            bool fullReconcile)
         {
             ComponentLookup<ParkingLane> parkingLaneLookup = SystemAPI.GetComponentLookup<ParkingLane>();
             ComponentLookup<Owner> ownerLookup = SystemAPI.GetComponentLookup<Owner>(true);
             ComponentLookup<PrefabRef> prefabRefLookup = SystemAPI.GetComponentLookup<PrefabRef>(true);
             ComponentLookup<ParkingLaneData> parkingLaneDataLookup = SystemAPI.GetComponentLookup<ParkingLaneData>(true);
             ComponentLookup<Road> roadLookup = SystemAPI.GetComponentLookup<Road>(true);
+            ComponentLookup<Game.Areas.BorderDistrict> borderDistrictLookup =
+                SystemAPI.GetComponentLookup<Game.Areas.BorderDistrict>(true);
             ComponentLookup<StreetParkingState> stateLookup = SystemAPI.GetComponentLookup<StreetParkingState>(true);
             ComponentLookup<Created> createdLookup = SystemAPI.GetComponentLookup<Created>(true);
             ComponentLookup<Updated> updatedLookup = SystemAPI.GetComponentLookup<Updated>(true);
             ComponentLookup<PathfindUpdated> pathfindUpdatedLookup = SystemAPI.GetComponentLookup<PathfindUpdated>(true);
+            BufferLookup<Game.Policies.Policy> policyLookup =
+                SystemAPI.GetBufferLookup<Game.Policies.Policy>(true);
 
             NativeList<Entity> addStateEntities = new(Allocator.Temp);
             NativeList<Entity> removeStateEntities = new(Allocator.Temp);
@@ -163,8 +189,18 @@ namespace ParkingControl
                         prefabRefLookup,
                         parkingLaneDataLookup,
                         roadLookup);
+                    bool shouldRestrict =
+                        isStreetParking &&
+                        IsRestrictionTarget(
+                            entity,
+                            parkingLane,
+                            scope,
+                            policyEntity,
+                            ownerLookup,
+                            borderDistrictLookup,
+                            policyLookup);
 
-                    if (!isStreetParking)
+                    if (!shouldRestrict)
                     {
                         if (hasState)
                         {
@@ -239,6 +275,82 @@ namespace ParkingControl
             removeStateEntities.Dispose();
             pathfindUpdateEntities.Dispose();
             return result;
+        }
+
+        /// <summary>
+        /// Returns whether this road side is covered by the selected scope.
+        /// </summary>
+        internal static bool IsRestrictionTarget(
+            Entity lane,
+            ParkingLane parkingLane,
+            PCSettings.ParkingScope scope,
+            Entity policyEntity,
+            ComponentLookup<Owner> ownerLookup,
+            ComponentLookup<Game.Areas.BorderDistrict> borderDistrictLookup,
+            BufferLookup<Game.Policies.Policy> policyLookup)
+        {
+            if (scope == PCSettings.ParkingScope.WholeCity)
+            {
+                return true;
+            }
+
+            if (scope != PCSettings.ParkingScope.ByDistrict || policyEntity == Entity.Null)
+            {
+                return false;
+            }
+
+            Entity road = ownerLookup[lane].m_Owner;
+            if (!borderDistrictLookup.TryGetComponent(
+                    road,
+                    out Game.Areas.BorderDistrict borderDistrict))
+            {
+                return false;
+            }
+
+            // Match vanilla roadside parking fees: RightSide uses the road's right
+            // district; every other ordinary parking lane uses its left district.
+            Entity district =
+                (parkingLane.m_Flags & ParkingLaneFlags.RightSide) != 0
+                    ? borderDistrict.m_Right
+                    : borderDistrict.m_Left;
+            if (district == Entity.Null ||
+                !policyLookup.TryGetBuffer(
+                    district,
+                    out DynamicBuffer<Game.Policies.Policy> policies))
+            {
+                return false;
+            }
+
+            foreach (Game.Policies.Policy policy in policies)
+            {
+                if (policy.m_Policy == policyEntity &&
+                    (policy.m_Flags & Game.Policies.PolicyFlags.Active) != 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool HasPolicyChange(Entity policyEntity)
+        {
+            if (policyEntity == Entity.Null || m_PolicyModifyQuery.IsEmptyIgnoreFilter)
+            {
+                return false;
+            }
+
+            using NativeArray<Game.Policies.Modify> modifications =
+                m_PolicyModifyQuery.ToComponentDataArray<Game.Policies.Modify>(Allocator.Temp);
+            foreach (Game.Policies.Modify modification in modifications)
+            {
+                if (modification.m_Policy == policyEntity)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private ReconcileResult RestoreStreetParking()

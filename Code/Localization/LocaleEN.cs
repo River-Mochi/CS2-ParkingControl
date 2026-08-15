@@ -44,15 +44,25 @@ namespace ParkingControl
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "Mod information" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "Links" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutDiagnosticsGroup), "Diagnostics" },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NoStreetParking)), "No street parking (whole city)" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.NoStreetParking)),
-                    "- Prevents future personal vehicles + motorcycles, from using street parking.\n" +
-                    "- Parking lots, building parking stay available.\n" +
-                    "- Existing parked vehicles are not removed. They naturally leave the next time a citizen uses the car. \n" +
-                    "- Make sure the city has adequate off-street parking or cars may drive a lot looking for a space." },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "No street parking" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
+                    "Choose where new street parking is blocked. Existing parked cars leave naturally; lots and building parking remain available." },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Whole city" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "By district" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "Off" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Show instructions" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)), "Show how to use district mode." },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.DistrictInstructions)),
+                    "<District mode>\n" +
+                    "1. Choose <By district> above.\n" +
+                    "2. Create or select a district in the city.\n" +
+                    "3. Open <Policies> and enable <No Street Parking>.\n" +
+                    "Roads outside selected districts keep normal street parking." },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
+                { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "No Street Parking" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Street Parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Parked> = cars still parked on streets.\n" +
+                    "<Parked> = cars still parked on streets covered by the selected mode.\n" +
                     "<Lanes> = roadside parking sections holding those cars. One lane can hold several cars.\n" +
                     "<Disabled> = street-parking lanes closed to new parking.\n" +
                     "<OK> = No Street Parking is on and working.\n" +

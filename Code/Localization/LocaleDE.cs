@@ -44,15 +44,25 @@ namespace ParkingControl
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "Mod-Informationen" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "Links" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutDiagnosticsGroup), "Diagnose" },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NoStreetParking)), "Kein Straßenparken (gesamte Stadt)" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.NoStreetParking)),
-                    "- Verhindert, dass private Fahrzeuge und Motorräder künftig Straßenparkplätze nutzen.\n" +
-                    "- Parkplätze und Stellplätze in Gebäuden bleiben verfügbar.\n" +
-                    "- Bereits geparkte Fahrzeuge werden nicht entfernt. Sie fahren auf natürliche Weise weg, sobald ein Bürger das Auto das nächste Mal benutzt.\n" +
-                    "- Stelle sicher, dass die Stadt genügend Parkmöglichkeiten abseits der Straße hat, sonst fahren Autos möglicherweise lange auf der Suche nach einem Stellplatz herum." },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "Kein Straßenparken" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
+                    "Wähle, wo neues Straßenparken gesperrt wird. Bereits geparkte Autos fahren natürlich weg; Parkplätze und Gebäudeparkplätze bleiben verfügbar." },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Ganze Stadt" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "Nach Bezirk" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "Aus" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Anweisungen anzeigen" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)), "Anleitung für den Bezirksmodus anzeigen." },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.DistrictInstructions)),
+                    "<Bezirksmodus>\n" +
+                    "1. Wähle oben <Nach Bezirk>.\n" +
+                    "2. Erstelle oder wähle einen Bezirk in der Stadt.\n" +
+                    "3. Öffne <Richtlinien> und aktiviere <Kein Straßenparken>.\n" +
+                    "Außerhalb ausgewählter Bezirke bleibt normales Straßenparken erlaubt." },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
+                { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "Kein Straßenparken" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Straßenparken" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Geparkt> = Autos, die noch auf Straßen geparkt sind.\n" +
+                    "<Geparkt> = Autos auf Straßen, die vom gewählten Modus erfasst werden.\n" +
                     "<Spuren> = Straßenrand-Parkabschnitte mit diesen Autos. Eine Spur kann mehrere Autos aufnehmen.\n" +
                     "<Deaktiviert> = Straßenparkspuren, die für neues Parken gesperrt sind.\n" +
                     "<OK> = Kein Straßenparken ist aktiviert und funktioniert.\n" +

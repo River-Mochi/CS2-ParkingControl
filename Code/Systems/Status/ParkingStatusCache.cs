@@ -218,20 +218,29 @@ namespace ParkingControl
 
         private static void PublishSnapshotRows(ParkingSnapshot snapshot)
         {
+            bool districtScope = snapshot.Scope == PCSettings.ParkingScope.ByDistrict;
+            int parked = districtScope ? snapshot.TargetStreetParked : snapshot.StreetParked;
+            int occupiedLanes = districtScope
+                ? snapshot.OccupiedTargetCurbLanes
+                : snapshot.OccupiedCurbLanes;
+            int disabledLanes = districtScope
+                ? snapshot.DisabledTargetCurbLanes
+                : snapshot.DisabledCurbLanes;
+            int targetLanes = districtScope ? snapshot.TargetCurbLanes : snapshot.CurbLanes;
             string status = LocalizeOwnershipStatus(
                 ParkingStatusSystem.GetOwnershipStatus(
                     snapshot.RestrictionEnabled,
-                    snapshot.CurbLanes,
-                    snapshot.DisabledCurbLanes,
+                    targetLanes,
+                    disabledLanes,
                     snapshot.TrackedCurbLanes));
 
             string enforcement = ParkingStatusLocale.Format(
                 ParkingStatusLocale.kEnforcementFormat,
                 kEnforcementFormatFallback,
-                Format(snapshot.StreetParked),
-                Format(snapshot.OccupiedCurbLanes),
-                Format(snapshot.DisabledCurbLanes),
-                Format(snapshot.CurbLanes),
+                Format(parked),
+                Format(occupiedLanes),
+                Format(disabledLanes),
+                Format(targetLanes),
                 status);
             string vehicles = ParkingStatusLocale.Format(
                 ParkingStatusLocale.kVehicleFormat,

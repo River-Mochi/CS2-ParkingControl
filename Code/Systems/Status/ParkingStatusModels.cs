@@ -21,11 +21,14 @@ namespace ParkingControl
     {
         public DateTime CapturedAtLocal;
         public uint SimulationFrame;
-        public bool RestrictionEnabled;
+        public PCSettings.ParkingScope Scope;
         public int CurbLanes;
+        public int TargetCurbLanes;
         public int DisabledCurbLanes;
+        public int DisabledTargetCurbLanes;
         public int TrackedCurbLanes;
         public int OccupiedCurbLanes;
+        public int OccupiedTargetCurbLanes;
         public int FixedSlotCurbLanes;
         public int FixedSlotCurbCapacity;
         public int FixedSlotCurbParked;
@@ -36,6 +39,7 @@ namespace ParkingControl
         public int ActiveVehicles;
         public int UnlocatedVehicles;
         public int StreetParked;
+        public int TargetStreetParked;
         public int VisibleOffStreet;
         public int VisibleFacilityParking;
         public int VisibleBuildingParking;
@@ -95,6 +99,10 @@ namespace ParkingControl
         public int GarageLanes;
         public int GarageCapacity;
         public int GarageOccupied;
+        public int Districts;
+        public int DistrictsWithPolicy;
+
+        public readonly bool RestrictionEnabled => Scope != PCSettings.ParkingScope.Off;
 
         public readonly int ParkedElsewhere =>
             VisibleOffStreet + HiddenInBuildings + OutsideConnection + UnassignedOrUnknownParked;

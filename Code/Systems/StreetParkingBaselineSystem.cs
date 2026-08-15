@@ -71,7 +71,8 @@ namespace ParkingControl
             }
 
             s_ScanRequested = false;
-            if (!(Mod.Settings?.NoStreetParking ?? false))
+            if ((Mod.Settings?.Scope ?? PCSettings.ParkingScope.Off) ==
+                PCSettings.ParkingScope.Off)
             {
                 Enabled = false;
                 return;

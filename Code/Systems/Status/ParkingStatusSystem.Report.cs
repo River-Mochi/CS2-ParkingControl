@@ -100,13 +100,21 @@ namespace ParkingControl
                 snapshot.DisabledCurbLanes - snapshot.TrackedCurbLanes);
             string enforcementStatus = GetOwnershipStatus(
                 snapshot.RestrictionEnabled,
-                snapshot.CurbLanes,
-                snapshot.DisabledCurbLanes,
+                snapshot.Scope == PCSettings.ParkingScope.ByDistrict
+                    ? snapshot.TargetCurbLanes
+                    : snapshot.CurbLanes,
+                snapshot.Scope == PCSettings.ParkingScope.ByDistrict
+                    ? snapshot.DisabledTargetCurbLanes
+                    : snapshot.DisabledCurbLanes,
                 snapshot.TrackedCurbLanes);
             string enforcementDetails = GetOwnershipDetails(
                 snapshot.RestrictionEnabled,
-                snapshot.CurbLanes,
-                snapshot.DisabledCurbLanes,
+                snapshot.Scope == PCSettings.ParkingScope.ByDistrict
+                    ? snapshot.TargetCurbLanes
+                    : snapshot.CurbLanes,
+                snapshot.Scope == PCSettings.ParkingScope.ByDistrict
+                    ? snapshot.DisabledTargetCurbLanes
+                    : snapshot.DisabledCurbLanes,
                 snapshot.TrackedCurbLanes);
             string deltaLine = m_HasPreviousReport
                 ? "ChangeSincePrevious: " +
@@ -122,8 +130,16 @@ namespace ParkingControl
             text.AppendLine($"==================== {Mod.ModTag} PARKING REPORT ====================");
             text.AppendLine($"Mod={Mod.ModName} v{Mod.ModVersion}");
             text.AppendLine($"SimulationFrame={snapshot.SimulationFrame}");
-            text.AppendLine($"WholeCityNoStreetParking={snapshot.RestrictionEnabled}");
+            text.AppendLine($"ParkingScope={snapshot.Scope}");
+            text.AppendLine(
+                $"DistrictPolicy=ActiveIn{snapshot.DistrictsWithPolicy}/{snapshot.Districts}Districts " +
+                $"(PolicyEntity={FormatEntity(ParkingPolicySystem.PolicyEntity)})");
             text.AppendLine($"EligibleStreetParkingLanes={snapshot.CurbLanes}");
+            text.AppendLine(
+                $"TargetStreetParkingLanes={snapshot.TargetCurbLanes} " +
+                $"(Disabled={snapshot.DisabledTargetCurbLanes}, " +
+                $"Occupied={snapshot.OccupiedTargetCurbLanes}, " +
+                $"ParkedCars={snapshot.TargetStreetParked})");
             text.AppendLine(
                 $"DisabledStreetParkingLanes={snapshot.DisabledCurbLanes} " +
                 $"(ParkingControlTracked={snapshot.TrackedCurbLanes}, VanillaOrOther={otherDisabledCurbLanes})");
@@ -379,7 +395,7 @@ namespace ParkingControl
         }
 
         /// <summary>
-        /// Describes whether eligible curb lanes match the current restriction setting.
+        /// Describes whether targeted street-parking lanes match the current restriction setting.
         /// </summary>
         internal static string GetOwnershipStatus(
             bool restrictionEnabled,
@@ -430,12 +446,12 @@ namespace ParkingControl
 
             if (curbLanes > 0 && trackedCurbLanes == 0)
             {
-                return "Restriction on but Parking Control owns no eligible lanes";
+                return "Restriction on but Parking Control owns no targeted lanes";
             }
 
             if (disabledCurbLanes < curbLanes)
             {
-                return "Some eligible street-parking lanes are not disabled";
+                return "Some targeted street-parking lanes are not disabled";
             }
 
             if (disabledCurbLanes < trackedCurbLanes)
@@ -443,7 +459,7 @@ namespace ParkingControl
                 return "Some Parking Control lanes are not disabled";
             }
 
-            return "Restriction on and eligible street-parking lanes are disabled";
+            return "Restriction on and targeted street-parking lanes are disabled";
         }
 
         private static string FormatDelta(int value)

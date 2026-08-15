@@ -44,15 +44,25 @@ namespace ParkingControl
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "Informacje o modzie" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "Linki" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutDiagnosticsGroup), "Diagnostyka" },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NoStreetParking)), "Zakaz parkowania przy ulicy (całe miasto)" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.NoStreetParking)),
-                    "- Uniemożliwia pojazdom prywatnym i motocyklom korzystanie w przyszłości z parkowania przy ulicy.\n" +
-                    "- Parkingi i miejsca parkingowe w budynkach pozostają dostępne.\n" +
-                    "- Już zaparkowane pojazdy nie są usuwane. Odjadą naturalnie, gdy obywatel następnym razem użyje samochodu.\n" +
-                    "- Upewnij się, że miasto ma wystarczająco dużo miejsc poza ulicami, inaczej samochody mogą długo jeździć w poszukiwaniu miejsca." },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "Zakaz parkowania przy ulicy" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
+                    "Wybierz, gdzie blokować nowe parkowanie przy ulicy. Już zaparkowane auta odjadą naturalnie; parkingi i miejsca w budynkach pozostaną dostępne." },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Całe miasto" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "Według dzielnic" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "Wyłączone" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Pokaż instrukcje" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)), "Pokaż sposób użycia trybu dzielnic." },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.DistrictInstructions)),
+                    "<Tryb dzielnic>\n" +
+                    "1. Wybierz wyżej <Według dzielnic>.\n" +
+                    "2. Utwórz lub wybierz dzielnicę w mieście.\n" +
+                    "3. Otwórz <Polityki> i włącz <Zakaz parkowania przy ulicy>.\n" +
+                    "Poza wybranymi dzielnicami pozostaje zwykłe parkowanie." },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
+                { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "Zakaz parkowania przy ulicy" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Parkowanie przy ulicy" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Zaparkowane> = samochody nadal zaparkowane na ulicach.\n" +
+                    "<Zaparkowane> = auta na ulicach objętych wybranym trybem.\n" +
                     "<Pasy> = odcinki parkingowe przy drodze zajęte przez te samochody. Jeden pas może pomieścić kilka samochodów.\n" +
                     "<Wyłączone> = pasy parkowania przy ulicy zamknięte dla nowych pojazdów.\n" +
                     "<OK> = Zakaz parkowania przy ulicy jest włączony i działa.\n" +

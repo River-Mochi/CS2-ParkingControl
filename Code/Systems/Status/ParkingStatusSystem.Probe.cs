@@ -28,6 +28,8 @@ namespace ParkingControl
                 GetComponentLookup<Game.Buildings.Building>(true);
             ComponentLookup<Game.Buildings.CarParkingFacility> carParkingFacilityLookup =
                 GetComponentLookup<Game.Buildings.CarParkingFacility>(true);
+            ComponentLookup<Game.Areas.BorderDistrict> borderDistrictLookup =
+                GetComponentLookup<Game.Areas.BorderDistrict>(true);
             ComponentLookup<Game.Vehicles.CarCurrentLane> currentLaneLookup =
                 GetComponentLookup<Game.Vehicles.CarCurrentLane>(true);
             ComponentLookup<Game.Net.ConnectionLane> connectionLaneLookup =
@@ -68,18 +70,49 @@ namespace ParkingControl
                 GetBufferLookup<Game.Net.LaneObject>(true);
             BufferLookup<Game.Vehicles.OwnedVehicle> ownedVehicleLookup =
                 GetBufferLookup<Game.Vehicles.OwnedVehicle>(true);
+            BufferLookup<Game.Policies.Policy> policyLookup =
+                GetBufferLookup<Game.Policies.Policy>(true);
             BufferLookup<Game.Net.SubLane> subLaneLookup = GetBufferLookup<Game.Net.SubLane>(true);
             BufferLookup<Game.Net.SubNet> subNetLookup = GetBufferLookup<Game.Net.SubNet>(true);
             BufferLookup<Game.Objects.SubObject> subObjectLookup =
                 GetBufferLookup<Game.Objects.SubObject>(true);
 
+            PCSettings.ParkingScope scope =
+                Mod.Settings?.Scope ?? PCSettings.ParkingScope.Off;
+            Entity policyEntity = ParkingPolicySystem.PolicyEntity;
             ParkingSnapshot snapshot = new()
             {
                 CapturedAtLocal = DateTime.Now,
                 SimulationFrame = m_SimulationSystem.frameIndex,
-                RestrictionEnabled = Mod.Settings?.NoStreetParking ?? false,
+                Scope = scope,
             };
             HashSet<Entity> occupiedCurbLanes = new();
+            HashSet<Entity> occupiedTargetCurbLanes = new();
+
+            using (NativeArray<Entity> districts = m_DistrictQuery.ToEntityArray(Allocator.Temp))
+            {
+                snapshot.Districts = districts.Length;
+                foreach (Entity district in districts)
+                {
+                    if (policyEntity == Entity.Null ||
+                        !policyLookup.TryGetBuffer(
+                            district,
+                            out DynamicBuffer<Game.Policies.Policy> policies))
+                    {
+                        continue;
+                    }
+
+                    foreach (Game.Policies.Policy policy in policies)
+                    {
+                        if (policy.m_Policy == policyEntity &&
+                            (policy.m_Flags & Game.Policies.PolicyFlags.Active) != 0)
+                        {
+                            snapshot.DistrictsWithPolicy++;
+                            break;
+                        }
+                    }
+                }
+            }
 
             using (NativeArray<Entity> lanes = m_CurbLaneQuery.ToEntityArray(Allocator.Temp))
             {
@@ -139,9 +172,26 @@ namespace ParkingControl
                     }
 
                     snapshot.CurbLanes++;
+                    bool isTarget = NoStreetParkingSystem.IsRestrictionTarget(
+                        lane,
+                        parkingLane,
+                        scope,
+                        policyEntity,
+                        ownerLookup,
+                        borderDistrictLookup,
+                        policyLookup);
+                    if (isTarget)
+                    {
+                        snapshot.TargetCurbLanes++;
+                    }
+
                     if ((parkingLane.m_Flags & Game.Net.ParkingLaneFlags.ParkingDisabled) != 0)
                     {
                         snapshot.DisabledCurbLanes++;
+                        if (isTarget)
+                        {
+                            snapshot.DisabledTargetCurbLanes++;
+                        }
                     }
 
                     if (stateLookup.HasComponent(lane))
@@ -333,6 +383,20 @@ namespace ParkingControl
                             snapshot.ParkedVehicles++;
                             snapshot.StreetParked++;
                             occupiedCurbLanes.Add(parkedLane);
+                            Game.Net.ParkingLane streetLane = parkingLaneLookup[parkedLane];
+                            if (NoStreetParkingSystem.IsRestrictionTarget(
+                                    parkedLane,
+                                    streetLane,
+                                    scope,
+                                    policyEntity,
+                                    ownerLookup,
+                                    borderDistrictLookup,
+                                    policyLookup))
+                            {
+                                snapshot.TargetStreetParked++;
+                                occupiedTargetCurbLanes.Add(parkedLane);
+                            }
+
                             if (IsFixedSlotLane(
                                 parkedLane,
                                 prefabRefLookup,
@@ -479,6 +543,7 @@ namespace ParkingControl
             }
 
             snapshot.OccupiedCurbLanes = occupiedCurbLanes.Count;
+            snapshot.OccupiedTargetCurbLanes = occupiedTargetCurbLanes.Count;
             return snapshot;
         }
 

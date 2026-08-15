@@ -44,15 +44,25 @@ namespace ParkingControl
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "Información del mod" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "Enlaces" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutDiagnosticsGroup), "Diagnóstico" },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NoStreetParking)), "Sin estacionamiento en la calle (toda la ciudad)" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.NoStreetParking)),
-                    "- Impide que los vehículos personales y las motocicletas estacionen en la calle en el futuro.\n" +
-                    "- Los estacionamientos y el estacionamiento incluido en edificios siguen disponibles.\n" +
-                    "- Los vehículos que ya están estacionados no se eliminan. Se van de forma natural la próxima vez que un ciudadano usa el coche.\n" +
-                    "- Asegúrate de que la ciudad tenga suficiente estacionamiento fuera de la calle o los coches pueden recorrer mucho buscando un espacio." },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "Sin estacionamiento en la calle" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
+                    "Elige dónde se bloquea el estacionamiento nuevo en la calle. Los coches ya estacionados se van de forma natural; los estacionamientos y edificios siguen disponibles." },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Toda la ciudad" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "Por distrito" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "Desactivado" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Mostrar instrucciones" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)), "Mostrar cómo usar el modo por distrito." },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.DistrictInstructions)),
+                    "<Modo por distrito>\n" +
+                    "1. Elige <Por distrito> arriba.\n" +
+                    "2. Crea o selecciona un distrito en la ciudad.\n" +
+                    "3. Abre <Políticas> y activa <Sin estacionamiento en la calle>.\n" +
+                    "Las calles fuera de los distritos seleccionados conservan el estacionamiento normal." },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
+                { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "Sin estacionamiento en la calle" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Estacionamiento en la calle" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Aparc.> = coches que siguen estacionados en las calles.\n" +
+                    "<Aparc.> = coches en calles cubiertas por el modo seleccionado.\n" +
                     "<Carr.> = secciones de estacionamiento junto a la calle que contienen esos coches. Un carril puede contener varios coches.\n" +
                     "<Cerrados> = carriles de estacionamiento en la calle cerrados a nuevos vehículos.\n" +
                     "<OK> = Sin estacionamiento en la calle está activado y funcionando.\n" +

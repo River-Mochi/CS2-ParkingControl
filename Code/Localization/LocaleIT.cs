@@ -44,15 +44,25 @@ namespace ParkingControl
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "Informazioni sulla mod" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "Collegamenti" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutDiagnosticsGroup), "Diagnostica" },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NoStreetParking)), "Nessun parcheggio su strada (intera città)" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.NoStreetParking)),
-                    "- Impedisce ai veicoli personali e alle motociclette di usare il parcheggio su strada in futuro.\n" +
-                    "- I parcheggi e i posti auto inclusi negli edifici restano disponibili.\n" +
-                    "- I veicoli già parcheggiati non vengono rimossi. Se ne vanno naturalmente la prossima volta che un cittadino usa l'auto.\n" +
-                    "- Assicurati che la città disponga di abbastanza parcheggi fuori strada, altrimenti le auto potrebbero girare a lungo in cerca di un posto." },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "Niente parcheggio su strada" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
+                    "Scegli dove bloccare i nuovi parcheggi su strada. Le auto già parcheggiate se ne vanno naturalmente; parcheggi ed edifici restano disponibili." },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Intera città" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "Per distretto" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "Disattivato" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Mostra istruzioni" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)), "Mostra come usare la modalità per distretto." },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.DistrictInstructions)),
+                    "<Modalità per distretto>\n" +
+                    "1. Scegli <Per distretto> qui sopra.\n" +
+                    "2. Crea o seleziona un distretto nella città.\n" +
+                    "3. Apri <Politiche> e attiva <Niente parcheggio su strada>.\n" +
+                    "Fuori dai distretti selezionati resta il parcheggio normale." },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
+                { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "Niente parcheggio su strada" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Parcheggio su strada" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Parcheggiate> = auto ancora parcheggiate sulle strade.\n" +
+                    "<Parcheggiate> = auto sulle strade coperte dalla modalità scelta.\n" +
                     "<Corsie> = sezioni di parcheggio a bordo strada che contengono quelle auto. Una corsia può contenere diverse auto.\n" +
                     "<Disattivate> = corsie di parcheggio su strada chiuse a nuovi parcheggi.\n" +
                     "<OK> = Nessun parcheggio su strada è attivo e funziona.\n" +

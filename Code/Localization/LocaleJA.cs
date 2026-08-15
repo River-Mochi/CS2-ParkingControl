@@ -44,15 +44,25 @@ namespace ParkingControl
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "MOD情報" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "リンク" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutDiagnosticsGroup), "診断" },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NoStreetParking)), "路上駐車禁止（市全体）" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.NoStreetParking)),
-                    "- 今後、自家用車とオートバイが路上駐車を利用できないようにします。\n" +
-                    "- 駐車場や建物に付属する駐車スペースは引き続き利用できます。\n" +
-                    "- すでに駐車中の車両は削除されません。市民が次にその車を使用すると自然に移動します。\n" +
-                    "- 路外駐車が十分にないと、空きを探して車が長時間走り回ることがあります。" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "路上駐車禁止" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
+                    "新しい路上駐車を禁止する範囲を選びます。すでに駐車中の車は自然に移動し、駐車場と建物内駐車は引き続き利用できます。" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "市全体" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "地区ごと" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "オフ" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "手順を表示" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)), "地区モードの使い方を表示します。" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.DistrictInstructions)),
+                    "<地区モード>\n" +
+                    "1. 上で<地区ごと>を選びます。\n" +
+                    "2. 都市内で地区を作成または選択します。\n" +
+                    "3. <条例>を開き、<路上駐車禁止>を有効にします。\n" +
+                    "選択していない地区では通常の路上駐車が残ります。" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
+                { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "路上駐車禁止" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "路上駐車" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<駐車中> = 道路上にまだ駐車している車。\n" +
+                    "<駐車中> = 選択したモードの対象道路に駐車している車。\n" +
                     "<車線> = それらの車が駐車している道路脇の駐車区画。1つの車線に複数の車を駐車できます。\n" +
                     "<無効> = 新たな駐車を受け付けない路上駐車車線。\n" +
                     "<OK> = 路上駐車禁止が有効で正常に動作しています。\n" +

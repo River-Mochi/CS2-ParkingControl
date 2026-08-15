@@ -23,6 +23,7 @@ namespace ParkingControl
     public sealed partial class ParkingStatusSystem : GameSystemBase
     {
         private EntityQuery m_CurbLaneQuery;
+        private EntityQuery m_DistrictQuery;
         private EntityQuery m_GarageLaneQuery;
         private EntityQuery m_ParkingFacilityQuery;
         private EntityQuery m_PersonalVehicleQuery;
@@ -61,6 +62,10 @@ namespace ParkingControl
             // becoming ambiguous when another namespace is added to a partial file.
             m_CurbLaneQuery = SystemAPI.QueryBuilder()
                 .WithAll<Game.Net.ParkingLane, Game.Common.Owner, Game.Prefabs.PrefabRef>()
+                .WithNone<Game.Common.Deleted, Game.Tools.Temp>()
+                .Build();
+            m_DistrictQuery = SystemAPI.QueryBuilder()
+                .WithAll<Game.Areas.District, Game.Policies.Policy>()
                 .WithNone<Game.Common.Deleted, Game.Tools.Temp>()
                 .Build();
             m_GarageLaneQuery = SystemAPI.QueryBuilder()

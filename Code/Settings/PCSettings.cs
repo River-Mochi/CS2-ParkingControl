@@ -41,7 +41,8 @@ namespace ParkingControl
         private const string kUrlParadox =
             "https://mods.paradoxplaza.com/authors/River-mochi/cities_skylines_2?games=cities_skylines_2&orderBy=desc&sortBy=best&time=alltime";
 
-        private bool m_NoStreetParking;
+        private ParkingScope m_AppliedScope;
+        private ParkingScope m_ParkingScope;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PCSettings"/> class.
@@ -54,14 +55,28 @@ namespace ParkingControl
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether ordinary car curb parking is disabled citywide.
+        /// Gets or sets where ordinary street parking is disabled.
         /// </summary>
         [SettingsUISection(kActionsTab, kStreetParkingGroup)]
-        public bool NoStreetParking
+        public ParkingScope Scope
         {
-            get => m_NoStreetParking;
-            set => m_NoStreetParking = value;
+            get => m_ParkingScope;
+            set => m_ParkingScope = value;
         }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether district-mode instructions are shown.
+        /// </summary>
+        [SettingsUISection(kActionsTab, kStreetParkingGroup)]
+        public bool ShowInstructions { get; set; }
+
+        /// <summary>
+        /// Gets the localized district-mode instructions shown by the multiline widget.
+        /// </summary>
+        [SettingsUIMultilineText]
+        [SettingsUIHideByCondition(typeof(PCSettings), nameof(HideInstructions))]
+        [SettingsUISection(kActionsTab, kStreetParkingGroup)]
+        public string DistrictInstructions => string.Empty;
 
         /// <summary>
         /// Gets the cached lane-enforcement status.
@@ -167,7 +182,14 @@ namespace ParkingControl
         public override void Apply()
         {
             base.Apply();
-            if (m_NoStreetParking)
+            if (m_AppliedScope == m_ParkingScope)
+            {
+                return;
+            }
+
+            // Instruction visibility is also a setting change, but it must not rescan lanes.
+            m_AppliedScope = m_ParkingScope;
+            if (m_ParkingScope != ParkingScope.Off)
             {
                 StreetParkingBaselineSystem.RequestScan();
             }
@@ -179,7 +201,13 @@ namespace ParkingControl
         /// <inheritdoc/>
         public override void SetDefaults()
         {
-            m_NoStreetParking = true;
+            m_ParkingScope = ParkingScope.WholeCity;
+            ShowInstructions = false;
+        }
+
+        private bool HideInstructions()
+        {
+            return !ShowInstructions;
         }
 
         private static void ReportToLogAction()
@@ -218,6 +246,16 @@ namespace ParkingControl
             {
                 LogUtils.Warn($"{Mod.ModTag} Failed to open URL: {ex.GetType().Name}: {ex.Message}", ex);
             }
+        }
+
+        /// <summary>
+        /// Selects the area covered by the no-street-parking rule.
+        /// </summary>
+        public enum ParkingScope
+        {
+            WholeCity,
+            ByDistrict,
+            Off,
         }
     }
 }
