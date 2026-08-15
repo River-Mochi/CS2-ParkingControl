@@ -86,7 +86,8 @@ namespace ParkingControl
 
             UIObject uiObject = prefab.AddOrGetComponent<UIObject>();
             uiObject.m_Icon = "Media/Game/Policies/PaidParking.svg";
-            uiObject.m_Priority = 50;
+            // Match vanilla priority so the policy uses the panel's normal alphabetical order.
+            uiObject.m_Priority = 0;
 
             if (!m_PrefabSystem.AddPrefab(prefab))
             {
