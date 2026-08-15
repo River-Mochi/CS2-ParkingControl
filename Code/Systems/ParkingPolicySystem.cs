@@ -137,6 +137,10 @@ namespace ParkingControl
             // Hiding the prefab does not remove saved Policy-buffer selections.
             m_Prefab.m_Visibility = visibility;
             World.GetExistingSystemManaged<SelectedInfoUISystem>()?.RequestUpdate();
+            LogUtils.Info(
+                $"{Mod.ModTag} District policy row " +
+                $"{(visibility == PolicyVisibility.Default ? "shown" : "hidden")} " +
+                $"for scope {Mod.Settings?.Scope}.");
         }
     }
 }

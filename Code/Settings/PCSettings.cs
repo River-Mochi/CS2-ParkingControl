@@ -41,7 +41,8 @@ namespace ParkingControl
         private const string kUrlParadox =
             "https://mods.paradoxplaza.com/authors/River-mochi/cities_skylines_2?games=cities_skylines_2&orderBy=desc&sortBy=best&time=alltime";
 
-        private ParkingScope m_AppliedScope;
+        // Null until the first Options Apply because LoadSettings does not call Apply.
+        private ParkingScope? m_AppliedScope;
         private ParkingScope m_ParkingScope;
 
         /// <summary>
