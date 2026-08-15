@@ -63,13 +63,13 @@ namespace ParkingControl
                     "<District mode>\n" +
                     "1. Choose <By district> above.\n" +
                     "2. Create or select a district in the city.\n" +
-                    "3. Open <Policies> and enable <No Street Parking>.\n" +
+                    "3. Open <Policies> and enable <Roadside Parking Ban>.\n" +
                     "Roads outside selected districts keep normal street parking." },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
-                { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "No Street Parking" },
+                { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "Roadside Parking Ban" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.PrefabName}]",
-                    "New street parking is blocked here if By District is enabled in mod Options. " +
-                    "Existing parked cars leave naturally if the citizen ever needs the car." },
+                    "Select By District in Parking Control Options to block new street parking here. " +
+                    "Existing parked cars leave when their citizens next use them." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Street Parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "<Parked> = cars still parked on streets covered by the selected mode.\n" +
