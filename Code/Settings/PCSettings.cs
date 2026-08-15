@@ -204,6 +204,7 @@ namespace ParkingControl
                 StreetParkingBaselineSystem.RequestScan();
             }
 
+            ParkingPolicySystem.RefreshVisibility();
             NoStreetParkingSystem.RequestReconcile();
             ParkingStatusCache.MarkDirty();
         }

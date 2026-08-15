@@ -46,10 +46,11 @@ namespace ParkingControl
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutDiagnosticsGroup), "Diagnostics" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "No street parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
-                    "Choose if street parking is blocked for the Whole City or per District.\n" +
-                    "Lane is flagged for no parking to prevent new street parking.\n" +
-                    "Existing parked cars leave naturally over time when it is next used.\n" +
-                    "Of course, fee-based parking lots and normal building parking spaces are still useable."
+                    "Select if street parking is blocked for the\n" +
+                    "**Whole City** or **per District**.\n" +
+                    "- Lane is flagged for no parking to prevent new street parking.\n" +
+                    "- Existing parked cars leave naturally over time when it is next used.\n" +
+                    "- Of course, fee-based parking lots and normal building parking spaces are still useable."
                 },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Whole City" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "By District" },

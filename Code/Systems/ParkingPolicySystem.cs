@@ -14,6 +14,7 @@ namespace ParkingControl
     using CS2Shared.RiverMochi;
     using Game;
     using Game.Prefabs;
+    using Game.UI.InGame;
     using Unity.Entities;
 
     /// <summary>
@@ -24,12 +25,22 @@ namespace ParkingControl
         internal const string PrefabName = "ParkingControlNoStreetParking";
 
         private PrefabSystem m_PrefabSystem = null!;
+        private PolicyTogglePrefab? m_Prefab;
         private bool m_Installed;
 
         /// <summary>
         /// Gets the prefab entity stored in each district's native Policy buffer.
         /// </summary>
         internal static Entity PolicyEntity { get; private set; }
+
+        /// <summary>
+        /// Updates the native policy-list visibility after the Options scope changes.
+        /// </summary>
+        internal static void RefreshVisibility()
+        {
+            World? world = World.DefaultGameObjectInjectionWorld;
+            world?.GetExistingSystemManaged<ParkingPolicySystem>()?.ApplyVisibility();
+        }
 
         /// <inheritdoc/>
         protected override void OnCreate()
@@ -65,6 +76,7 @@ namespace ParkingControl
         protected override void OnDestroy()
         {
             PolicyEntity = Entity.Null;
+            m_Prefab = null;
             base.OnDestroy();
         }
 
@@ -77,7 +89,7 @@ namespace ParkingControl
 
             PolicyTogglePrefab prefab = PrefabBase.Create<PolicyTogglePrefab>(PrefabName);
             prefab.m_Category = PolicyCategory.Traffic;
-            prefab.m_Visibility = PolicyVisibility.Default;
+            prefab.m_Visibility = GetVisibility();
 
             // An empty DistrictOptions component creates DistrictOptionData with a zero mask.
             // The checkbox therefore uses the native Policy buffer without claiming a vanilla bit.
@@ -96,9 +108,35 @@ namespace ParkingControl
             }
 
             PolicyEntity = m_PrefabSystem.GetEntity(prefab);
+            m_Prefab = prefab;
             m_Installed = true;
             NoStreetParkingSystem.RequestReconcile();
             LogUtils.Info($"{Mod.ModTag} District policy registered as {PrefabName}.");
+        }
+
+        private static PolicyVisibility GetVisibility()
+        {
+            return Mod.Settings?.Scope == PCSettings.ParkingScope.ByDistrict
+                ? PolicyVisibility.Default
+                : PolicyVisibility.HideFromPolicyList;
+        }
+
+        private void ApplyVisibility()
+        {
+            if (m_Prefab == null)
+            {
+                return;
+            }
+
+            PolicyVisibility visibility = GetVisibility();
+            if (m_Prefab.m_Visibility == visibility)
+            {
+                return;
+            }
+
+            // Hiding the prefab does not remove saved Policy-buffer selections.
+            m_Prefab.m_Visibility = visibility;
+            World.GetExistingSystemManaged<SelectedInfoUISystem>()?.RequestUpdate();
         }
     }
 }
