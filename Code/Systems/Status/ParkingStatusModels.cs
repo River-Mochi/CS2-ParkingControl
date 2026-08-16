@@ -182,7 +182,7 @@ namespace ParkingControl
 
         public int StreetCars { get; set; }
 
-        public HashSet<Entity> OccupiedLanes { get; } = new HashSet<Entity>();
+        public int OccupiedLanes { get; set; }
     }
 
     /// <summary>

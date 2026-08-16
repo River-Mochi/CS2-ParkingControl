@@ -34,9 +34,9 @@ namespace ParkingControl
         private const string kVehicleFormatFallback =
             "{0} street | {1} visible | {2} hidden | {3} OC";
         private const string kSupplyFormatFallback =
-            "{0}  {1} / {2} public | {3}  {4} / {5} building";
+            "{0} public {1}/{2} | {3} building {4}/{5}";
         private const string kShareFormatFallback =
-            "{0} street parked | {1} moving | updated {2}";
+            "{0} street parked {1} | {2} active";
 
         private static bool s_ForceRefresh = true;
         private static bool s_HasRequestedSimulationFrame;
@@ -59,17 +59,22 @@ namespace ParkingControl
         /// <summary>
         /// Gets the cached personal-vehicle location summary.
         /// </summary>
-        internal static string VehicleRow { get; private set; } = kLoadCityFallback;
+        internal static string VehicleRow { get; private set; } = string.Empty;
 
         /// <summary>
         /// Gets the cached parking-supply summary.
         /// </summary>
-        internal static string SupplyRow { get; private set; } = kLoadCityFallback;
+        internal static string SupplyRow { get; private set; } = string.Empty;
 
         /// <summary>
-        /// Gets the cached street share and update time.
+        /// Gets the cached citywide street-parking share.
         /// </summary>
-        internal static string ShareRow { get; private set; } = kLoadCityFallback;
+        internal static string ShareRow { get; private set; } = string.Empty;
+
+        /// <summary>
+        /// Gets the time when the cached snapshot was collected.
+        /// </summary>
+        internal static string UpdatedRow { get; private set; } = string.Empty;
 
         /// <summary>
         /// Requests one snapshot after the simulation advances and returns the published UI version.
@@ -84,7 +89,7 @@ namespace ParkingControl
                 return s_Version;
             }
 
-            // Four status widgets ask for the version each UI frame; perform the check only once.
+            // Status widgets ask for the version each UI frame; perform the check only once.
             int uiFrame = Time.frameCount;
             if (uiFrame == s_LastUiFrame)
             {
@@ -286,10 +291,13 @@ namespace ParkingControl
                 ParkingStatusLocale.kShareFormat,
                 kShareFormatFallback,
                 FormatPercent(snapshot.StreetParked, snapshot.KnownInCityParking),
-                Format(snapshot.ActiveVehicles),
-                snapshot.CapturedAtLocal.ToString("HH:mm:ss", CultureInfo.CurrentCulture));
+                Format(snapshot.StreetParked),
+                Format(snapshot.ActiveVehicles));
+            string updated = snapshot.CapturedAtLocal.ToString(
+                "HH:mm:ss",
+                CultureInfo.CurrentCulture);
 
-            PublishRows(enforcement, vehicles, supply, share);
+            PublishRows(enforcement, share, supply, vehicles, updated);
         }
 
         private static string LocalizeOwnershipStatus(string status)
@@ -368,29 +376,32 @@ namespace ParkingControl
 
         private static void PublishRows(
             string enforcement,
-            string vehicles,
+            string share,
             string supply,
-            string share)
+            string vehicles,
+            string updated)
         {
             if (EnforcementRow == enforcement &&
-                VehicleRow == vehicles &&
+                ShareRow == share &&
                 SupplyRow == supply &&
-                ShareRow == share)
+                VehicleRow == vehicles &&
+                UpdatedRow == updated)
             {
                 return;
             }
 
             EnforcementRow = enforcement;
-            VehicleRow = vehicles;
-            SupplyRow = supply;
             ShareRow = share;
+            SupplyRow = supply;
+            VehicleRow = vehicles;
+            UpdatedRow = updated;
             s_Version++;
         }
 
         private static void PublishMessage(string message)
         {
-            // One temporary message is enough; repeating it in all four rows clutters Options.
-            PublishRows(message, string.Empty, string.Empty, string.Empty);
+            // One temporary message is enough; repeating it in every row clutters Options.
+            PublishRows(message, string.Empty, string.Empty, string.Empty, string.Empty);
         }
     }
 }

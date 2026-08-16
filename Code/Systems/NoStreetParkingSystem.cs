@@ -205,7 +205,7 @@ namespace ParkingControl
                         if (hasState)
                         {
                             // A changed lane has already been recalculated by vanilla this pass.
-                            // Otherwise clear the temporary flag we previously owned.
+                            // Otherwise clear the temp flag we previously owned.
                             if (!recalculatedByVanilla &&
                                 (parkingLane.m_Flags & ParkingLaneFlags.ParkingDisabled) != 0)
                             {

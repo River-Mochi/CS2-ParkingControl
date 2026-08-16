@@ -124,27 +124,19 @@ namespace ParkingControl
                     ? snapshot.DisabledTargetCurbLanes
                     : snapshot.DisabledCurbLanes,
                 snapshot.TrackedCurbLanes);
-            string deltaLine = m_HasPreviousReport
-                ? "ChangeSincePrevious: " +
-                    $"PersonalMotorVehicles={FormatDelta(snapshot.TotalVehicles - m_PreviousReport.TotalVehicles)}, " +
-                    $"StreetParking={FormatDelta(snapshot.StreetParked - m_PreviousReport.StreetParked)}, " +
-                    $"ParkedElsewhere={FormatDelta(snapshot.ParkedElsewhere - m_PreviousReport.ParkedElsewhere)}, " +
-                    $"OutsideConnection={FormatDelta(snapshot.OutsideConnection - m_PreviousReport.OutsideConnection)}, " +
-                    $"OutsideHidden={FormatDelta(snapshot.OutsideConnectionHidden - m_PreviousReport.OutsideConnectionHidden)}"
-                : "ChangeSincePrevious=<first report for this loaded city>";
-
             StringBuilder text = new StringBuilder(8192);
             text.AppendLine();
             text.AppendLine($"==================== {Mod.ModTag} PARKING REPORT ====================");
             text.AppendLine("-------------------- SUMMARY --------------------");
             text.AppendLine($"Mod={Mod.ModName} v{Mod.ModVersion}");
-            text.AppendLine($"SimulationFrame={snapshot.SimulationFrame}");
+            text.AppendLine(
+                $"SimulationFrame={snapshot.SimulationFrame} (sim tick used to order reports.)");
             text.AppendLine($"ParkingScope={snapshot.Scope}");
             text.AppendLine(
-                $"DistrictPolicy=ActiveIn{snapshot.DistrictsWithPolicy}/{snapshot.Districts}Districts " +
+                $"DistrictPolicy=Active in {snapshot.DistrictsWithPolicy}/{snapshot.Districts} districts " +
                 $"(PolicyEntity={FormatEntity(ParkingPolicySystem.PolicyEntity)})");
             text.AppendLine();
-            text.AppendLine("-------------------- STREET PARKING ENFORCEMENT --------------------");
+            text.AppendLine("-------------------- STREET PARKING CONTROL --------------------");
             text.AppendLine($"EligibleStreetParkingLanes={snapshot.CurbLanes}");
             text.AppendLine(
                 $"TargetStreetParkingLanes={snapshot.TargetCurbLanes} " +
@@ -250,7 +242,25 @@ namespace ParkingControl
                 $"across {snapshot.GarageLanes} garage lane entities");
             text.AppendLine();
             text.AppendLine("-------------------- CHANGES SINCE PREVIOUS REPORT --------------------");
-            text.AppendLine(deltaLine);
+            text.AppendLine("ChangeSincePrevious:");
+            if (m_HasPreviousReport)
+            {
+                text.AppendLine(
+                    $"    PersonalMotorVehicles={FormatDelta(snapshot.TotalVehicles - m_PreviousReport.TotalVehicles)}");
+                text.AppendLine(
+                    $"    StreetParking={FormatDelta(snapshot.StreetParked - m_PreviousReport.StreetParked)}");
+                text.AppendLine(
+                    $"    ParkedElsewhere={FormatDelta(snapshot.ParkedElsewhere - m_PreviousReport.ParkedElsewhere)}");
+                text.AppendLine(
+                    $"    OutsideConnection={FormatDelta(snapshot.OutsideConnection - m_PreviousReport.OutsideConnection)}");
+                text.AppendLine(
+                    $"    OutsideHidden={FormatDelta(snapshot.OutsideConnectionHidden - m_PreviousReport.OutsideConnectionHidden)}");
+            }
+            else
+            {
+                text.AppendLine("    <first report for this loaded city>");
+            }
+
             text.AppendLine();
             text.AppendLine("-------------------- SAMPLE TRANSITIONS SINCE PREVIOUS REPORT --------------------");
             AppendSampleTransitions(text, details);
@@ -332,7 +342,7 @@ namespace ParkingControl
                 StringComparison.CurrentCultureIgnoreCase));
 
             text.AppendLine(
-                "DistrictStreetParking=<lane counts are road-side parking sections, not spaces>");
+                "District details (lane counts are roadside parking sections, not individual spaces):");
             foreach (DistrictParkingStats district in districts)
             {
                 bool effective = snapshot.Scope == PCSettings.ParkingScope.WholeCity ||
@@ -355,7 +365,7 @@ namespace ParkingControl
                 text.AppendLine(
                     $"  {GetDistrictName(district.District)} [{FormatEntity(district.District)}] | " +
                     $"Policy={(district.PolicyActive ? "ON" : "OFF")} | " +
-                    $"{district.StreetCars} parked ({district.OccupiedLanes.Count} lanes) | " +
+                    $"{district.StreetCars} parked ({district.OccupiedLanes} lanes) | " +
                     $"{district.DisabledLanes}/{district.EligibleLanes} disabled | " +
                     $"{status} | Change={change}");
             }
@@ -609,7 +619,7 @@ namespace ParkingControl
         }
 
         /// <summary>
-        /// Keeps technical enforcement details in the manual log rather than the Options value.
+        /// Keeps technical details in the manual log rather than the Options UI.
         /// </summary>
         private static string GetOwnershipDetails(
             bool restrictionEnabled,

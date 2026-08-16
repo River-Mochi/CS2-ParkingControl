@@ -186,7 +186,7 @@ namespace ParkingControl
             }
             finally
             {
-                // Status is entirely on demand; there is no steady periodic probe.
+                // Status is entirely on demand; no steady periodic probe.
                 Enabled = false;
             }
         }

@@ -18,7 +18,7 @@
 
 ## Good to know
 - It could take a few city months for already parked cars to move. If you want a faster reset of existing roads, try a vanilla accessory like updating to bike lanes on/off.
-- New roads should be parking free. Caveat: a few cars may appear after a newly built road while the game updates parking lanes and paths (timing order).
+- New roads in banned parking areas should be parking free. Caveat: a few cars may appear after a newly built road while the game updates parking lanes and paths (timing order).
 - If the city does not have enough parking facilities, the game handles the overflow normally to include use of outside-connection (hidden) storage/staging area.
 -  uses the game’s own no-parking lane flag and does not delete vehicles or touch bicycles.
 - Safe to remove: streets return to vanilla parking.
@@ -27,9 +27,11 @@
 ## Support and Feedback
 - Consider clicking the like button (top right) to show support for mods.
 - Feedback and pull requests are welcome through the GitHub and Discord links (right side icons).
+- Future plans: add UI for centralized parking fees - the current mod that does fees is asking for someone to take over the task.
 
 ## Credits
 River-mochi - mod author
+Maintyper - testing
 
 
 ### Why newly built roads can briefly receive cars

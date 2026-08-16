@@ -95,7 +95,7 @@ namespace ParkingControl
         public string EnforcementStatus => ParkingStatusCache.EnforcementRow;
 
         /// <summary>
-        /// Gets the cached street share and update time.
+        /// Gets the cached citywide street-parking share.
         /// </summary>
         [Exclude]
         [SettingsUIHideByCondition(typeof(PCSettings), nameof(HideStatus))]
@@ -120,6 +120,15 @@ namespace ParkingControl
         [SettingsUIValueVersion(typeof(ParkingStatusCache), nameof(ParkingStatusCache.GetUiVersion))]
         [SettingsUISection(kActionsTab, kStatusGroup)]
         public string VehicleStatus => ParkingStatusCache.VehicleRow;
+
+        /// <summary>
+        /// Gets the time when the cached status snapshot was collected.
+        /// </summary>
+        [Exclude]
+        [SettingsUIHideByCondition(typeof(PCSettings), nameof(HideStatus))]
+        [SettingsUIValueVersion(typeof(ParkingStatusCache), nameof(ParkingStatusCache.GetUiVersion))]
+        [SettingsUISection(kActionsTab, kStatusGroup)]
+        public string UpdatedStatus => ParkingStatusCache.UpdatedRow;
 
         /// <summary>
         /// Gets the player-facing mod name.

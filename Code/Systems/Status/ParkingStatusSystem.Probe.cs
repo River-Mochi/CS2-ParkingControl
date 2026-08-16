@@ -11,7 +11,6 @@
 namespace ParkingControl
 {
     using System;
-    using System.Collections.Generic;
     using Unity.Collections;
     using Unity.Entities;
 
@@ -86,8 +85,11 @@ namespace ParkingControl
                 SimulationFrame = m_SimulationSystem.frameIndex,
                 Scope = scope,
             };
-            HashSet<Entity> occupiedCurbLanes = new();
-            HashSet<Entity> occupiedTargetCurbLanes = new();
+            // This temporary set scales with curb lanes, not vehicle count, and is released
+            // as soon as the on-demand snapshot is complete.
+            int occupiedLaneCapacity = Math.Max(1, m_CurbLaneQuery.CalculateEntityCount());
+            using NativeHashSet<Entity> occupiedCurbLanes =
+                new NativeHashSet<Entity>(occupiedLaneCapacity, Allocator.Temp);
 
             using (NativeArray<Entity> districts = m_DistrictQuery.ToEntityArray(Allocator.Temp))
             {
@@ -404,8 +406,25 @@ namespace ParkingControl
                         case VehicleLocation.StreetCurb:
                             snapshot.ParkedVehicles++;
                             snapshot.StreetParked++;
-                            occupiedCurbLanes.Add(parkedLane);
                             Game.Net.ParkingLane streetLane = parkingLaneLookup[parkedLane];
+                            bool restrictionTarget = NoStreetParkingSystem.IsRestrictionTarget(
+                                parkedLane,
+                                streetLane,
+                                scope,
+                                policyEntity,
+                                ownerLookup,
+                                borderDistrictLookup,
+                                policyLookup);
+                            bool firstParkedCarOnLane = occupiedCurbLanes.Add(parkedLane);
+                            if (firstParkedCarOnLane)
+                            {
+                                snapshot.OccupiedCurbLanes++;
+                                if (restrictionTarget)
+                                {
+                                    snapshot.OccupiedTargetCurbLanes++;
+                                }
+                            }
+
                             if (details != null)
                             {
                                 Entity district = NoStreetParkingSystem.GetLaneDistrict(
@@ -419,20 +438,15 @@ namespace ParkingControl
                                     policyEntity,
                                     policyLookup);
                                 districtStats.StreetCars++;
-                                districtStats.OccupiedLanes.Add(parkedLane);
+                                if (firstParkedCarOnLane)
+                                {
+                                    districtStats.OccupiedLanes++;
+                                }
                             }
 
-                            if (NoStreetParkingSystem.IsRestrictionTarget(
-                                    parkedLane,
-                                    streetLane,
-                                    scope,
-                                    policyEntity,
-                                    ownerLookup,
-                                    borderDistrictLookup,
-                                    policyLookup))
+                            if (restrictionTarget)
                             {
                                 snapshot.TargetStreetParked++;
-                                occupiedTargetCurbLanes.Add(parkedLane);
                             }
 
                             if (IsFixedSlotLane(
@@ -580,8 +594,6 @@ namespace ParkingControl
                 }
             }
 
-            snapshot.OccupiedCurbLanes = occupiedCurbLanes.Count;
-            snapshot.OccupiedTargetCurbLanes = occupiedTargetCurbLanes.Count;
             return snapshot;
         }
 

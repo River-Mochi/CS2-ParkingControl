@@ -12,13 +12,6 @@ namespace ParkingControl
 {
     using System.Collections.Generic;
     using Colossal;
-    using Game.City;
-    using Game.Common;
-    using Game.Net;
-    using Game.Vehicles;
-    using Unity.Entities;
-    using static Unity.Collections.Unicode;
-    using static UnityEngine.InputSystem.LowLevel.InputStateHistory;
 
     /// <summary>
     /// English localization entries for <see cref="PCSettings"/>.
@@ -57,9 +50,9 @@ namespace ParkingControl
                     "**Whole City** or\n" +
                     "**by District**.\n" +
                     "- Eligible Lanes are flagged to prevent new street parking.\n" +
-                    "- Existing parked cars leave naturally over time when it is next used.\n" +
-                    "- Of course, fee-based parking lots and normal building parking are still useable and not affected.\n" +
-                    "**Highways, and asymetric 3-lane roads are examples of vanilla roads that are not eligible for street parking already.**"
+                    "- Existing parked cars leave naturally when they are next used.\n" +
+                    "- Fee-based parking lots and normal building parking remain usable.\n" +
+                    "**Highways and asymmetric 3-lane roads are examples of vanilla roads that already exclude street parking.**"
                 },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Whole City" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "by District" },
@@ -94,6 +87,22 @@ namespace ParkingControl
                     "<CHECK> = some selected roads are not blocked yet. Let the city run briefly and check again. If <CHECK> appears, include a parking log report when asking for help (see About tab)."
                 },
 
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Parking spaces" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
+                    "Shows citywide parking occupancy.\n" +
+                    "<Public> spaces used = facilities counted by the vanilla Parking InfoView.\n" +
+                    "<Building> spaces used = parking included with homes, workplaces, and shops.\n" +
+                    "**High percentage indicates more parking facilities may be needed.**"
+                },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Street use" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
+                    "This row includes the <whole city>, not just districts.\n" +
+                    "<Street parked> = share of cars using known street, public, or building parking.\n" +
+                    "<Active> = personal vehicles driving or waiting in traffic.\n" +
+                    "<Formula:> street parked (SP) % = SP ÷ (SP + occupied Public + occupied Building)\n" +
+                    "**Outside connection (OC) and unassigned staging are excluded.**"        
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Car Locations" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VehicleStatus)),
                     "This row shows citywide data, not just parking banned districts.\n" +
@@ -103,21 +112,10 @@ namespace ParkingControl
                     "<OC> = outside connection storage at the city border; some incoming household cars start there.\n" +
                     "**Some hidden cars have no assigned parking lane; their diagnostic count is shown only in the log.**"
                 },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Parking spaces" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "Shows citywide parking occupancy.\n" +
-                    "<Public> spaced used = facilities counted by the vanilla Parking InfoView.\n" +
-                    "<Building> spaces used = parking included with homes, workplaces, commercial shops.\n" +
-                    "**High percentages indicates a need for more parking facilities.**"
-                },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Street use" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "This row shows the whole city, not just districts.\n" +
-                    "<Street parked> = share of cars using known street, public, or building parking.\n" +
-                    "<Active> = personal vehicles driving or waiting in traffic.\n" +
-                    "<Updated> = last refresh of Status.\n" +
-                    "**Outside connection (OC) and unassigned staging are excluded.**"
-                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.UpdatedStatus)), "Updated" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.UpdatedStatus)),
+                    "Time when these citywide status values were last refreshed." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NameText)), "Mod name" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VersionText)), "Version" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenParadox)), "Paradox Mods link" },
@@ -144,8 +142,8 @@ namespace ParkingControl
                 { ParkingStatusLocale.kDistrictEnforcementFormat,
                     "{0} parked ({1}/{2} lanes) | {3}/{4} disabled | {5}/{6} districts{7}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} street | {1} visible | {2} hidden | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0}  {1} / {2} public | {3}  {4} / {5} building" },
-                { ParkingStatusLocale.kShareFormat, "{0} street parked | {1} active | updated {2}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} public {1}/{2} | {3} building {4}/{5}" },
+                { ParkingStatusLocale.kShareFormat, "{0} street parked {1} | {2} active" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "OFF" },
                 { ParkingStatusLocale.kStatusCheck, "CHECK" },
