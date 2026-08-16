@@ -78,8 +78,8 @@ namespace ParkingControl
                 // In-city district policy.
                 { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "Roadside Parking Ban" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.PrefabName}]",
-                    "Choose <by District> in Options > Parking Control to block new street parking here. " +
-                    "Existing parked cars leave when their citizens next use them." },
+                    "Prevents <cars and motorcycles> from parking on roadsides in this district. " +
+                    "Existing parked vehicles leave when their owners next use them." },
 
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Street Parking" },
@@ -87,8 +87,10 @@ namespace ParkingControl
                     "<Parked> = cars still parked on streets covered by the selected mode.\n" +
                     "<Lanes> = roadside parking sections holding those cars. One lane can hold many.\n" +
                     "<Disabled> = street-parking lanes closed to new parking.\n" +
-                    "<by District> shows banned-area / citywide occupied lanes, disabled / eligible city lanes, " +
-                    "and enabled / total districts.\n" +
+                    "<by District> shows:\n" +
+                    "- Occupied lanes in banned districts / occupied lanes citywide.\n" +
+                    "- Disabled lanes / eligible city lanes.\n" +
+                    "- Enabled districts / total districts.\n" +
                     "<New or rebuilt roads> may briefly accept a few cars while their lanes update.\n" +
                     "Cars already parked leave naturally.\n" +
                     "<CHECK> = some selected roads are not blocked yet. Run the city briefly and check again. " +
@@ -99,13 +101,13 @@ namespace ParkingControl
                     "<Street parked> = percentage parked on streets instead of in public or building parking.\n" +
                     "<Active> = personal vehicles driving or waiting in traffic.\n" +
                     "<Formula> = street ÷ (street + occupied public + occupied building).\n" +
-                    "**OC storage and cars without an assigned parking lane are excluded.**" },
+                    "**Outside connection (OC) storage and cars without an assigned parking lane are excluded.**" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Parking spaces" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
                     "Shows citywide parking occupancy.\n" +
                     "<Public> spaces used = facilities counted by the vanilla Parking InfoView.\n" +
                     "<Building> spaces used = parking included with homes, workplaces, and shops.\n" +
-                    "**Higher usage means fewer spaces are available in that category.**" },
+                    "**Higher % usage = more parking may be needed.**" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Car Locations" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VehicleStatus)),
                     "This row shows citywide data, not only districts with the ban.\n" +
@@ -127,9 +129,11 @@ namespace ParkingControl
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ReportToLog)),
                     "Write street-parking and related details to \n" +
                     "<Logs/ParkingControl.log>.\n" +
-                    "If curious, write a second report later in the same loaded city.\n" +
-                    "- Compares up to 20 sampled Entity IDs from street, OC, and no-lane cars.\n" +
-                    "- Shows if each sample stayed, started driving, parked elsewhere, or disappeared." },
+                    "If curious, write a 2nd report later in the same loaded city.\n" +
+                    "- Compares up to 20 sample Entity IDs from different catagories.\n" +
+                    "- Shows if each sample stayed, started driving, parked elsewhere, or disappeared.\n" +
+                    "- Scene Explorer mod is needed to track the Entity ID numbers in the city."
+                },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenLog)), "Open log" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)),
                     "Open <Logs/ParkingControl.log>, or the Logs folder if the file does not exist yet." },
