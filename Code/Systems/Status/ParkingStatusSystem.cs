@@ -22,6 +22,8 @@ namespace ParkingControl
     /// </summary>
     public sealed partial class ParkingStatusSystem : GameSystemBase
     {
+        private const int kVehicleSampleLimit = 20;
+
         private EntityQuery m_CurbLaneQuery;
         private EntityQuery m_DistrictQuery;
         private EntityQuery m_GarageLaneQuery;
@@ -33,7 +35,9 @@ namespace ParkingControl
         private bool m_ReportRequested;
         private bool m_StatusRequested;
         private Dictionary<Entity, int> m_PreviousDistrictStreetCars = new();
-        private HashSet<Entity> m_PreviousStreetVehicles = new();
+        private readonly List<Entity> m_PreviousOutsideSamples = new(kVehicleSampleLimit);
+        private readonly List<Entity> m_PreviousStreetSamples = new(kVehicleSampleLimit);
+        private readonly List<Entity> m_PreviousUnknownSamples = new(kVehicleSampleLimit);
         private ParkingSnapshot m_PreviousReport;
 
         /// <summary>
@@ -142,7 +146,8 @@ namespace ParkingControl
         /// <inheritdoc/>
         protected override void OnDestroy()
         {
-            ResetReportHistory();
+            // GameSystemBase.OnDestroy unregisters its game/world event handlers.
+            // Managed report samples are reclaimed with this ECS system.
             ParkingStatusCache.InvalidateCache();
             base.OnDestroy();
         }
@@ -163,7 +168,9 @@ namespace ParkingControl
             try
             {
                 Dependency.Complete();
-                ParkingReportDetails? details = reportRequested ? new ParkingReportDetails() : null;
+                ParkingReportDetails? details = reportRequested
+                    ? new ParkingReportDetails(kVehicleSampleLimit)
+                    : null;
                 ParkingSnapshot snapshot = BuildSnapshot(details);
                 ParkingStatusCache.Publish(snapshot);
 
@@ -188,8 +195,10 @@ namespace ParkingControl
         {
             m_HasPreviousReport = false;
             m_PreviousReport = default;
-            m_PreviousDistrictStreetCars = new Dictionary<Entity, int>();
-            m_PreviousStreetVehicles = new HashSet<Entity>();
+            m_PreviousDistrictStreetCars.Clear();
+            m_PreviousOutsideSamples.Clear();
+            m_PreviousStreetSamples.Clear();
+            m_PreviousUnknownSamples.Clear();
         }
     }
 }

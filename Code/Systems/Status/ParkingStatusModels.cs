@@ -118,44 +118,45 @@ namespace ParkingControl
     /// </summary>
     internal sealed class ParkingReportDetails
     {
+        public ParkingReportDetails(int sampleLimit)
+        {
+            StreetSamples = new List<Entity>(sampleLimit);
+            VisibleSamples = new List<Entity>(sampleLimit);
+            HiddenSamples = new List<Entity>(sampleLimit);
+            OutsideSamples = new List<Entity>(sampleLimit);
+            UnknownSamples = new List<Entity>(sampleLimit);
+            UnknownOutsideSourceSamples = new List<Entity>(sampleLimit);
+            UnknownBuildingSourceSamples = new List<Entity>(sampleLimit);
+            UnknownOtherSourceSamples = new List<Entity>(sampleLimit);
+            UnknownMissingSourceSamples = new List<Entity>(sampleLimit);
+            UnknownNoSourceSamples = new List<Entity>(sampleLimit);
+            SampleTransitions = new List<VehicleSampleTransition>(sampleLimit * 3);
+        }
+
         public Dictionary<Entity, DistrictParkingStats> DistrictParking { get; } =
             new Dictionary<Entity, DistrictParkingStats>();
 
-        public HashSet<Entity> CurrentStreetVehicles { get; } = new HashSet<Entity>();
+        public List<Entity> StreetSamples { get; }
 
-        public List<Entity> VisibleSamples { get; } = new List<Entity>();
+        public List<Entity> VisibleSamples { get; }
 
-        public List<Entity> HiddenSamples { get; } = new List<Entity>();
+        public List<Entity> HiddenSamples { get; }
 
-        public List<Entity> OutsideSamples { get; } = new List<Entity>();
+        public List<Entity> OutsideSamples { get; }
 
-        public List<Entity> UnknownSamples { get; } = new List<Entity>();
+        public List<Entity> UnknownSamples { get; }
 
-        public List<Entity> UnknownOutsideSourceSamples { get; } = new List<Entity>();
+        public List<Entity> UnknownOutsideSourceSamples { get; }
 
-        public List<Entity> UnknownBuildingSourceSamples { get; } = new List<Entity>();
+        public List<Entity> UnknownBuildingSourceSamples { get; }
 
-        public List<Entity> UnknownOtherSourceSamples { get; } = new List<Entity>();
+        public List<Entity> UnknownOtherSourceSamples { get; }
 
-        public List<Entity> UnknownMissingSourceSamples { get; } = new List<Entity>();
+        public List<Entity> UnknownMissingSourceSamples { get; }
 
-        public List<Entity> UnknownNoSourceSamples { get; } = new List<Entity>();
+        public List<Entity> UnknownNoSourceSamples { get; }
 
-        public int SeenPreviousStreet { get; set; }
-
-        public int RemainedOnStreet { get; set; }
-
-        public int NewlyParkedOnStreet { get; set; }
-
-        public int NowActive { get; set; }
-
-        public int NowOffStreet { get; set; }
-
-        public int NowHiddenInBuilding { get; set; }
-
-        public int NowAtOutsideConnection { get; set; }
-
-        public int NowUnassignedOrUnknown { get; set; }
+        public List<VehicleSampleTransition> SampleTransitions { get; }
     }
 
     /// <summary>
@@ -195,6 +196,38 @@ namespace ParkingControl
         VisibleOffStreet,
         HiddenInBuilding,
         OutsideConnection,
+    }
+
+    /// <summary>
+    /// Identifies which previous-report sample group a vehicle came from.
+    /// </summary>
+    internal enum VehicleSampleSource
+    {
+        Street,
+        OutsideConnection,
+        Unknown,
+    }
+
+    /// <summary>
+    /// Records where one bounded previous-report sample was found now.
+    /// </summary>
+    internal readonly struct VehicleSampleTransition
+    {
+        public VehicleSampleTransition(
+            Entity vehicle,
+            VehicleSampleSource source,
+            VehicleLocation currentLocation)
+        {
+            Vehicle = vehicle;
+            Source = source;
+            CurrentLocation = currentLocation;
+        }
+
+        public Entity Vehicle { get; }
+
+        public VehicleSampleSource Source { get; }
+
+        public VehicleLocation CurrentLocation { get; }
     }
 
     /// <summary>

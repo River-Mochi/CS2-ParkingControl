@@ -685,7 +685,7 @@ namespace ParkingControl
                     out Game.Objects.TripSource tripSource))
             {
                 snapshot.UnknownWithoutTripSource++;
-                details.UnknownNoSourceSamples.Add(vehicle);
+                AddBoundedSample(details.UnknownNoSourceSamples, vehicle);
                 return;
             }
 
@@ -694,7 +694,7 @@ namespace ParkingControl
             if (source == Entity.Null || !EntityManager.Exists(source))
             {
                 snapshot.UnknownTripSourceMissing++;
-                details.UnknownMissingSourceSamples.Add(vehicle);
+                AddBoundedSample(details.UnknownMissingSourceSamples, vehicle);
             }
             else if (IsOutsideConnectionEntity(
                          source,
@@ -703,17 +703,17 @@ namespace ParkingControl
                          ownerLookup))
             {
                 snapshot.UnknownTripSourceOutside++;
-                details.UnknownOutsideSourceSamples.Add(vehicle);
+                AddBoundedSample(details.UnknownOutsideSourceSamples, vehicle);
             }
             else if (IsOwnedByBuilding(source, buildingLookup, ownerLookup))
             {
                 snapshot.UnknownTripSourceBuilding++;
-                details.UnknownBuildingSourceSamples.Add(vehicle);
+                AddBoundedSample(details.UnknownBuildingSourceSamples, vehicle);
             }
             else
             {
                 snapshot.UnknownTripSourceOther++;
-                details.UnknownOtherSourceSamples.Add(vehicle);
+                AddBoundedSample(details.UnknownOtherSourceSamples, vehicle);
             }
         }
 
