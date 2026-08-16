@@ -173,7 +173,7 @@ namespace ParkingControl
         }
 
         /// <summary>
-        /// Recognizes both network and object outside connections through nested ownership.
+        /// Recognizes both network and object outside connections by nested ownership.
         /// </summary>
         private static bool IsOutsideConnectionEntity(
             Entity entity,

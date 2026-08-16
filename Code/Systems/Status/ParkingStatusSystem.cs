@@ -22,15 +22,22 @@ namespace ParkingControl
     /// </summary>
     public sealed partial class ParkingStatusSystem : GameSystemBase
     {
+        private const int kVehicleSampleLimit = 20;
+
         private EntityQuery m_CurbLaneQuery;
+        private EntityQuery m_DistrictQuery;
         private EntityQuery m_GarageLaneQuery;
         private EntityQuery m_ParkingFacilityQuery;
         private EntityQuery m_PersonalVehicleQuery;
+        private Game.UI.NameSystem m_NameSystem = null!;
         private SimulationSystem m_SimulationSystem = null!;
         private bool m_HasPreviousReport;
         private bool m_ReportRequested;
         private bool m_StatusRequested;
-        private HashSet<Entity> m_PreviousStreetVehicles = new();
+        private Dictionary<Entity, int> m_PreviousDistrictStreetCars = new();
+        private readonly List<Entity> m_PreviousOutsideSamples = new(kVehicleSampleLimit);
+        private readonly List<Entity> m_PreviousStreetSamples = new(kVehicleSampleLimit);
+        private readonly List<Entity> m_PreviousUnknownSamples = new(kVehicleSampleLimit);
         private ParkingSnapshot m_PreviousReport;
 
         /// <summary>
@@ -55,12 +62,17 @@ namespace ParkingControl
         protected override void OnCreate()
         {
             base.OnCreate();
+            m_NameSystem = World.GetOrCreateSystemManaged<Game.UI.NameSystem>();
             m_SimulationSystem = World.GetOrCreateSystemManaged<SimulationSystem>();
 
             // Fully qualified query types prevent similarly named Game components from
             // becoming ambiguous when another namespace is added to a partial file.
             m_CurbLaneQuery = SystemAPI.QueryBuilder()
                 .WithAll<Game.Net.ParkingLane, Game.Common.Owner, Game.Prefabs.PrefabRef>()
+                .WithNone<Game.Common.Deleted, Game.Tools.Temp>()
+                .Build();
+            m_DistrictQuery = SystemAPI.QueryBuilder()
+                .WithAll<Game.Areas.District, Game.Policies.Policy>()
                 .WithNone<Game.Common.Deleted, Game.Tools.Temp>()
                 .Build();
             m_GarageLaneQuery = SystemAPI.QueryBuilder()
@@ -134,7 +146,8 @@ namespace ParkingControl
         /// <inheritdoc/>
         protected override void OnDestroy()
         {
-            ResetReportHistory();
+            // GameSystemBase.OnDestroy unregisters its game/world event handlers.
+            // Managed report samples are reclaimed with this ECS system.
             ParkingStatusCache.InvalidateCache();
             base.OnDestroy();
         }
@@ -155,7 +168,9 @@ namespace ParkingControl
             try
             {
                 Dependency.Complete();
-                ParkingReportDetails? details = reportRequested ? new ParkingReportDetails() : null;
+                ParkingReportDetails? details = reportRequested
+                    ? new ParkingReportDetails(kVehicleSampleLimit)
+                    : null;
                 ParkingSnapshot snapshot = BuildSnapshot(details);
                 ParkingStatusCache.Publish(snapshot);
 
@@ -171,7 +186,7 @@ namespace ParkingControl
             }
             finally
             {
-                // Status is entirely on demand; there is no steady periodic probe.
+                // Status is entirely on demand; no steady periodic probe.
                 Enabled = false;
             }
         }
@@ -180,7 +195,10 @@ namespace ParkingControl
         {
             m_HasPreviousReport = false;
             m_PreviousReport = default;
-            m_PreviousStreetVehicles = new HashSet<Entity>();
+            m_PreviousDistrictStreetCars.Clear();
+            m_PreviousOutsideSamples.Clear();
+            m_PreviousStreetSamples.Clear();
+            m_PreviousUnknownSamples.Clear();
         }
     }
 }

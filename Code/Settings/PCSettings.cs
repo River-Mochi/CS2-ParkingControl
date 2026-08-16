@@ -41,7 +41,9 @@ namespace ParkingControl
         private const string kUrlParadox =
             "https://mods.paradoxplaza.com/authors/River-mochi/cities_skylines_2?games=cities_skylines_2&orderBy=desc&sortBy=best&time=alltime";
 
-        private bool m_NoStreetParking;
+        // Null until the first Options Apply because LoadSettings does not call Apply.
+        private ParkingScope? m_AppliedScope;
+        private ParkingScope m_ParkingScope;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PCSettings"/> class.
@@ -54,46 +56,79 @@ namespace ParkingControl
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether ordinary car curb parking is disabled citywide.
+        /// Gets or sets where ordinary street parking is disabled.
         /// </summary>
         [SettingsUISection(kActionsTab, kStreetParkingGroup)]
-        public bool NoStreetParking
+        public ParkingScope Scope
         {
-            get => m_NoStreetParking;
-            set => m_NoStreetParking = value;
+            get => m_ParkingScope;
+            set => m_ParkingScope = value;
         }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether district-mode instructions are shown.
+        /// </summary>
+        [SettingsUISection(kActionsTab, kStreetParkingGroup)]
+        public bool ShowInstructions { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether live parking status rows are shown.
+        /// </summary>
+        [SettingsUISection(kActionsTab, kStatusGroup)]
+        public bool ShowStatus { get; set; }
+
+        /// <summary>
+        /// Gets the localized district-mode instructions shown by the multiline widget.
+        /// </summary>
+        [SettingsUIMultilineText]
+        [SettingsUIHideByCondition(typeof(PCSettings), nameof(HideInstructions))]
+        [SettingsUISection(kActionsTab, kStreetParkingGroup)]
+        public string DistrictInstructions => string.Empty;
 
         /// <summary>
         /// Gets the cached lane-enforcement status.
         /// </summary>
         [Exclude]
+        [SettingsUIHideByCondition(typeof(PCSettings), nameof(HideStatus))]
         [SettingsUIValueVersion(typeof(ParkingStatusCache), nameof(ParkingStatusCache.GetUiVersion))]
         [SettingsUISection(kActionsTab, kStatusGroup)]
         public string EnforcementStatus => ParkingStatusCache.EnforcementRow;
 
         /// <summary>
-        /// Gets the cached personal-vehicle location status.
+        /// Gets the cached citywide street-parking share.
         /// </summary>
         [Exclude]
+        [SettingsUIHideByCondition(typeof(PCSettings), nameof(HideStatus))]
         [SettingsUIValueVersion(typeof(ParkingStatusCache), nameof(ParkingStatusCache.GetUiVersion))]
         [SettingsUISection(kActionsTab, kStatusGroup)]
-        public string VehicleStatus => ParkingStatusCache.VehicleRow;
+        public string ShareStatus => ParkingStatusCache.ShareRow;
 
         /// <summary>
         /// Gets the cached parking-supply status.
         /// </summary>
         [Exclude]
+        [SettingsUIHideByCondition(typeof(PCSettings), nameof(HideStatus))]
         [SettingsUIValueVersion(typeof(ParkingStatusCache), nameof(ParkingStatusCache.GetUiVersion))]
         [SettingsUISection(kActionsTab, kStatusGroup)]
         public string SupplyStatus => ParkingStatusCache.SupplyRow;
 
         /// <summary>
-        /// Gets the cached street share and update time.
+        /// Gets the cached personal-vehicle location status.
         /// </summary>
         [Exclude]
+        [SettingsUIHideByCondition(typeof(PCSettings), nameof(HideStatus))]
         [SettingsUIValueVersion(typeof(ParkingStatusCache), nameof(ParkingStatusCache.GetUiVersion))]
         [SettingsUISection(kActionsTab, kStatusGroup)]
-        public string ShareStatus => ParkingStatusCache.ShareRow;
+        public string VehicleStatus => ParkingStatusCache.VehicleRow;
+
+        /// <summary>
+        /// Gets the time when the cached status snapshot was collected.
+        /// </summary>
+        [Exclude]
+        [SettingsUIHideByCondition(typeof(PCSettings), nameof(HideStatus))]
+        [SettingsUIValueVersion(typeof(ParkingStatusCache), nameof(ParkingStatusCache.GetUiVersion))]
+        [SettingsUISection(kActionsTab, kStatusGroup)]
+        public string UpdatedStatus => ParkingStatusCache.UpdatedRow;
 
         /// <summary>
         /// Gets the player-facing mod name.
@@ -167,11 +202,19 @@ namespace ParkingControl
         public override void Apply()
         {
             base.Apply();
-            if (m_NoStreetParking)
+            if (m_AppliedScope == m_ParkingScope)
+            {
+                return;
+            }
+
+            // Visibility-only setting changes must not rescan lanes.
+            m_AppliedScope = m_ParkingScope;
+            if (m_ParkingScope != ParkingScope.Off)
             {
                 StreetParkingBaselineSystem.RequestScan();
             }
 
+            ParkingPolicySystem.RefreshVisibility();
             NoStreetParkingSystem.RequestReconcile();
             ParkingStatusCache.MarkDirty();
         }
@@ -179,7 +222,19 @@ namespace ParkingControl
         /// <inheritdoc/>
         public override void SetDefaults()
         {
-            m_NoStreetParking = true;
+            m_ParkingScope = ParkingScope.WholeCity;
+            ShowInstructions = false;
+            ShowStatus = false;
+        }
+
+        private bool HideInstructions()
+        {
+            return !ShowInstructions;
+        }
+
+        private bool HideStatus()
+        {
+            return !ShowStatus;
         }
 
         private static void ReportToLogAction()
@@ -218,6 +273,16 @@ namespace ParkingControl
             {
                 LogUtils.Warn($"{Mod.ModTag} Failed to open URL: {ex.GetType().Name}: {ex.Message}", ex);
             }
+        }
+
+        /// <summary>
+        /// Selects the area covered by the no-street-parking rule.
+        /// </summary>
+        public enum ParkingScope
+        {
+            WholeCity,
+            ByDistrict,
+            Off,
         }
     }
 }

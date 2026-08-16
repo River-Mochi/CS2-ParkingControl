@@ -9,39 +9,48 @@
 <!--LongDescription Value="No Street Parking" /-->
 <LongDescription>
 
-Stops cars and motorcycles from choosing street parking in the whole city.
+## Parking Control (PC)
+- Prevents cars and motorcycles from choosing street parking citywide or per district (your choice).
 
 ## Features
-- Enabled with the Options menu [x] toggle.
-- Private vehicles still park in parking lots and buildings that allow parking.
+- Choose Whole City, by District, or OFF in Options.
+- Uses CS2's own no-parking lane flag.
+- Parking lots and building parking continue to work normally.
 
 ## Good to know
-- It could take a few city months for already parked cars to move. Some vanilla road upgrades clear the affected road faster.
-- A few cars may remain temporarily after road construction while the game updates parking lanes and paths.
-- If the city does not have enough parking facilities, the game handles the overflow including use of outside-connection (hidden) storage/staging area.
-- Safe to remove: streets return to vanilla parking.
-- This does not delete cars or affect bicycles, it just prevents street parking.
+- Existing parked cars leave when their owners next use them. This may take several in-game months.
+- New or rebuilt roads may briefly accept a few cars while CS2 updates the lanes (timing order). The mod then blocks new street parking; cars already there leave naturally.
+- For faster clearing, temporarily add a vanilla feature such as bike lanes or wide sidewalks.
+- When local parking is unavailable, CS2 may use outside-connection storage or staging as it does in vanilla.
+- Safe to remove: streets return to game default behavior.
+- The mod uses the game’s own no-parking flag and does not delete vehicles or touch bicycles.
+
+
 
 ## Support and Feedback
-- Consider using the like button (top right) to show support for mods.
-- Feedback and pull requests are welcome through the GitHub and Discord links (icons on the right).
+- Don't forget the like button (top right) to give support for the mod.
+- Feedback and pull requests are welcome through the GitHub and Discord links (right side icons).
+- Future plans include adding a UI for centralized parking fees.
 
 ## Credits
 River-mochi - mod author
+Maintyper - testing
 
 
 </LongDescription>
 <!--Thumbnail-->
-<Thumbnail Value="Properties/thumbnail-NoParking02.jpg" />
+<Thumbnail Value="Properties/thumbnail-ParkingControl.jpg" />
 <!--Screenshot, can be set multiple times-->
-<Screenshot Value="Properties/10-image-Options.jpg" />
+<Screenshot Value="Properties/10-image-Options01.jpg" />
+<Screenshot Value="Properties/15-image-DistrictParking.jpg" />
 <Screenshot Value="Properties/20-image-Before-After.jpg" />
+<Screenshot Value="Properties/30-image-DistrictBeforeAfter.jpg" />
 <!--Tag, can be set multiple times-->
-<Tag Value="" />
+<Tag Value="Code Mod" />
 <!--Link to the forum post where the mod can be discussed-->
 <ForumLink Value="" />
 <!--Version of the mod-->
-<ModVersion Value="0.2.0" />
+<ModVersion Value="0.3.0" />
 <!--Recommended version of the base game to use the mod-->
 <GameVersion Value="1.6.*" />
 <!--Dependency for the mod, can be set multiple times-->

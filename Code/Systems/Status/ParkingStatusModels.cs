@@ -21,11 +21,14 @@ namespace ParkingControl
     {
         public DateTime CapturedAtLocal;
         public uint SimulationFrame;
-        public bool RestrictionEnabled;
+        public PCSettings.ParkingScope Scope;
         public int CurbLanes;
+        public int TargetCurbLanes;
         public int DisabledCurbLanes;
+        public int DisabledTargetCurbLanes;
         public int TrackedCurbLanes;
         public int OccupiedCurbLanes;
+        public int OccupiedTargetCurbLanes;
         public int FixedSlotCurbLanes;
         public int FixedSlotCurbCapacity;
         public int FixedSlotCurbParked;
@@ -36,6 +39,7 @@ namespace ParkingControl
         public int ActiveVehicles;
         public int UnlocatedVehicles;
         public int StreetParked;
+        public int TargetStreetParked;
         public int VisibleOffStreet;
         public int VisibleFacilityParking;
         public int VisibleBuildingParking;
@@ -95,6 +99,10 @@ namespace ParkingControl
         public int GarageLanes;
         public int GarageCapacity;
         public int GarageOccupied;
+        public int Districts;
+        public int DistrictsWithPolicy;
+
+        public readonly bool RestrictionEnabled => Scope != PCSettings.ParkingScope.Off;
 
         public readonly int ParkedElsewhere =>
             VisibleOffStreet + HiddenInBuildings + OutsideConnection + UnassignedOrUnknownParked;
@@ -110,41 +118,71 @@ namespace ParkingControl
     /// </summary>
     internal sealed class ParkingReportDetails
     {
-        public HashSet<Entity> CurrentStreetVehicles { get; } = new HashSet<Entity>();
+        public ParkingReportDetails(int sampleLimit)
+        {
+            StreetSamples = new List<Entity>(sampleLimit);
+            VisibleSamples = new List<Entity>(sampleLimit);
+            HiddenSamples = new List<Entity>(sampleLimit);
+            OutsideSamples = new List<Entity>(sampleLimit);
+            UnknownSamples = new List<Entity>(sampleLimit);
+            UnknownOutsideSourceSamples = new List<Entity>(sampleLimit);
+            UnknownBuildingSourceSamples = new List<Entity>(sampleLimit);
+            UnknownOtherSourceSamples = new List<Entity>(sampleLimit);
+            UnknownMissingSourceSamples = new List<Entity>(sampleLimit);
+            UnknownNoSourceSamples = new List<Entity>(sampleLimit);
+            SampleTransitions = new List<VehicleSampleTransition>(sampleLimit * 3);
+        }
 
-        public List<Entity> VisibleSamples { get; } = new List<Entity>();
+        public Dictionary<Entity, DistrictParkingStats> DistrictParking { get; } =
+            new Dictionary<Entity, DistrictParkingStats>();
 
-        public List<Entity> HiddenSamples { get; } = new List<Entity>();
+        public List<Entity> StreetSamples { get; }
 
-        public List<Entity> OutsideSamples { get; } = new List<Entity>();
+        public List<Entity> VisibleSamples { get; }
 
-        public List<Entity> UnknownSamples { get; } = new List<Entity>();
+        public List<Entity> HiddenSamples { get; }
 
-        public List<Entity> UnknownOutsideSourceSamples { get; } = new List<Entity>();
+        public List<Entity> OutsideSamples { get; }
 
-        public List<Entity> UnknownBuildingSourceSamples { get; } = new List<Entity>();
+        public List<Entity> UnknownSamples { get; }
 
-        public List<Entity> UnknownOtherSourceSamples { get; } = new List<Entity>();
+        public List<Entity> UnknownOutsideSourceSamples { get; }
 
-        public List<Entity> UnknownMissingSourceSamples { get; } = new List<Entity>();
+        public List<Entity> UnknownBuildingSourceSamples { get; }
 
-        public List<Entity> UnknownNoSourceSamples { get; } = new List<Entity>();
+        public List<Entity> UnknownOtherSourceSamples { get; }
 
-        public int SeenPreviousStreet { get; set; }
+        public List<Entity> UnknownMissingSourceSamples { get; }
 
-        public int RemainedOnStreet { get; set; }
+        public List<Entity> UnknownNoSourceSamples { get; }
 
-        public int NewlyParkedOnStreet { get; set; }
+        public List<VehicleSampleTransition> SampleTransitions { get; }
+    }
 
-        public int NowActive { get; set; }
+    /// <summary>
+    /// Log-only street-parking counters for one district side, or Entity.Null outside districts.
+    /// </summary>
+    internal sealed class DistrictParkingStats
+    {
+        public DistrictParkingStats(Entity district, bool policyActive)
+        {
+            District = district;
+            PolicyActive = policyActive;
+        }
 
-        public int NowOffStreet { get; set; }
+        public Entity District { get; }
 
-        public int NowHiddenInBuilding { get; set; }
+        public bool PolicyActive { get; set; }
 
-        public int NowAtOutsideConnection { get; set; }
+        public int EligibleLanes { get; set; }
 
-        public int NowUnassignedOrUnknown { get; set; }
+        public int DisabledLanes { get; set; }
+
+        public int TrackedLanes { get; set; }
+
+        public int StreetCars { get; set; }
+
+        public int OccupiedLanes { get; set; }
     }
 
     /// <summary>
@@ -158,6 +196,38 @@ namespace ParkingControl
         VisibleOffStreet,
         HiddenInBuilding,
         OutsideConnection,
+    }
+
+    /// <summary>
+    /// Identifies which previous-report sample group a vehicle came from.
+    /// </summary>
+    internal enum VehicleSampleSource
+    {
+        Street,
+        OutsideConnection,
+        Unknown,
+    }
+
+    /// <summary>
+    /// Records where one bounded previous-report sample was found now.
+    /// </summary>
+    internal readonly struct VehicleSampleTransition
+    {
+        public VehicleSampleTransition(
+            Entity vehicle,
+            VehicleSampleSource source,
+            VehicleLocation currentLocation)
+        {
+            Vehicle = vehicle;
+            Source = source;
+            CurrentLocation = currentLocation;
+        }
+
+        public Entity Vehicle { get; }
+
+        public VehicleSampleSource Source { get; }
+
+        public VehicleLocation CurrentLocation { get; }
     }
 
     /// <summary>

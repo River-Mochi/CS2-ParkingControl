@@ -18,10 +18,8 @@ namespace ParkingControl
 
     public sealed partial class ParkingStatusSystem
     {
-        private const int kVehicleSampleCount = 10;
-
         /// <summary>
-        /// Records one vehicle in the manual report's identity and transition collections.
+        /// Records one vehicle in bounded manual-report samples.
         /// </summary>
         private void AddReportVehicle(
             ParkingReportDetails details,
@@ -29,64 +27,74 @@ namespace ParkingControl
             VehicleLocation location,
             bool isParked)
         {
-            // Index:Version is stable only for this loaded city session, so history is
-            // cleared on every new/load callback in the main partial.
-            bool wasStreetPrevious = m_HasPreviousReport && m_PreviousStreetVehicles.Contains(vehicle);
-            if (wasStreetPrevious)
-            {
-                details.SeenPreviousStreet++;
-                switch (location)
-                {
-                    case VehicleLocation.Active:
-                        details.NowActive++;
-                        break;
-                    case VehicleLocation.StreetCurb:
-                        details.RemainedOnStreet++;
-                        break;
-                    case VehicleLocation.VisibleOffStreet:
-                        details.NowOffStreet++;
-                        break;
-                    case VehicleLocation.HiddenInBuilding:
-                        details.NowHiddenInBuilding++;
-                        break;
-                    case VehicleLocation.OutsideConnection:
-                        details.NowAtOutsideConnection++;
-                        break;
-                    default:
-                        details.NowUnassignedOrUnknown++;
-                        break;
-                }
-            }
+            RecordSampleTransition(details, vehicle, location);
 
             if (location == VehicleLocation.StreetCurb)
             {
-                details.CurrentStreetVehicles.Add(vehicle);
-                if (!wasStreetPrevious)
-                {
-                    details.NewlyParkedOnStreet++;
-                }
+                AddBoundedSample(details.StreetSamples, vehicle);
             }
 
-            // Store IDs by location only for an on-demand report. The writer prints
-            // at most ten from each group so Scene Explorer samples stay practical.
+            // These samples are capped while scanning; large cities never build a
+            // thousands-entry list merely to print a few Scene Explorer IDs.
             switch (location)
             {
                 case VehicleLocation.VisibleOffStreet:
-                    details.VisibleSamples.Add(vehicle);
+                    AddBoundedSample(details.VisibleSamples, vehicle);
                     break;
                 case VehicleLocation.HiddenInBuilding:
-                    details.HiddenSamples.Add(vehicle);
+                    AddBoundedSample(details.HiddenSamples, vehicle);
                     break;
                 case VehicleLocation.OutsideConnection:
-                    details.OutsideSamples.Add(vehicle);
+                    AddBoundedSample(details.OutsideSamples, vehicle);
                     break;
                 default:
                     if (isParked && location != VehicleLocation.StreetCurb)
                     {
-                        details.UnknownSamples.Add(vehicle);
+                        AddBoundedSample(details.UnknownSamples, vehicle);
                     }
 
                     break;
+            }
+        }
+
+        private static void AddBoundedSample(List<Entity> samples, Entity vehicle)
+        {
+            if (samples.Count < kVehicleSampleLimit)
+            {
+                samples.Add(vehicle);
+            }
+        }
+
+        private void RecordSampleTransition(
+            ParkingReportDetails details,
+            Entity vehicle,
+            VehicleLocation currentLocation)
+        {
+            if (!m_HasPreviousReport)
+            {
+                return;
+            }
+
+            if (m_PreviousStreetSamples.Contains(vehicle))
+            {
+                details.SampleTransitions.Add(new VehicleSampleTransition(
+                    vehicle,
+                    VehicleSampleSource.Street,
+                    currentLocation));
+            }
+            else if (m_PreviousOutsideSamples.Contains(vehicle))
+            {
+                details.SampleTransitions.Add(new VehicleSampleTransition(
+                    vehicle,
+                    VehicleSampleSource.OutsideConnection,
+                    currentLocation));
+            }
+            else if (m_PreviousUnknownSamples.Contains(vehicle))
+            {
+                details.SampleTransitions.Add(new VehicleSampleTransition(
+                    vehicle,
+                    VehicleSampleSource.Unknown,
+                    currentLocation));
             }
         }
 
@@ -100,30 +108,42 @@ namespace ParkingControl
                 snapshot.DisabledCurbLanes - snapshot.TrackedCurbLanes);
             string enforcementStatus = GetOwnershipStatus(
                 snapshot.RestrictionEnabled,
-                snapshot.CurbLanes,
-                snapshot.DisabledCurbLanes,
+                snapshot.Scope == PCSettings.ParkingScope.ByDistrict
+                    ? snapshot.TargetCurbLanes
+                    : snapshot.CurbLanes,
+                snapshot.Scope == PCSettings.ParkingScope.ByDistrict
+                    ? snapshot.DisabledTargetCurbLanes
+                    : snapshot.DisabledCurbLanes,
                 snapshot.TrackedCurbLanes);
             string enforcementDetails = GetOwnershipDetails(
                 snapshot.RestrictionEnabled,
-                snapshot.CurbLanes,
-                snapshot.DisabledCurbLanes,
+                snapshot.Scope == PCSettings.ParkingScope.ByDistrict
+                    ? snapshot.TargetCurbLanes
+                    : snapshot.CurbLanes,
+                snapshot.Scope == PCSettings.ParkingScope.ByDistrict
+                    ? snapshot.DisabledTargetCurbLanes
+                    : snapshot.DisabledCurbLanes,
                 snapshot.TrackedCurbLanes);
-            string deltaLine = m_HasPreviousReport
-                ? "ChangeSincePrevious: " +
-                    $"PersonalMotorVehicles={FormatDelta(snapshot.TotalVehicles - m_PreviousReport.TotalVehicles)}, " +
-                    $"StreetParking={FormatDelta(snapshot.StreetParked - m_PreviousReport.StreetParked)}, " +
-                    $"ParkedElsewhere={FormatDelta(snapshot.ParkedElsewhere - m_PreviousReport.ParkedElsewhere)}, " +
-                    $"OutsideConnection={FormatDelta(snapshot.OutsideConnection - m_PreviousReport.OutsideConnection)}, " +
-                    $"OutsideHidden={FormatDelta(snapshot.OutsideConnectionHidden - m_PreviousReport.OutsideConnectionHidden)}"
-                : "ChangeSincePrevious=<first report for this loaded city>";
-
             StringBuilder text = new StringBuilder(8192);
             text.AppendLine();
             text.AppendLine($"==================== {Mod.ModTag} PARKING REPORT ====================");
+            text.AppendLine("-------------------- SUMMARY --------------------");
             text.AppendLine($"Mod={Mod.ModName} v{Mod.ModVersion}");
-            text.AppendLine($"SimulationFrame={snapshot.SimulationFrame}");
-            text.AppendLine($"WholeCityNoStreetParking={snapshot.RestrictionEnabled}");
+            text.AppendLine(
+                $"SimulationFrame={snapshot.SimulationFrame} (simulation tick when data was collected)");
+            text.AppendLine($"ParkingScope={snapshot.Scope}");
+            text.AppendLine(
+                $"DistrictPolicy=Active in {snapshot.DistrictsWithPolicy}/{snapshot.Districts} districts " +
+                $"(PolicyEntity={FormatEntity(ParkingPolicySystem.PolicyEntity)})");
+            text.AppendLine();
+            text.AppendLine("-------------------- STREET PARKING CONTROL --------------------");
             text.AppendLine($"EligibleStreetParkingLanes={snapshot.CurbLanes}");
+            text.AppendLine(
+                $"TargetStreetParkingLanes={snapshot.TargetCurbLanes} " +
+                $"(Disabled={snapshot.DisabledTargetCurbLanes}, " +
+                $"Occupied={snapshot.OccupiedTargetCurbLanes}, " +
+                $"ParkedCars={snapshot.TargetStreetParked})");
+            AppendDistrictStreetParking(text, snapshot, details);
             text.AppendLine(
                 $"DisabledStreetParkingLanes={snapshot.DisabledCurbLanes} " +
                 $"(ParkingControlTracked={snapshot.TrackedCurbLanes}, VanillaOrOther={otherDisabledCurbLanes})");
@@ -138,6 +158,8 @@ namespace ParkingControl
             text.AppendLine(
                 $"ContinuousStreetParking={snapshot.ContinuousCurbParked} vehicles across " +
                 $"{snapshot.ContinuousCurbLanes} continuous lane entities (no exact slot capacity)");
+            text.AppendLine();
+            text.AppendLine("-------------------- PERSONAL VEHICLES --------------------");
             text.AppendLine(
                 $"PersonalMotorVehicles={snapshot.TotalVehicles} " +
                 $"(Parked={snapshot.ParkedVehicles}, Active={snapshot.ActiveVehicles}, Neither={snapshot.UnlocatedVehicles})");
@@ -153,6 +175,8 @@ namespace ParkingControl
                 $"TouristHousehold={snapshot.TouristHouseholdVehicles}, " +
                 $"CommuterHousehold={snapshot.CommuterHouseholdVehicles}, " +
                 $"DummyTraffic={snapshot.DummyTrafficVehicles}, OtherOrUnowned={snapshot.OtherOrUnownedVehicles}");
+            text.AppendLine();
+            text.AppendLine("-------------------- PARKING LOCATIONS --------------------");
             text.AppendLine($"ParkedOnStreets={snapshot.StreetParked}");
             text.AppendLine(
                 $"ParkedElsewhere={snapshot.ParkedElsewhere} " +
@@ -196,6 +220,8 @@ namespace ParkingControl
                 $"TouristHousehold={snapshot.OutsideTouristHousehold}, " +
                 $"CommuterHousehold={snapshot.OutsideCommuterHousehold}, " +
                 $"DummyTraffic={snapshot.OutsideDummyTraffic}");
+            text.AppendLine();
+            text.AppendLine("-------------------- PARKING SUPPLY --------------------");
             text.AppendLine(
                 $"VanillaRoadsInfoviewParking={snapshot.OfficialParkingOccupied}/{snapshot.OfficialParkingCapacity} " +
                 $"across {snapshot.OfficialParkingFacilities} facility entities");
@@ -214,16 +240,42 @@ namespace ParkingControl
             text.AppendLine(
                 $"NonBorderGarageLanes={snapshot.GarageOccupied}/{snapshot.GarageCapacity} occupied/capacity " +
                 $"across {snapshot.GarageLanes} garage lane entities");
-            text.AppendLine(deltaLine);
-            AppendStreetTransitions(text, snapshot, details);
+            text.AppendLine();
+            text.AppendLine("-------------------- CHANGES SINCE PREVIOUS REPORT --------------------");
+            text.AppendLine("ChangeSincePrevious:");
+            if (m_HasPreviousReport)
+            {
+                text.AppendLine(
+                    $"    PersonalMotorVehicles={FormatDelta(snapshot.TotalVehicles - m_PreviousReport.TotalVehicles)}");
+                text.AppendLine(
+                    $"    StreetParking={FormatDelta(snapshot.StreetParked - m_PreviousReport.StreetParked)}");
+                text.AppendLine(
+                    $"    ParkedElsewhere={FormatDelta(snapshot.ParkedElsewhere - m_PreviousReport.ParkedElsewhere)}");
+                text.AppendLine(
+                    $"    OutsideConnection={FormatDelta(snapshot.OutsideConnection - m_PreviousReport.OutsideConnection)}");
+                text.AppendLine(
+                    $"    OutsideHidden={FormatDelta(snapshot.OutsideConnectionHidden - m_PreviousReport.OutsideConnectionHidden)}");
+            }
+            else
+            {
+                text.AppendLine("    <first report for this loaded city>");
+            }
+
+            text.AppendLine();
+            text.AppendLine("-------------------- SAMPLE TRANSITIONS SINCE PREVIOUS REPORT --------------------");
+            AppendSampleTransitions(text, details);
+            text.AppendLine();
+            text.AppendLine("-------------------- SAMPLE ENTITY IDS --------------------");
             AppendVehicleEntitySamples(text, snapshot, details);
+            text.AppendLine();
+            text.AppendLine("-------------------- NOTES --------------------");
             text.AppendLine(
-                "Note: existing curb-parked cars leave when a keeper next uses them; this is not limited to a workday event.");
+                "Note: existing curb-parked cars leave when a keeper next uses them.");
             text.AppendLine(
                 "Note: PersonalCar.m_Keeper is the current reserver/user, not the persistent vehicle owner.");
             text.AppendLine(
                 "Note: OutsideConnection describes the parking lane/root location, not the vehicle Owner. " +
-                "Valid household-owned cars at that location are legitimate and must not be deleted.");
+                "Valid household-owned cars at that location are legit and should probably not all be deleted.");
             text.AppendLine(
                 "Note: Unknown parked cars have no usable concrete lane. Vanilla can leave an unspawned car " +
                 "at its trip source when initial parking assignment fails; TripSource may later be removed.");
@@ -245,13 +297,96 @@ namespace ParkingControl
                 "Note: StreetUsage compares street cars only with known street, public, and building parking; " +
                 "outside-connection and unknown staging are excluded.");
             text.AppendLine(
-                "Note: Entity IDs use Index:Version for Scene Explorer and are valid only within this loaded city session.");
-            text.Append("===================================================================");
+                "Note: Entity IDs use Index:Version for Scene Explorer mod use.");
+            text.AppendLine(
+                $"Note: SampleTransitions trace up to {kVehicleSampleLimit} IDs from each previous " +
+                "Street, OutsideConnection, and Unknown group; they do not represent every vehicle.");
+            text.AppendLine(
+                "Note: NoLongerTracked means the entity still exists but no longer matches this " +
+                "report's current personal-vehicle query.");
+            text.Append($"==================== {Mod.ModTag} END OF PARKING REPORT ====================");
             LogUtils.Info(text.ToString());
 
             m_PreviousReport = snapshot;
-            m_PreviousStreetVehicles = details.CurrentStreetVehicles;
+            m_PreviousDistrictStreetCars.Clear();
+            foreach (DistrictParkingStats district in details.DistrictParking.Values)
+            {
+                m_PreviousDistrictStreetCars[district.District] = district.StreetCars;
+            }
+
+            ReplaceSamples(m_PreviousStreetSamples, details.StreetSamples);
+            ReplaceSamples(m_PreviousOutsideSamples, details.OutsideSamples);
+            ReplaceSamples(m_PreviousUnknownSamples, details.UnknownSamples);
             m_HasPreviousReport = true;
+        }
+
+        private static void ReplaceSamples(List<Entity> destination, List<Entity> source)
+        {
+            destination.Clear();
+            destination.AddRange(source);
+        }
+
+        /// <summary>
+        /// Lists each district by player-facing name so repeated reports show local trends.
+        /// </summary>
+        private void AppendDistrictStreetParking(
+            StringBuilder text,
+            ParkingSnapshot snapshot,
+            ParkingReportDetails details)
+        {
+            List<DistrictParkingStats> districts =
+                new List<DistrictParkingStats>(details.DistrictParking.Values);
+            districts.Sort((left, right) => string.Compare(
+                GetDistrictName(left.District),
+                GetDistrictName(right.District),
+                StringComparison.CurrentCultureIgnoreCase));
+
+            text.AppendLine(
+                "District details (lane counts are roadside parking sections, not individual spaces):");
+            foreach (DistrictParkingStats district in districts)
+            {
+                bool effective = snapshot.Scope == PCSettings.ParkingScope.WholeCity ||
+                    (snapshot.Scope == PCSettings.ParkingScope.ByDistrict && district.PolicyActive);
+                string status = GetOwnershipStatus(
+                    effective,
+                    district.EligibleLanes,
+                    district.DisabledLanes,
+                    district.TrackedLanes);
+                string change = "<first>";
+                if (m_HasPreviousReport)
+                {
+                    change = m_PreviousDistrictStreetCars.TryGetValue(
+                        district.District,
+                        out int previousCars)
+                        ? FormatDelta(district.StreetCars - previousCars)
+                        : "<new>";
+                }
+
+                text.AppendLine(
+                    $"  {GetDistrictName(district.District)} [{FormatEntity(district.District)}] | " +
+                    $"Policy={(district.PolicyActive ? "ON" : "OFF")} | " +
+                    $"{district.StreetCars} parked ({district.OccupiedLanes} lanes) | " +
+                    $"{district.DisabledLanes}/{district.EligibleLanes} disabled | " +
+                    $"{status} | Change={change}");
+            }
+        }
+
+        private string GetDistrictName(Entity district)
+        {
+            if (district == Entity.Null)
+            {
+                return "<No district>";
+            }
+
+            if (!EntityManager.Exists(district))
+            {
+                return "<Missing district>";
+            }
+
+            string name = m_NameSystem.GetRenderedLabelName(district);
+            return string.IsNullOrWhiteSpace(name)
+                ? $"District {FormatEntity(district)}"
+                : name.Replace('\r', ' ').Replace('\n', ' ').Replace('|', '/');
         }
 
         /// <summary>
@@ -262,10 +397,10 @@ namespace ParkingControl
             ParkingSnapshot snapshot,
             ParkingReportDetails details)
         {
-            List<Entity> vehicles = new List<Entity>(details.CurrentStreetVehicles);
             text.AppendLine(
-                "VehicleEntitySamples=<up to 10 per parked location; enter Index:Version in Scene Explorer>");
-            AppendEntitySampleLine(text, "Street", snapshot.StreetParked, vehicles);
+                $"Samples=<up to {kVehicleSampleLimit} per parked location; " +
+                "enter Index:Version in Scene Explorer>");
+            AppendEntitySampleLine(text, "Street", snapshot.StreetParked, details.StreetSamples);
             AppendEntitySampleLine(text, "Visible", snapshot.VisibleOffStreet, details.VisibleSamples);
             AppendEntitySampleLine(text, "Hidden", snapshot.HiddenInBuildings, details.HiddenSamples);
             AppendEntitySampleLine(text, "Outside", snapshot.OutsideConnection, details.OutsideSamples);
@@ -308,15 +443,14 @@ namespace ParkingControl
             List<Entity> vehicles)
         {
             vehicles.Sort(CompareEntities);
-            int count = Math.Min(kVehicleSampleCount, vehicles.Count);
             text.Append($"  {label}={total} total; samples=");
-            if (count == 0)
+            if (vehicles.Count == 0)
             {
                 text.AppendLine("<none>");
                 return;
             }
 
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < vehicles.Count; i++)
             {
                 if (i != 0)
                 {
@@ -337,49 +471,121 @@ namespace ParkingControl
                 : left.Version.CompareTo(right.Version);
         }
 
-        private void AppendStreetTransitions(
-            StringBuilder text,
-            ParkingSnapshot snapshot,
-            ParkingReportDetails details)
+        private void AppendSampleTransitions(StringBuilder text, ParkingReportDetails details)
         {
             if (!m_HasPreviousReport)
             {
                 text.AppendLine(
-                    $"StreetCarsSincePrevious=<first report; stored {snapshot.StreetParked} current street-car IDs as baseline>");
+                    $"SampleTransitions=<first report; storing up to {kVehicleSampleLimit} " +
+                    "Street, OutsideConnection, and Unknown Entity IDs for the next report>");
                 return;
             }
 
-            int deletedOrNoLongerExists = Math.Max(
-                0,
-                m_PreviousStreetVehicles.Count - details.SeenPreviousStreet);
-            int leftStreetTotal = Math.Max(
-                0,
-                m_PreviousStreetVehicles.Count - details.RemainedOnStreet);
-            int classifiedLeft =
-                details.NowActive +
-                details.NowOffStreet +
-                details.NowHiddenInBuilding +
-                details.NowAtOutsideConnection +
-                details.NowUnassignedOrUnknown +
-                deletedOrNoLongerExists;
-
-            text.AppendLine("StreetCarsSincePrevious:");
-            text.AppendLine($"  RemainedOnStreet={details.RemainedOnStreet}");
-            text.AppendLine($"  NewlyParkedOnStreet={details.NewlyParkedOnStreet}");
-            text.AppendLine($"  LeftStreetTotal={leftStreetTotal}");
-            text.AppendLine($"  NowActive={details.NowActive}");
-            text.AppendLine($"  NowOffStreet={details.NowOffStreet}");
-            text.AppendLine($"  NowHiddenInBuilding={details.NowHiddenInBuilding}");
-            text.AppendLine($"  NowAtOutsideConnection={details.NowAtOutsideConnection}");
-            text.AppendLine($"  NowUnassignedOrUnknown={details.NowUnassignedOrUnknown}");
-            text.AppendLine($"  DeletedOrNoLongerExists={deletedOrNoLongerExists}");
             text.AppendLine(
-                $"  TransitionClassification={(classifiedLeft == leftStreetTotal ? "OK" : "WARNING")} " +
-                $"(Classified={classifiedLeft})");
+                $"SampleTransitions=<up to {kVehicleSampleLimit} sampled IDs per group; " +
+                "these results do not cover every vehicle>");
+            AppendSampleTransitionGroup(
+                text,
+                "Street",
+                VehicleSampleSource.Street,
+                m_PreviousStreetSamples,
+                details);
+            AppendSampleTransitionGroup(
+                text,
+                "OutsideConnection",
+                VehicleSampleSource.OutsideConnection,
+                m_PreviousOutsideSamples,
+                details);
+            AppendSampleTransitionGroup(
+                text,
+                "Unknown",
+                VehicleSampleSource.Unknown,
+                m_PreviousUnknownSamples,
+                details);
+        }
+
+        private void AppendSampleTransitionGroup(
+            StringBuilder text,
+            string label,
+            VehicleSampleSource source,
+            List<Entity> previousSamples,
+            ParkingReportDetails details)
+        {
+            int[] counts = new int[8];
+            foreach (Entity vehicle in previousSamples)
+            {
+                counts[(int)GetCurrentSampleState(vehicle, source, details)]++;
+            }
+
+            text.AppendLine(
+                $"Previous{label}Samples={previousSamples.Count} | " +
+                $"Street={counts[(int)CurrentSampleState.Street]} | " +
+                $"Active={counts[(int)CurrentSampleState.Active]} | " +
+                $"Visible={counts[(int)CurrentSampleState.Visible]} | " +
+                $"Hidden={counts[(int)CurrentSampleState.Hidden]} | " +
+                $"Outside={counts[(int)CurrentSampleState.Outside]} | " +
+                $"Unknown={counts[(int)CurrentSampleState.Unknown]} | " +
+                $"NoLongerTracked={counts[(int)CurrentSampleState.NoLongerTracked]} | " +
+                $"NoLongerExists={counts[(int)CurrentSampleState.NoLongerExists]}");
+
+            foreach (Entity vehicle in previousSamples)
+            {
+                CurrentSampleState current = GetCurrentSampleState(vehicle, source, details);
+                text.AppendLine(
+                    $"  {FormatEntity(vehicle)}: {label} -> {FormatSampleState(current)}");
+            }
+        }
+
+        private CurrentSampleState GetCurrentSampleState(
+            Entity vehicle,
+            VehicleSampleSource source,
+            ParkingReportDetails details)
+        {
+            foreach (VehicleSampleTransition transition in details.SampleTransitions)
+            {
+                if (transition.Vehicle == vehicle && transition.Source == source)
+                {
+                    return transition.CurrentLocation switch
+                    {
+                        VehicleLocation.Active => CurrentSampleState.Active,
+                        VehicleLocation.StreetCurb => CurrentSampleState.Street,
+                        VehicleLocation.VisibleOffStreet => CurrentSampleState.Visible,
+                        VehicleLocation.HiddenInBuilding => CurrentSampleState.Hidden,
+                        VehicleLocation.OutsideConnection => CurrentSampleState.Outside,
+                        _ => CurrentSampleState.Unknown,
+                    };
+                }
+            }
+
+            return EntityManager.Exists(vehicle)
+                ? CurrentSampleState.NoLongerTracked
+                : CurrentSampleState.NoLongerExists;
+        }
+
+        private static string FormatSampleState(CurrentSampleState state)
+        {
+            return state switch
+            {
+                CurrentSampleState.NoLongerTracked => "No longer tracked as a personal vehicle",
+                CurrentSampleState.NoLongerExists => "No longer exists",
+                _ => state.ToString(),
+            };
+        }
+
+        private enum CurrentSampleState
+        {
+            Street,
+            Active,
+            Visible,
+            Hidden,
+            Outside,
+            Unknown,
+            NoLongerTracked,
+            NoLongerExists,
         }
 
         /// <summary>
-        /// Describes whether eligible curb lanes match the current restriction setting.
+        /// Describes whether targeted street-parking lanes match the current restriction setting.
         /// </summary>
         internal static string GetOwnershipStatus(
             bool restrictionEnabled,
@@ -413,7 +619,7 @@ namespace ParkingControl
         }
 
         /// <summary>
-        /// Keeps technical enforcement details in the manual log rather than the Options value.
+        /// Keeps technical details in the manual log rather than the Options UI.
         /// </summary>
         private static string GetOwnershipDetails(
             bool restrictionEnabled,
@@ -430,12 +636,12 @@ namespace ParkingControl
 
             if (curbLanes > 0 && trackedCurbLanes == 0)
             {
-                return "Restriction on but Parking Control owns no eligible lanes";
+                return "Restriction on but Parking Control owns no targeted lanes";
             }
 
             if (disabledCurbLanes < curbLanes)
             {
-                return "Some eligible street-parking lanes are not disabled";
+                return "Some targeted street-parking lanes are not disabled";
             }
 
             if (disabledCurbLanes < trackedCurbLanes)
@@ -443,7 +649,7 @@ namespace ParkingControl
                 return "Some Parking Control lanes are not disabled";
             }
 
-            return "Restriction on and eligible street-parking lanes are disabled";
+            return "Restriction on and targeted street-parking lanes are disabled";
         }
 
         private static string FormatDelta(int value)
