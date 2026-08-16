@@ -10,10 +10,8 @@
 
 namespace ParkingControl
 {
-    using System;
     using System.Collections.Generic;
     using Colossal;
-    using Game.Routes;
 
     /// <summary>
     /// English localization entries for <see cref="PCSettings"/>.
@@ -61,26 +59,26 @@ namespace ParkingControl
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "OFF" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Show instructions" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
-                    "Shows how to use <District> mode.\n" +
+                    "Shows how to use <by District> mode.\n" +
                     "OFF = street-parking restrictions are disabled.\n" +
                     "Whole City = eligible street parking is blocked citywide." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "Show status" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowStatus)),
                     "<Show current parking totals below.>\n" +
-                    "Status is collected only while Options menu is open; no background scan runs during city play."
-                },
+                    "Status is collected only while the Options menu is open; " +
+                    "no background status scan runs during city play." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.DistrictInstructions)),
                     "<District mode>\n" +
                     "1. Choose <by District> above.\n" +
                     "2. Create/select a district in the city.\n" +
-                    "3. Open <Policies panel> and enable **Roadside Parking Ban [✓]**.\n" +
+                    "3. Open the <Policies> panel and enable **Roadside Parking Ban [✓]**.\n" +
                     "Roads outside selected districts keep normal street parking." },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
 
                 // In-city district policy.
                 { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "Roadside Parking Ban" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.PrefabName}]",
-                    "Choose <By District> in Options> Parking Control. This prevents future street parking. " +
+                    "Choose <by District> in Options > Parking Control to block new street parking here. " +
                     "Existing parked cars leave when their citizens next use them." },
 
                 // Live Options status rows, in display order.
@@ -89,7 +87,8 @@ namespace ParkingControl
                     "<Parked> = cars still parked on streets covered by the selected mode.\n" +
                     "<Lanes> = roadside parking sections holding those cars. One lane can hold many.\n" +
                     "<Disabled> = street-parking lanes closed to new parking.\n" +
-                    "<By District> shows banned-area / total city occupied lanes, disabled/eligible lanes, and enabled / total districts.\n" +
+                    "<by District> shows banned-area / citywide occupied lanes, disabled / eligible city lanes, " +
+                    "and enabled / total districts.\n" +
                     "<New or rebuilt roads> may briefly accept a few cars while their lanes update.\n" +
                     "Cars already parked leave naturally.\n" +
                     "<CHECK> = some selected roads are not blocked yet. Run the city briefly and check again. " +
@@ -100,13 +99,13 @@ namespace ParkingControl
                     "<Street parked> = percentage parked on streets instead of in public or building parking.\n" +
                     "<Active> = personal vehicles driving or waiting in traffic.\n" +
                     "<Formula> = street ÷ (street + occupied public + occupied building).\n" +
-                    "**Outside connection (OC) and unassigned staging are excluded.**" },
+                    "**OC storage and cars without an assigned parking lane are excluded.**" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Parking spaces" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
                     "Shows citywide parking occupancy.\n" +
                     "<Public> spaces used = facilities counted by the vanilla Parking InfoView.\n" +
                     "<Building> spaces used = parking included with homes, workplaces, and shops.\n" +
-                    "**Higher percent % = more parking facilities may be needed.**" },
+                    "**Higher usage means fewer spaces are available in that category.**" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Car Locations" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VehicleStatus)),
                     "This row shows citywide data, not only districts with the ban.\n" +
@@ -128,8 +127,8 @@ namespace ParkingControl
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ReportToLog)),
                     "Write street-parking and related details to \n" +
                     "<Logs/ParkingControl.log>.\n" +
-                    "If curious, write a 2nd report later in the same loaded city.\n" +
-                    "- Compares up to 20 sampled street, OC, and unassigned Entity IDs.\n" +
+                    "If curious, write a second report later in the same loaded city.\n" +
+                    "- Compares up to 20 sampled Entity IDs from street, OC, and no-lane cars.\n" +
                     "- Shows if each sample stayed, started driving, parked elsewhere, or disappeared." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenLog)), "Open log" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)),
