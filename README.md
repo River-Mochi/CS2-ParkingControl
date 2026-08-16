@@ -1,15 +1,21 @@
 # Parking Control
 
-**Parking Control** gives you a simple citywide option to stop personal cars and motorcycles from using street parking in Cities Skylines II.
+**Parking Control** prevents cars and motorcycles from choosing street parking in Cities: Skylines II.
 
-## What it does
+## Features
 
-- Prevents new street parking on ordinary roads across the city.
-- Keeps parking lots and parking included with buildings available.
-- Does **not** delete cars already parked on the street — they leave naturally when citizens use them.
-- Shows live parking status, including where personal vehicles are parked and available parking supply.
-- Includes an optional detailed parking report for troubleshooting.
+- Choose **Whole City**, **by District**, or **OFF** in the mod Options.
+- Whole City is enabled by default.
+- In by-District mode, enable **Roadside Parking Ban** in each district's Policies panel.
+- Parking lots and parking included with buildings remain available.
+- Optional Status rows show street parking, parking-space use, and car locations.
+- An on-demand log report provides detailed troubleshooting information.
 
-The **No Street Parking** [x] option is enabled by default and can be changed in the mod's Options menu.
+## Good to know
+
+- Existing street-parked cars are not deleted. They leave when their owners next use them, which may take several in-game months.
+- New or rebuilt roads may briefly accept a few cars while the game updates their parking lanes.
+- If local parking is unavailable, the game may use outside-connection storage or staging as it does in vanilla.
+- Removing the mod returns streets to normal game behavior after the city is reloaded.
 
 > Make sure your city has enough off-street parking. If parking is scarce, drivers may spend more time searching for a space.
