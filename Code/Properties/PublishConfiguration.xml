@@ -9,17 +9,18 @@
 <!--LongDescription Value="No Street Parking" /-->
 <LongDescription>
 
-Prevents cars and motorcycles from choosing street parking in the whole city or per district.
+## Parcking Control (PC)
+- Prevents cars and motorcycles from choosing street parking in the whole city or per district (your choice).
 
 ## Features
-- Options menu dropdown: whole city, districts, or off.
-- Naturaly, vehicles still park in parking lots and buildings that allow parking.
+- Options menu dropdown: whole city, per district, or off.
+- Naturally, vehicles still use parking lots and buildings that allow parking.
 
 ## Good to know
-- It could take a few city months for already parked cars to move. Some vanilla road upgrades clear the road faster if you want a faster reset.
-- New roads should be parking free. Caveate: a few cars may appear after road construction while the game updates parking lanes and paths (timing).
+- It could take a few city months for already parked cars to move. If you want a faster reset of existing roads, try a vanilla accessory like updating to bike lanes on/off.
+- New roads should be parking free. Caveat: a few cars may appear after a newly built road while the game updates parking lanes and paths (timing order).
 - If the city does not have enough parking facilities, the game handles the overflow normally to include use of outside-connection (hidden) storage/staging area.
-- This does not delete cars or affect bicycles, it adds road no parking flags.
+-  uses the game’s own no-parking lane flag and does not delete vehicles or touch bicycles.
 - Safe to remove: streets return to vanilla parking.
 
 
@@ -31,6 +32,12 @@ Prevents cars and motorcycles from choosing street parking in the whole city or 
 River-mochi - mod author
 
 
+### Why newly built roads can briefly receive cars
+- This is a normal minor timing/order: CS2 calculates a road’s parking lanes across several modification passes.
+- A car can claim a space during that process.
+- PC then sees the newly created or updated lane and applies ParkingDisabled.
+- It deliberately does not delete a car that already claimed the space so one could see a couple sneak in and choose to leave them or not.
+
 </LongDescription>
 <!--Thumbnail-->
 <Thumbnail Value="Properties/thumbnail-ParkingControl.jpg" />
@@ -38,8 +45,9 @@ River-mochi - mod author
 <Screenshot Value="Properties/10-image-Options01.jpg" />
 <Screenshot Value="Properties/15-image-DistrictParking.jpg" />
 <Screenshot Value="Properties/20-image-Before-After.jpg" />
+<Screenshot Value="Properties/30-image-DistrictBeforeAfter.jpg" />
 <!--Tag, can be set multiple times-->
-<Tag Value="" />
+<Tag Value="Code Mod" />
 <!--Link to the forum post where the mod can be discussed-->
 <ForumLink Value="" />
 <!--Version of the mod-->
