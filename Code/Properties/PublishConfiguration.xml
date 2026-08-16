@@ -9,36 +9,33 @@
 <!--LongDescription Value="No Street Parking" /-->
 <LongDescription>
 
-## Parcking Control (PC)
-- Prevents cars and motorcycles from choosing street parking in the whole city or per district (your choice).
+## Parking Control (PC)
+- Prevents cars and motorcycles from choosing street parking citywide or per district (your choice).
 
 ## Features
-- Options menu dropdown: whole city, per district, or off.
-- Naturally, vehicles still use parking lots and buildings that allow parking.
+- Choose Whole City, by District, or OFF in Options.
+- Uses CS2's own no-parking lane flag.
+- Parking lots and building parking continue to work normally.
 
 ## Good to know
-- It could take a few city months for already parked cars to move. If you want a faster reset of existing roads, try a vanilla accessory like updating to bike lanes on/off.
-- New roads in banned parking areas should be parking free. Caveat: a few cars may appear after a newly built road while the game updates parking lanes and paths (timing order).
-- If the city does not have enough parking facilities, the game handles the overflow normally to include use of outside-connection (hidden) storage/staging area.
--  uses the game’s own no-parking lane flag and does not delete vehicles or touch bicycles.
-- Safe to remove: streets return to vanilla parking.
+- Existing parked cars leave when their owners next use them. This may take several in-game months.
+- New or rebuilt roads may briefly accept a few cars while CS2 updates the lanes (timing order). The mod then blocks new street parking; cars already there leave naturally.
+- For faster clearing, temporarily add a vanilla feature such as bike lanes or wide sidewalks.
+- When local parking is unavailable, CS2 may use outside-connection storage or staging as it does in vanilla.
+- Safe to remove: streets return to game default behavior.
+- The mod uses the game’s own no-parking flag and does not delete vehicles or touch bicycles.
+
 
 
 ## Support and Feedback
-- Consider clicking the like button (top right) to show support for mods.
+- Don't forget the like button (top right) to give support for the mod.
 - Feedback and pull requests are welcome through the GitHub and Discord links (right side icons).
-- Future plans: add UI for centralized parking fees - the current mod that does fees is asking for someone to take over the task.
+- Future plans include adding a UI for centralized parking fees.
 
 ## Credits
 River-mochi - mod author
 Maintyper - testing
 
-
-### Why newly built roads can briefly receive cars
-- This is a normal minor timing/order: CS2 calculates a road’s parking lanes across several modification passes.
-- A car can claim a space during that process.
-- PC then sees the newly created or updated lane and applies ParkingDisabled.
-- It deliberately does not delete a car that already claimed the space so one could see a couple sneak in and choose to leave them or not.
 
 </LongDescription>
 <!--Thumbnail-->

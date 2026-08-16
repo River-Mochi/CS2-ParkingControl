@@ -96,6 +96,10 @@ namespace ParkingControl
                     "<업데이트> = 상태의 마지막 새로 고침.\n" +
                     "**외부 연결(OC)과 할당되지 않은 대기 영역은 제외됩니다.**"
                 },
+                // Translate these two new entries from LocaleEN.cs.
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.UpdatedStatus)), "Updated" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.UpdatedStatus)),
+                    "Time when these citywide status values were last refreshed." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NameText)), "모드 이름" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VersionText)), "버전" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenParadox)), "Paradox Mods 링크" },
@@ -112,10 +116,14 @@ namespace ParkingControl
                 { ParkingStatusLocale.kCollecting, "주차 상태를 수집하는 중..." },
                 { ParkingStatusLocale.kUnavailable, "주차 상태를 사용할 수 없습니다." },
                 { ParkingStatusLocale.kCollectionFailed, "주차 상태를 수집하지 못했습니다. ParkingControl.log를 확인하세요." },
-                { ParkingStatusLocale.kEnforcementFormat, "{0} 주차됨 ({1} 차선) | {2}/{3} 비활성 | {4}" },
+                // Translate these formats without changing the numbered placeholders.
+                { ParkingStatusLocale.kCompactEnforcementFormat,
+                    "{0} parked ({1} lanes) | {2}/{3} disabled{4}" },
+                { ParkingStatusLocale.kDistrictEnforcementFormat,
+                    "{0} parked ({1}/{2} lanes) | {3}/{4} disabled | {5}/{6} districts{7}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} 도로 | {1} 표시 | {2} 숨김 | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0}  {1} / {2} 공공 | {3}  {4} / {5} 건물" },
-                { ParkingStatusLocale.kShareFormat, "{0} 노상 주차 | {1} 이동 중 | 업데이트 {2}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} public {1}/{2} | {3} building {4}/{5}" },
+                { ParkingStatusLocale.kShareFormat, "{0} street parked {1} | {2} active" },
                 { ParkingStatusLocale.kStatusOk, "정상" },
                 { ParkingStatusLocale.kStatusOff, "꺼짐" },
                 { ParkingStatusLocale.kStatusCheck, "확인" },

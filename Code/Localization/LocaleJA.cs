@@ -96,6 +96,10 @@ namespace ParkingControl
                     "<更新> = 状態の最終更新時刻。\n" +
                     "**外部接続（OC）と未割り当ての待機領域は除外されます。**"
                 },
+                // Translate these two new entries from LocaleEN.cs.
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.UpdatedStatus)), "Updated" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.UpdatedStatus)),
+                    "Time when these citywide status values were last refreshed." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NameText)), "MOD名" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VersionText)), "バージョン" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenParadox)), "Paradox Mods リンク" },
@@ -112,10 +116,14 @@ namespace ParkingControl
                 { ParkingStatusLocale.kCollecting, "駐車状況を収集中..." },
                 { ParkingStatusLocale.kUnavailable, "駐車状況を取得できません。" },
                 { ParkingStatusLocale.kCollectionFailed, "駐車状況を収集できませんでした。ParkingControl.log を確認してください。" },
-                { ParkingStatusLocale.kEnforcementFormat, "{0} 駐車中（{1} 車線） | {2}/{3} 無効 | {4}" },
+                // Translate these formats without changing the numbered placeholders.
+                { ParkingStatusLocale.kCompactEnforcementFormat,
+                    "{0} parked ({1} lanes) | {2}/{3} disabled{4}" },
+                { ParkingStatusLocale.kDistrictEnforcementFormat,
+                    "{0} parked ({1}/{2} lanes) | {3}/{4} disabled | {5}/{6} districts{7}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} 路上 | {1} 表示 | {2} 非表示 | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0}  {1} / {2} 公共 | {3}  {4} / {5} 建物" },
-                { ParkingStatusLocale.kShareFormat, "{0} 路上駐車 | {1} 移動中 | 更新 {2}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} public {1}/{2} | {3} building {4}/{5}" },
+                { ParkingStatusLocale.kShareFormat, "{0} street parked {1} | {2} active" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "オフ" },
                 { ParkingStatusLocale.kStatusCheck, "確認" },

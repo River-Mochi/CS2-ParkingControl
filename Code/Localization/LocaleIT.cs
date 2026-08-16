@@ -97,6 +97,10 @@ namespace ParkingControl
                     "<Aggiornato> = ultimo aggiornamento dello stato.\n" +
                     "**Le connessioni esterne (OC) e l'area di attesa non assegnata sono escluse.**"
                 },
+                // Translate these two new entries from LocaleEN.cs.
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.UpdatedStatus)), "Updated" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.UpdatedStatus)),
+                    "Time when these citywide status values were last refreshed." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NameText)), "Nome mod" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VersionText)), "Versione" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenParadox)), "Link Paradox Mods" },
@@ -113,10 +117,14 @@ namespace ParkingControl
                 { ParkingStatusLocale.kCollecting, "Raccolta dello stato dei parcheggi..." },
                 { ParkingStatusLocale.kUnavailable, "Lo stato dei parcheggi non è disponibile." },
                 { ParkingStatusLocale.kCollectionFailed, "Impossibile raccogliere lo stato dei parcheggi; consulta ParkingControl.log." },
-                { ParkingStatusLocale.kEnforcementFormat, "{0} parcheggiate ({1} corsie) | {2}/{3} disattivate | {4}" },
+                // Translate these formats without changing the numbered placeholders.
+                { ParkingStatusLocale.kCompactEnforcementFormat,
+                    "{0} parked ({1} lanes) | {2}/{3} disabled{4}" },
+                { ParkingStatusLocale.kDistrictEnforcementFormat,
+                    "{0} parked ({1}/{2} lanes) | {3}/{4} disabled | {5}/{6} districts{7}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} strada | {1} visibili | {2} nascoste | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0}  {1} / {2} pubblici | {3}  {4} / {5} edificio" },
-                { ParkingStatusLocale.kShareFormat, "{0} parcheggiate in strada | {1} in movimento | aggiornato {2}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} public {1}/{2} | {3} building {4}/{5}" },
+                { ParkingStatusLocale.kShareFormat, "{0} street parked {1} | {2} active" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "DISATTIVATO" },
                 { ParkingStatusLocale.kStatusCheck, "CONTROLLA" },

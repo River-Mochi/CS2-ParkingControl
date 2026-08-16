@@ -130,7 +130,7 @@ namespace ParkingControl
             text.AppendLine("-------------------- SUMMARY --------------------");
             text.AppendLine($"Mod={Mod.ModName} v{Mod.ModVersion}");
             text.AppendLine(
-                $"SimulationFrame={snapshot.SimulationFrame} (sim tick used to order reports.)");
+                $"SimulationFrame={snapshot.SimulationFrame} (simulation tick when data was collected)");
             text.AppendLine($"ParkingScope={snapshot.Scope}");
             text.AppendLine(
                 $"DistrictPolicy=Active in {snapshot.DistrictsWithPolicy}/{snapshot.Districts} districts " +

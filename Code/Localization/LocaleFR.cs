@@ -97,6 +97,10 @@ namespace ParkingControl
                     "<Màj> = dernière actualisation de l'état.\n" +
                     "**Les connexions extérieures (OC) et la zone d'attente non attribuée sont exclues.**"
                 },
+                // Translate these two new entries from LocaleEN.cs.
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.UpdatedStatus)), "Updated" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.UpdatedStatus)),
+                    "Time when these citywide status values were last refreshed." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NameText)), "Nom du mod" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VersionText)), "Version" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenParadox)), "Lien Paradox Mods" },
@@ -113,10 +117,14 @@ namespace ParkingControl
                 { ParkingStatusLocale.kCollecting, "Collecte de l'état du stationnement..." },
                 { ParkingStatusLocale.kUnavailable, "L'état du stationnement n'est pas disponible." },
                 { ParkingStatusLocale.kCollectionFailed, "Impossible de collecter l'état du stationnement ; consultez ParkingControl.log." },
-                { ParkingStatusLocale.kEnforcementFormat, "{0} garées ({1} voies) | {2}/{3} fermées | {4}" },
+                // Translate these formats without changing the numbered placeholders.
+                { ParkingStatusLocale.kCompactEnforcementFormat,
+                    "{0} parked ({1} lanes) | {2}/{3} disabled{4}" },
+                { ParkingStatusLocale.kDistrictEnforcementFormat,
+                    "{0} parked ({1}/{2} lanes) | {3}/{4} disabled | {5}/{6} districts{7}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} rue | {1} visibles | {2} cachées | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} {1}/{2} public | {3} {4}/{5} bâtiment" },
-                { ParkingStatusLocale.kShareFormat, "{0} rue | {1} roulent | màj {2}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} public {1}/{2} | {3} building {4}/{5}" },
+                { ParkingStatusLocale.kShareFormat, "{0} street parked {1} | {2} active" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "OFF" },
                 { ParkingStatusLocale.kStatusCheck, "VÉRIF." },

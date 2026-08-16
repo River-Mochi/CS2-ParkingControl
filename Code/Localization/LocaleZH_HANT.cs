@@ -96,6 +96,10 @@ namespace ParkingControl
                     "<更新> = 狀態上次重新整理的時間。\n" +
                     "**外部連接（OC）和未分配暫存區域不計入統計。**"
                 },
+                // Translate these two new entries from LocaleEN.cs.
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.UpdatedStatus)), "Updated" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.UpdatedStatus)),
+                    "Time when these citywide status values were last refreshed." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NameText)), "模組名稱" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VersionText)), "版本" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenParadox)), "Paradox Mods 連結" },
@@ -112,10 +116,14 @@ namespace ParkingControl
                 { ParkingStatusLocale.kCollecting, "正在收集停車狀態..." },
                 { ParkingStatusLocale.kUnavailable, "停車狀態無法使用。" },
                 { ParkingStatusLocale.kCollectionFailed, "無法收集停車狀態；請查看 ParkingControl.log。" },
-                { ParkingStatusLocale.kEnforcementFormat, "{0} 已停放（{1} 車道） | {2}/{3} 已停用 | {4}" },
+                // Translate these formats without changing the numbered placeholders.
+                { ParkingStatusLocale.kCompactEnforcementFormat,
+                    "{0} parked ({1} lanes) | {2}/{3} disabled{4}" },
+                { ParkingStatusLocale.kDistrictEnforcementFormat,
+                    "{0} parked ({1}/{2} lanes) | {3}/{4} disabled | {5}/{6} districts{7}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} 路邊 | {1} 可見 | {2} 隱藏 | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0}  {1} / {2} 公共 | {3}  {4} / {5} 建築" },
-                { ParkingStatusLocale.kShareFormat, "{0} 路邊停放 | {1} 行駛中 | 更新 {2}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} public {1}/{2} | {3} building {4}/{5}" },
+                { ParkingStatusLocale.kShareFormat, "{0} street parked {1} | {2} active" },
                 { ParkingStatusLocale.kStatusOk, "正常" },
                 { ParkingStatusLocale.kStatusOff, "關閉" },
                 { ParkingStatusLocale.kStatusCheck, "檢查" },
