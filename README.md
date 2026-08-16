@@ -1,15 +1,15 @@
 # Parking Control
 
-**Parking Control** prevents cars and motorcycles from choosing street parking in Cities: Skylines II.
+**Parking Control** prevents cars and motorcycles from choosing street parking in Cities Skylines II.
 
 ## Features
 
 - Choose **Whole City**, **by District**, or **OFF** in the mod Options.
 - Whole City is enabled by default.
 - In by-District mode, enable **Roadside Parking Ban** in each district's Policies panel.
-- Parking lots and parking included with buildings remain available.
-- Optional Status rows show street parking, parking-space use, and car locations.
-- An on-demand log report provides detailed troubleshooting information.
+- Parking lots and Building provided parking remain available.
+- Optional Status rows show street parking, public parking use, and car locations.
+- An on-demand log report provides detailed research information.
 
 ## Good to know
 
