@@ -89,7 +89,7 @@ namespace ParkingControl
                     "<Gesperrt> = Straßenparkspuren, die kein neues Parken zulassen.\n" +
                     "<Nach Bezirk> zeigt:\n" +
                     "- Belegte Spuren in Bezirken mit Verbot / belegte Spuren stadtweit.\n" +
-                    "- Deaktivierte Spuren / geeignete Spuren der Stadt.\n" +
+                    "- Gesperrte Spuren / geeignete Spuren der Stadt.\n" +
                     "- Aktivierte Bezirke / gesamte Bezirke.\n" +
                     "<Neue oder umgebaute Straßen> können kurzzeitig einige Autos aufnehmen, während ihre Spuren aktualisiert werden.\n" +
                     "Bereits geparkte Autos fahren natürlich weg.\n" +
@@ -105,7 +105,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Parkplätze" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
                     "Zeigt die stadtweite Parkplatzbelegung.\n" +
-                    "<Öff.> belegt = Einrichtungen, die von der Vanilla-Parkplatz-Infoansicht gezählt werden.\n" +
+                    "<Öff.> belegt = Einrichtungen, die von der Parkplatz-Infoansicht des Grundspiels gezählt werden.\n" +
                     "<Gebäude> belegt = Parkplätze bei Wohnungen, Arbeitsplätzen und Geschäften.\n" +
                     "**Je höher die %-Nutzung, desto eher werden zusätzliche Parkplätze benötigt.**" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Auto-Standorte" },

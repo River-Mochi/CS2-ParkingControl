@@ -78,8 +78,8 @@ namespace ParkingControl
                 // In-city district policy.
                 { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "路边停车禁令" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.PrefabName}]",
-                    "禁止<汽车和摩托车>在此行政区的路边停" +
-                    "车。已停放车辆会在车主下次使用时离开。" },
+                    "禁止<汽车和摩托车>在此行政区路边停车。" +
+                    "已停放车辆会在车主下次使用时离开。" },
 
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "路边停车" },

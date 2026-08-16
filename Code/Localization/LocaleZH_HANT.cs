@@ -53,7 +53,7 @@ namespace ParkingControl
                     "- 符合條件的停車車道會被停用，以阻止新的路邊停車。\n" +
                     "- 已停放車輛會在下次使用時自然駛離。\n" +
                     "- 收費停車場和一般建築停車位仍可使用。\n" +
-                    "**高速公路和非對稱三車道路本來就不允許路邊停車。**" },
+                    "**高速公路和非對稱三車道道路本來就不允許路邊停車。**" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "全城" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "按行政區" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "關閉" },
@@ -65,8 +65,8 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "顯示狀態" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowStatus)),
                     "<在下方顯示目前停車統計。>\n" +
-                    "僅在開啟「選項」選單時收集狀態；正" +
-                    "常城市遊玩期間不會在背景掃描狀態。" },
+                    "僅在開啟「選項」選單時收集狀態；" +
+                    "正常城市遊玩期間不會在背景掃描狀態。" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.DistrictInstructions)),
                     "<行政區模式>\n" +
                     "1. 在上方選擇<按行政區>。\n" +
@@ -78,8 +78,8 @@ namespace ParkingControl
                 // In-city district policy.
                 { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "路邊停車禁令" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.PrefabName}]",
-                    "禁止<汽車和摩托車>在此行政區的路邊停" +
-                    "車。已停放車輛會在車主下次使用時離開。" },
+                    "禁止<汽車和摩托車>在此行政區路邊停車。" +
+                    "已停放車輛會在車主下次使用時離開。" },
 
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "路邊停車" },

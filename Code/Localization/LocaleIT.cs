@@ -42,7 +42,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kAboutTab), "Informazioni" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStreetParkingGroup), "Parcheggio su strada" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStatusGroup), "Stato veicoli personali" },
-                { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "Informazioni sulla mod" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "Informazioni sul mod" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "Collegamenti" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutDiagnosticsGroup), "Diagnostica" },
 
@@ -89,7 +89,7 @@ namespace ParkingControl
                     "<Chiuse> = corsie di parcheggio su strada chiuse ai nuovi veicoli.\n" +
                     "<Per distretto> mostra:\n" +
                     "- Corsie occupate nei distretti con divieto / corsie occupate in tutta la città.\n" +
-                    "- Corsie disattivate / corsie idonee della città.\n" +
+                    "- Corsie chiuse / corsie idonee della città.\n" +
                     "- Distretti attivati / distretti totali.\n" +
                     "<Strade nuove o ricostruite> possono accettare brevemente qualche auto mentre le corsie si aggiornano.\n" +
                     "Le auto già parcheggiate se ne vanno naturalmente.\n" +
@@ -150,7 +150,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kSupplyFormat, "{0} pubblico {1}/{2} | {3} edificio {4}/{5}" },
                 { ParkingStatusLocale.kShareFormat, "{0} in strada {1} | {2} attive" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
-                { ParkingStatusLocale.kStatusOff, "DISATTIVATO" },
+                { ParkingStatusLocale.kStatusOff, "DISATT." },
                 { ParkingStatusLocale.kStatusCheck, "VERIF." },
             };
         }

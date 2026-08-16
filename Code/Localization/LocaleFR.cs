@@ -88,7 +88,7 @@ namespace ParkingControl
                     "<Voies> = sections de stationnement en bord de route occupées par ces voitures. Une voie peut en contenir plusieurs.\n" +
                     "<Fermées> = voies de stationnement sur rue fermées aux nouveaux véhicules.\n" +
                     "<Par quartier> affiche :\n" +
-                    "- Voies occupées dans les quartiers interdits / voies occupées dans toute la ville.\n" +
+                    "- Voies occupées dans les quartiers avec interdiction / voies occupées dans toute la ville.\n" +
                     "- Voies fermées / voies admissibles de la ville.\n" +
                     "- Quartiers activés / quartiers totaux.\n" +
                     "<Rues nouvelles ou reconstruites> peuvent accepter brièvement quelques voitures pendant la mise à jour de leurs voies.\n" +
@@ -108,7 +108,7 @@ namespace ParkingControl
                     "<Public> utilisé = installations comptées par la vue d’information Stationnement du jeu de base.\n" +
                     "<Bâtiment> utilisé = stationnement inclus avec logements, lieux de travail et commerces.\n" +
                     "**Un % d’utilisation plus élevé = davantage de stationnement peut être nécessaire.**" },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Voitures garées" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Position autos" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VehicleStatus)),
                     "Cette ligne affiche les données de toute la ville, pas seulement des quartiers concernés par l’interdiction.\n" +
                     "<Rue> = stationnées sur la voie publique.\n" +
@@ -150,7 +150,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kSupplyFormat, "{0} public {1}/{2} | {3} bâtiment {4}/{5}" },
                 { ParkingStatusLocale.kShareFormat, "{0} sur rue {1} | {2} actifs" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
-                { ParkingStatusLocale.kStatusOff, "DÉSACTIVÉ" },
+                { ParkingStatusLocale.kStatusOff, "DÉSACT." },
                 { ParkingStatusLocale.kStatusCheck, "VÉRIF." },
             };
         }
