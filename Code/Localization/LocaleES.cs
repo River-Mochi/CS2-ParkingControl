@@ -82,9 +82,9 @@ namespace ParkingControl
                     "Los vehículos ya estacionados se irán cuando sus dueños vuelvan a usarlos." },
 
                 // Live Options status rows, in display order.
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Estac. en calle" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Aparc. en calle" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Estac.> = coches que siguen estacionados en calles cubiertas por el modo seleccionado.\n" +
+                    "<Aparc.> = coches que siguen estacionados en calles cubiertas por el modo seleccionado.\n" +
                     "<Carr.> = tramos de estacionamiento junto a la vía que contienen esos coches. Un carril puede contener varios.\n" +
                     "<Desact.> = carriles de estacionamiento en la calle cerrados a nuevos vehículos.\n" +
                     "<Por distrito> muestra:\n" +
@@ -143,9 +143,9 @@ namespace ParkingControl
                 { ParkingStatusLocale.kUnavailable, "El estado del estacionamiento no está disponible." },
                 { ParkingStatusLocale.kCollectionFailed, "No se pudo recopilar el estado del estacionamiento; consulta ParkingControl.log." },
                 { ParkingStatusLocale.kCompactEnforcementFormat,
-                    "{0} estac. ({1} carr.) | {2}/{3} desact.{4}" },
+                    "{0} aparc. ({1} carr.) | {2}/{3} desact.{4}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat,
-                    "{0} estac. ({1}/{2} carr.) | {3}/{4} desact. | {5}/{6} dist.{7}" },
+                    "{0} aparc. ({1}/{2} carr.) | {3}/{4} desact. | {5}/{6} dist.{7}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} calle | {1} visibles | {2} ocultos | {3} OC" },
                 { ParkingStatusLocale.kSupplyFormat, "{0} público {1}/{2} | {3} edificio {4}/{5}" },
                 { ParkingStatusLocale.kShareFormat, "{0} en calle {1} | {2} activos" },
