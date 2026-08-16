@@ -20,8 +20,10 @@ namespace ParkingControl
     {
         private readonly PCSettings m_Settings;
 
+        /// <summary>
         /// Initializes a new instance of the <see cref="LocaleKO"/> class.
         /// </summary>
+        /// <param name="settings">Options settings whose localization IDs are used.</param>
         public LocaleKO(PCSettings settings)
         {
             m_Settings = settings;
@@ -98,7 +100,7 @@ namespace ParkingControl
                     "이 행은 구역뿐 아니라 <도시 전체>를 포함합니다.\n" +
                     "<노상 주차> = 공공 또는 건물 주차 대신 도로에 주차된 비율.\n" +
                     "<활성> = 주행 중이거나 교통에서 대기 중인 개인 차량.\n" +
-                    "<공식> = 도로 ÷ (도로 + 사용 중 공공 + 사용 중 건물 주차).\n" +
+                    "<계산식> = 도로 ÷ (도로 + 사용 중 공공 + 사용 중 건물 주차).\n" +
                     "**외부 연결(OC) 보관소와 주차 차선이 지정되지 않은 차량은 제외됩니다.**" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "주차 공간" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),

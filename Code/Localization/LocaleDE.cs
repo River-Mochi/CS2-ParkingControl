@@ -20,8 +20,10 @@ namespace ParkingControl
     {
         private readonly PCSettings m_Settings;
 
+        /// <summary>
         /// Initializes a new instance of the <see cref="LocaleDE"/> class.
         /// </summary>
+        /// <param name="settings">Options settings whose localization IDs are used.</param>
         public LocaleDE(PCSettings settings)
         {
             m_Settings = settings;
@@ -84,7 +86,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "<Geparkt> = Autos, die noch auf Straßen parken, die vom gewählten Modus erfasst werden.\n" +
                     "<Spuren> = Straßenrand-Parkabschnitte mit diesen Autos. Eine Spur kann mehrere Autos aufnehmen.\n" +
-                    "<Deaktiviert> = Straßenparkspuren, die für neues Parken gesperrt sind.\n" +
+                    "<Gesperrt> = Straßenparkspuren, die kein neues Parken zulassen.\n" +
                     "<Nach Bezirk> zeigt:\n" +
                     "- Belegte Spuren in Bezirken mit Verbot / belegte Spuren stadtweit.\n" +
                     "- Deaktivierte Spuren / geeignete Spuren der Stadt.\n" +
@@ -103,7 +105,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Parkplätze" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
                     "Zeigt die stadtweite Parkplatzbelegung.\n" +
-                    "<Öffentlich> belegt = Einrichtungen, die von der Vanilla-Parkplatz-Infoansicht gezählt werden.\n" +
+                    "<Öff.> belegt = Einrichtungen, die von der Vanilla-Parkplatz-Infoansicht gezählt werden.\n" +
                     "<Gebäude> belegt = Parkplätze bei Wohnungen, Arbeitsplätzen und Geschäften.\n" +
                     "**Je höher die %-Nutzung, desto eher werden zusätzliche Parkplätze benötigt.**" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Auto-Standorte" },
@@ -141,11 +143,11 @@ namespace ParkingControl
                 { ParkingStatusLocale.kUnavailable, "Parkstatus ist nicht verfügbar." },
                 { ParkingStatusLocale.kCollectionFailed, "Parkstatus konnte nicht erfasst werden; siehe ParkingControl.log." },
                 { ParkingStatusLocale.kCompactEnforcementFormat,
-                    "{0} geparkt ({1} Spuren) | {2}/{3} deaktiviert{4}" },
+                    "{0} geparkt ({1} Spuren) | {2}/{3} gesperrt{4}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat,
-                    "{0} geparkt ({1}/{2} Spuren) | {3}/{4} deaktiviert | {5}/{6} Bezirke{7}" },
+                    "{0} geparkt ({1}/{2} Spuren) | {3}/{4} gesperrt | {5}/{6} Bezirke{7}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} Straße | {1} sichtbar | {2} versteckt | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} öffentlich {1}/{2} | {3} Gebäude {4}/{5}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} öff. {1}/{2} | {3} Gebäude {4}/{5}" },
                 { ParkingStatusLocale.kShareFormat, "{0} Straße {1} | {2} aktiv" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "AUS" },

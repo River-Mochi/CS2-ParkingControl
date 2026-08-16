@@ -20,8 +20,10 @@ namespace ParkingControl
     {
         private readonly PCSettings m_Settings;
 
+        /// <summary>
         /// Initializes a new instance of the <see cref="LocaleZH_HANT"/> class.
         /// </summary>
+        /// <param name="settings">Options settings whose localization IDs are used.</param>
         public LocaleZH_HANT(PCSettings settings)
         {
             m_Settings = settings;

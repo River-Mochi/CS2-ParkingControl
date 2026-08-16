@@ -20,8 +20,10 @@ namespace ParkingControl
     {
         private readonly PCSettings m_Settings;
 
+        /// <summary>
         /// Initializes a new instance of the <see cref="LocaleIT"/> class.
         /// </summary>
+        /// <param name="settings">Options settings whose localization IDs are used.</param>
         public LocaleIT(PCSettings settings)
         {
             m_Settings = settings;
@@ -80,20 +82,20 @@ namespace ParkingControl
                     "I veicoli già parcheggiati se ne vanno quando i proprietari li usano di nuovo." },
 
                 // Live Options status rows, in display order.
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Parcheggio su strada" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Sosta su strada" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Parcheggiate> = auto ancora parcheggiate sulle strade coperte dalla modalità scelta.\n" +
+                    "<In sosta> = auto ancora parcheggiate sulle strade coperte dalla modalità scelta.\n" +
                     "<Corsie> = tratti di parcheggio a bordo strada che contengono quelle auto. Una corsia può contenerne diverse.\n" +
-                    "<Disattivate> = corsie di parcheggio su strada chiuse ai nuovi veicoli.\n" +
+                    "<Chiuse> = corsie di parcheggio su strada chiuse ai nuovi veicoli.\n" +
                     "<Per distretto> mostra:\n" +
                     "- Corsie occupate nei distretti con divieto / corsie occupate in tutta la città.\n" +
                     "- Corsie disattivate / corsie idonee della città.\n" +
                     "- Distretti attivati / distretti totali.\n" +
                     "<Strade nuove o ricostruite> possono accettare brevemente qualche auto mentre le corsie si aggiornano.\n" +
                     "Le auto già parcheggiate se ne vanno naturalmente.\n" +
-                    "<CONTROLLA> = alcune strade selezionate non sono ancora bloccate. Fai andare la città per un " +
-                    "po’ e ricontrolla. Se <CONTROLLA> resta, includi un rapporto parcheggi quando chiedi assistenza." },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Uso della strada" },
+                    "<VERIF.> = alcune strade selezionate non sono ancora bloccate. Fai andare la città per un " +
+                    "po’ e ricontrolla. Se <VERIF.> resta, includi un rapporto parcheggi quando chiedi assistenza." },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Uso strade" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
                     "Questa riga include <l’intera città>, non solo i distretti.\n" +
                     "<Parcheggiate in strada> = percentuale parcheggiata in strada invece che in parcheggi pubblici o degli edifici.\n" +
@@ -106,7 +108,7 @@ namespace ParkingControl
                     "<Pubblico> usato = strutture conteggiate dalla visualizzazione Informazioni parcheggi del gioco base.\n" +
                     "<Edificio> usato = parcheggi inclusi con abitazioni, luoghi di lavoro e negozi.\n" +
                     "**Una % di utilizzo più alta = potrebbero servire più parcheggi.**" },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Posizione delle auto" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Posizione auto" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VehicleStatus)),
                     "Questa riga mostra dati di tutta la città, non solo dei distretti con il divieto.\n" +
                     "<Strada> = parcheggiate su strade pubbliche.\n" +
@@ -141,15 +143,15 @@ namespace ParkingControl
                 { ParkingStatusLocale.kUnavailable, "Lo stato dei parcheggi non è disponibile." },
                 { ParkingStatusLocale.kCollectionFailed, "Impossibile raccogliere lo stato dei parcheggi; consulta ParkingControl.log." },
                 { ParkingStatusLocale.kCompactEnforcementFormat,
-                    "{0} parcheggiate ({1} corsie) | {2}/{3} disattivate{4}" },
+                    "{0} in sosta ({1} corsie) | {2}/{3} chiuse{4}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat,
-                    "{0} parcheggiate ({1}/{2} corsie) | {3}/{4} disattivate | {5}/{6} distretti{7}" },
+                    "{0} in sosta ({1}/{2} corsie) | {3}/{4} chiuse | {5}/{6} distretti{7}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} strada | {1} visibili | {2} nascoste | {3} OC" },
                 { ParkingStatusLocale.kSupplyFormat, "{0} pubblico {1}/{2} | {3} edificio {4}/{5}" },
                 { ParkingStatusLocale.kShareFormat, "{0} in strada {1} | {2} attive" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "DISATTIVATO" },
-                { ParkingStatusLocale.kStatusCheck, "CONTROLLA" },
+                { ParkingStatusLocale.kStatusCheck, "VERIF." },
             };
         }
 

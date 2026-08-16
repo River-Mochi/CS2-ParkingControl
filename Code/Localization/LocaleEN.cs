@@ -130,7 +130,7 @@ namespace ParkingControl
                     "Write street-parking and related details to \n" +
                     "<Logs/ParkingControl.log>.\n" +
                     "If curious, write a 2nd report later in the same loaded city.\n" +
-                    "- Compares up to 20 sample Entity IDs from different catagories.\n" +
+                    "- Compares up to 20 sample Entity IDs from different categories.\n" +
                     "- Shows if each sample stayed, started driving, parked elsewhere, or disappeared.\n" +
                     "- Scene Explorer mod is needed to track the Entity ID numbers in the city."
                 },

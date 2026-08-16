@@ -20,8 +20,10 @@ namespace ParkingControl
     {
         private readonly PCSettings m_Settings;
 
+        /// <summary>
         /// Initializes a new instance of the <see cref="LocalePT_BR"/> class.
         /// </summary>
+        /// <param name="settings">Options settings whose localization IDs are used.</param>
         public LocalePT_BR(PCSettings settings)
         {
             m_Settings = settings;
@@ -80,19 +82,19 @@ namespace ParkingControl
                     "Veículos já estacionados saem quando seus donos os usam novamente." },
 
                 // Live Options status rows, in display order.
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Estacionamento na rua" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Estac. na rua" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Estacionados> = carros que ainda estão em ruas cobertas pelo modo selecionado.\n" +
+                    "<Estac.> = carros que ainda estão em ruas cobertas pelo modo selecionado.\n" +
                     "<Faixas> = trechos de estacionamento junto à via onde esses carros estão. Uma faixa pode conter vários.\n" +
-                    "<Desativadas> = faixas de estacionamento na rua fechadas para novos veículos.\n" +
+                    "<Desat.> = faixas de estacionamento na rua fechadas para novos veículos.\n" +
                     "<Por distrito> mostra:\n" +
                     "- Faixas ocupadas em distritos com proibição / faixas ocupadas na cidade inteira.\n" +
                     "- Faixas desativadas / faixas elegíveis da cidade.\n" +
                     "- Distritos ativados / distritos totais.\n" +
                     "<Vias novas ou reconstruídas> podem aceitar alguns carros por pouco tempo enquanto as faixas são atualizadas.\n" +
                     "Carros já estacionados saem naturalmente.\n" +
-                    "<VERIFICAR> = algumas vias selecionadas ainda não estão bloqueadas. Deixe a cidade rodar um pouco e " +
-                    "verifique novamente. Se <VERIFICAR> continuar, inclua um relatório de estacionamento ao pedir ajuda." },
+                    "<VERIF.> = algumas vias selecionadas ainda não estão bloqueadas. Deixe a cidade rodar um pouco e " +
+                    "verifique novamente. Se <VERIF.> continuar, inclua um relatório de estacionamento ao pedir ajuda." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Uso das ruas" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
                     "Esta linha inclui a <cidade inteira>, não apenas os distritos.\n" +
@@ -100,13 +102,13 @@ namespace ParkingControl
                     "<Ativos> = veículos particulares dirigindo ou aguardando no trânsito.\n" +
                     "<Fórmula> = rua ÷ (rua + público ocupado + edifício ocupado).\n" +
                     "**Armazenamento de conexão externa (OC) e carros sem faixa de estacionamento atribuída são excluídos.**" },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Vagas de estacionamento" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Vagas" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
                     "Mostra a ocupação do estacionamento em toda a cidade.\n" +
                     "<Público> usado = instalações contadas pela visualização de informações de Estacionamento do jogo base.\n" +
                     "<Edifício> usado = estacionamento incluído em residências, locais de trabalho e lojas.\n" +
                     "**% de uso maior = pode ser necessário ter mais vagas.**" },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Localização dos carros" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Onde estacionam" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VehicleStatus)),
                     "Esta linha mostra dados da cidade inteira, não apenas dos distritos com proibição.\n" +
                     "<Rua> = estacionados em vias públicas.\n" +
@@ -141,15 +143,15 @@ namespace ParkingControl
                 { ParkingStatusLocale.kUnavailable, "O status do estacionamento não está disponível." },
                 { ParkingStatusLocale.kCollectionFailed, "Não foi possível coletar o status do estacionamento; consulte ParkingControl.log." },
                 { ParkingStatusLocale.kCompactEnforcementFormat,
-                    "{0} estacionados ({1} faixas) | {2}/{3} desativadas{4}" },
+                    "{0} estac. ({1} faixas) | {2}/{3} desat.{4}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat,
-                    "{0} estacionados ({1}/{2} faixas) | {3}/{4} desativadas | {5}/{6} distritos{7}" },
+                    "{0} estac. ({1}/{2} faixas) | {3}/{4} desat. | {5}/{6} distr.{7}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} rua | {1} visíveis | {2} ocultos | {3} OC" },
                 { ParkingStatusLocale.kSupplyFormat, "{0} público {1}/{2} | {3} edifício {4}/{5}" },
                 { ParkingStatusLocale.kShareFormat, "{0} na rua {1} | {2} ativos" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "DESLIGADO" },
-                { ParkingStatusLocale.kStatusCheck, "VERIFICAR" },
+                { ParkingStatusLocale.kStatusCheck, "VERIF." },
             };
         }
 

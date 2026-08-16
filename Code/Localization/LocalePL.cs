@@ -20,8 +20,10 @@ namespace ParkingControl
     {
         private readonly PCSettings m_Settings;
 
+        /// <summary>
         /// Initializes a new instance of the <see cref="LocalePL"/> class.
         /// </summary>
+        /// <param name="settings">Options settings whose localization IDs are used.</param>
         public LocalePL(PCSettings settings)
         {
             m_Settings = settings;
@@ -80,7 +82,7 @@ namespace ParkingControl
                     "dzielnicy. Już zaparkowane pojazdy odjadą, gdy właściciele ponownie ich użyją." },
 
                 // Live Options status rows, in display order.
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Parkowanie przy ulicy" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Parking uliczny" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "<Zaparkowane> = auta nadal stojące na ulicach objętych wybranym trybem.\n" +
                     "<Pasy> = odcinki parkingowe przy drodze zajęte przez te auta. Jeden pas może mieścić kilka aut.\n" +
@@ -93,20 +95,20 @@ namespace ParkingControl
                     "Już zaparkowane auta odjadą naturalnie.\n" +
                     "<SPRAWDŹ> = niektóre wybrane drogi nie są jeszcze zablokowane. Uruchom miasto na chwilę i " +
                     "sprawdź ponownie. Jeśli <SPRAWDŹ> pozostaje, dołącz raport parkowania przy prośbie o pomoc." },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Wykorzystanie ulic" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Użycie ulic" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
                     "Ten wiersz obejmuje <całe miasto>, nie tylko dzielnice.\n" +
                     "<Zaparkowane na ulicy> = procent aut zaparkowanych na ulicach zamiast na parkingach publicznych lub przy budynkach.\n" +
                     "<Aktywne> = pojazdy prywatne jadące lub stojące w ruchu.\n" +
                     "<Wzór> = ulica ÷ (ulica + zajęte publiczne + zajęte przy budynkach).\n" +
                     "**Magazyn połączeń zewnętrznych (OC) i auta bez przypisanego pasa parkingowego są wykluczone.**" },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Miejsca parkingowe" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Miejsca" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
                     "Pokazuje zajętość parkingów w całym mieście.\n" +
-                    "<Publiczne> zajęte = obiekty liczone przez podstawowy widok informacji o parkowaniu.\n" +
+                    "<Publ.> zajęte = obiekty liczone przez podstawowy widok informacji o parkowaniu.\n" +
                     "<Budynek> zajęte = miejsca przy domach, miejscach pracy i sklepach.\n" +
                     "**Wyższy % wykorzystania = może być potrzebnych więcej miejsc parkingowych.**" },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Położenie samochodów" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Położenie aut" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VehicleStatus)),
                     "Ten wiersz pokazuje dane całego miasta, nie tylko dzielnic z zakazem.\n" +
                     "<Ulica> = zaparkowane na drogach publicznych.\n" +
@@ -145,7 +147,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kDistrictEnforcementFormat,
                     "{0} zapark. ({1}/{2} pasy) | {3}/{4} wył. | {5}/{6} dzielnic{7}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} ulica | {1} widoczne | {2} ukryte | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} publiczne {1}/{2} | {3} budynki {4}/{5}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} publ. {1}/{2} | {3} budynki {4}/{5}" },
                 { ParkingStatusLocale.kShareFormat, "{0} na ulicy {1} | {2} aktywne" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "WYŁ." },
