@@ -6,7 +6,7 @@
 // all copies or substantial portions of this code.
 // ================= </copyright> ======================
 
-// Purpose: Provides the German text for Parking Control's Options UI.
+// Purpose: German text for Parking Control's Options UI.
 
 namespace ParkingControl
 {
@@ -20,10 +20,8 @@ namespace ParkingControl
     {
         private readonly PCSettings m_Settings;
 
-        /// <summary>
         /// Initializes a new instance of the <see cref="LocaleDE"/> class.
         /// </summary>
-        /// <param name="settings"> Options settings whose localization IDs are used.</param>
         public LocaleDE(PCSettings settings)
         {
             m_Settings = settings;
@@ -36,6 +34,7 @@ namespace ParkingControl
         {
             return new Dictionary<string, string>
             {
+                // Options tabs and groups.
                 { m_Settings.GetSettingsLocaleID(), Mod.ModName },
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kActionsTab), "Aktionen" },
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kAboutTab), "Über" },
@@ -44,87 +43,110 @@ namespace ParkingControl
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "Mod-Informationen" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "Links" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutDiagnosticsGroup), "Diagnose" },
+
+                // Street-parking controls.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "Kein Straßenparken" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
-                    "Wähle, wo neues Straßenparken gesperrt wird. Bereits geparkte Autos fahren natürlich weg; Parkplätze und Gebäudeparkplätze bleiben verfügbar." },
+                    "Wähle **Ganze Stadt**, **Nach Bezirk** oder **AUS**.\n" +
+                    "- Geeignete Straßenparkspuren werden für neues Parken gesperrt.\n" +
+                    "- Bereits geparkte Autos fahren weg, wenn sie das nächste Mal benutzt werden.\n" +
+                    "- Kostenpflichtige Parkplätze und normale Gebäudeparkplätze bleiben nutzbar.\n" +
+                    "**Autobahnen und asymmetrische 3-spurige Straßen erlauben bereits kein Straßenparken.**" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Ganze Stadt" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "Nach Bezirk" },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "Aus" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "AUS" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Anweisungen anzeigen" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)), "Anleitung für den Bezirksmodus anzeigen." },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
+                    "Zeigt, wie der Modus <Nach Bezirk> verwendet wird.\n" +
+                    "AUS = Straßenparkbeschränkungen sind deaktiviert.\n" +
+                    "Ganze Stadt = geeignetes Straßenparken ist in der ganzen Stadt gesperrt." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "Status anzeigen" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowStatus)),
-                    "Zeigt aktuelle Parkzahlen unten. Daten werden nur dann erfasst." },
+                    "<Aktuelle Parkzahlen unten anzeigen.>\n" +
+                    "Der Status wird nur erfasst, solange das Optionsmenü geöffnet " +
+                    "ist; während des normalen Stadtspiels läuft kein Hintergrundscan." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.DistrictInstructions)),
                     "<Bezirksmodus>\n" +
                     "1. Wähle oben <Nach Bezirk>.\n" +
                     "2. Erstelle oder wähle einen Bezirk in der Stadt.\n" +
-                    "3. Öffne <Richtlinien> und aktiviere <Kein Straßenparken>.\n" +
-                    "Außerhalb ausgewählter Bezirke bleibt normales Straßenparken erlaubt." },
+                    "3. Öffne <Richtlinien> und aktiviere **Parkverbot am Straßenrand [✓]**.\n" +
+                    "Straßen außerhalb ausgewählter Bezirke behalten normales Straßenparken." },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
-                { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "Kein Straßenparken" },
+
+                // In-city district policy.
+                { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "Parkverbot am Straßenrand" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.PrefabName}]",
-                    "Im Modus Nach Bezirk wird hier neues Straßenparken verhindert. " +
-                    "Bereits geparkte Autos fahren nach und nach weg." },
+                    "Verhindert, dass <Autos und Motorräder> in diesem Bezirk am Straßenrand parken. Bereits " +
+                    "geparkte Fahrzeuge fahren weg, wenn ihre Besitzer sie das nächste Mal benutzen." },
+
+                // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Straßenparken" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Geparkt> = Autos auf Straßen, die vom gewählten Modus erfasst werden.\n" +
+                    "<Geparkt> = Autos, die noch auf Straßen parken, die vom gewählten Modus erfasst werden.\n" +
                     "<Spuren> = Straßenrand-Parkabschnitte mit diesen Autos. Eine Spur kann mehrere Autos aufnehmen.\n" +
                     "<Deaktiviert> = Straßenparkspuren, die für neues Parken gesperrt sind.\n" +
-                    "<OK> = Kein Straßenparken ist aktiviert und funktioniert.\n" +
-                    "<AUS> = Kein Straßenparken ist deaktiviert; Autos dürfen auf normalen Straßen frei parken.\n" +
-                    "<PRÜFEN> = Straßen werden möglicherweise noch aktualisiert. Warte einen Moment; schreibe einen Log-Bericht, falls dies bestehen bleibt.\n" +
-                    "**Einige Autos können nach dem Aktivieren der Regel gegen Straßenparken oder nach Straßenänderungen verbleiben. Sie fahren auf natürliche Weise weg, wenn der Bürger das Auto benutzt.**" },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Auto-Standorte" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VehicleStatus)),
-                    "<Straße> = auf öffentlichen Straßen geparkt.\n" +
-                    "<Sichtbar> = Autos, die du auf offenen Parkplätzen oder auf Außenparkplätzen von Gebäuden sehen und anklicken kannst.\n" +
-                    "<Versteckt> = in Gebäuden oder Garagen.\n" +
-                    "<OC> = Speicher einer Außenverbindung am Stadtrand; einige Autos einziehender Haushalte beginnen dort.\n" +
-                    "**Nicht zugewiesene Bereitstellung des Grundspiels wird nur im Log erfasst.**"
-                },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Parkplätze" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "<Prozent> und <belegt / gesamt> zeigen die Parkplatzbelegung.\n" +
-                    "<Öffentlich> = Einrichtungen, die von der Parkplatz-Infoansicht des Grundspiels gezählt werden.\n" +
-                    "<Gebäude> = Parkplätze, die zu Wohnungen und Arbeitsplätzen gehören.\n" +
-                    "**Gebäudeparkplätze umfassen sichtbare Außenstellplätze und interne Parkplätze.**"
-                },
+                    "<Nach Bezirk> zeigt:\n" +
+                    "- Belegte Spuren in Bezirken mit Verbot / belegte Spuren stadtweit.\n" +
+                    "- Deaktivierte Spuren / geeignete Spuren der Stadt.\n" +
+                    "- Aktivierte Bezirke / gesamte Bezirke.\n" +
+                    "<Neue oder umgebaute Straßen> können kurzzeitig einige Autos aufnehmen, während ihre Spuren aktualisiert werden.\n" +
+                    "Bereits geparkte Autos fahren natürlich weg.\n" +
+                    "<PRÜFEN> = einige ausgewählte Straßen sind noch nicht blockiert. Lass die Stadt kurz laufen und " +
+                    "prüfe erneut. Bleibt <PRÜFEN>, füge bei einer Support-Anfrage einen Parkbericht aus dem Log bei." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Straßennutzung" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "<Auf Straße geparkt> = Anteil der Autos, die bekannte Straßen-, öffentliche oder Gebäudeparkplätze nutzen.\n" +
-                    "<In Bewegung> = private Fahrzeuge, die fahren oder im Verkehr warten.\n" +
-                    "<Aktualisiert> = letzte Aktualisierung des Status.\n" +
-                    "**Außenverbindungen (OC) und nicht zugewiesene Bereitstellung sind ausgeschlossen.**"
-                },
-                // Translate these two new entries from LocaleEN.cs.
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.UpdatedStatus)), "Updated" },
+                    "Diese Zeile umfasst die <ganze Stadt>, nicht nur Bezirke.\n" +
+                    "<Auf Straße geparkt> = Anteil der Fahrzeuge, die auf Straßen statt auf öffentlichen oder Gebäudeparkplätzen parken.\n" +
+                    "<Aktiv> = private Fahrzeuge, die fahren oder im Verkehr warten.\n" +
+                    "<Formel> = Straße ÷ (Straße + belegte öffentliche + belegte Gebäudeplätze).\n" +
+                    "**Speicher von Außenverbindungen (OC) und Autos ohne zugewiesene Parkspur sind ausgeschlossen.**" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Parkplätze" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
+                    "Zeigt die stadtweite Parkplatzbelegung.\n" +
+                    "<Öffentlich> belegt = Einrichtungen, die von der Vanilla-Parkplatz-Infoansicht gezählt werden.\n" +
+                    "<Gebäude> belegt = Parkplätze bei Wohnungen, Arbeitsplätzen und Geschäften.\n" +
+                    "**Je höher die %-Nutzung, desto eher werden zusätzliche Parkplätze benötigt.**" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Auto-Standorte" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VehicleStatus)),
+                    "Diese Zeile zeigt stadtweite Daten, nicht nur Bezirke mit Parkverbot.\n" +
+                    "<Straße> = auf öffentlichen Straßen geparkt.\n" +
+                    "<Sichtbar> = Autos, die du auf offenen Parkplätzen oder Außenparkplätzen von Gebäuden sehen und anklicken kannst.\n" +
+                    "<Versteckt> = in Gebäuden oder Garagen.\n" +
+                    "<OC> = Speicher einer Außenverbindung am Stadtrand; einige Autos einziehender Haushalte starten dort als Bereitstellung.\n" +
+                    "Autos ohne zugewiesene Parkspur werden hier ausgelassen und nur im Log-Bericht im Tab Über angezeigt." },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.UpdatedStatus)), "Aktualisiert" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.UpdatedStatus)),
-                    "Time when these citywide status values were last refreshed." },
+                    "Zeitpunkt, zu dem diese stadtweiten Statuswerte zuletzt aktualisiert wurden." },
+
+                // About tab.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NameText)), "Mod-Name" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VersionText)), "Version" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenParadox)), "Paradox-Mods-Link" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenParadox)), "Die Seite des Autors auf Paradox Mods öffnen." },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenParadox)), "Öffnet die Seite des Autors auf Paradox Mods." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ReportToLog)), "Parkbericht schreiben" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ReportToLog)),
-                    "Details zu Straßenparken, Angebot, Besitz und Fahrzeugstandorten\n" +
-                    "in <ParkingControl.log> schreiben\n" +
-                    "Ein zweiter Bericht in derselben geladenen Stadt verfolgt dieselben Entitäts-IDs der auf der Straße geparkten Autos." },
+                    "Schreibt Details zu Straßenparken und verwandten Daten nach \n" +
+                    "<Logs/ParkingControl.log>.\n" +
+                    "Wenn du neugierig bist, schreibe später in derselben geladenen Stadt einen 2. Bericht.\n" +
+                    "- Vergleicht bis zu 20 Beispiel-Entity-IDs aus verschiedenen Kategorien.\n" +
+                    "- Zeigt, ob jedes Beispiel blieb, losfuhr, anderswo parkte oder verschwand.\n" +
+                    "- Der Mod Scene Explorer wird benötigt, um die Entity-ID-Nummern in der Stadt zu verfolgen."
+                },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenLog)), "Log öffnen" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)), "<ParkingControl.log> öffnen oder den Logs-Ordner, falls die Datei noch nicht vorhanden ist." },
-                // Live status rows use these localized strings.
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)),
+                    "Öffnet <Logs/ParkingControl.log> oder den Logs-Ordner, falls die Datei noch nicht existiert." },
+                // Dynamic values used by the live status rows.
                 { ParkingStatusLocale.kLoadCity, "Noch keine Stadt geladen." },
                 { ParkingStatusLocale.kCollecting, "Parkstatus wird erfasst..." },
-                { ParkingStatusLocale.kUnavailable, "Der Parkstatus ist nicht verfügbar." },
-                { ParkingStatusLocale.kCollectionFailed, "Der Parkstatus konnte nicht erfasst werden; siehe ParkingControl.log." },
-                // Translate these formats without changing the numbered placeholders.
+                { ParkingStatusLocale.kUnavailable, "Parkstatus ist nicht verfügbar." },
+                { ParkingStatusLocale.kCollectionFailed, "Parkstatus konnte nicht erfasst werden; siehe ParkingControl.log." },
                 { ParkingStatusLocale.kCompactEnforcementFormat,
-                    "{0} parked ({1} lanes) | {2}/{3} disabled{4}" },
+                    "{0} geparkt ({1} Spuren) | {2}/{3} deaktiviert{4}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat,
-                    "{0} parked ({1}/{2} lanes) | {3}/{4} disabled | {5}/{6} districts{7}" },
+                    "{0} geparkt ({1}/{2} Spuren) | {3}/{4} deaktiviert | {5}/{6} Bezirke{7}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} Straße | {1} sichtbar | {2} versteckt | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} public {1}/{2} | {3} building {4}/{5}" },
-                { ParkingStatusLocale.kShareFormat, "{0} street parked {1} | {2} active" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} öffentlich {1}/{2} | {3} Gebäude {4}/{5}" },
+                { ParkingStatusLocale.kShareFormat, "{0} Straße {1} | {2} aktiv" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "AUS" },
                 { ParkingStatusLocale.kStatusCheck, "PRÜFEN" },

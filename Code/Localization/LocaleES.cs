@@ -6,7 +6,7 @@
 // all copies or substantial portions of this code.
 // ================= </copyright> ======================
 
-// Purpose: Provides the Spanish text for Parking Control's Options UI.
+// Purpose: Spanish text for Parking Control's Options UI.
 
 namespace ParkingControl
 {
@@ -20,10 +20,8 @@ namespace ParkingControl
     {
         private readonly PCSettings m_Settings;
 
-        /// <summary>
         /// Initializes a new instance of the <see cref="LocaleES"/> class.
         /// </summary>
-        /// <param name="settings"> Options settings whose localization IDs are used.</param>
         public LocaleES(PCSettings settings)
         {
             m_Settings = settings;
@@ -36,6 +34,7 @@ namespace ParkingControl
         {
             return new Dictionary<string, string>
             {
+                // Options tabs and groups.
                 { m_Settings.GetSettingsLocaleID(), Mod.ModName },
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kActionsTab), "Acciones" },
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kAboutTab), "Acerca de" },
@@ -44,89 +43,112 @@ namespace ParkingControl
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "Información del mod" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "Enlaces" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutDiagnosticsGroup), "Diagnóstico" },
+
+                // Street-parking controls.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "Sin estacionamiento en la calle" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
-                    "Elige dónde se bloquea el estacionamiento nuevo en la calle. Los coches ya estacionados se van de forma natural; los estacionamientos y edificios siguen disponibles." },
+                    "Elige **Toda la ciudad**, **Por distrito** o **DESACTIVADO**.\n" +
+                    "- Los carriles aptos se bloquean para impedir nuevos estacionamientos en la calle.\n" +
+                    "- Los coches ya estacionados se van cuando vuelven a usarse.\n" +
+                    "- Los estacionamientos de pago y el estacionamiento normal de edificios siguen disponibles.\n" +
+                    "**Las autopistas y las carreteras asimétricas de 3 carriles ya excluyen el estacionamiento en la calle.**" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Toda la ciudad" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "Por distrito" },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "Desactivado" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "DESACTIVADO" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Mostrar instrucciones" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)), "Mostrar cómo usar el modo por distrito." },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
+                    "Muestra cómo usar el modo <Por distrito>.\n" +
+                    "DESACTIVADO = se desactivan las restricciones de estacionamiento en la calle.\n" +
+                    "Toda la ciudad = se bloquea el estacionamiento apto en la calle en toda la ciudad." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "Mostrar estado" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowStatus)),
-                    "Muestra los totales de estacionamiento. Solo se recopilan al mostrarlos." },
+                    "<Muestra abajo los totales actuales de estacionamiento.>\n" +
+                    "El estado solo se recopila mientras el menú Opciones está abierto; " +
+                    "no hay un escaneo de estado en segundo plano durante el juego." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.DistrictInstructions)),
                     "<Modo por distrito>\n" +
                     "1. Elige <Por distrito> arriba.\n" +
                     "2. Crea o selecciona un distrito en la ciudad.\n" +
-                    "3. Abre <Políticas> y activa <Sin estacionamiento en la calle>.\n" +
-                    "Las calles fuera de los distritos seleccionados conservan el estacionamiento normal." },
+                    "3. Abre <Políticas> y activa **Prohibición de estacionamiento en la calle [✓]**.\n" +
+                    "Las calles fuera de los distritos seleccionados mantienen el estacionamiento normal." },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
-                { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "Sin estacionamiento en la calle" },
+
+                // In-city district policy.
+                { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "Prohibición de estacionamiento en la calle" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.PrefabName}]",
-                    "En el modo Por distrito, impide nuevos estacionamientos en la calle aquí. " +
-                    "Los coches ya aparcados se van de forma natural." },
+                    "Impide que <coches y motocicletas> aparquen junto a la calle en este distrito. " +
+                    "Los vehículos ya estacionados se irán cuando sus dueños vuelvan a usarlos." },
+
+                // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Estacionamiento en la calle" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Aparc.> = coches en calles cubiertas por el modo seleccionado.\n" +
-                    "<Carr.> = secciones de estacionamiento junto a la calle que contienen esos coches. Un carril puede contener varios coches.\n" +
-                    "<Cerrados> = carriles de estacionamiento en la calle cerrados a nuevos vehículos.\n" +
-                    "<OK> = Sin estacionamiento en la calle está activado y funcionando.\n" +
-                    "<OFF> = Sin estacionamiento en la calle está desactivado; los coches pueden estacionar libremente en calles normales.\n" +
-                    "<REVISAR> = es posible que las carreteras aún se estén actualizando. Espera un momento; escribe un informe en el registro si continúa.\n" +
-                    "**Algunos coches pueden permanecer después de activar la regla sin estacionamiento en la calle o de cambiar carreteras. Se van de forma natural si el ciudadano usa el coche.**" },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Ubicación de los coches" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VehicleStatus)),
-                    "<Calle> = estacionados en vías públicas.\n" +
-                    "<Visibles> = coches que puedes ver y seleccionar en estacionamientos al aire libre o en estacionamiento exterior incluido con edificios.\n" +
-                    "<Ocultos> = dentro de edificios o garajes.\n" +
-                    "<OC> = almacenamiento de conexión exterior en el límite de la ciudad; algunos coches de hogares que llegan empiezan allí.\n" +
-                    "**La zona de espera sin asignar del juego base solo aparece en el registro.**"
-                },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Estacionamiento" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "<Porcentaje> y <usado / total> muestran la ocupación del estacionamiento.\n" +
-                    "<Público> = instalaciones contabilizadas por la vista de información de Estacionamiento del juego base.\n" +
-                    "<Edificio> = estacionamiento incluido con viviendas y lugares de trabajo.\n" +
-                    "**El estacionamiento de edificios incluye espacios exteriores visibles y estacionamiento interno.**"
-                },
+                    "<Estacionados> = coches que siguen estacionados en calles cubiertas por el modo seleccionado.\n" +
+                    "<Carriles> = tramos de estacionamiento junto a la vía que contienen esos coches. Un carril puede contener varios.\n" +
+                    "<Desactivados> = carriles de estacionamiento en la calle cerrados a nuevos vehículos.\n" +
+                    "<Por distrito> muestra:\n" +
+                    "- Carriles ocupados en distritos con prohibición / carriles ocupados en toda la ciudad.\n" +
+                    "- Carriles desactivados / carriles aptos de la ciudad.\n" +
+                    "- Distritos activados / distritos totales.\n" +
+                    "<Carreteras nuevas o reconstruidas> pueden aceptar unos pocos coches brevemente mientras se actualizan sus carriles.\n" +
+                    "Los coches ya estacionados se van de forma natural.\n" +
+                    "<REVISAR> = algunas calles seleccionadas aún no están bloqueadas. Deja correr la ciudad un poco " +
+                    "y vuelve a comprobar. Si sigue <REVISAR>, incluye un informe de estacionamiento al pedir ayuda." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Uso de la calle" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "<Calle> = proporción de coches que usan estacionamiento conocido en la calle, público o de edificios.\n" +
-                    "<En marcha> = vehículos personales circulando o esperando en el tráfico.\n" +
-                    "<Act.> = última actualización del estado.\n" +
-                    "**Se excluyen la conexión exterior (OC) y la zona de espera sin asignar.**"
-                },
-                // Translate these two new entries from LocaleEN.cs.
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.UpdatedStatus)), "Updated" },
+                    "Esta fila incluye <toda la ciudad>, no solo los distritos.\n" +
+                    "<Estacionados en la calle> = porcentaje aparcado en calles en vez de estacionamientos públicos o de edificios.\n" +
+                    "<Activos> = vehículos personales circulando o esperando en tráfico.\n" +
+                    "<Fórmula> = calle ÷ (calle + público ocupado + edificio ocupado).\n" +
+                    "**Se excluyen el almacenamiento de conexiones exteriores (OC) y los coches sin carril de estacionamiento asignado.**" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Espacios de estacionamiento" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
+                    "Muestra la ocupación de estacionamiento de toda la ciudad.\n" +
+                    "<Público> usado = instalaciones contadas por la vista de información de Estacionamiento del juego base.\n" +
+                    "<Edificio> usado = estacionamiento incluido con viviendas, trabajos y tiendas.\n" +
+                    "**Un % de uso más alto = puede hacer falta más estacionamiento.**" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Ubicación de los coches" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VehicleStatus)),
+                    "Esta fila muestra datos de toda la ciudad, no solo de distritos con la prohibición.\n" +
+                    "<Calle> = estacionados en vías públicas.\n" +
+                    "<Visibles> = coches que puedes ver y seleccionar en estacionamientos al aire libre o plazas exteriores de edificios.\n" +
+                    "<Ocultos> = dentro de edificios o garajes.\n" +
+                    "<OC> = almacenamiento de conexión exterior en el límite de la ciudad; algunos coches de hogares entrantes empiezan allí como zona de espera.\n" +
+                    "Los coches sin carril de estacionamiento asignado se omiten aquí y solo aparecen en el informe del registro de la pestaña Acerca de." },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.UpdatedStatus)), "Actualizado" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.UpdatedStatus)),
-                    "Time when these citywide status values were last refreshed." },
+                    "Hora de la última actualización de estos valores de estado de toda la ciudad." },
+
+                // About tab.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NameText)), "Nombre del mod" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VersionText)), "Versión" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenParadox)), "Enlace de Paradox Mods" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenParadox)), "Abrir la página del autor en Paradox Mods." },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenParadox)), "Abre la página del autor en Paradox Mods." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ReportToLog)), "Escribir informe de estacionamiento" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ReportToLog)),
-                    "Escribir detalles del estacionamiento en la calle, la oferta, la propiedad y la ubicación de vehículos\n" +
-                    "en <ParkingControl.log>\n" +
-                    "Un segundo informe en la misma ciudad cargada sigue los mismos ID de entidad de los coches estacionados en la calle." },
+                    "Escribe detalles del estacionamiento en la calle y datos relacionados en \n" +
+                    "<Logs/ParkingControl.log>.\n" +
+                    "Si te interesa, escribe un 2.º informe más tarde en la misma ciudad cargada.\n" +
+                    "- Compara hasta 20 ID de entidad de muestra de distintas categorías.\n" +
+                    "- Muestra si cada muestra permaneció, empezó a circular, aparcó en otro lugar o desapareció.\n" +
+                    "- Se necesita el mod Scene Explorer para seguir los números de ID de entidad dentro de la ciudad."
+                },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenLog)), "Abrir registro" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)), "Abrir <ParkingControl.log>, o la carpeta Logs si el archivo todavía no existe." },
-                // Live status rows use these localized strings.
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)),
+                    "Abre <Logs/ParkingControl.log>, o la carpeta Logs si el archivo aún no existe." },
+                // Dynamic values used by the live status rows.
                 { ParkingStatusLocale.kLoadCity, "No hay ciudad cargada." },
                 { ParkingStatusLocale.kCollecting, "Recopilando el estado del estacionamiento..." },
                 { ParkingStatusLocale.kUnavailable, "El estado del estacionamiento no está disponible." },
                 { ParkingStatusLocale.kCollectionFailed, "No se pudo recopilar el estado del estacionamiento; consulta ParkingControl.log." },
-                // Translate these formats without changing the numbered placeholders.
                 { ParkingStatusLocale.kCompactEnforcementFormat,
-                    "{0} parked ({1} lanes) | {2}/{3} disabled{4}" },
+                    "{0} aparcados ({1} carriles) | {2}/{3} desactivados{4}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat,
-                    "{0} parked ({1}/{2} lanes) | {3}/{4} disabled | {5}/{6} districts{7}" },
+                    "{0} aparcados ({1}/{2} carriles) | {3}/{4} desactivados | {5}/{6} distritos{7}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} calle | {1} visibles | {2} ocultos | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} public {1}/{2} | {3} building {4}/{5}" },
-                { ParkingStatusLocale.kShareFormat, "{0} street parked {1} | {2} active" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} público {1}/{2} | {3} edificio {4}/{5}" },
+                { ParkingStatusLocale.kShareFormat, "{0} en calle {1} | {2} activos" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
-                { ParkingStatusLocale.kStatusOff, "OFF" },
+                { ParkingStatusLocale.kStatusOff, "DESACTIVADO" },
                 { ParkingStatusLocale.kStatusCheck, "REVISAR" },
             };
         }

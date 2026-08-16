@@ -6,7 +6,7 @@
 // all copies or substantial portions of this code.
 // ================= </copyright> ======================
 
-// Purpose: Provides the French text for Parking Control's Options UI.
+// Purpose: French text for Parking Control's Options UI.
 
 namespace ParkingControl
 {
@@ -20,10 +20,8 @@ namespace ParkingControl
     {
         private readonly PCSettings m_Settings;
 
-        /// <summary>
         /// Initializes a new instance of the <see cref="LocaleFR"/> class.
         /// </summary>
-        /// <param name="settings"> Options settings whose localization IDs are used.</param>
         public LocaleFR(PCSettings settings)
         {
             m_Settings = settings;
@@ -36,6 +34,7 @@ namespace ParkingControl
         {
             return new Dictionary<string, string>
             {
+                // Options tabs and groups.
                 { m_Settings.GetSettingsLocaleID(), Mod.ModName },
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kActionsTab), "Actions" },
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kAboutTab), "À propos" },
@@ -44,89 +43,112 @@ namespace ParkingControl
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "Informations sur le mod" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "Liens" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutDiagnosticsGroup), "Diagnostic" },
+
+                // Street-parking controls.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "Stationnement sur rue interdit" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
-                    "Choisissez où interdire tout nouveau stationnement sur rue. Les voitures déjà garées partent naturellement ; les parkings et bâtiments restent disponibles." },
+                    "Choisissez **Ville entière**, **Par quartier** ou **DÉSACTIVÉ**.\n" +
+                    "- Les voies admissibles sont bloquées pour empêcher tout nouveau stationnement sur rue.\n" +
+                    "- Les voitures déjà garées partent naturellement lorsqu’elles sont réutilisées.\n" +
+                    "- Les parkings payants et le stationnement normal des bâtiments restent disponibles.\n" +
+                    "**Les autoroutes et les routes asymétriques à 3 voies excluent déjà le stationnement sur rue.**" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Ville entière" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "Par quartier" },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "Désactivé" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "DÉSACTIVÉ" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Afficher les instructions" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)), "Afficher comment utiliser le mode par quartier." },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
+                    "Explique comment utiliser le mode <Par quartier>.\n" +
+                    "DÉSACTIVÉ = les restrictions de stationnement sur rue sont désactivées.\n" +
+                    "Ville entière = le stationnement admissible sur rue est bloqué dans toute la ville." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "Afficher l’état" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowStatus)),
-                    "Affiche les totaux de stationnement. Données collectées seulement si affichées." },
+                    "<Affiche ci-dessous les totaux actuels de stationnement.>\n" +
+                    "Le statut n’est collecté que lorsque le menu Options est " +
+                    "ouvert ; aucun scan en arrière-plan ne tourne pendant la partie." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.DistrictInstructions)),
                     "<Mode par quartier>\n" +
                     "1. Choisissez <Par quartier> ci-dessus.\n" +
                     "2. Créez ou sélectionnez un quartier dans la ville.\n" +
-                    "3. Ouvrez <Politiques> et activez <Stationnement sur rue interdit>.\n" +
-                    "Le stationnement normal reste permis hors des quartiers sélectionnés." },
+                    "3. Ouvrez <Politiques> et activez **Interdiction de stationner en bord de route [✓]**.\n" +
+                    "Les routes hors des quartiers sélectionnés gardent le stationnement normal." },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
-                { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "Stationnement sur rue interdit" },
+
+                // In-city district policy.
+                { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "Interdiction de stationner en bord de route" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.PrefabName}]",
-                    "En mode Par quartier, empêche tout nouveau stationnement sur rue ici. " +
-                    "Les voitures déjà garées partent naturellement." },
+                    "Empêche les <voitures et motos> de stationner en bord de route dans ce quartier. " +
+                    "Les véhicules déjà garés partent lorsque leurs propriétaires les réutilisent." },
+
+                // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Stationnement sur rue" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Garées> = voitures dans les rues couvertes par le mode choisi.\n" +
-                    "<Voies> = sections de stationnement en bord de route contenant ces voitures. Une voie peut contenir plusieurs voitures.\n" +
-                    "<Fermées> = voies de stationnement sur rue fermées aux nouveaux stationnements.\n" +
-                    "<OK> = Aucun stationnement sur rue est activé et fonctionne.\n" +
-                    "<OFF> = Aucun stationnement sur rue est désactivé ; les voitures peuvent se garer librement dans les rues ordinaires.\n" +
-                    "<VÉRIF.> = les routes sont peut-être encore en cours de mise à jour. Attendez un moment ; écrivez un rapport dans le journal si cela persiste.\n" +
-                    "**Certaines voitures peuvent rester après l'activation de la règle sans stationnement sur rue ou après une modification des routes. Elles partent naturellement si le citoyen utilise la voiture.**" },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Emplacement des voitures" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VehicleStatus)),
-                    "<Rue> = stationnées sur la voie publique.\n" +
-                    "<Visibles> = voitures que vous pouvez voir et sélectionner dans les parkings à ciel ouvert ou les stationnements extérieurs inclus avec les bâtiments.\n" +
-                    "<Cachées> = à l'intérieur de bâtiments ou de garages.\n" +
-                    "<OC> = stockage de connexion extérieure à la limite de la ville ; certaines voitures de ménages entrants commencent ici.\n" +
-                    "**La zone d'attente non attribuée du jeu de base est uniquement enregistrée dans le journal.**"
-                },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Stationnement" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "<Pourcentage> et <utilisé / total> indiquent l'occupation du stationnement.\n" +
-                    "<Public> = installations comptées par la vue d'information Stationnement du jeu de base.\n" +
-                    "<Bâtiment> = stationnement inclus avec les logements et les lieux de travail.\n" +
-                    "**Le stationnement des bâtiments comprend les places extérieures visibles et le stationnement intérieur.**"
-                },
+                    "<Garées> = voitures encore garées dans les rues couvertes par le mode choisi.\n" +
+                    "<Voies> = sections de stationnement en bord de route occupées par ces voitures. Une voie peut en contenir plusieurs.\n" +
+                    "<Fermées> = voies de stationnement sur rue fermées aux nouveaux véhicules.\n" +
+                    "<Par quartier> affiche :\n" +
+                    "- Voies occupées dans les quartiers interdits / voies occupées dans toute la ville.\n" +
+                    "- Voies fermées / voies admissibles de la ville.\n" +
+                    "- Quartiers activés / quartiers totaux.\n" +
+                    "<Rues nouvelles ou reconstruites> peuvent accepter brièvement quelques voitures pendant la mise à jour de leurs voies.\n" +
+                    "Les voitures déjà garées partent naturellement.\n" +
+                    "<VÉRIF.> = certaines routes sélectionnées ne sont pas encore bloquées. Faites tourner la ville un moment puis " +
+                    "revérifiez. Si <VÉRIF.> reste affiché, joignez un rapport de stationnement quand vous demandez de l’aide." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Utilisation des rues" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "<Rue> = part des voitures utilisant un stationnement connu sur rue, public ou de bâtiment.\n" +
-                    "<Roulent> = véhicules personnels qui roulent ou attendent dans la circulation.\n" +
-                    "<Màj> = dernière actualisation de l'état.\n" +
-                    "**Les connexions extérieures (OC) et la zone d'attente non attribuée sont exclues.**"
-                },
-                // Translate these two new entries from LocaleEN.cs.
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.UpdatedStatus)), "Updated" },
+                    "Cette ligne couvre <toute la ville>, pas seulement les quartiers.\n" +
+                    "<Garées sur rue> = pourcentage garé dans la rue plutôt que dans les parkings publics ou de bâtiments.\n" +
+                    "<Actifs> = véhicules personnels roulant ou attendant dans la circulation.\n" +
+                    "<Formule> = rue ÷ (rue + public occupé + bâtiment occupé).\n" +
+                    "**Le stockage des connexions extérieures (OC) et les voitures sans voie de stationnement attribuée sont exclus.**" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Places de stationnement" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
+                    "Affiche l’occupation des parkings dans toute la ville.\n" +
+                    "<Public> utilisé = installations comptées par la vue d’information Stationnement du jeu de base.\n" +
+                    "<Bâtiment> utilisé = stationnement inclus avec logements, lieux de travail et commerces.\n" +
+                    "**Un % d’utilisation plus élevé = davantage de stationnement peut être nécessaire.**" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Emplacement des voitures" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VehicleStatus)),
+                    "Cette ligne affiche les données de toute la ville, pas seulement des quartiers concernés par l’interdiction.\n" +
+                    "<Rue> = stationnées sur la voie publique.\n" +
+                    "<Visibles> = voitures visibles et cliquables dans les parkings à ciel ouvert ou les places extérieures des bâtiments.\n" +
+                    "<Cachées> = dans les bâtiments ou garages.\n" +
+                    "<OC> = stockage de connexion extérieure à la limite de la ville ; certaines voitures de ménages entrants commencent là comme zone de transit.\n" +
+                    "Les voitures sans voie de stationnement attribuée sont omises ici et visibles uniquement dans le rapport du journal, onglet À propos." },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.UpdatedStatus)), "Mis à jour" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.UpdatedStatus)),
-                    "Time when these citywide status values were last refreshed." },
+                    "Heure de la dernière actualisation de ces valeurs de statut à l’échelle de la ville." },
+
+                // About tab.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NameText)), "Nom du mod" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VersionText)), "Version" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenParadox)), "Lien Paradox Mods" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenParadox)), "Ouvrir la page de l'auteur sur Paradox Mods." },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenParadox)), "Ouvre la page de l’auteur sur Paradox Mods." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ReportToLog)), "Écrire un rapport de stationnement" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ReportToLog)),
-                    "Écrire les détails du stationnement sur rue, de l'offre, de la propriété et de l'emplacement des véhicules\n" +
-                    "dans <ParkingControl.log>\n" +
-                    "Un second rapport dans la même ville chargée suit les mêmes ID d'entités des voitures stationnées dans la rue." },
+                    "Écrit les détails du stationnement sur rue et les informations associées dans \n" +
+                    "<Logs/ParkingControl.log>.\n" +
+                    "Si vous êtes curieux, écrivez un 2e rapport plus tard dans la même ville chargée.\n" +
+                    "- Compare jusqu’à 20 ID d’entité échantillonnés de différentes catégories.\n" +
+                    "- Indique si chaque échantillon est resté, a commencé à rouler, s’est garé ailleurs ou a disparu.\n" +
+                    "- Le mod Scene Explorer est nécessaire pour suivre les numéros d’ID d’entité dans la ville."
+                },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenLog)), "Ouvrir le journal" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)), "Ouvrir <ParkingControl.log>, ou le dossier Logs si le fichier n'existe pas encore." },
-                // Live status rows use these localized strings.
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)),
+                    "Ouvre <Logs/ParkingControl.log>, ou le dossier Logs si le fichier n’existe pas encore." },
+                // Dynamic values used by the live status rows.
                 { ParkingStatusLocale.kLoadCity, "Aucune ville chargée." },
-                { ParkingStatusLocale.kCollecting, "Collecte de l'état du stationnement..." },
-                { ParkingStatusLocale.kUnavailable, "L'état du stationnement n'est pas disponible." },
-                { ParkingStatusLocale.kCollectionFailed, "Impossible de collecter l'état du stationnement ; consultez ParkingControl.log." },
-                // Translate these formats without changing the numbered placeholders.
+                { ParkingStatusLocale.kCollecting, "Collecte de l’état du stationnement..." },
+                { ParkingStatusLocale.kUnavailable, "L’état du stationnement n’est pas disponible." },
+                { ParkingStatusLocale.kCollectionFailed, "Impossible de collecter l’état du stationnement ; consultez ParkingControl.log." },
                 { ParkingStatusLocale.kCompactEnforcementFormat,
-                    "{0} parked ({1} lanes) | {2}/{3} disabled{4}" },
+                    "{0} garées ({1} voies) | {2}/{3} fermées{4}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat,
-                    "{0} parked ({1}/{2} lanes) | {3}/{4} disabled | {5}/{6} districts{7}" },
+                    "{0} garées ({1}/{2} voies) | {3}/{4} fermées | {5}/{6} quartiers{7}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} rue | {1} visibles | {2} cachées | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} public {1}/{2} | {3} building {4}/{5}" },
-                { ParkingStatusLocale.kShareFormat, "{0} street parked {1} | {2} active" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} public {1}/{2} | {3} bâtiment {4}/{5}" },
+                { ParkingStatusLocale.kShareFormat, "{0} sur rue {1} | {2} actifs" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
-                { ParkingStatusLocale.kStatusOff, "OFF" },
+                { ParkingStatusLocale.kStatusOff, "DÉSACTIVÉ" },
                 { ParkingStatusLocale.kStatusCheck, "VÉRIF." },
             };
         }
