@@ -53,7 +53,8 @@ namespace ParkingControl
                     "- Eligible lanes are flagged to prevent new street parking.\n" +
                     "- Existing parked cars leave naturally when they are next used.\n" +
                     "- Fee-based parking lots and normal building parking remain usable.\n" +
-                    "**Some roads already exclude street parking like Highways and asymmetric 3-lane roads.**" },
+                    "**Some roads already exclude street parking, like Highways and asymmetric 3-lane roads.**"
+                },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Whole City" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "by District" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "OFF" },
@@ -109,14 +110,18 @@ namespace ParkingControl
                     "<Public> spaces used = facilities counted by the vanilla Parking InfoView.\n" +
                     "<Building> spaces used = parking included with homes, workplaces, and shops.\n" +
                     "**Higher % usage = more parking may be needed.**" },
+
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Car Locations" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VehicleStatus)),
                     "This row shows citywide data, not only districts with the ban.\n" +
                     "<Street> = parked on public roads.\n" +
                     "<Visible> = cars you can see and click in open-air lots or outdoor parking included with buildings.\n" +
-                    "<Hidden> = inside buildings or garages.\n" +
+                    "<Inside> = in buildings or garages.\n" +
                     "<OC> = outside connection storage at the city border; some incoming household cars start there (staging area).\n" +
-                    "Cars without an assigned parking lane are omitted here and shown only in the log report (About tab)." },
+                    "Cars without an assigned parking lane are omitted here and shown only in the log report (About tab)."
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.UpdatedStatus)), "Updated" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.UpdatedStatus)),
                     "Time when these citywide status values were last refreshed." },
@@ -147,7 +152,7 @@ namespace ParkingControl
                     "{0} parked ({1} lanes) | {2}/{3} disabled{4}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat,
                     "{0} parked ({1}/{2} lanes) | {3}/{4} disabled | {5}/{6} districts{7}" },
-                { ParkingStatusLocale.kVehicleFormat, "{0} street | {1} visible | {2} hidden | {3} OC" },
+                { ParkingStatusLocale.kVehicleFormat, "{0} street | {1} visible | {2} inside | {3} OC" },
                 { ParkingStatusLocale.kSupplyFormat, "{0} public {1}/{2} | {3} building {4}/{5}" },
                 { ParkingStatusLocale.kShareFormat, "{0} street parked {1} | {2} active" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
