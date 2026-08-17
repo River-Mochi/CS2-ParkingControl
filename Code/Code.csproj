@@ -67,57 +67,25 @@
     <!-- Game / Colossal / Unity references resolved by the CS2 toolchain. -->
     <ItemGroup>
         <Reference Include="Game"><Private>false</Private></Reference>
-        <Reference Include="Colossal.Core">
-            <Private>false</Private>
-        </Reference>
-        <Reference Include="Colossal.Logging">
-            <Private>false</Private>
-        </Reference>
-        <Reference Include="Colossal.IO.AssetDatabase">
-            <Private>false</Private>
-        </Reference>
-        <Reference Include="Colossal.UI">
-            <Private>false</Private>
-        </Reference>
-        <Reference Include="Colossal.UI.Binding">
-            <Private>false</Private>
-        </Reference>
-        <Reference Include="Colossal.Localization">
-            <Private>false</Private>
-        </Reference>
-        <Reference Include="Colossal.Mathematics">
-            <Private>false</Private>
-        </Reference>
-        <Reference Include="Unity.InputSystem">
-            <Private>false</Private>
-        </Reference>
-        <Reference Include="UnityEngine.CoreModule">
-            <Private>false</Private>
-        </Reference>
-        <Reference Include="Unity.Burst">
-            <Private>false</Private>
-        </Reference>
-        <Reference Include="Unity.Collections">
-            <Private>false</Private>
-        </Reference>
-        <Reference Include="Unity.Entities">
-            <Private>false</Private>
-        </Reference>
-        <Reference Include="Unity.Mathematics">
-            <Private>false</Private>
-        </Reference>
+        <Reference Include="Colossal.Core"><Private>false</Private></Reference>
+        <Reference Include="Colossal.Logging"><Private>false</Private></Reference>
+        <Reference Include="Colossal.IO.AssetDatabase"><Private>false</Private></Reference>
+        <Reference Include="Colossal.UI"><Private>false</Private></Reference>
+        <Reference Include="Colossal.UI.Binding"><Private>false</Private></Reference>
+        <Reference Include="Colossal.Localization"><Private>false</Private></Reference>
+        <Reference Include="Colossal.Mathematics"><Private>false</Private></Reference>
+        <Reference Include="Unity.InputSystem"><Private>false</Private></Reference>
+        <Reference Include="UnityEngine.CoreModule"><Private>false</Private></Reference>
+        <Reference Include="Unity.Burst"><Private>false</Private></Reference>
+        <Reference Include="Unity.Collections"><Private>false</Private></Reference>
+        <Reference Include="Unity.Entities"><Private>false</Private></Reference>
+        <Reference Include="Unity.Mathematics"><Private>false</Private></Reference>
     </ItemGroup>
 
     <ItemGroup>
-        <Reference Update="System">
-            <Private>false</Private>
-        </Reference>
-        <Reference Update="System.Core">
-            <Private>false</Private>
-        </Reference>
-        <Reference Update="System.Data">
-            <Private>false</Private>
-        </Reference>
+        <Reference Update="System"><Private>false</Private></Reference>
+        <Reference Update="System.Core"><Private>false</Private></Reference>
+        <Reference Update="System.Data"><Private>false</Private></Reference>
     </ItemGroup>
 
     <!-- Convenience links for viewing CS2 toolchain files in Visual Studio. -->
@@ -127,64 +95,37 @@
     </ItemGroup>
 
     <!-- Sync PublishConfiguration.xml and UI/mod.json before each build. -->
-    <Target Name="UpdatePublishConfigVersion"
-            BeforeTargets="PrepareForBuild"
+    <Target Name="UpdatePublishConfigVersion" BeforeTargets="PrepareForBuild"
             Condition="Exists('$(PublishConfigScript)') AND Exists('$(MSBuildProjectDirectory)\$(PublishConfigurationPath)')">
-
-        <Message Text="$(AssemblyTitle) PublishConfig: syncing ModVersion/GameVersion + UI mod version..."
-                 Importance="high" />
-
+        <Message Text="$(AssemblyTitle) PublishConfig: syncing ModVersion/GameVersion + UI mod version..." Importance="high" />
         <Exec Command="&quot;$(SystemRoot)\System32\WindowsPowerShell\v1.0\powershell.exe&quot; -NoProfile -ExecutionPolicy Bypass -File &quot;$(PublishConfigScript)&quot; -Path &quot;$(MSBuildProjectDirectory)\$(PublishConfigurationPath)&quot; -Version &quot;$(Version)&quot; -GameVersion &quot;$(GameVersion)&quot; -Eol lf -LeftAlignBlocks" />
     </Target>
 
     <!-- Run npm ci only on first use or when package-lock.json changes. -->
-    <Target Name="NpmInstallIfNeeded"
-            AfterTargets="Build"
+    <Target Name="NpmInstallIfNeeded" AfterTargets="Build" DependsOnTargets=""
             Condition="Exists('$(ProjectDir)UI\package.json') AND Exists('$(ProjectDir)UI\package-lock.json')"
             Inputs="$(ProjectDir)UI\package-lock.json"
             Outputs="$(ProjectDir)UI\node_modules\.stamp">
-
-        <Message Text="$(AssemblyTitle) UI: npm ci (first-time or lockfile changed)..."
-                 Importance="high" />
-
-        <Exec Command="npm ci"
-              WorkingDirectory="$(ProjectDir)UI"
-              IgnoreExitCode="true"
-              Timeout="$(PcNpmCiTimeoutMs)">
+        <Message Text="$(AssemblyTitle) UI: npm ci (first-time or lockfile changed)..." Importance="high" />
+        <Exec Command="npm ci" WorkingDirectory="$(ProjectDir)UI" IgnoreExitCode="true" Timeout="$(PcNpmCiTimeoutMs)">
             <Output TaskParameter="ExitCode" PropertyName="NpmCiExit" />
         </Exec>
-
         <Error Condition="'$(Configuration)'=='Release' AND '$(NpmCiExit)'!='0'"
                Text="$(AssemblyTitle) UI: 'npm ci' failed (exit $(NpmCiExit)). Release build aborted." />
-
         <Warning Condition="'$(Configuration)'!='Release' AND '$(NpmCiExit)'!='0'"
                  Text="$(AssemblyTitle) UI: 'npm ci' failed (exit $(NpmCiExit)). Continuing (non-Release)." />
-
-        <WriteLinesToFile Condition="'$(NpmCiExit)'=='0'"
-                          File="$(ProjectDir)UI\node_modules\.stamp"
-                          Lines="ok"
-                          Overwrite="true" />
+        <WriteLinesToFile Condition="'$(NpmCiExit)'=='0'" File="$(ProjectDir)UI\node_modules\.stamp" Lines="ok" Overwrite="true" />
     </Target>
 
     <!-- Bundle the UI after the C# build. -->
-    <Target Name="BuildUI"
-            AfterTargets="Build"
-            DependsOnTargets="NpmInstallIfNeeded"
+    <Target Name="BuildUI" AfterTargets="Build" DependsOnTargets="NpmInstallIfNeeded"
             Condition="Exists('$(ProjectDir)UI\package.json')">
-
-        <Message Text="$(AssemblyTitle) UI: npm run build ($(Configuration))..."
-                 Importance="high" />
-
-        <Exec Command="npm run build"
-              WorkingDirectory="$(ProjectDir)UI"
-              IgnoreExitCode="true"
-              Timeout="$(PcNpmBuildTimeoutMs)">
+        <Message Text="$(AssemblyTitle) UI: npm run build ($(Configuration))..." Importance="high" />
+        <Exec Command="npm run build" WorkingDirectory="$(ProjectDir)UI" IgnoreExitCode="true" Timeout="$(PcNpmBuildTimeoutMs)">
             <Output TaskParameter="ExitCode" PropertyName="NpmBuildExit" />
         </Exec>
-
         <Error Condition="'$(Configuration)'=='Release' AND '$(NpmBuildExit)'!='0'"
                Text="$(AssemblyTitle) UI: 'npm run build' failed (exit $(NpmBuildExit)). Release build aborted." />
-
         <Warning Condition="'$(Configuration)'!='Release' AND '$(NpmBuildExit)'!='0'"
                  Text="$(AssemblyTitle) UI: 'npm run build' failed (exit $(NpmBuildExit)). Continuing (non-Release)." />
     </Target>
