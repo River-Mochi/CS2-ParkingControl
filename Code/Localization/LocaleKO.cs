@@ -20,11 +20,11 @@ namespace ParkingControl
     {
         private readonly PCSettings m_Settings;
 
-        /// <summary>
         /// Initializes a new instance of the <see cref="LocaleKO"/> class.
+        /// Initializes a new instance of the <see cref="LocaleEN"/> class.
         /// </summary>
-        /// <param name="settings">Options settings whose localization IDs are used.</param>
         public LocaleKO(PCSettings settings)
+        public LocaleEN(PCSettings settings)
         {
             m_Settings = settings;
         }
@@ -84,15 +84,15 @@ namespace ParkingControl
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "노상 주차" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<주차됨> = 선택한 모드가 적용되는 도로에 아직 주차된 차량.\n" +
+                    "<주차됨> = 선택한 모드에서 주차가 금지된 도로에 아직 주차된 차량.\n" +
                     "<차선> = 해당 차량이 있는 도로변 주차 구간. 한 차선에 여러 차량이 주차될 수 있습니다.\n" +
                     "<비활성> = 새 차량 주차가 금지된 노상 주차 차선.\n" +
                     "<구역별>에서는 다음을 표시합니다:\n" +
                     "- 금지 구역의 점유 차선 / 도시 전체 점유 차선.\n" +
                     "- 비활성 차선 / 도시의 대상 차선.\n" +
                     "- 활성화된 구역 / 전체 구역.\n" +
-                    "<새로 만든 도로나 재건한 도로>는 차선이 업데이트되는 동안 잠깐 몇 대가 주차할 수 있습니다.\n" +
-                    "이미 주차된 차량은 자연스럽게 이동합니다.\n" +
+                    "<새로 만든 도로나 재건한 도로>는 차선이 업데이트되는 동안 잠깐 몇 대가 주차할 수 있습니다. " +
+                    "이미 주차된 차량은 시민이 사용할 때 자연스럽게 이동합니다.\n" +
                     "<확인> = 선택한 도로 일부가 아직 차단되지 않았습니다. 도시를 잠시 실행한 뒤 " +
                     "다시 확인하세요. <확인>이 계속되면 도움을 요청할 때 주차 로그 보고서를 포함하세요." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "도로 사용" },
@@ -100,7 +100,7 @@ namespace ParkingControl
                     "이 행은 구역뿐 아니라 <도시 전체>를 포함합니다.\n" +
                     "<노상 주차> = 공공 또는 건물 주차 대신 도로에 주차된 비율.\n" +
                     "<활성> = 주행 중이거나 교통에서 대기 중인 개인 차량.\n" +
-                    "<계산식> = 도로 ÷ (도로 + 사용 중 공공 + 사용 중 건물 주차).\n" +
+                    "<공식> = 도로 ÷ (도로 + 사용 중 공공 + 사용 중 건물 주차).\n" +
                     "**외부 연결(OC) 보관소와 주차 차선이 지정되지 않은 차량은 제외됩니다.**" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "주차 공간" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),

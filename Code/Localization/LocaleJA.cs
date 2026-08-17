@@ -20,11 +20,11 @@ namespace ParkingControl
     {
         private readonly PCSettings m_Settings;
 
-        /// <summary>
         /// Initializes a new instance of the <see cref="LocaleJA"/> class.
+        /// Initializes a new instance of the <see cref="LocaleEN"/> class.
         /// </summary>
-        /// <param name="settings">Options settings whose localization IDs are used.</param>
         public LocaleJA(PCSettings settings)
+        public LocaleEN(PCSettings settings)
         {
             m_Settings = settings;
         }
@@ -84,15 +84,15 @@ namespace ParkingControl
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "路上駐車" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<駐車中> = 選択したモードの対象道路にまだ駐車している車。\n" +
+                    "<駐車中> = 選択したモードで駐車禁止になっている道路にまだ駐車している車。\n" +
                     "<車線> = それらの車がある道路脇の駐車区間。1つの車線に複数台駐車できます。\n" +
                     "<無効> = 新たな駐車を受け付けない路上駐車車線。\n" +
                     "<地区ごと>では次を表示します:\n" +
                     "- 禁止地区内の駐車中車線 / 市全体の駐車中車線。\n" +
                     "- 無効な車線 / 市内の対象車線。\n" +
                     "- 有効な地区 / 全地区。\n" +
-                    "<新設・再建した道路>は、車線の更新中に一時的に数台の車を受け入れることがあります。\n" +
-                    "すでに駐車中の車は自然に移動します。\n" +
+                    "<新設・再建した道路>は、車線の更新中に一時的に数台の車を受け入れることがあります。 " +
+                    "すでに駐車中の車は、市民が使うと自然に移動します。\n" +
                     "<確認> = " +
                     "選択した道路の一部がまだ禁止されていません。少し都市を動かして再確認してください。<確認>が続く場合は、問い合わせ時に駐車ログレポートを添付してください。" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "路上利用" },

@@ -20,11 +20,11 @@ namespace ParkingControl
     {
         private readonly PCSettings m_Settings;
 
-        /// <summary>
         /// Initializes a new instance of the <see cref="LocaleDE"/> class.
+        /// Initializes a new instance of the <see cref="LocaleEN"/> class.
         /// </summary>
-        /// <param name="settings">Options settings whose localization IDs are used.</param>
         public LocaleDE(PCSettings settings)
+        public LocaleEN(PCSettings settings)
         {
             m_Settings = settings;
         }
@@ -84,15 +84,15 @@ namespace ParkingControl
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Straßenparken" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Geparkt> = Autos, die noch auf Straßen parken, die vom gewählten Modus erfasst werden.\n" +
+                    "<Geparkt> = Autos, die noch auf Straßen parken, auf denen der gewählte Modus das Parken verbietet.\n" +
                     "<Spuren> = Straßenrand-Parkabschnitte mit diesen Autos. Eine Spur kann mehrere Autos aufnehmen.\n" +
                     "<Gesperrt> = Straßenparkspuren, die kein neues Parken zulassen.\n" +
                     "<Nach Bezirk> zeigt:\n" +
                     "- Belegte Spuren in Bezirken mit Verbot / belegte Spuren stadtweit.\n" +
-                    "- Gesperrte Spuren / geeignete Spuren der Stadt.\n" +
+                    "- Deaktivierte Spuren / geeignete Spuren der Stadt.\n" +
                     "- Aktivierte Bezirke / gesamte Bezirke.\n" +
-                    "<Neue oder umgebaute Straßen> können kurzzeitig einige Autos aufnehmen, während ihre Spuren aktualisiert werden.\n" +
-                    "Bereits geparkte Autos fahren natürlich weg.\n" +
+                    "<Neue oder umgebaute Straßen> können kurzzeitig einige Autos aufnehmen, während ihre Spuren aktualisiert werden. " +
+                    "Bereits geparkte Autos fahren weg, wenn Bürger sie benutzen.\n" +
                     "<PRÜFEN> = einige ausgewählte Straßen sind noch nicht blockiert. Lass die Stadt kurz laufen und " +
                     "prüfe erneut. Bleibt <PRÜFEN>, füge bei einer Support-Anfrage einen Parkbericht aus dem Log bei." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Straßennutzung" },
@@ -105,7 +105,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Parkplätze" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
                     "Zeigt die stadtweite Parkplatzbelegung.\n" +
-                    "<Öff.> belegt = Einrichtungen, die von der Parkplatz-Infoansicht des Grundspiels gezählt werden.\n" +
+                    "<Öffentlich> belegt = Einrichtungen, die von der Vanilla-Parkplatz-Infoansicht gezählt werden.\n" +
                     "<Gebäude> belegt = Parkplätze bei Wohnungen, Arbeitsplätzen und Geschäften.\n" +
                     "**Je höher die %-Nutzung, desto eher werden zusätzliche Parkplätze benötigt.**" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Auto-Standorte" },

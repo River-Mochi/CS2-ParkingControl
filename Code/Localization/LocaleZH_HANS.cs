@@ -20,11 +20,11 @@ namespace ParkingControl
     {
         private readonly PCSettings m_Settings;
 
-        /// <summary>
         /// Initializes a new instance of the <see cref="LocaleZH_HANS"/> class.
+        /// Initializes a new instance of the <see cref="LocaleEN"/> class.
         /// </summary>
-        /// <param name="settings">Options settings whose localization IDs are used.</param>
         public LocaleZH_HANS(PCSettings settings)
+        public LocaleEN(PCSettings settings)
         {
             m_Settings = settings;
         }
@@ -78,21 +78,21 @@ namespace ParkingControl
                 // In-city district policy.
                 { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "路边停车禁令" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.PrefabName}]",
-                    "禁止<汽车和摩托车>在此行政区路边停车。" +
-                    "已停放车辆会在车主下次使用时离开。" },
+                    "禁止<汽车和摩托车>在此行政区的路边停" +
+                    "车。已停放车辆会在车主下次使用时离开。" },
 
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "路边停车" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<已停放> = 仍停在所选模式覆盖道路上的车辆。\n" +
+                    "<已停放> = 仍停在所选模式禁止停车道路上的车辆。\n" +
                     "<车道> = 停放这些车辆的路边停车路段。一条车道可停多辆车。\n" +
                     "<已禁用> = 禁止新车辆停车的路边停车车道。\n" +
                     "<按行政区>显示：\n" +
                     "- 禁停行政区内的已占用车道 / 全城已占用车道。\n" +
                     "- 已禁用车道 / 全城符合条件的车道。\n" +
                     "- 已启用行政区 / 行政区总数。\n" +
-                    "<新建或重建道路>在车道更新时可能短暂接受少量车辆停车。\n" +
-                    "已停放车辆会自然驶离。\n" +
+                    "<新建或重建道路>在车道更新时可能短暂接受少量车辆停车。" +
+                    "已停放车辆会在市民使用时自然驶离。\n" +
                     "<检查> = " +
                     "部分所选道路尚未被禁止停车。让城市运行一会儿后再检查。如果<检查>一直存在，请在求助时附上停车日志报告。" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "路边使用" },

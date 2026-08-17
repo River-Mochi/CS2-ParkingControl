@@ -20,11 +20,11 @@ namespace ParkingControl
     {
         private readonly PCSettings m_Settings;
 
-        /// <summary>
         /// Initializes a new instance of the <see cref="LocalePL"/> class.
+        /// Initializes a new instance of the <see cref="LocaleEN"/> class.
         /// </summary>
-        /// <param name="settings">Options settings whose localization IDs are used.</param>
         public LocalePL(PCSettings settings)
+        public LocaleEN(PCSettings settings)
         {
             m_Settings = settings;
         }
@@ -84,15 +84,15 @@ namespace ParkingControl
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Parking uliczny" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Zaparkowane> = auta nadal stojące na ulicach objętych wybranym trybem.\n" +
+                    "<Zaparkowane> = auta nadal stojące na ulicach, gdzie wybrany tryb zakazuje parkowania.\n" +
                     "<Pasy> = odcinki parkingowe przy drodze zajęte przez te auta. Jeden pas może mieścić kilka aut.\n" +
                     "<Wyłączone> = pasy parkowania przy ulicy zamknięte dla nowych pojazdów.\n" +
                     "<Według dzielnic> pokazuje:\n" +
                     "- Zajęte pasy w dzielnicach z zakazem / zajęte pasy w całym mieście.\n" +
                     "- Wyłączone pasy / odpowiednie pasy w mieście.\n" +
                     "- Włączone dzielnice / wszystkie dzielnice.\n" +
-                    "<Nowe lub przebudowane drogi> mogą przez chwilę przyjąć kilka aut podczas aktualizacji pasów.\n" +
-                    "Już zaparkowane auta odjadą naturalnie.\n" +
+                    "<Nowe lub przebudowane drogi> mogą przez chwilę przyjąć kilka aut podczas aktualizacji pasów. " +
+                    "Już zaparkowane auta odjadą, gdy mieszkańcy ich użyją.\n" +
                     "<SPRAWDŹ> = niektóre wybrane drogi nie są jeszcze zablokowane. Uruchom miasto na chwilę i " +
                     "sprawdź ponownie. Jeśli <SPRAWDŹ> pozostaje, dołącz raport parkowania przy prośbie o pomoc." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Użycie ulic" },
@@ -105,7 +105,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Miejsca" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
                     "Pokazuje zajętość parkingów w całym mieście.\n" +
-                    "<Publ.> zajęte = obiekty liczone przez podstawowy widok informacji o parkowaniu.\n" +
+                    "<Publiczne> zajęte = obiekty liczone przez podstawowy widok informacji o parkowaniu.\n" +
                     "<Budynek> zajęte = miejsca przy domach, miejscach pracy i sklepach.\n" +
                     "**Wyższy % wykorzystania = może być potrzebnych więcej miejsc parkingowych.**" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Położenie aut" },

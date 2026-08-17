@@ -20,11 +20,11 @@ namespace ParkingControl
     {
         private readonly PCSettings m_Settings;
 
-        /// <summary>
         /// Initializes a new instance of the <see cref="LocaleIT"/> class.
+        /// Initializes a new instance of the <see cref="LocaleEN"/> class.
         /// </summary>
-        /// <param name="settings">Options settings whose localization IDs are used.</param>
         public LocaleIT(PCSettings settings)
+        public LocaleEN(PCSettings settings)
         {
             m_Settings = settings;
         }
@@ -42,7 +42,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kAboutTab), "Informazioni" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStreetParkingGroup), "Parcheggio su strada" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStatusGroup), "Stato veicoli personali" },
-                { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "Informazioni sul mod" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "Informazioni sulla mod" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "Collegamenti" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutDiagnosticsGroup), "Diagnostica" },
 
@@ -84,17 +84,17 @@ namespace ParkingControl
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Sosta su strada" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<In sosta> = auto ancora parcheggiate sulle strade coperte dalla modalità scelta.\n" +
+                    "<In sosta> = auto ancora parcheggiate sulle strade dove la modalità scelta vieta il parcheggio.\n" +
                     "<Corsie> = tratti di parcheggio a bordo strada che contengono quelle auto. Una corsia può contenerne diverse.\n" +
                     "<Chiuse> = corsie di parcheggio su strada chiuse ai nuovi veicoli.\n" +
                     "<Per distretto> mostra:\n" +
                     "- Corsie occupate nei distretti con divieto / corsie occupate in tutta la città.\n" +
-                    "- Corsie chiuse / corsie idonee della città.\n" +
+                    "- Corsie disattivate / corsie idonee della città.\n" +
                     "- Distretti attivati / distretti totali.\n" +
-                    "<Strade nuove o ricostruite> possono accettare brevemente qualche auto mentre le corsie si aggiornano.\n" +
-                    "Le auto già parcheggiate se ne vanno naturalmente.\n" +
-                    "<VERIF.> = alcune strade selezionate non sono ancora bloccate. Fai andare la città per un " +
-                    "po’ e ricontrolla. Se <VERIF.> resta, includi un rapporto parcheggi quando chiedi assistenza." },
+                    "<Strade nuove o ricostruite> possono accettare brevemente qualche auto mentre le corsie si aggiornano. " +
+                    "Le auto già parcheggiate se ne vanno quando i cittadini le usano.\n" +
+                    "<CONTROLLA> = alcune strade selezionate non sono ancora bloccate. Fai andare la città per un " +
+                    "po’ e ricontrolla. Se <CONTROLLA> resta, includi un rapporto parcheggi quando chiedi assistenza." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Uso strade" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
                     "Questa riga include <l’intera città>, non solo i distretti.\n" +

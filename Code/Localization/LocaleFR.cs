@@ -20,11 +20,11 @@ namespace ParkingControl
     {
         private readonly PCSettings m_Settings;
 
-        /// <summary>
         /// Initializes a new instance of the <see cref="LocaleFR"/> class.
+        /// Initializes a new instance of the <see cref="LocaleEN"/> class.
         /// </summary>
-        /// <param name="settings">Options settings whose localization IDs are used.</param>
         public LocaleFR(PCSettings settings)
+        public LocaleEN(PCSettings settings)
         {
             m_Settings = settings;
         }
@@ -84,15 +84,15 @@ namespace ParkingControl
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Parking sur rue" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Garées> = voitures encore garées dans les rues couvertes par le mode choisi.\n" +
+                    "<Garées> = voitures encore garées dans les rues où le mode choisi interdit le stationnement.\n" +
                     "<Voies> = sections de stationnement en bord de route occupées par ces voitures. Une voie peut en contenir plusieurs.\n" +
                     "<Fermées> = voies de stationnement sur rue fermées aux nouveaux véhicules.\n" +
                     "<Par quartier> affiche :\n" +
-                    "- Voies occupées dans les quartiers avec interdiction / voies occupées dans toute la ville.\n" +
+                    "- Voies occupées dans les quartiers interdits / voies occupées dans toute la ville.\n" +
                     "- Voies fermées / voies admissibles de la ville.\n" +
                     "- Quartiers activés / quartiers totaux.\n" +
-                    "<Rues nouvelles ou reconstruites> peuvent accepter brièvement quelques voitures pendant la mise à jour de leurs voies.\n" +
-                    "Les voitures déjà garées partent naturellement.\n" +
+                    "<Rues nouvelles ou reconstruites> peuvent accepter brièvement quelques voitures pendant la mise à jour de leurs voies. " +
+                    "Les voitures déjà garées partent lorsque les citoyens les utilisent.\n" +
                     "<VÉRIF.> = certaines routes sélectionnées ne sont pas encore bloquées. Faites tourner la ville un moment puis " +
                     "revérifiez. Si <VÉRIF.> reste affiché, joignez un rapport de stationnement quand vous demandez de l’aide." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Usage des rues" },

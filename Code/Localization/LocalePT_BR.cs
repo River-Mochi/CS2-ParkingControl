@@ -20,11 +20,11 @@ namespace ParkingControl
     {
         private readonly PCSettings m_Settings;
 
-        /// <summary>
         /// Initializes a new instance of the <see cref="LocalePT_BR"/> class.
+        /// Initializes a new instance of the <see cref="LocaleEN"/> class.
         /// </summary>
-        /// <param name="settings">Options settings whose localization IDs are used.</param>
         public LocalePT_BR(PCSettings settings)
+        public LocaleEN(PCSettings settings)
         {
             m_Settings = settings;
         }
@@ -84,17 +84,17 @@ namespace ParkingControl
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Estac. na rua" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Estac.> = carros que ainda estão em ruas cobertas pelo modo selecionado.\n" +
+                    "<Estac.> = carros que ainda estão em ruas onde o modo selecionado proíbe estacionar.\n" +
                     "<Faixas> = trechos de estacionamento junto à via onde esses carros estão. Uma faixa pode conter vários.\n" +
                     "<Desat.> = faixas de estacionamento na rua fechadas para novos veículos.\n" +
                     "<Por distrito> mostra:\n" +
                     "- Faixas ocupadas em distritos com proibição / faixas ocupadas na cidade inteira.\n" +
                     "- Faixas desativadas / faixas elegíveis da cidade.\n" +
                     "- Distritos ativados / distritos totais.\n" +
-                    "<Vias novas ou reconstruídas> podem aceitar alguns carros por pouco tempo enquanto as faixas são atualizadas.\n" +
-                    "Carros já estacionados saem naturalmente.\n" +
-                    "<VERIF.> = algumas vias selecionadas ainda não estão bloqueadas. Deixe a cidade rodar um pouco e " +
-                    "verifique novamente. Se <VERIF.> continuar, inclua um relatório de estacionamento ao pedir ajuda." },
+                    "<Vias novas ou reconstruídas> podem aceitar alguns carros por pouco tempo enquanto as faixas são atualizadas. " +
+                    "Carros já estacionados saem quando os cidadãos os usam.\n" +
+                    "<VERIFICAR> = algumas vias selecionadas ainda não estão bloqueadas. Deixe a cidade rodar um pouco e " +
+                    "verifique novamente. Se <VERIFICAR> continuar, inclua um relatório de estacionamento ao pedir ajuda." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Uso das ruas" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
                     "Esta linha inclui a <cidade inteira>, não apenas os distritos.\n" +

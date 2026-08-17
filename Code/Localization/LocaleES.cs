@@ -20,11 +20,11 @@ namespace ParkingControl
     {
         private readonly PCSettings m_Settings;
 
-        /// <summary>
         /// Initializes a new instance of the <see cref="LocaleES"/> class.
+        /// Initializes a new instance of the <see cref="LocaleEN"/> class.
         /// </summary>
-        /// <param name="settings">Options settings whose localization IDs are used.</param>
         public LocaleES(PCSettings settings)
+        public LocaleEN(PCSettings settings)
         {
             m_Settings = settings;
         }
@@ -50,18 +50,18 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "Sin aparcamiento en calle" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
                     "Elige **Toda la ciudad**, **Por distrito** o **DESACTIVADO**.\n" +
-                    "- Los carriles aptos se bloquean para impedir nuevos aparcamientos en calle.\n" +
+                    "- Los carriles aptos se bloquean para impedir nuevos aparcamientos en la calle.\n" +
                     "- Los coches ya aparcados se van cuando vuelven a usarse.\n" +
-                    "- Los aparcamientos de pago y los de edificios siguen disponibles.\n" +
-                    "**Las autopistas y las carreteras asimétricas de 3 carriles ya excluyen el aparcamiento en calle.**" },
+                    "- Los aparcamientos de pago y el aparcamiento normal de edificios siguen disponibles.\n" +
+                    "**Las autopistas y las carreteras asimétricas de 3 carriles ya excluyen el aparcamiento en la calle.**" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Toda la ciudad" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "Por distrito" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "DESACTIVADO" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Mostrar instrucciones" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
                     "Muestra cómo usar el modo <Por distrito>.\n" +
-                    "DESACTIVADO = se desactivan las restricciones de aparcamiento en calle.\n" +
-                    "Toda la ciudad = se bloquea el aparcamiento en calle en toda la ciudad." },
+                    "DESACTIVADO = se desactivan las restricciones de aparcamiento en la calle.\n" +
+                    "Toda la ciudad = se bloquea el aparcamiento apto en la calle en toda la ciudad." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "Mostrar estado" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowStatus)),
                     "<Muestra abajo los totales actuales de aparcamiento.>\n" +
@@ -84,35 +84,35 @@ namespace ParkingControl
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Aparc. en calle" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Aparc.> = coches que siguen aparcados en calles cubiertas por el modo seleccionado.\n" +
-                    "<Carr.> = tramos de aparcamiento junto a la vía donde están esos coches. Un carril puede contener varios.\n" +
+                    "<Aparc.> = coches que siguen aparcados en calles donde el modo elegido prohíbe aparcar.\n" +
+                    "<Carr.> = tramos de aparcamiento junto a la vía que contienen esos coches. Un carril puede contener varios.\n" +
                     "<Desact.> = carriles de aparcamiento en calle cerrados a nuevos vehículos.\n" +
                     "<Por distrito> muestra:\n" +
                     "- Carriles ocupados en distritos con prohibición / carriles ocupados en toda la ciudad.\n" +
                     "- Carriles desactivados / carriles aptos de la ciudad.\n" +
                     "- Distritos activados / distritos totales.\n" +
-                    "<Carreteras nuevas o reconstruidas> pueden aceptar unos pocos coches mientras se actualizan sus carriles.\n" +
-                    "Los coches ya aparcados se van de forma natural.\n" +
+                    "<Carreteras nuevas o reconstruidas> pueden aceptar unos pocos coches mientras se actualizan sus carriles. " +
+                    "Los coches ya aparcados se van cuando los ciudadanos los usan.\n" +
                     "<REVISAR> = algunas calles seleccionadas aún no están bloqueadas. Deja correr la ciudad un poco " +
                     "y vuelve a comprobar. Si sigue <REVISAR>, incluye un informe de aparcamiento al pedir ayuda." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Uso de calles" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
                     "Esta fila incluye <toda la ciudad>, no solo los distritos.\n" +
-                    "<En calle> = porcentaje aparcado en calle en vez de en plazas públicas o de edificios.\n" +
+                    "<Aparcados en la calle> = porcentaje aparcado en calles en vez de aparcamientos públicos o de edificios.\n" +
                     "<Activos> = vehículos personales circulando o esperando en tráfico.\n" +
                     "<Fórmula> = calle ÷ (calle + público ocupado + edificio ocupado).\n" +
-                    "**Se excluyen las conexiones exteriores (OC) y los coches sin carril de aparcamiento asignado.**" },
+                    "**Se excluyen el almacenamiento de conexiones exteriores (OC) y los coches sin carril de aparcamiento asignado.**" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Plazas" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
                     "Muestra la ocupación de aparcamiento de toda la ciudad.\n" +
-                    "<Público> usado = instalaciones contadas por la vista de Aparcamiento del juego base.\n" +
-                    "<Edificio> usado = plazas incluidas con viviendas, trabajos y tiendas.\n" +
-                    "**Un % de uso más alto = pueden hacer falta más plazas.**" },
+                    "<Público> usado = instalaciones contadas por la vista de información de Aparcamiento del juego base.\n" +
+                    "<Edificio> usado = aparcamiento incluido con viviendas, trabajos y tiendas.\n" +
+                    "**Un % de uso más alto = puede hacer falta más aparcamiento.**" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Dónde aparcan" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VehicleStatus)),
                     "Esta fila muestra datos de toda la ciudad, no solo de distritos con la prohibición.\n" +
                     "<Calle> = aparcados en vías públicas.\n" +
-                    "<Visibles> = coches visibles y seleccionables en aparcamientos al aire libre o plazas exteriores de edificios.\n" +
+                    "<Visibles> = coches que puedes ver y seleccionar en aparcamientos al aire libre o plazas exteriores de edificios.\n" +
                     "<Ocultos> = dentro de edificios o garajes.\n" +
                     "<OC> = almacenamiento de conexión exterior en el límite de la ciudad; algunos coches de hogares entrantes empiezan allí como zona de espera.\n" +
                     "Los coches sin carril de aparcamiento asignado se omiten aquí y solo aparecen en el informe del registro de la pestaña Acerca de." },
@@ -127,7 +127,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenParadox)), "Abre la página del autor en Paradox Mods." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ReportToLog)), "Escribir informe de aparcamiento" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ReportToLog)),
-                    "Escribe detalles del aparcamiento en calle y datos relacionados en \n" +
+                    "Escribe detalles del aparcamiento en la calle y datos relacionados en \n" +
                     "<Logs/ParkingControl.log>.\n" +
                     "Si te interesa, escribe un 2.º informe más tarde en la misma ciudad cargada.\n" +
                     "- Compara hasta 20 ID de entidad de muestra de distintas categorías.\n" +
