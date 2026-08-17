@@ -20,11 +20,11 @@ namespace ParkingControl
     {
         private readonly PCSettings m_Settings;
 
+        /// <summary>
         /// Initializes a new instance of the <see cref="LocaleIT"/> class.
-        /// Initializes a new instance of the <see cref="LocaleEN"/> class.
         /// </summary>
+        /// <param name="settings">Options settings whose localization IDs are used.</param>
         public LocaleIT(PCSettings settings)
-        public LocaleEN(PCSettings settings)
         {
             m_Settings = settings;
         }
