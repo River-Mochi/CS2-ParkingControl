@@ -102,7 +102,7 @@
     </Target>
 
     <!-- Run npm ci only on first use or when package-lock.json changes. -->
-    <Target Name="NpmInstallIfNeeded" AfterTargets="Build" DependsOnTargets=""
+    <Target Name="NpmInstallIfNeeded" AfterTargets="Build"
             Condition="Exists('$(ProjectDir)UI\package.json') AND Exists('$(ProjectDir)UI\package-lock.json')"
             Inputs="$(ProjectDir)UI\package-lock.json"
             Outputs="$(ProjectDir)UI\node_modules\.stamp">
