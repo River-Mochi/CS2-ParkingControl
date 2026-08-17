@@ -1,7 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
+    <!--
+    Parking Control [PC]
+    - CS2 toolchain supplies net48, supported C# version, and game references.
+    - UI build under UI/ runs with the C# build.
+    - Release stops on UI build/install errors; Debug warns and continues.
+    - Update-PublishConfig.ps1 syncs Version/GameVersion into publish files
+      and the nested UI/mod.json version.
+    -->
 
-	<PropertyGroup>
-		<Configurations>Debug;Release</Configurations>
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <Configurations>Debug;Release</Configurations>
         <Nullable>enable</Nullable>
 
         <!-- Paradox Mods publish config -->
@@ -10,12 +19,15 @@
 
         <!-- Versioning: single source of truth -->
         <Version>0.3.0</Version>
+        <AssemblyVersion>$(Version).0</AssemblyVersion>
+        <FileVersion>$(Version).0</FileVersion>
         <GameVersion>1.6.*</GameVersion>
 
         <!-- Assembly identity -->
         <RootNamespace>ParkingControl</RootNamespace>
-        <AssemblyTitle>Parking Controller</AssemblyTitle>
         <AssemblyName>ParkingControl</AssemblyName>
+        <AssemblyTitle>Parking Control</AssemblyTitle>
+        <Product>Parking Control</Product>
         <Copyright>Copyright © 2026 River-Mochi</Copyright>
 
         <!-- Code quality -->
@@ -23,81 +35,157 @@
         <AnalysisMode>Recommended</AnalysisMode>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
 
-	</PropertyGroup>
-	
-	<!--Imports must be after PropertyGroup block-->
-	<Import Project="$([System.Environment]::GetEnvironmentVariable('CSII_TOOLPATH', 'EnvironmentVariableTarget.User'))\Mod.props" />
-	<Import Project="$([System.Environment]::GetEnvironmentVariable('CSII_TOOLPATH', 'EnvironmentVariableTarget.User'))\Mod.targets" />
+        <!-- Prevent stalled npm processes from blocking a build indefinitely. -->
+        <PcNpmCiTimeoutMs Condition="'$(PcNpmCiTimeoutMs)'==''">450000</PcNpmCiTimeoutMs>
+        <PcNpmBuildTimeoutMs Condition="'$(PcNpmBuildTimeoutMs)'==''">300000</PcNpmBuildTimeoutMs>
+    </PropertyGroup>
 
-    <!-- Sync PublishConfiguration.xml and any future UI/mod.json before each build. -->
-    <Target Name="UpdatePublishConfigVersion" BeforeTargets="PrepareForBuild" Condition="Exists('$(PublishConfigScript)') AND Exists('$(MSBuildProjectDirectory)\$(PublishConfigurationPath)')">
-        <Message Text="$(AssemblyTitle) PublishConfig: syncing ModVersion/GameVersion + normalizing EOL/BOM..." Importance="high" />
+    <!-- Make UI-only edits participate in Visual Studio's up-to-date check. -->
+    <ItemGroup>
+        <UpToDateCheckInput Include="UI\**\*.ts" />
+        <UpToDateCheckInput Include="UI\**\*.tsx" />
+        <UpToDateCheckInput Include="UI\**\*.scss" />
+        <UpToDateCheckInput Include="UI\**\*.svg" />
+        <UpToDateCheckInput Include="UI\mod.json" />
+        <UpToDateCheckInput Include="UI\package.json" />
+        <UpToDateCheckInput Include="UI\package-lock.json" />
+        <UpToDateCheckInput Include="UI\webpack.config.js" />
+    </ItemGroup>
+
+    <!-- CS2 toolchain imports must follow PropertyGroup. -->
+    <Import Project="$([System.Environment]::GetEnvironmentVariable('CSII_TOOLPATH', 'EnvironmentVariableTarget.User'))\Mod.props" />
+    <Import Project="$([System.Environment]::GetEnvironmentVariable('CSII_TOOLPATH', 'EnvironmentVariableTarget.User'))\Mod.targets" />
+
+    <!-- Keep build output out of SDK source globs. -->
+    <ItemGroup>
+        <Compile Remove="bin\**" />
+        <EmbeddedResource Remove="bin\**" />
+        <None Remove="bin\**" />
+        <UpToDateCheckInput Remove="bin\**" />
+    </ItemGroup>
+
+    <!-- Game / Colossal / Unity references resolved by the CS2 toolchain. -->
+    <ItemGroup>
+        <Reference Include="Game"><Private>false</Private></Reference>
+        <Reference Include="Colossal.Core">
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="Colossal.Logging">
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="Colossal.IO.AssetDatabase">
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="Colossal.UI">
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="Colossal.UI.Binding">
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="Colossal.Localization">
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="Colossal.Mathematics">
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="Unity.InputSystem">
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="UnityEngine.CoreModule">
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="Unity.Burst">
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="Unity.Collections">
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="Unity.Entities">
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="Unity.Mathematics">
+            <Private>false</Private>
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Update="System">
+            <Private>false</Private>
+        </Reference>
+        <Reference Update="System.Core">
+            <Private>false</Private>
+        </Reference>
+        <Reference Update="System.Data">
+            <Private>false</Private>
+        </Reference>
+    </ItemGroup>
+
+    <!-- Convenience links for viewing CS2 toolchain files in Visual Studio. -->
+    <ItemGroup>
+        <None Include="$(ModPropsFile)" Link="Properties\Mod.props" />
+        <None Include="$(ModTargetsFile)" Link="Properties\Mod.targets" />
+    </ItemGroup>
+
+    <!-- Sync PublishConfiguration.xml and UI/mod.json before each build. -->
+    <Target Name="UpdatePublishConfigVersion"
+            BeforeTargets="PrepareForBuild"
+            Condition="Exists('$(PublishConfigScript)') AND Exists('$(MSBuildProjectDirectory)\$(PublishConfigurationPath)')">
+
+        <Message Text="$(AssemblyTitle) PublishConfig: syncing ModVersion/GameVersion + UI mod version..."
+                 Importance="high" />
+
         <Exec Command="&quot;$(SystemRoot)\System32\WindowsPowerShell\v1.0\powershell.exe&quot; -NoProfile -ExecutionPolicy Bypass -File &quot;$(PublishConfigScript)&quot; -Path &quot;$(MSBuildProjectDirectory)\$(PublishConfigurationPath)&quot; -Version &quot;$(Version)&quot; -GameVersion &quot;$(GameVersion)&quot; -Eol lf -LeftAlignBlocks" />
     </Target>
 
-	<ItemGroup>
-		<Reference Include="Game">
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="Colossal.Core">
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="Colossal.Logging">
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="Colossal.IO.AssetDatabase">
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="Colossal.UI">
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="Colossal.UI.Binding">
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="Colossal.Localization">
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="Colossal.Mathematics">
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="Unity.InputSystem">
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="UnityEngine.CoreModule">
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="Unity.Burst">
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="Unity.Collections">
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="Unity.Entities">
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="Unity.Mathematics">
-			<Private>false</Private>
-		</Reference>
-	</ItemGroup>
+    <!-- Run npm ci only on first use or when package-lock.json changes. -->
+    <Target Name="NpmInstallIfNeeded"
+            AfterTargets="Build"
+            Condition="Exists('$(ProjectDir)UI\package.json') AND Exists('$(ProjectDir)UI\package-lock.json')"
+            Inputs="$(ProjectDir)UI\package-lock.json"
+            Outputs="$(ProjectDir)UI\node_modules\.stamp">
 
-	<ItemGroup>
-		<Reference Update="System">
-			<Private>false</Private>
-		</Reference>
-		<Reference Update="System.Core">
-			<Private>false</Private>
-		</Reference>
-		<Reference Update="System.Data">
-			<Private>false</Private>
-		</Reference>
-	</ItemGroup>
+        <Message Text="$(AssemblyTitle) UI: npm ci (first-time or lockfile changed)..."
+                 Importance="high" />
 
-	<ItemGroup>
-		<None Include="$(ModPropsFile)" Link="Properties\Mod.props" />
-		<None Include="$(ModTargetsFile)" Link="Properties\Mod.targets" />
-	</ItemGroup>
+        <Exec Command="npm ci"
+              WorkingDirectory="$(ProjectDir)UI"
+              IgnoreExitCode="true"
+              Timeout="$(PcNpmCiTimeoutMs)">
+            <Output TaskParameter="ExitCode" PropertyName="NpmCiExit" />
+        </Exec>
 
-	<ItemGroup>
-	  <Folder Include="Systems\Status\" />
-	</ItemGroup>
+        <Error Condition="'$(Configuration)'=='Release' AND '$(NpmCiExit)'!='0'"
+               Text="$(AssemblyTitle) UI: 'npm ci' failed (exit $(NpmCiExit)). Release build aborted." />
+
+        <Warning Condition="'$(Configuration)'!='Release' AND '$(NpmCiExit)'!='0'"
+                 Text="$(AssemblyTitle) UI: 'npm ci' failed (exit $(NpmCiExit)). Continuing (non-Release)." />
+
+        <WriteLinesToFile Condition="'$(NpmCiExit)'=='0'"
+                          File="$(ProjectDir)UI\node_modules\.stamp"
+                          Lines="ok"
+                          Overwrite="true" />
+    </Target>
+
+    <!-- Bundle the UI after the C# build. -->
+    <Target Name="BuildUI"
+            AfterTargets="Build"
+            DependsOnTargets="NpmInstallIfNeeded"
+            Condition="Exists('$(ProjectDir)UI\package.json')">
+
+        <Message Text="$(AssemblyTitle) UI: npm run build ($(Configuration))..."
+                 Importance="high" />
+
+        <Exec Command="npm run build"
+              WorkingDirectory="$(ProjectDir)UI"
+              IgnoreExitCode="true"
+              Timeout="$(PcNpmBuildTimeoutMs)">
+            <Output TaskParameter="ExitCode" PropertyName="NpmBuildExit" />
+        </Exec>
+
+        <Error Condition="'$(Configuration)'=='Release' AND '$(NpmBuildExit)'!='0'"
+               Text="$(AssemblyTitle) UI: 'npm run build' failed (exit $(NpmBuildExit)). Release build aborted." />
+
+        <Warning Condition="'$(Configuration)'!='Release' AND '$(NpmBuildExit)'!='0'"
+                 Text="$(AssemblyTitle) UI: 'npm run build' failed (exit $(NpmBuildExit)). Continuing (non-Release)." />
+    </Target>
 </Project>
