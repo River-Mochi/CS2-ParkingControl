@@ -6,7 +6,7 @@
 // all copies or substantial portions of this code.
 // ================= </copyright> ======================
 
-// Purpose: Registers the zero-mask district policy used to select no-street-parking districts.
+// Purpose: Registers the runtime-only zero-mask policy shown in the vanilla district panel.
 
 namespace ParkingControl
 {
@@ -29,7 +29,7 @@ namespace ParkingControl
         private bool m_Installed;
 
         /// <summary>
-        /// Gets the prefab entity stored in each district's native Policy buffer.
+        /// Gets the prefab entity stored in each district's runtime Policy buffer.
         /// </summary>
         internal static Entity PolicyEntity { get; private set; }
 
@@ -65,6 +65,25 @@ namespace ParkingControl
         {
             base.OnGameLoadingComplete(purpose, mode);
             Install();
+
+            bool isGameLoad =
+                mode == GameMode.Game &&
+                (purpose == Colossal.Serialization.Entities.Purpose.NewGame ||
+                    purpose == Colossal.Serialization.Entities.Purpose.LoadGame);
+            if (!isGameLoad)
+            {
+                return;
+            }
+
+            DistrictPolicyRestoreSystem restoreSystem =
+                World.GetOrCreateSystemManaged<DistrictPolicyRestoreSystem>();
+            int restored = restoreSystem.RestoreNow();
+            if (restored > 0)
+            {
+                LogUtils.Info(
+                    $"{Mod.ModTag} Restored {restored} district parking " +
+                    "selection(s) from save markers.");
+            }
         }
 
         /// <inheritdoc/>
@@ -134,7 +153,7 @@ namespace ParkingControl
                 return;
             }
 
-            // Hiding the prefab does not remove saved Policy-buffer selections.
+            // Hiding the row does not clear its runtime district selections.
             m_Prefab.m_Visibility = visibility;
             World.GetExistingSystemManaged<SelectedInfoUISystem>()?.RequestUpdate();
             LogUtils.Info(

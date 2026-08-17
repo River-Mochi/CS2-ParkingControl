@@ -35,6 +35,7 @@ namespace ParkingControl
         private EntityQuery m_ChangedParkingLanesQuery;
         private EntityQuery m_ModifiedParkingLanesQuery;
         private EntityQuery m_PolicyModifyQuery;
+        private bool m_IsGame;
         private bool m_Initialized;
         private PCSettings.ParkingScope m_LastScope;
 
@@ -92,9 +93,11 @@ namespace ParkingControl
         {
             base.OnGameLoadingComplete(purpose, mode);
 
-            if (mode == GameMode.Game &&
+            m_IsGame =
+                mode == GameMode.Game &&
                 (purpose == Colossal.Serialization.Entities.Purpose.NewGame ||
-                    purpose == Colossal.Serialization.Entities.Purpose.LoadGame))
+                    purpose == Colossal.Serialization.Entities.Purpose.LoadGame);
+            if (m_IsGame)
             {
                 m_Initialized = false;
                 StreetParkingBaselineSystem.RequestScan();
@@ -105,6 +108,11 @@ namespace ParkingControl
         /// <inheritdoc/>
         protected override void OnUpdate()
         {
+            if (!m_IsGame)
+            {
+                return;
+            }
+
             PCSettings.ParkingScope scope =
                 Mod.Settings?.Scope ?? PCSettings.ParkingScope.Off;
             Entity policyEntity = ParkingPolicySystem.PolicyEntity;

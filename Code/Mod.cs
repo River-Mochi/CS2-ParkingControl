@@ -107,9 +107,13 @@ namespace ParkingControl
                 SystemUpdatePhase.ModificationEnd);
             updateSystem.UpdateAfter<ParkingStatusSystem, NoStreetParkingSystem>(
                 SystemUpdatePhase.ModificationEnd);
+            updateSystem.UpdateBefore<DistrictPolicySaveSystem, BeginPrefabSerializationSystem>(
+                SystemUpdatePhase.Serialize);
             updateSystem.UpdateBefore<StreetParkingSaveSystem, SerializerSystem>(
                 SystemUpdatePhase.Serialize);
             updateSystem.UpdateAfter<StreetParkingRestoreSystem, SerializerSystem>(
+                SystemUpdatePhase.Serialize);
+            updateSystem.UpdateAfter<DistrictPolicyRestoreSystem, EndPrefabSerializationSystem>(
                 SystemUpdatePhase.Serialize);
 
             StreetParkingBaselineSystem.RequestScan();

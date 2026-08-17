@@ -91,8 +91,8 @@ namespace ParkingControl
                     "- Occupied lanes in banned districts / occupied lanes citywide.\n" +
                     "- Disabled lanes / eligible city lanes.\n" +
                     "- Enabled districts / total districts.\n" +
-                    "<New or rebuilt roads> may briefly accept a few cars while their lanes update.\n" +
-                    "Cars already parked leave naturally.\n" +
+                    "<New or rebuilt roads> may briefly accept a few cars while their lanes update. " +
+                    "Cars already parked leave naturally when citizens use them.\n" +
                     "<CHECK> = some selected roads are not blocked yet. Run the city briefly and check again. " +
                     "If <CHECK> remains, include a parking log report when asking for help." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Street use" },
