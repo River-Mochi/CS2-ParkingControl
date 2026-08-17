@@ -72,7 +72,8 @@ namespace ParkingControl
                     "1. Choose <by District> above.\n" +
                     "2. Create/select a district in the city.\n" +
                     "3. Open the <Policies> panel and enable **Roadside Parking Ban [✓]**.\n" +
-                    "Roads outside selected districts keep normal street parking." },
+                    "4. It's okay to have both the Ban and the Parking fee enabled. Fee is charged to any cars still remaining or sneaking in.\n" +
+                    "Roads outside banned parking districts keep normal street parking." },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
 
                 // In-city district policy.
