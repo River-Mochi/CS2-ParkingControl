@@ -84,7 +84,7 @@ namespace ParkingControl
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Street Parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Parked> = cars still parked on streets covered by the selected mode.\n" +
+                    "<Parked> = cars still parked on streets banned by the selected mode.\n" +
                     "<Lanes> = roadside parking sections holding those cars. One lane can hold many.\n" +
                     "<Disabled> = street-parking lanes closed to new parking.\n" +
                     "<by District> shows:\n" +
