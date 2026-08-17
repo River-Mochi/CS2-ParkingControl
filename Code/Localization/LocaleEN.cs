@@ -53,7 +53,7 @@ namespace ParkingControl
                     "- Eligible lanes are flagged to prevent new street parking.\n" +
                     "- Existing parked cars leave naturally when they are next used.\n" +
                     "- Fee-based parking lots and normal building parking remain usable.\n" +
-                    "**Highways and asymmetric 3-lane roads already exclude street parking.**" },
+                    "**Some roads already exclude street parking like Highways and asymmetric 3-lane roads.**" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Whole City" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "by District" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "OFF" },
