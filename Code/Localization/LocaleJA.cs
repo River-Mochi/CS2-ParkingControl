@@ -78,7 +78,7 @@ namespace ParkingControl
                 // In-city district policy.
                 { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "路上駐車禁止" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]",
-                    "この地区では、<自動車とオートバイ>が道路脇に駐車できないように" +
+                    "この地区では、自動車とオートバイ>が道路脇に駐車できないように" +
                     "します。すでに駐車中の車両は、所有者が次に使ったとき移動します。" },
 
                 // Live Options status rows, in display order.

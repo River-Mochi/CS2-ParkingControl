@@ -78,7 +78,7 @@ namespace ParkingControl
                 // In-city district policy.
                 { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "Interdiction de stationner en bord de route" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]",
-                    "Empêche les <voitures et motos> de stationner en bord de route dans ce quartier. " +
+                    "Empêche les voitures et motos de stationner en bord de route dans ce quartier. " +
                     "Les véhicules déjà garés partent lorsque leurs propriétaires les réutilisent." },
 
                 // Live Options status rows, in display order.

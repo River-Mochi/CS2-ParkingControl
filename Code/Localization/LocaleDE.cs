@@ -78,7 +78,7 @@ namespace ParkingControl
                 // In-city district policy.
                 { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "Parkverbot am Straßenrand" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]",
-                    "Verhindert, dass <Autos und Motorräder> in diesem Bezirk am Straßenrand parken. Bereits " +
+                    "Verhindert, dass Autos und Motorräder in diesem Bezirk am Straßenrand parken. Bereits " +
                     "geparkte Fahrzeuge fahren weg, wenn ihre Besitzer sie das nächste Mal benutzen." },
 
                 // Live Options status rows, in display order.

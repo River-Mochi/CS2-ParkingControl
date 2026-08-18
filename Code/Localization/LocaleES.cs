@@ -78,7 +78,7 @@ namespace ParkingControl
                 // In-city district policy.
                 { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "Prohibido aparcar en la calle" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]",
-                    "Impide que <coches y motos> aparquen junto a la vía en este distrito. " +
+                    "Impide que coches y motos aparquen junto a la vía en este distrito. " +
                     "Los vehículos ya aparcados se irán cuando sus dueños vuelvan a usarlos." },
 
                 // Live Options status rows, in display order.

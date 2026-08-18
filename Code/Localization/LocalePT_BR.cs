@@ -78,7 +78,7 @@ namespace ParkingControl
                 // In-city district policy.
                 { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "Proibição de estacionamento à beira da via" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]",
-                    "Impede que <carros e motocicletas> estacionem à beira da via neste distrito. " +
+                    "Impede que carros e motocicletas estacionem à beira da via neste distrito. " +
                     "Veículos já estacionados saem quando seus donos os usam novamente." },
 
                 // Live Options status rows, in display order.

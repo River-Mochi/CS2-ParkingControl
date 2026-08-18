@@ -78,7 +78,7 @@ namespace ParkingControl
                 // In-city district policy.
                 { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "도로변 주차 금지" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]",
-                    "이 구역에서는 <자동차와 오토바이>가 도로변에 주차하지 못하게 " +
+                    "이 구역에서는 자동차와 오토바이가 도로변에 주차하지 못하게 " +
                     "합니다. 이미 주차된 차량은 소유자가 다음에 사용할 때 이동합니다." },
 
                 // Live Options status rows, in display order.

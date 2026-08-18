@@ -78,7 +78,7 @@ namespace ParkingControl
                 // In-city district policy.
                 { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "Zakaz parkowania przy drodze" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]",
-                    "Uniemożliwia <samochodom i motocyklom> parkowanie przy drodze w tej " +
+                    "Uniemożliwia samochodom i motocyklom parkowanie przy drodze w tej " +
                     "dzielnicy. Już zaparkowane pojazdy odjadą, gdy właściciele ponownie ich użyją." },
 
                 // Live Options status rows, in display order.

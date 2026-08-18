@@ -78,7 +78,7 @@ namespace ParkingControl
                 // In-city district policy.
                 { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "路邊停車禁令" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]",
-                    "禁止<汽車和摩托車>在此行政區的路邊停" +
+                    "禁止 汽車和摩托車在此行政區的路邊停" +
                     "車。已停放車輛會在車主下次使用時離開。" },
 
                 // Live Options status rows, in display order.
