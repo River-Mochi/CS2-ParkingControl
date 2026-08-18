@@ -96,7 +96,6 @@
     <ItemGroup>
       <Folder Include="UI\src\extensions\" />
       <Folder Include="UI\src\entry\" />
-      <Folder Include="UI\src\diagnostics\" />
       <Folder Include="UI\src\panel\parking-fees\" />
       <Folder Include="UI\src\shared\" />
       <Folder Include="UI\src\utils\vanilla\" />
