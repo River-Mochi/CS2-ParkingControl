@@ -1,4 +1,4 @@
-# <copyright file="add_gpl_headers.py" company="River-Mochi">
+﻿# <copyright file="add_gpl_headers.py" company="River-Mochi">
 # Copyright (c) 2026 River-Mochi. All rights reserved.
 # Licensed under the GNU General Public License v3.0 or later,
 # with the Cities: Skylines II Linking Exception.
@@ -8,7 +8,7 @@
 
 # version 0.6.0
 """
-Add standard River-Mochi MIT file headers to source files.
+Add standard River-Mochi GPL file headers to source files.
 
 Dry run by default. Run commands from the repo root:
 
