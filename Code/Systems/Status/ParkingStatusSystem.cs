@@ -1,4 +1,4 @@
-// <copyright file="ParkingStatusSystem.cs" company="River-Mochi">
+﻿// <copyright file="ParkingStatusSystem.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -34,7 +34,7 @@ namespace ParkingControl
         private bool m_HasPreviousReport;
         private bool m_ReportRequested;
         private bool m_StatusRequested;
-        private Dictionary<Entity, int> m_PreviousDistrictStreetCars = new();
+        private readonly Dictionary<Entity, int> m_PreviousDistrictStreetCars = new();
         private readonly List<Entity> m_PreviousOutsideSamples = new(kVehicleSampleLimit);
         private readonly List<Entity> m_PreviousStreetSamples = new(kVehicleSampleLimit);
         private readonly List<Entity> m_PreviousUnknownSamples = new(kVehicleSampleLimit);

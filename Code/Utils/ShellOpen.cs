@@ -1,4 +1,4 @@
-// <copyright file="ShellOpen.cs" company="River-Mochi">
+﻿// <copyright file="ShellOpen.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -24,6 +24,7 @@ namespace CS2Shared.RiverMochi
         private static ILog? s_Log;
         private static string s_ModId = string.Empty;
         private static string s_ModTag = "[CS2Shared]";
+        private static readonly char[] s_ArgumentQuoteChars = { ' ', '\t', '"' };
 
         public static void Configure(ILog log, string modId, string modTag)
         {
@@ -253,9 +254,10 @@ namespace CS2Shared.RiverMochi
                 return "\"\"";
             }
 
-            return value.IndexOfAny(new[] { ' ', '\t', '"' }) >= 0
+            return value.IndexOfAny(s_ArgumentQuoteChars) >= 0
                 ? "\"" + value.Replace("\"", "\\\"") + "\""
-                : value;
+                : value;           
+
         }
     }
 }
