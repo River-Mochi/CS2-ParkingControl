@@ -1,9 +1,9 @@
 # <copyright file="add_file_headers.py" company="River-Mochi">
 # Copyright (c) 2026 River-Mochi. All rights reserved.
-# Licensed under the MIT License. You may not use this file except in compliance with this License.
-# See LICENSE file in the project root for full license information.
-# This notice and the MIT License notice must be kept with
-# all copies or substantial portions of this code.
+# Licensed under the GNU General Public License v3.0 or later,
+# with the Cities: Skylines II Linking Exception.
+# See LICENSE and LICENSE-EXCEPTION in the project root.
+# This notice MUST be kept with copies or substantial portions of this code.
 # ================= </copyright> ======================
 
 # version 0.5.1
@@ -271,14 +271,13 @@ def make_header(path: Path, year: int) -> str:
     return (
         f'{prefix} <copyright file="{path.name}" company="River-Mochi">\n'
         f"{prefix} Copyright (c) {year} River-Mochi. All rights reserved.\n"
-        f"{prefix} Licensed under the MIT License. You may not use this file except in compliance with this License.\n"
-        f"{prefix} See LICENSE file in the project root for full license information.\n"
-        f"{prefix} This notice and the MIT License notice must be kept with\n"
-        f"{prefix} all copies or substantial portions of this code.\n"
+        f"{prefix} Licensed under the GNU General Public License v3.0 or later,\n"
+        f"{prefix} with the Cities: Skylines II Linking Exception.\n"
+        f"{prefix} See LICENSE and LICENSE-EXCEPTION in the project root.\n"
+        f"{prefix} This notice MUST be kept with copies or substantial portions of this code.\n"
         f"{prefix} ================= </copyright> ======================\n"
         "\n"
     )
-
 
 def process_file(path: Path, year: int, replace_existing: bool) -> FileResult:
     """Return whether the file would change and the new file text."""
