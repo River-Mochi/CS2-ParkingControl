@@ -1,40 +1,51 @@
-<Publish>
+﻿<Publish>
 <!--Id must be set in order to update existed mod. it is not required for publishing mod for the first time-->
 <ModId Value="" />
 <!--Name of the mod to display to players-->
 <DisplayName Value="Parking Control" />
 <!--Short description of the mod-->
-<ShortDescription Value="No Street Parking" />
+<ShortDescription Value="No Street Parking without tedious changes of each road. Pick Citywide or per District." />
 <!--Long description of the mod. Single line or multi line. Supports minimal markdown subset-->
 <!--LongDescription Value="No Street Parking" /-->
 <LongDescription>
 
-## Parking Control (PC)
-- Prevents cars and motorcycles from choosing street parking citywide or per district (your choice).
+	## Parking Control (PC)
 
-## Features
-- Choose Whole City, by District, or OFF in Options.
-- Uses game's own no-parking flag.
-- Parking lots and building parking continue to work normally.
+	Want clean curbs without changing your road design?
 
-## Good to know
-- Existing parked cars leave when their owners next use them. This may take several in-game months.
-- New or rebuilt roads may briefly accept a few cars while CS2 updates the lanes (timing order). The mod then blocks new street parking; cars already there leave naturally.
-- For faster clearing, temporarily add a vanilla feature such as bike lanes or wide sidewalks.
-- When local parking is unavailable, CS2 may use outside-connection storage or staging as it does in vanilla.
-- Safe to remove: streets return to game default behavior.
-- The mod uses the game’s own no-parking flag and does not delete vehicles or touch bicycles.
+	- Parking Control is easy to use; prevents cars and motorcycles from choosing street parking.
+	- No need to add grass, or wide sidewalks as work arounds.
 
 
+	## Choose where
 
-## Support and Feedback
-- Don't forget the like button (top right) to give support for the mod.
-- Feedback and pull requests are welcome through the GitHub and Discord links (right side icons).
-- Future plans include adding a UI for centralized parking fees.
+	- ✅**Whole City** - block eligible street parking citywide.
+	- ✅**by District** - enable **Roadside Parking Ban** in the district Policies panel.
+	- ✅**OFF** - restore normal street parking.
 
-## Credits
-River-mochi - mod author
-Maintyper - testing
+	Parking lots and building parking stay working normally.
+	Optional status rows show where cars are parking and how much parking is being used.
+
+
+	## Good to know
+
+	- New or rebuilt roads may briefly accept a few cars while CS2 updates the parking lanes (timing).
+	- Existing parked cars leave when their owners next use them.
+	- For faster clearing, temporarily add a vanilla feature such as bike lanes.
+	- Make sure your city has enough off-street parking. When parking is unavailable, the game may use outside-connection storage or staging as it does in vanilla.
+	- The mod uses vanilla features (e.g. the game’s own no-parking flag) and does not delete vehicles or deal with bicycles.
+	- Safe to remove anytime.
+
+
+	## Support and Feedback
+	- Don't forget the like button (top right), it helps people know about the mod.
+	- Feedback and pull requests are welcome through the GitHub and Discord links (right side icons).
+
+	**Planned:** centralized parking-fee controls.
+
+	## Credits
+	River-mochi - mod author
+	Maintyper - testing
 
 
 </LongDescription>
