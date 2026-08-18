@@ -257,7 +257,6 @@ namespace CS2Shared.RiverMochi
             return value.IndexOfAny(s_ArgumentQuoteChars) >= 0
                 ? "\"" + value.Replace("\"", "\\\"") + "\""
                 : value;           
-
         }
     }
 }

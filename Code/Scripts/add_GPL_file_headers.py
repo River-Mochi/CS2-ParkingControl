@@ -1,4 +1,4 @@
-# <copyright file="add_file_headers.py" company="River-Mochi">
+﻿# <copyright file="add_file_headers.py" company="River-Mochi">
 # Copyright (c) 2026 River-Mochi. All rights reserved.
 # Licensed under the GNU General Public License v3.0 or later,
 # with the Cities: Skylines II Linking Exception.
@@ -6,7 +6,7 @@
 # This notice MUST be kept with copies or substantial portions of this code.
 # ================= </copyright> ======================
 
-# version 0.5.1
+# version 0.6.0
 """
 Add standard River-Mochi MIT file headers to source files.
 
