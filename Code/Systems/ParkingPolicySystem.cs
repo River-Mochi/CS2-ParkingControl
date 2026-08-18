@@ -116,7 +116,7 @@ namespace ParkingControl
             options.m_Options = Array.Empty<Game.Areas.DistrictOption>();
 
             UIObject uiObject = prefab.AddOrGetComponent<UIObject>();
-            uiObject.m_Icon = "Media/Game/Policies/PaidParking.svg";
+            uiObject.m_Icon = "coui://ui-mods/images/PC-DistrictParkingBan.svg";
             // Match vanilla priority so the policy uses the panel's normal alphabetical order.
             uiObject.m_Priority = 0;
 
