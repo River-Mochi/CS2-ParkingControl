@@ -1,4 +1,4 @@
-﻿// File: UI/src/extensions/districtPolicyFocus.tsx
+// File: UI/src/extensions/districtPolicyFocus.tsx
 // Purpose: Prevents invalid focus registration in Parking Control's expanded district policy row.
 
 import { FocusDisabled } from "cs2/input";

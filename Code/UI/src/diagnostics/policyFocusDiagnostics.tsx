@@ -1,4 +1,4 @@
-﻿// File: UI/src/diagnostics/policyFocusDiagnostics.tsx
+// File: UI/src/diagnostics/policyFocusDiagnostics.tsx
 // Purpose: One-run diagnostics for the district policy focus-registration error.
 
 import {

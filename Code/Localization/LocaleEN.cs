@@ -1,4 +1,4 @@
-﻿// <copyright file="LocaleEN.cs" company="River-Mochi">
+// <copyright file="LocaleEN.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -80,7 +80,7 @@ namespace ParkingControl
                 // In-city district policy.
                 { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "Roadside Parking Ban" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]",
-                    "Prevents <cars and motorcycles> from parking on roadsides in this district. " +
+                    "Prevents cars and motorcycles from parking on roadsides in this district. " +
                     "Existing parked vehicles leave when their owners next use them." },
 
                 // Live Options status rows, in display order.
