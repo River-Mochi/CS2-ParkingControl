@@ -1,4 +1,4 @@
-// <copyright file="ParkingStatusCache.cs" company="River-Mochi">
+﻿// <copyright file="ParkingStatusCache.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -233,14 +233,27 @@ namespace ParkingControl
         private static void PublishSnapshotRows(ParkingSnapshot snapshot)
         {
             bool districtScope = snapshot.Scope == PCSettings.ParkingScope.ByDistrict;
-            int parked = districtScope ? snapshot.TargetStreetParked : snapshot.StreetParked;
-            int occupiedLanes = districtScope
-                ? snapshot.OccupiedTargetCurbLanes
-                : snapshot.OccupiedCurbLanes;
+            bool offScope = snapshot.Scope == PCSettings.ParkingScope.Off;
+
+            int parked = offScope
+                ? 0
+                : districtScope
+                    ? snapshot.TargetStreetParked
+                    : snapshot.StreetParked;
+
+            int occupiedLanes = offScope
+                ? 0
+                : districtScope
+                    ? snapshot.OccupiedTargetCurbLanes
+                    : snapshot.OccupiedCurbLanes;
+
             int disabledLanes = districtScope
                 ? snapshot.DisabledTargetCurbLanes
                 : snapshot.DisabledCurbLanes;
-            int targetLanes = districtScope ? snapshot.TargetCurbLanes : snapshot.CurbLanes;
+
+            int targetLanes = districtScope
+                ? snapshot.TargetCurbLanes
+                : snapshot.CurbLanes;
             string status = ParkingStatusSystem.GetOwnershipStatus(
                 snapshot.RestrictionEnabled,
                 targetLanes,
