@@ -1,4 +1,4 @@
-// <copyright file="ParkingPolicySystem.cs" company="River-Mochi">
+﻿// <copyright file="ParkingPolicySystem.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -22,7 +22,7 @@ namespace ParkingControl
     /// </summary>
     public sealed partial class ParkingPolicySystem : GameSystemBase
     {
-        internal const string PrefabName = "PCDistrictParkingBan";
+        internal const string kPrefabName = "PCDistrictParkingBan";
 
         private PrefabSystem m_PrefabSystem = null!;
         private PolicyTogglePrefab? m_Prefab;
@@ -106,7 +106,7 @@ namespace ParkingControl
                 return;
             }
 
-            PolicyTogglePrefab prefab = PrefabBase.Create<PolicyTogglePrefab>(PrefabName);
+            PolicyTogglePrefab prefab = PrefabBase.Create<PolicyTogglePrefab>(kPrefabName);
             prefab.m_Category = PolicyCategory.Traffic;
             prefab.m_Visibility = GetVisibility();
 
@@ -130,7 +130,7 @@ namespace ParkingControl
             m_Prefab = prefab;
             m_Installed = true;
             NoStreetParkingSystem.RequestReconcile();
-            LogUtils.Info($"{Mod.ModTag} District policy registered as {PrefabName}.");
+            LogUtils.Info($"{Mod.ModTag} District policy registered as {kPrefabName}.");
         }
 
         private static PolicyVisibility GetVisibility()

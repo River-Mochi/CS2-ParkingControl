@@ -1,4 +1,4 @@
-// <copyright file="LocalePT_BR.cs" company="River-Mochi">
+﻿// <copyright file="LocalePT_BR.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -76,8 +76,8 @@ namespace ParkingControl
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
 
                 // In-city district policy.
-                { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "Proibição de estacionamento à beira da via" },
-                { $"Policy.DESCRIPTION[{ParkingPolicySystem.PrefabName}]",
+                { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "Proibição de estacionamento à beira da via" },
+                { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]",
                     "Impede que <carros e motocicletas> estacionem à beira da via neste distrito. " +
                     "Veículos já estacionados saem quando seus donos os usam novamente." },
 

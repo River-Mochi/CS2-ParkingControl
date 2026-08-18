@@ -1,4 +1,4 @@
-// <copyright file="LocaleJA.cs" company="River-Mochi">
+﻿// <copyright file="LocaleJA.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -76,8 +76,8 @@ namespace ParkingControl
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
 
                 // In-city district policy.
-                { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "路上駐車禁止" },
-                { $"Policy.DESCRIPTION[{ParkingPolicySystem.PrefabName}]",
+                { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "路上駐車禁止" },
+                { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]",
                     "この地区では、<自動車とオートバイ>が道路脇に駐車できないように" +
                     "します。すでに駐車中の車両は、所有者が次に使ったとき移動します。" },
 

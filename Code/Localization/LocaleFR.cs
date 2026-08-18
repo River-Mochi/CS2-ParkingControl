@@ -1,4 +1,4 @@
-// <copyright file="LocaleFR.cs" company="River-Mochi">
+﻿// <copyright file="LocaleFR.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -76,8 +76,8 @@ namespace ParkingControl
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
 
                 // In-city district policy.
-                { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "Interdiction de stationner en bord de route" },
-                { $"Policy.DESCRIPTION[{ParkingPolicySystem.PrefabName}]",
+                { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "Interdiction de stationner en bord de route" },
+                { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]",
                     "Empêche les <voitures et motos> de stationner en bord de route dans ce quartier. " +
                     "Les véhicules déjà garés partent lorsque leurs propriétaires les réutilisent." },
 
