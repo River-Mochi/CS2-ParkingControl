@@ -1,4 +1,4 @@
-declare module "cohtml/cohtml" {
+﻿declare module "cohtml/cohtml" {
   interface SingleArgumentCallback<T> {
     (result: T): any;
   }
