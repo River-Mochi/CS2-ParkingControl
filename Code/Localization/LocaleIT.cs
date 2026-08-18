@@ -72,7 +72,8 @@ namespace ParkingControl
                     "1. Scegli <Per distretto> qui sopra.\n" +
                     "2. Crea o seleziona un distretto nella città.\n" +
                     "3. Apri <Politiche> e attiva **Divieto di parcheggio a bordo strada [✓]**.\n" +
-                    "Fuori dai distretti selezionati resta il parcheggio normale." },
+                    "4. Puoi attivare insieme il divieto e la tariffa di parcheggio. La tariffa viene applicata alle auto ancora presenti o che riescono comunque a parcheggiare.\n" +
+                    "Fuori dai distretti con divieto resta il parcheggio normale su strada." },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
 
                 // In-city district policy.
@@ -113,7 +114,7 @@ namespace ParkingControl
                     "Questa riga mostra dati di tutta la città, non solo dei distretti con il divieto.\n" +
                     "<Strada> = parcheggiate su strade pubbliche.\n" +
                     "<Visibili> = auto visibili e cliccabili nei parcheggi all’aperto o nei posti auto esterni degli edifici.\n" +
-                    "<Nascoste> = dentro edifici o garage.\n" +
+                    "<Interno> = dentro edifici o garage.\n" +
                     "<OC> = deposito della connessione esterna al confine della città; alcune auto delle famiglie in arrivo iniziano lì come area di attesa.\n" +
                     "Le auto senza corsia di parcheggio assegnata sono omesse qui e mostrate solo nel rapporto del log nella scheda Informazioni." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.UpdatedStatus)), "Aggiornato" },
@@ -146,7 +147,7 @@ namespace ParkingControl
                     "{0} in sosta ({1} corsie) | {2}/{3} chiuse{4}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat,
                     "{0} in sosta ({1}/{2} corsie) | {3}/{4} chiuse | {5}/{6} distretti{7}" },
-                { ParkingStatusLocale.kVehicleFormat, "{0} strada | {1} visibili | {2} nascoste | {3} OC" },
+                { ParkingStatusLocale.kVehicleFormat, "{0} strada | {1} visibili | {2} interno | {3} OC" },
                 { ParkingStatusLocale.kSupplyFormat, "{0} pubblico {1}/{2} | {3} edificio {4}/{5}" },
                 { ParkingStatusLocale.kShareFormat, "{0} in strada {1} | {2} attive" },
                 { ParkingStatusLocale.kStatusOk, "OK" },

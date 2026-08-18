@@ -72,7 +72,8 @@ namespace ParkingControl
                     "1. Choisissez <Par quartier> ci-dessus.\n" +
                     "2. Créez ou sélectionnez un quartier dans la ville.\n" +
                     "3. Ouvrez <Politiques> et activez **Interdiction de stationner en bord de route [✓]**.\n" +
-                    "Les routes hors des quartiers sélectionnés gardent le stationnement normal." },
+                    "4. L’interdiction et le stationnement payant peuvent être activés ensemble. Le tarif s’applique aux voitures encore présentes ou qui réussissent malgré tout à se garer.\n" +
+                    "Les routes hors des quartiers avec interdiction gardent le stationnement normal sur rue." },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
 
                 // In-city district policy.
@@ -113,7 +114,7 @@ namespace ParkingControl
                     "Cette ligne affiche les données de toute la ville, pas seulement des quartiers concernés par l’interdiction.\n" +
                     "<Rue> = stationnées sur la voie publique.\n" +
                     "<Visibles> = voitures visibles et cliquables dans les parkings à ciel ouvert ou les places extérieures des bâtiments.\n" +
-                    "<Cachées> = dans les bâtiments ou garages.\n" +
+                    "<Intérieur> = dans les bâtiments ou garages.\n" +
                     "<OC> = stockage de connexion extérieure à la limite de la ville ; certaines voitures de ménages entrants commencent là comme zone de transit.\n" +
                     "Les voitures sans voie de stationnement attribuée sont omises ici et visibles uniquement dans le rapport du journal, onglet À propos." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.UpdatedStatus)), "Mis à jour" },
@@ -146,7 +147,7 @@ namespace ParkingControl
                     "{0} garées ({1} voies) | {2}/{3} fermées{4}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat,
                     "{0} garées ({1}/{2} voies) | {3}/{4} fermées | {5}/{6} quartiers{7}" },
-                { ParkingStatusLocale.kVehicleFormat, "{0} rue | {1} visibles | {2} cachées | {3} OC" },
+                { ParkingStatusLocale.kVehicleFormat, "{0} rue | {1} visibles | {2} intérieur | {3} OC" },
                 { ParkingStatusLocale.kSupplyFormat, "{0} public {1}/{2} | {3} bâtiment {4}/{5}" },
                 { ParkingStatusLocale.kShareFormat, "{0} sur rue {1} | {2} actifs" },
                 { ParkingStatusLocale.kStatusOk, "OK" },

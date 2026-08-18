@@ -72,7 +72,8 @@ namespace ParkingControl
                     "1. Escolha <Por distrito> acima.\n" +
                     "2. Crie ou selecione um distrito na cidade.\n" +
                     "3. Abra <Políticas> e ative **Proibição de estacionamento à beira da via [✓]**.\n" +
-                    "As ruas fora dos distritos selecionados mantêm o estacionamento normal." },
+                    "4. A proibição e a tarifa de estacionamento podem ficar ativas juntas. A tarifa é cobrada dos carros que ainda estiverem lá ou conseguirem estacionar.\n" +
+                    "As ruas fora dos distritos com proibição mantêm o estacionamento normal." },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
 
                 // In-city district policy.
@@ -113,7 +114,7 @@ namespace ParkingControl
                     "Esta linha mostra dados da cidade inteira, não apenas dos distritos com proibição.\n" +
                     "<Rua> = estacionados em vias públicas.\n" +
                     "<Visíveis> = carros que você pode ver e clicar em estacionamentos abertos ou vagas externas de edifícios.\n" +
-                    "<Ocultos> = dentro de edifícios ou garagens.\n" +
+                    "<Dentro> = dentro de edifícios ou garagens.\n" +
                     "<OC> = armazenamento de conexão externa na divisa da cidade; alguns carros de famílias que chegam começam ali como área de espera.\n" +
                     "Carros sem faixa de estacionamento atribuída são omitidos aqui e aparecem apenas no relatório do log na aba Sobre." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.UpdatedStatus)), "Atualizado" },
@@ -146,7 +147,7 @@ namespace ParkingControl
                     "{0} estac. ({1} faixas) | {2}/{3} desat.{4}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat,
                     "{0} estac. ({1}/{2} faixas) | {3}/{4} desat. | {5}/{6} distr.{7}" },
-                { ParkingStatusLocale.kVehicleFormat, "{0} rua | {1} visíveis | {2} ocultos | {3} OC" },
+                { ParkingStatusLocale.kVehicleFormat, "{0} rua | {1} visíveis | {2} dentro | {3} OC" },
                 { ParkingStatusLocale.kSupplyFormat, "{0} público {1}/{2} | {3} edifício {4}/{5}" },
                 { ParkingStatusLocale.kShareFormat, "{0} na rua {1} | {2} ativos" },
                 { ParkingStatusLocale.kStatusOk, "OK" },

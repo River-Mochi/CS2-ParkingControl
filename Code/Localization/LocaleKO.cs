@@ -72,7 +72,8 @@ namespace ParkingControl
                     "1. 위에서 <구역별>을 선택합니다.\n" +
                     "2. 도시에서 구역을 만들거나 선택합니다.\n" +
                     "3. <정책>을 열고 **도로변 주차 금지 [✓]**를 켭니다.\n" +
-                    "선택한 구역 밖의 도로는 일반 노상 주차를 유지합니다." },
+                    "4. 주차 금지와 주차 요금을 동시에 켜도 됩니다. 아직 남아 있거나 금지 후에도 주차한 차량에는 요금이 부과됩니다.\n" +
+                    "주차 금지 구역 밖의 도로는 일반 노상 주차를 유지합니다." },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
 
                 // In-city district policy.
@@ -113,7 +114,7 @@ namespace ParkingControl
                     "이 행은 금지 구역뿐 아니라 도시 전체 데이터를 표시합니다.\n" +
                     "<도로> = 공공 도로에 주차됨.\n" +
                     "<표시> = 야외 주차장이나 건물에 포함된 야외 주차 공간에서 보고 클릭할 수 있는 차량.\n" +
-                    "<숨김> = 건물이나 차고 내부.\n" +
+                    "<실내> = 건물이나 차고 내부.\n" +
                     "<OC> = 도시 경계의 외부 연결 보관소. 일부 유입 가구 차량은 대기 구역으로 여기에서 시작합니다.\n" +
                     "주차 차선이 지정되지 않은 차량은 여기에서 제외되고 정보 탭의 로그 보고서에만 표시됩니다." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.UpdatedStatus)), "업데이트" },
@@ -146,7 +147,7 @@ namespace ParkingControl
                     "{0} 주차 ({1} 차선) | {2}/{3} 비활성{4}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat,
                     "{0} 주차 ({1}/{2} 차선) | {3}/{4} 비활성 | {5}/{6} 구역{7}" },
-                { ParkingStatusLocale.kVehicleFormat, "{0} 도로 | {1} 표시 | {2} 숨김 | {3} OC" },
+                { ParkingStatusLocale.kVehicleFormat, "{0} 도로 | {1} 표시 | {2} 실내 | {3} OC" },
                 { ParkingStatusLocale.kSupplyFormat, "{0} 공공 {1}/{2} | {3} 건물 {4}/{5}" },
                 { ParkingStatusLocale.kShareFormat, "{0} 노상 주차 {1} | {2} 활성" },
                 { ParkingStatusLocale.kStatusOk, "정상" },
