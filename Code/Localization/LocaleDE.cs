@@ -1,9 +1,9 @@
 // <copyright file="LocaleDE.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
-// Licensed under the MIT License. You may not use this file except in compliance with this License.
-// See LICENSE file in the project root for full license information.
-// This notice and the MIT License notice must be kept with
-// all copies or substantial portions of this code.
+// Licensed under the GNU General Public License v3.0 or later,
+// with the Cities: Skylines II Linking Exception.
+// See LICENSE and LICENSE-EXCEPTION in the project root.
+// This notice MUST be kept with copies or substantial portions of this code.
 // ================= </copyright> ======================
 
 // Purpose: German text for Parking Control's Options UI.
@@ -72,13 +72,14 @@ namespace ParkingControl
                     "1. Wähle oben <Nach Bezirk>.\n" +
                     "2. Erstelle oder wähle einen Bezirk in der Stadt.\n" +
                     "3. Öffne <Richtlinien> und aktiviere **Parkverbot am Straßenrand [✓]**.\n" +
-                    "Straßen außerhalb ausgewählter Bezirke behalten normales Straßenparken." },
+                    "4. Parkverbot und Parkgebühr können gleichzeitig aktiv sein. Die Gebühr gilt für Autos, die noch dort stehen oder trotz Verbot dort parken.\n" +
+                    "Straßen außerhalb von Bezirken mit Parkverbot behalten normales Straßenparken." },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
 
                 // In-city district policy.
-                { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "Parkverbot am Straßenrand" },
-                { $"Policy.DESCRIPTION[{ParkingPolicySystem.PrefabName}]",
-                    "Verhindert, dass <Autos und Motorräder> in diesem Bezirk am Straßenrand parken. Bereits " +
+                { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "Parkverbot am Straßenrand" },
+                { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]",
+                    "Verhindert, dass Autos und Motorräder in diesem Bezirk am Straßenrand parken. Bereits " +
                     "geparkte Fahrzeuge fahren weg, wenn ihre Besitzer sie das nächste Mal benutzen." },
 
                 // Live Options status rows, in display order.
@@ -113,7 +114,7 @@ namespace ParkingControl
                     "Diese Zeile zeigt stadtweite Daten, nicht nur Bezirke mit Parkverbot.\n" +
                     "<Straße> = auf öffentlichen Straßen geparkt.\n" +
                     "<Sichtbar> = Autos, die du auf offenen Parkplätzen oder Außenparkplätzen von Gebäuden sehen und anklicken kannst.\n" +
-                    "<Versteckt> = in Gebäuden oder Garagen.\n" +
+                    "<Innen> = in Gebäuden oder Garagen.\n" +
                     "<OC> = Speicher einer Außenverbindung am Stadtrand; einige Autos einziehender Haushalte starten dort als Bereitstellung.\n" +
                     "Autos ohne zugewiesene Parkspur werden hier ausgelassen und nur im Log-Bericht im Tab Über angezeigt." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.UpdatedStatus)), "Aktualisiert" },
@@ -146,7 +147,7 @@ namespace ParkingControl
                     "{0} geparkt ({1} Spuren) | {2}/{3} gesperrt{4}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat,
                     "{0} geparkt ({1}/{2} Spuren) | {3}/{4} gesperrt | {5}/{6} Bezirke{7}" },
-                { ParkingStatusLocale.kVehicleFormat, "{0} Straße | {1} sichtbar | {2} versteckt | {3} OC" },
+                { ParkingStatusLocale.kVehicleFormat, "{0} Straße | {1} sichtbar | {2} innen | {3} OC" },
                 { ParkingStatusLocale.kSupplyFormat, "{0} öff. {1}/{2} | {3} Gebäude {4}/{5}" },
                 { ParkingStatusLocale.kShareFormat, "{0} Straße {1} | {2} aktiv" },
                 { ParkingStatusLocale.kStatusOk, "OK" },

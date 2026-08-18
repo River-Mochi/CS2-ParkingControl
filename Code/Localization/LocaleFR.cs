@@ -1,9 +1,9 @@
 // <copyright file="LocaleFR.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
-// Licensed under the MIT License. You may not use this file except in compliance with this License.
-// See LICENSE file in the project root for full license information.
-// This notice and the MIT License notice must be kept with
-// all copies or substantial portions of this code.
+// Licensed under the GNU General Public License v3.0 or later,
+// with the Cities: Skylines II Linking Exception.
+// See LICENSE and LICENSE-EXCEPTION in the project root.
+// This notice MUST be kept with copies or substantial portions of this code.
 // ================= </copyright> ======================
 
 // Purpose: French text for Parking Control's Options UI.
@@ -72,13 +72,14 @@ namespace ParkingControl
                     "1. Choisissez <Par quartier> ci-dessus.\n" +
                     "2. Créez ou sélectionnez un quartier dans la ville.\n" +
                     "3. Ouvrez <Politiques> et activez **Interdiction de stationner en bord de route [✓]**.\n" +
-                    "Les routes hors des quartiers sélectionnés gardent le stationnement normal." },
+                    "4. L’interdiction et le stationnement payant peuvent être activés ensemble. Le tarif s’applique aux voitures encore présentes ou qui réussissent malgré tout à se garer.\n" +
+                    "Les routes hors des quartiers avec interdiction gardent le stationnement normal sur rue." },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
 
                 // In-city district policy.
-                { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "Interdiction de stationner en bord de route" },
-                { $"Policy.DESCRIPTION[{ParkingPolicySystem.PrefabName}]",
-                    "Empêche les <voitures et motos> de stationner en bord de route dans ce quartier. " +
+                { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "Interdiction de stationner en bord de route" },
+                { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]",
+                    "Empêche les voitures et motos de stationner en bord de route dans ce quartier. " +
                     "Les véhicules déjà garés partent lorsque leurs propriétaires les réutilisent." },
 
                 // Live Options status rows, in display order.
@@ -113,7 +114,7 @@ namespace ParkingControl
                     "Cette ligne affiche les données de toute la ville, pas seulement des quartiers concernés par l’interdiction.\n" +
                     "<Rue> = stationnées sur la voie publique.\n" +
                     "<Visibles> = voitures visibles et cliquables dans les parkings à ciel ouvert ou les places extérieures des bâtiments.\n" +
-                    "<Cachées> = dans les bâtiments ou garages.\n" +
+                    "<Intérieur> = dans les bâtiments ou garages.\n" +
                     "<OC> = stockage de connexion extérieure à la limite de la ville ; certaines voitures de ménages entrants commencent là comme zone de transit.\n" +
                     "Les voitures sans voie de stationnement attribuée sont omises ici et visibles uniquement dans le rapport du journal, onglet À propos." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.UpdatedStatus)), "Mis à jour" },
@@ -146,7 +147,7 @@ namespace ParkingControl
                     "{0} garées ({1} voies) | {2}/{3} fermées{4}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat,
                     "{0} garées ({1}/{2} voies) | {3}/{4} fermées | {5}/{6} quartiers{7}" },
-                { ParkingStatusLocale.kVehicleFormat, "{0} rue | {1} visibles | {2} cachées | {3} OC" },
+                { ParkingStatusLocale.kVehicleFormat, "{0} rue | {1} visibles | {2} intérieur | {3} OC" },
                 { ParkingStatusLocale.kSupplyFormat, "{0} public {1}/{2} | {3} bâtiment {4}/{5}" },
                 { ParkingStatusLocale.kShareFormat, "{0} sur rue {1} | {2} actifs" },
                 { ParkingStatusLocale.kStatusOk, "OK" },

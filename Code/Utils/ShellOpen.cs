@@ -1,13 +1,13 @@
 // <copyright file="ShellOpen.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
-// Licensed under the MIT License. You may not use this file except in compliance with this License.
-// See LICENSE file in the project root for full license information.
-// This notice and the MIT License notice must be kept with
-// all copies or substantial portions of this code.
+// Licensed under the GNU General Public License v3.0 or later,
+// with the Cities: Skylines II Linking Exception.
+// See LICENSE and LICENSE-EXCEPTION in the project root.
+// This notice MUST be kept with copies or substantial portions of this code.
 // ================= </copyright> ======================
 
 // File: Utils/ShellOpen.cs
-// Version: 0.3.2
+// Version: 0.3.3
 // Purpose: File/folder opening helpers for CS2 Options UI buttons.
 // Based on River-Mochi shared CS2 utilities.
 
@@ -24,6 +24,7 @@ namespace CS2Shared.RiverMochi
         private static ILog? s_Log;
         private static string s_ModId = string.Empty;
         private static string s_ModTag = "[CS2Shared]";
+        private static readonly char[] s_ArgumentQuoteChars = { ' ', '\t', '"' };
 
         public static void Configure(ILog log, string modId, string modTag)
         {
@@ -253,7 +254,7 @@ namespace CS2Shared.RiverMochi
                 return "\"\"";
             }
 
-            return value.IndexOfAny(new[] { ' ', '\t', '"' }) >= 0
+            return value.IndexOfAny(s_ArgumentQuoteChars) >= 0
                 ? "\"" + value.Replace("\"", "\\\"") + "\""
                 : value;
         }

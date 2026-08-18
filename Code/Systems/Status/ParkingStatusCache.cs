@@ -1,9 +1,9 @@
 // <copyright file="ParkingStatusCache.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
-// Licensed under the MIT License. You may not use this file except in compliance with this License.
-// See LICENSE file in the project root for full license information.
-// This notice and the MIT License notice must be kept with
-// all copies or substantial portions of this code.
+// Licensed under the GNU General Public License v3.0 or later,
+// with the Cities: Skylines II Linking Exception.
+// See LICENSE and LICENSE-EXCEPTION in the project root.
+// This notice MUST be kept with copies or substantial portions of this code.
 // ================= </copyright> ======================
 
 // Purpose: Caches on-demand parking status text for the Options UI.
@@ -32,7 +32,7 @@ namespace ParkingControl
         private const string kDistrictEnforcementFormatFallback =
             "{0} parked ({1}/{2} lanes) | {3}/{4} disabled | {5}/{6} districts{7}";
         private const string kVehicleFormatFallback =
-            "{0} street | {1} visible | {2} hidden | {3} OC";
+            "{0} street | {1} visible | {2} inside | {3} OC";
         private const string kSupplyFormatFallback =
             "{0} public {1}/{2} | {3} building {4}/{5}";
         private const string kShareFormatFallback =
@@ -233,14 +233,27 @@ namespace ParkingControl
         private static void PublishSnapshotRows(ParkingSnapshot snapshot)
         {
             bool districtScope = snapshot.Scope == PCSettings.ParkingScope.ByDistrict;
-            int parked = districtScope ? snapshot.TargetStreetParked : snapshot.StreetParked;
-            int occupiedLanes = districtScope
-                ? snapshot.OccupiedTargetCurbLanes
-                : snapshot.OccupiedCurbLanes;
+            bool offScope = snapshot.Scope == PCSettings.ParkingScope.Off;
+
+            int parked = offScope
+                ? 0
+                : districtScope
+                    ? snapshot.TargetStreetParked
+                    : snapshot.StreetParked;
+
+            int occupiedLanes = offScope
+                ? 0
+                : districtScope
+                    ? snapshot.OccupiedTargetCurbLanes
+                    : snapshot.OccupiedCurbLanes;
+
             int disabledLanes = districtScope
                 ? snapshot.DisabledTargetCurbLanes
                 : snapshot.DisabledCurbLanes;
-            int targetLanes = districtScope ? snapshot.TargetCurbLanes : snapshot.CurbLanes;
+
+            int targetLanes = districtScope
+                ? snapshot.TargetCurbLanes
+                : snapshot.CurbLanes;
             string status = ParkingStatusSystem.GetOwnershipStatus(
                 snapshot.RestrictionEnabled,
                 targetLanes,

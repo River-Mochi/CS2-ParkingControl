@@ -1,9 +1,9 @@
 // <copyright file="LocaleZH_HANS.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
-// Licensed under the MIT License. You may not use this file except in compliance with this License.
-// See LICENSE file in the project root for full license information.
-// This notice and the MIT License notice must be kept with
-// all copies or substantial portions of this code.
+// Licensed under the GNU General Public License v3.0 or later,
+// with the Cities: Skylines II Linking Exception.
+// See LICENSE and LICENSE-EXCEPTION in the project root.
+// This notice MUST be kept with copies or substantial portions of this code.
 // ================= </copyright> ======================
 
 // Purpose: Simplified Chinese text for Parking Control's Options UI.
@@ -72,14 +72,15 @@ namespace ParkingControl
                     "1. 在上方选择<按行政区>。\n" +
                     "2. 在城市中创建或选择行政区。\n" +
                     "3. 打开<政策>并启用**路边停车禁令 [✓]**。\n" +
-                    "所选行政区之外的道路仍保留正常路边停车。" },
+                    "4. 禁停和停车费可以同时启用。仍停在路边或禁停后仍然停车的车辆都会被收费。\n" +
+                    "禁停行政区之外的道路仍保留正常路边停车。" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
 
                 // In-city district policy.
-                { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "路边停车禁令" },
-                { $"Policy.DESCRIPTION[{ParkingPolicySystem.PrefabName}]",
-                    "禁止<汽车和摩托车>在此行政区的路边停" +
-                    "车。已停放车辆会在车主下次使用时离开。" },
+                { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "路边停车禁令" },
+                { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]",
+                    "禁止汽车和摩托车在此行政区的路边停车。" +
+                    "已停放车辆会在车主下次使用时离开。" },
 
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "路边停车" },
@@ -113,7 +114,7 @@ namespace ParkingControl
                     "此行显示全城数据，不只显示启用禁停的行政区。\n" +
                     "<路边> = 停在公共道路上。\n" +
                     "<可见> = 可在露天停车场或建筑外部停车位看到并点击的车辆。\n" +
-                    "<隐藏> = 位于建筑物或车库内部。\n" +
+                    "<室内> = 位于建筑物或车库内。\n" +
                     "<OC> = 城市边界的外部连接存储区；部分迁入家庭车辆会从这里开始，作为暂存区。\n" +
                     "没有分配停车车道的车辆不会显示在这里，只会出现在“关于”页的日志报告中。" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.UpdatedStatus)), "更新时间" },
@@ -146,7 +147,7 @@ namespace ParkingControl
                     "{0} 已停放（{1} 车道）| {2}/{3} 已禁用{4}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat,
                     "{0} 已停放（{1}/{2} 车道）| {3}/{4} 已禁用 | {5}/{6} 行政区{7}" },
-                { ParkingStatusLocale.kVehicleFormat, "{0} 路边 | {1} 可见 | {2} 隐藏 | {3} OC" },
+                { ParkingStatusLocale.kVehicleFormat, "{0} 路边 | {1} 可见 | {2} 室内 | {3} OC" },
                 { ParkingStatusLocale.kSupplyFormat, "{0} 公共 {1}/{2} | {3} 建筑 {4}/{5}" },
                 { ParkingStatusLocale.kShareFormat, "{0} 路边停放 {1} | {2} 活动中" },
                 { ParkingStatusLocale.kStatusOk, "正常" },

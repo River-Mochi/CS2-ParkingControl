@@ -1,9 +1,9 @@
 // <copyright file="LocaleJA.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
-// Licensed under the MIT License. You may not use this file except in compliance with this License.
-// See LICENSE file in the project root for full license information.
-// This notice and the MIT License notice must be kept with
-// all copies or substantial portions of this code.
+// Licensed under the GNU General Public License v3.0 or later,
+// with the Cities: Skylines II Linking Exception.
+// See LICENSE and LICENSE-EXCEPTION in the project root.
+// This notice MUST be kept with copies or substantial portions of this code.
 // ================= </copyright> ======================
 
 // Purpose: Japanese text for Parking Control's Options UI.
@@ -72,13 +72,14 @@ namespace ParkingControl
                     "1. 上で<地区ごと>を選びます。\n" +
                     "2. 都市内で地区を作成または選択します。\n" +
                     "3. <条例>を開き、**路上駐車禁止 [✓]**を有効にします。\n" +
-                    "選択した地区の外では通常の路上駐車ができます。" },
+                    "4. 駐車禁止と駐車料金は同時に有効にできます。残っている車や、禁止後も駐車した車には料金がかかります。\n" +
+                    "駐車禁止地区の外では通常の路上駐車ができます。" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
 
                 // In-city district policy.
-                { $"Policy.TITLE[{ParkingPolicySystem.PrefabName}]", "路上駐車禁止" },
-                { $"Policy.DESCRIPTION[{ParkingPolicySystem.PrefabName}]",
-                    "この地区では、<自動車とオートバイ>が道路脇に駐車できないように" +
+                { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "路上駐車禁止" },
+                { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]",
+                    "この地区では、自動車とオートバイが道路脇に駐車できないように" +
                     "します。すでに駐車中の車両は、所有者が次に使ったとき移動します。" },
 
                 // Live Options status rows, in display order.
@@ -113,7 +114,7 @@ namespace ParkingControl
                     "この行は、禁止地区だけでなく市全体のデータを表示します。\n" +
                     "<路上> = 公道に駐車中。\n" +
                     "<表示> = 屋外駐車場や建物に付属する屋外駐車スペースで、見たりクリックしたりできる車。\n" +
-                    "<非表示> = 建物やガレージの中。\n" +
+                    "<屋内> = 建物やガレージの中。\n" +
                     "<OC> = 市境の外部接続保管エリア。一部の流入世帯の車は待機場所としてここから始まります。\n" +
                     "駐車車線が割り当てられていない車はここでは省略され、情報タブのログレポートにのみ表示されます。" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.UpdatedStatus)), "更新" },
@@ -146,7 +147,7 @@ namespace ParkingControl
                     "{0} 駐車中 ({1} 車線) | {2}/{3} 無効{4}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat,
                     "{0} 駐車中 ({1}/{2} 車線) | {3}/{4} 無効 | {5}/{6} 地区{7}" },
-                { ParkingStatusLocale.kVehicleFormat, "{0} 路上 | {1} 表示 | {2} 非表示 | {3} OC" },
+                { ParkingStatusLocale.kVehicleFormat, "{0} 路上 | {1} 表示 | {2} 屋内 | {3} OC" },
                 { ParkingStatusLocale.kSupplyFormat, "{0} 公共 {1}/{2} | {3} 建物 {4}/{5}" },
                 { ParkingStatusLocale.kShareFormat, "{0} 路上駐車 {1} | {2} 稼働中" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
