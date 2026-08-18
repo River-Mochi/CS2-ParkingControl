@@ -1,11 +1,11 @@
-// File: UI/src/index.tsx
+﻿// File: UI/src/index.tsx
 // Purpose: Registers Parking Control UI extensions.
 
 import type { ModRegistrar } from "cs2/modding";
-import { registerDistrictPolicyFocusProbe } from "./extensions/districtPolicyFocus";
+import { registerDistrictPolicyFocusFix } from "./extensions/districtPolicyFocus";
 
 const register: ModRegistrar = (moduleRegistry) => {
-  registerDistrictPolicyFocusProbe(moduleRegistry);
+    registerDistrictPolicyFocusFix(moduleRegistry);
 };
 
 export default register;
