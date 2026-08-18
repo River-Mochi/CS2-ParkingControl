@@ -1,4 +1,4 @@
-// <copyright file="Mod.cs" company="River-Mochi">
+﻿// <copyright file="Mod.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -101,8 +101,7 @@ namespace ParkingControl
             settings.RegisterInOptionsUI();
 
             updateSystem.UpdateAt<ParkingPolicySystem>(SystemUpdatePhase.PrefabUpdate);
-            updateSystem.UpdateBefore<StreetParkingBaselineSystem, ParkingLaneDataSystem>(
-                SystemUpdatePhase.ModificationEnd);
+
             updateSystem.UpdateAfter<NoStreetParkingSystem, ParkingLaneDataSystem>(
                 SystemUpdatePhase.ModificationEnd);
             updateSystem.UpdateAfter<ParkingStatusSystem, NoStreetParkingSystem>(
@@ -116,7 +115,6 @@ namespace ParkingControl
             updateSystem.UpdateAfter<DistrictPolicyRestoreSystem, EndPrefabSerializationSystem>(
                 SystemUpdatePhase.Serialize);
 
-            StreetParkingBaselineSystem.RequestScan();
             NoStreetParkingSystem.RequestReconcile();
 
             LogUtils.Info(
