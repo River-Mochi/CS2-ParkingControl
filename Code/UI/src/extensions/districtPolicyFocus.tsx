@@ -1,90 +1,25 @@
 ﻿// File: UI/src/extensions/districtPolicyFocus.tsx
-// Purpose: Disables focus handling only for Parking Control's expanded district policy row.
+// Purpose: Finds the vanilla PanelSectionRow module used by the CS2 UI.
 
-import {
-    createContext,
-    useContext,
-} from "react";
+import type { ModuleRegistry } from "cs2/modding";
 
-import type {
-    ModuleRegistry,
-    ModuleRegistryExtend,
-} from "cs2/modding";
-
-import { VANILLA_COMPONENT_MODULES } from "../utils/vanilla/components";
-
-const POLICY_MODULE =
-    "game-ui/game/components/policy/policy.tsx";
-
-const POLICY_EXPORT = "Policy";
-
-const PC_POLICY_ID = "PCDistrictParkingBan";
-
-const PcPolicyContext = createContext(false);
-
-const PolicyScopeExtension: ModuleRegistryExtend = (Component) => {
-    return (props: any) => {
-        if (props?.policy?.id !== PC_POLICY_ID) {
-            return <Component {...props} />;
-        }
-
-        return (
-            <PcPolicyContext.Provider value={true}>
-                <Component {...props} />
-            </PcPolicyContext.Provider>
-        );
-    };
-};
-
-const InfoRowFocusExtension: ModuleRegistryExtend = (Component) => {
-    return (props: any) => {
-        const isPcPolicy = useContext(PcPolicyContext);
-
-        if (!isPcPolicy) {
-            return <Component {...props} />;
-        }
-
-        return <Component {...props} disableFocus={true} />;
-    };
-};
-
-function extendSafe(
-    moduleRegistry: ModuleRegistry,
-    modulePath: string,
-    exportId: string,
-    extension: ModuleRegistryExtend
-): void {
-    try {
-        moduleRegistry.extend(
-            modulePath,
-            exportId,
-            extension
-        );
-    } catch (error) {
-        console.error(
-            `[ParkingControl][UI] extend failed for ${modulePath}#${exportId}`,
-            error
-        );
-    }
-}
-
-export function registerDistrictPolicyFocusFix(
+export function registerDistrictPolicyFocusProbe(
     moduleRegistry: ModuleRegistry
 ): void {
-    extendSafe(
-        moduleRegistry,
-        POLICY_MODULE,
-        POLICY_EXPORT,
-        PolicyScopeExtension
+    const matches = moduleRegistry.find(
+        /PanelSectionRow|panel-section-row/i
     );
 
-    const [infoRowModule, infoRowExport] =
-        VANILLA_COMPONENT_MODULES.InfoRow;
+    if (matches.length === 0) {
+        console.warn(
+            "[ParkingControl][UI][PanelSectionRow] no matching module found"
+        );
+        return;
+    }
 
-    extendSafe(
-        moduleRegistry,
-        infoRowModule,
-        infoRowExport,
-        InfoRowFocusExtension
-    );
+    for (const [path, ...exports] of matches) {
+        console.log(
+            `[ParkingControl][UI][PanelSectionRow] ${path} :: ${exports.join(", ")}`
+        );
+    }
 }
