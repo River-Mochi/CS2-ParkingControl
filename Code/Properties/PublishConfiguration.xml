@@ -1,4 +1,4 @@
-<Publish>
+﻿<Publish>
 <!--Id must be set in order to update existed mod. it is not required for publishing mod for the first time-->
 <ModId Value="" />
 <!--Name of the mod to display to players-->
@@ -14,7 +14,7 @@
 
 ## Features
 - Choose Whole City, by District, or OFF in Options.
-- Uses CS2's own no-parking lane flag.
+- Uses game's own no-parking flag.
 - Parking lots and building parking continue to work normally.
 
 ## Good to know
