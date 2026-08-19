@@ -1,4 +1,4 @@
-﻿<Publish>
+<Publish>
 <!--Id must be set in order to update existed mod. it is not required for publishing mod for the first time-->
 <ModId Value="" />
 <!--Name of the mod to display to players-->
@@ -46,7 +46,7 @@ Want clean curbs without changing your road design?
 ## Credits
 
 - River-mochi - mod author
-- Maintyper, DragonFire_DFS - testing
+- Dataknase, Maintyper, DragonFire_DFS - testing
 
 
 </LongDescription>
