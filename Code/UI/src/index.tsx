@@ -1,4 +1,4 @@
-﻿// File: UI/src/index.tsx
+// File: UI/src/index.tsx
 // Purpose: Registers Parking Control UI assets.
 
 import type { ModRegistrar } from "cs2/modding";
