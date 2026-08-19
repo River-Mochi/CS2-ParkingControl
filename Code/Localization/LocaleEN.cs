@@ -1,4 +1,4 @@
-// <copyright file="LocaleEN.cs" company="River-Mochi">
+﻿// <copyright file="LocaleEN.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -51,7 +51,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
                     "Choose:\n" +
                     "**by District**\n" +
-                    "**Whole City**'n" +
+                    "**Whole City**\n" +
                     " or **OFF**.\n" +
                     "- Eligible lanes are flagged to prevent new street parking.\n" +
                     "- Existing parked cars leave naturally when they are next used.\n" +
@@ -64,8 +64,8 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Show instructions" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
                     "Shows how to use <by District> mode.\n" +
-                    "OFF = citywide and district restrictions are disabled (mostly back to vanilla;\n" +
-                    "- but you can still use manual single road button <No Parking> and it will apply.\n" +
+                    "OFF = citywide and district restrictions are disabled; mostly back to game defaults.\n" +
+                    "- The single-road <No Parking> tool still applies just like applying a wide sidewalk.\n" +
                     "Whole City = eligible street parking is blocked citywide."
                 },
 

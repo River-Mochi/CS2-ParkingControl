@@ -1,4 +1,4 @@
-// <copyright file="NoStreetParkingSystem.cs" company="River-Mochi">
+﻿// <copyright file="NoStreetParkingSystem.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -15,14 +15,8 @@ namespace ParkingControl
     using Game;
     using Game.Common;
     using Game.Net;
-    using Game.Prefabs;
     using Unity.Collections;
     using Unity.Entities;
-    using ParkingLane = Game.Net.ParkingLane;
-    using ParkingLaneFlags = Game.Net.ParkingLaneFlags;
-    using Road = Game.Net.Road;
-    using RoadTypes = Game.Net.RoadTypes;
-    using Temp = Game.Tools.Temp;
 
     /// <summary>
     /// Keeps ordinary street-parking lanes synchronized with all Parking Control restrictions.
@@ -85,34 +79,35 @@ namespace ParkingControl
             base.OnCreate();
 
             m_AllParkingLanesQuery = SystemAPI.QueryBuilder()
-                .WithAll<ParkingLane, Owner, PrefabRef>()
-                .WithNone<Deleted, Temp>()
+                .WithAll<Game.Net.ParkingLane, Game.Common.Owner, Game.Prefabs.PrefabRef>()
+                .WithNone<Game.Common.Deleted, Game.Tools.Temp>()
                 .Build();
 
             m_ChangedParkingLanesQuery = SystemAPI.QueryBuilder()
-                .WithAll<ParkingLane, Owner, PrefabRef>()
-                .WithAny<Created, Updated, PathfindUpdated>()
-                .WithNone<Deleted, Temp>()
+                .WithAll<Game.Net.ParkingLane, Game.Common.Owner, Game.Prefabs.PrefabRef>()
+                .WithAny<Game.Common.Created, Game.Common.Updated, Game.Common.PathfindUpdated>()
+                .WithNone<Game.Common.Deleted, Game.Tools.Temp>()
                 .Build();
 
             m_ModifiedParkingLanesQuery = SystemAPI.QueryBuilder()
-                .WithAll<ParkingLane, StreetParkingState>()
-                .WithNone<Deleted, Temp>()
+                .WithAll<Game.Net.ParkingLane, StreetParkingState>()
+                .WithNone<Game.Common.Deleted, Game.Tools.Temp>()
                 .Build();
 
             m_ManualRoadBanQuery = SystemAPI.QueryBuilder()
-                .WithAll<ManualRoadParkingBan, Road>()
-                .WithNone<Deleted, Temp>()
+                .WithAll<ManualRoadParkingBan, Game.Net.Road>()
+                .WithNone<Game.Common.Deleted, Game.Tools.Temp>()
                 .Build();
 
             m_ChangedManualRoadBanQuery = SystemAPI.QueryBuilder()
-                .WithAll<ManualRoadParkingBan, Road, Updated>()
-                .WithNone<Deleted, Temp>()
+                .WithAll<ManualRoadParkingBan, Game.Net.Road, Game.Common.Updated>()
+                .WithNone<Game.Common.Deleted, Game.Tools.Temp>()
                 .Build();
 
             m_PolicyModifyQuery = SystemAPI.QueryBuilder()
                 .WithAll<Game.Common.Event, Game.Policies.Modify>()
                 .Build();
+
         }
 
         /// <inheritdoc/>
@@ -298,11 +293,11 @@ namespace ParkingControl
             ComponentLookup<Owner> ownerLookup =
                 SystemAPI.GetComponentLookup<Owner>(true);
 
-            ComponentLookup<PrefabRef> prefabRefLookup =
-                SystemAPI.GetComponentLookup<PrefabRef>(true);
+            ComponentLookup<Game.Prefabs.PrefabRef> prefabRefLookup =
+                SystemAPI.GetComponentLookup<Game.Prefabs.PrefabRef>(true);
 
-            ComponentLookup<ParkingLaneData> parkingLaneDataLookup =
-                SystemAPI.GetComponentLookup<ParkingLaneData>(true);
+            ComponentLookup<Game.Prefabs.ParkingLaneData> parkingLaneDataLookup =
+                SystemAPI.GetComponentLookup<Game.Prefabs.ParkingLaneData>(true);
 
             ComponentLookup<Road> roadLookup =
                 SystemAPI.GetComponentLookup<Road>(true);
@@ -396,11 +391,11 @@ namespace ParkingControl
             ComponentLookup<Owner> ownerLookup =
                 SystemAPI.GetComponentLookup<Owner>(true);
 
-            ComponentLookup<PrefabRef> prefabRefLookup =
-                SystemAPI.GetComponentLookup<PrefabRef>(true);
+            ComponentLookup<Game.Prefabs.PrefabRef> prefabRefLookup =
+                SystemAPI.GetComponentLookup<Game.Prefabs.PrefabRef>(true);
 
-            ComponentLookup<ParkingLaneData> parkingLaneDataLookup =
-                SystemAPI.GetComponentLookup<ParkingLaneData>(true);
+            ComponentLookup<Game.Prefabs.ParkingLaneData> parkingLaneDataLookup =
+                SystemAPI.GetComponentLookup<Game.Prefabs.ParkingLaneData>(true);
 
             ComponentLookup<Road> roadLookup =
                 SystemAPI.GetComponentLookup<Road>(true);
@@ -480,8 +475,8 @@ namespace ParkingControl
             Entity policyEntity,
             ref ComponentLookup<ParkingLane> parkingLaneLookup,
             ComponentLookup<Owner> ownerLookup,
-            ComponentLookup<PrefabRef> prefabRefLookup,
-            ComponentLookup<ParkingLaneData> parkingLaneDataLookup,
+            ComponentLookup<Game.Prefabs.PrefabRef> prefabRefLookup,
+            ComponentLookup<Game.Prefabs.ParkingLaneData> parkingLaneDataLookup,
             ComponentLookup<Road> roadLookup,
             ComponentLookup<Game.Areas.BorderDistrict> borderDistrictLookup,
             ComponentLookup<ManualRoadParkingBan> manualBanLookup,
@@ -849,8 +844,8 @@ namespace ParkingControl
             Entity entity,
             ParkingLane parkingLane,
             ComponentLookup<Owner> ownerLookup,
-            ComponentLookup<PrefabRef> prefabRefLookup,
-            ComponentLookup<ParkingLaneData> parkingLaneDataLookup,
+            ComponentLookup<Game.Prefabs.PrefabRef> prefabRefLookup,
+            ComponentLookup<Game.Prefabs.ParkingLaneData> parkingLaneDataLookup,
             ComponentLookup<Road> roadLookup)
         {
             if ((parkingLane.m_Flags &
@@ -867,12 +862,12 @@ namespace ParkingControl
                 return false;
             }
 
-            PrefabRef prefabRef = prefabRefLookup[entity];
+            Game.Prefabs.PrefabRef prefabRef = prefabRefLookup[entity];
 
             return parkingLaneDataLookup.TryGetComponent(
                     prefabRef.m_Prefab,
-                    out ParkingLaneData parkingLaneData) &&
-                (parkingLaneData.m_RoadTypes & RoadTypes.Car) != 0;
+                    out Game.Prefabs.ParkingLaneData parkingLaneData) &&
+                (Game.Prefabs.ParkingLaneData.m_RoadTypes & RoadTypes.Car) != 0;
         }
 
         private static void QueuePathfindUpdate(

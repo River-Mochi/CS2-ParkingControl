@@ -1,4 +1,4 @@
-// <copyright file="NoParkingRoadToolSystem.cs" company="River-Mochi">
+﻿// <copyright file="NoParkingRoadToolSystem.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -13,7 +13,6 @@ namespace ParkingControl
     using Colossal.Mathematics;
     using Game.Common;
     using Game.Net;
-    using Game.Prefabs;
     using Game.Tools;
     using Unity.Entities;
     using Unity.Jobs;
@@ -23,7 +22,7 @@ namespace ParkingControl
     {
         internal const string kToolId = "ParkingControl.NoParking";
 
-        private PrefabBase? m_ToolPrefab;
+        private Game.Prefabs.PrefabBase? m_ToolPrefab;
         private Entity m_PreviewRoad;
         private bool m_PreviewRightSide;
         private bool m_PreviewRemoving;
@@ -131,13 +130,13 @@ namespace ParkingControl
         }
 
         /// <inheritdoc/>
-        public override PrefabBase? GetPrefab()
+        public override Game.Prefabs.PrefabBase? GetPrefab()
         {
             return m_ToolPrefab;
         }
 
         /// <inheritdoc/>
-        public override bool TrySetPrefab(PrefabBase prefab)
+        public override bool TrySetPrefab(Game.Prefabs.PrefabBase prefab)
         {
             if (prefab == null ||
                 !string.Equals(
@@ -372,11 +371,11 @@ namespace ParkingControl
         /// to the supplied road.
         /// </summary>
         internal static bool TryGetEligibleParkingLane(
-            EntityManager entityManager,
-            Entity road,
-            Entity lane,
-            out ParkingLane parkingLane,
-            out Curve curve)
+        EntityManager entityManager,
+        Entity road,
+        Entity lane,
+        out Game.Net.ParkingLane parkingLane,
+        out Game.Net.Curve curve)
         {
             parkingLane = default;
             curve = default;
@@ -385,10 +384,10 @@ namespace ParkingControl
                 !entityManager.Exists(lane) ||
                 entityManager.HasComponent<Deleted>(lane) ||
                 entityManager.HasComponent<Temp>(lane) ||
-                !entityManager.HasComponent<ParkingLane>(lane) ||
+                !entityManager.HasComponent<Game.Net.ParkingLane>(lane) ||
                 !entityManager.HasComponent<Owner>(lane) ||
-                !entityManager.HasComponent<PrefabRef>(lane) ||
-                !entityManager.HasComponent<Curve>(lane))
+                !entityManager.HasComponent<Game.Prefabs.PrefabRef>(lane) ||
+                !entityManager.HasComponent<Game.Net.Curve>(lane)
             {
                 return false;
             }
@@ -402,36 +401,36 @@ namespace ParkingControl
             }
 
             parkingLane =
-                entityManager.GetComponentData<ParkingLane>(lane);
+                entityManager.GetComponentData<Game.Net.ParkingLane>(lane);
 
             if ((parkingLane.m_Flags &
-                    (ParkingLaneFlags.VirtualLane |
-                        ParkingLaneFlags.SpecialVehicles)) != 0)
+                (Game.Net.ParkingLaneFlags.VirtualLane |
+                    Game.Net.ParkingLaneFlags.SpecialVehicles)) != 0)
             {
                 return false;
             }
 
-            PrefabRef prefabRef =
-                entityManager.GetComponentData<PrefabRef>(lane);
+            Game.Prefabs.PrefabRef prefabRef =
+                entityManager.GetComponentData<Game.Prefabs.PrefabRef>(lane);
 
             if (prefabRef.m_Prefab == Entity.Null ||
                 !entityManager.Exists(prefabRef.m_Prefab) ||
-                !entityManager.HasComponent<ParkingLaneData>(
-                    prefabRef.m_Prefab))
+                !entityManager.HasComponent<Game.Prefabs.ParkingLaneData>(
+                    prefabRef.m_Prefab)
             {
                 return false;
             }
 
-            ParkingLaneData parkingLaneData =
-                entityManager.GetComponentData<ParkingLaneData>(
+            Game.Prefabs.ParkingLaneData parkingLaneData =
+                entityManager.GetComponentData<Game.Prefabs.ParkingLaneData>(
                     prefabRef.m_Prefab);
 
-            if ((parkingLaneData.m_RoadTypes & RoadTypes.Car) == 0)
+            if ((parkingLaneData.m_RoadTypes & Game.Net.RoadTypes.Car) == 0)
             {
                 return false;
             }
 
-            curve = entityManager.GetComponentData<Curve>(lane);
+            curve = entityManager.GetComponentData<Game.Net.Curve>(lane);
             return true;
         }
     }
