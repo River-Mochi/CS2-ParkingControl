@@ -19,8 +19,8 @@ Want clean curbs without changing your road design?
 
 ## Choose where
 
-- ✅**Whole City** - block eligible street parking citywide.
-- ✅**by District** - enable **Roadside Parking Ban** in the district Policies panel.
+- ✅**Whole City** - prevent street parking citywide.
+- ✅**by District** - enable **Roadside Parking Ban** in the District Policies panel.
 - ✅**OFF** - restore normal street parking.
 
 🚙 Parking lots and building parking stay working normally.
@@ -33,7 +33,8 @@ Want clean curbs without changing your road design?
 - For faster clearing, temporarily add a vanilla feature such as bike lanes.
 - Make sure your city has enough off-street parking. When parking is unavailable, the game may use outside-connection storage or staging as it does in vanilla.
 - The mod uses vanilla features (e.g. the game’s own no-parking flag) and does not delete vehicles or deal with bicycles.
-- Safe to remove anytime.
+- Safe to remove anytime and designed to not impact performance.
+- Some vanilla roads already don't allow parking, e.g. 3-lane small roads.
 
 
 ## Support and Feedback
@@ -43,8 +44,9 @@ Want clean curbs without changing your road design?
 **Planned:** centralized parking-fee controls.
 
 ## Credits
-River-mochi - mod author
-Maintyper - testing
+
+- River-mochi - mod author
+- Maintyper, DragonFire_DFS - testing
 
 
 </LongDescription>
