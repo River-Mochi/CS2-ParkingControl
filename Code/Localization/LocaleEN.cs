@@ -1,4 +1,4 @@
-// <copyright file="LocaleEN.cs" company="River-Mochi">
+﻿// <copyright file="LocaleEN.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -49,7 +49,10 @@ namespace ParkingControl
                 // Street-parking controls.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "No street parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
-                    "Choose **Whole City**, **by District**, or **OFF**.\n" +
+                    "Choose:\n" +
+                    "**by District**\n" +
+                    "**Whole City**'n" +
+                    " or **OFF**.\n" +
                     "- Eligible lanes are flagged to prevent new street parking.\n" +
                     "- Existing parked cars leave naturally when they are next used.\n" +
                     "- Fee-based parking lots and normal building parking remain usable.\n" +
@@ -61,8 +64,11 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Show instructions" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
                     "Shows how to use <by District> mode.\n" +
-                    "OFF = street-parking restrictions are disabled.\n" +
-                    "Whole City = eligible street parking is blocked citywide." },
+                    "OFF = citywide and district restrictions are disabled (mostly back to vanilla;\n" +
+                    "- but you can still use manual single road button <No Parking> and it will apply.\n" +
+                    "Whole City = eligible street parking is blocked citywide."
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "Show status" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowStatus)),
                     "<Show current parking totals below.>\n" +
@@ -77,6 +83,11 @@ namespace ParkingControl
                     "Roads outside banned parking districts keep normal street parking." },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
 
+
+                // In-city Roads Services tool.
+                { $"Assets.NAME[{NoParkingRoadToolSystem.kToolId}]", "No Parking" },
+                { $"Assets.DESCRIPTION[{NoParkingRoadToolSystem.kToolId}]",
+                    "Toggle roadside parking on one side of a road." },
                 // In-city district policy.
                 { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "Roadside Parking Ban" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]",

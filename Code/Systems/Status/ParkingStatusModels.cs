@@ -1,4 +1,4 @@
-// <copyright file="ParkingStatusModels.cs" company="River-Mochi">
+﻿// <copyright file="ParkingStatusModels.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -102,7 +102,9 @@ namespace ParkingControl
         public int Districts;
         public int DistrictsWithPolicy;
 
-        public readonly bool RestrictionEnabled => Scope != PCSettings.ParkingScope.Off;
+        public readonly bool RestrictionEnabled =>
+            Scope != PCSettings.ParkingScope.Off ||
+            TargetCurbLanes > 0;
 
         public readonly int ParkedElsewhere =>
             VisibleOffStreet + HiddenInBuildings + OutsideConnection + UnassignedOrUnknownParked;

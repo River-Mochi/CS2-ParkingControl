@@ -1,4 +1,4 @@
-// <copyright file="ParkingStatusSystem.Probe.cs" company="River-Mochi">
+﻿// <copyright file="ParkingStatusSystem.Probe.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -21,6 +21,8 @@ namespace ParkingControl
         /// </summary>
         private ParkingSnapshot BuildSnapshot(ParkingReportDetails? details)
         {
+            ComponentLookup<ManualRoadParkingBan> manualRoadBanLookup =
+                GetComponentLookup<ManualRoadParkingBan>(true);
             ComponentLookup<Game.Prefabs.BicycleData> bicycleDataLookup =
                 GetComponentLookup<Game.Prefabs.BicycleData>(true);
             ComponentLookup<Game.Buildings.Building> buildingLookup =
@@ -99,6 +101,7 @@ namespace ParkingControl
                     bool policyActive = NoStreetParkingSystem.IsDistrictPolicyActive(
                         district,
                         policyEntity,
+                        manualRoadBanLookup,
                         policyLookup);
                     if (policyActive)
                     {
@@ -194,6 +197,7 @@ namespace ParkingControl
                         policyEntity,
                         ownerLookup,
                         borderDistrictLookup,
+                        manualRoadBanLookup,
                         policyLookup);
                     if (isTarget)
                     {
