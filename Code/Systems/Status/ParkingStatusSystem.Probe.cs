@@ -1,4 +1,4 @@
-// <copyright file="ParkingStatusSystem.Probe.cs" company="River-Mochi">
+﻿// <copyright file="ParkingStatusSystem.Probe.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -98,10 +98,10 @@ namespace ParkingControl
                 snapshot.Districts = districts.Length;
                 foreach (Entity district in districts)
                 {
+                    // no manual lookup if PolicyActive
                     bool policyActive = NoStreetParkingSystem.IsDistrictPolicyActive(
                         district,
                         policyEntity,
-                        manualRoadBanLookup,
                         policyLookup);
                     if (policyActive)
                     {
@@ -190,6 +190,7 @@ namespace ParkingControl
                         districtStats.EligibleLanes++;
                     }
 
+                    // Yes, manual lookup
                     bool isTarget = NoStreetParkingSystem.IsRestrictionTarget(
                         lane,
                         parkingLane,
@@ -411,14 +412,17 @@ namespace ParkingControl
                             snapshot.ParkedVehicles++;
                             snapshot.StreetParked++;
                             Game.Net.ParkingLane streetLane = parkingLaneLookup[parkedLane];
-                            bool restrictionTarget = NoStreetParkingSystem.IsRestrictionTarget(
-                                parkedLane,
-                                streetLane,
-                                scope,
-                                policyEntity,
-                                ownerLookup,
-                                borderDistrictLookup,
-                                policyLookup);
+
+                        bool restrictionTarget = NoStreetParkingSystem.IsRestrictionTarget(
+                            parkedLane,
+                            streetLane,
+                            scope,
+                            policyEntity,
+                            ownerLookup,
+                            borderDistrictLookup,
+                            manualRoadBanLookup,
+                            policyLookup);
+
                             bool firstParkedCarOnLane = occupiedCurbLanes.Add(parkedLane);
                             if (firstParkedCarOnLane)
                             {
