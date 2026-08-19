@@ -1,4 +1,4 @@
-﻿// <copyright file="NoStreetParkingSystem.cs" company="River-Mochi">
+// <copyright file="NoStreetParkingSystem.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -864,10 +864,10 @@ namespace ParkingControl
 
             Game.Prefabs.PrefabRef prefabRef = prefabRefLookup[entity];
 
-            return parkingLaneDataLookup.TryGetComponent(
+           return parkingLaneDataLookup.TryGetComponent(
                     prefabRef.m_Prefab,
                     out Game.Prefabs.ParkingLaneData parkingLaneData) &&
-                (Game.Prefabs.ParkingLaneData.m_RoadTypes & RoadTypes.Car) != 0;
+                (parkingLaneData.m_RoadTypes & Game.Net.RoadTypes.Car) != 0;
         }
 
         private static void QueuePathfindUpdate(

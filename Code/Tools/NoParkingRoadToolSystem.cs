@@ -1,4 +1,4 @@
-﻿// <copyright file="NoParkingRoadToolSystem.cs" company="River-Mochi">
+// <copyright file="NoParkingRoadToolSystem.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -12,7 +12,6 @@ namespace ParkingControl
 {
     using Colossal.Mathematics;
     using Game.Common;
-    using Game.Net;
     using Game.Tools;
     using Unity.Entities;
     using Unity.Jobs;
@@ -54,7 +53,6 @@ namespace ParkingControl
         protected override void OnCreate()
         {
             base.OnCreate();
-
             ClearPreview();
         }
 
@@ -67,7 +65,7 @@ namespace ParkingControl
             secondaryApplyAction.shouldBeEnabled = false;
             cancelAction.shouldBeEnabled = true;
 
-            requireNet = Layer.Road;
+            requireNet = Game.Net.Layer.Road;
             allowUnderground = false;
 
             ClearPreview();
@@ -80,7 +78,7 @@ namespace ParkingControl
             secondaryApplyAction.shouldBeEnabled = false;
             cancelAction.shouldBeEnabled = false;
 
-            requireNet = Layer.None;
+            requireNet = Game.Net.Layer.None;
             allowUnderground = false;
 
             ClearPreview();
@@ -157,7 +155,7 @@ namespace ParkingControl
             base.InitializeRaycast();
 
             m_ToolRaycastSystem.typeMask = TypeMask.Net;
-            m_ToolRaycastSystem.netLayerMask = Layer.Road;
+            m_ToolRaycastSystem.netLayerMask = Game.Net.Layer.Road;
         }
 
         private bool TryGetRoadSideUnderCursor(
@@ -177,16 +175,16 @@ namespace ParkingControl
             road = ResolveRoadEntity(hitEntity);
             if (road == Entity.Null ||
                 !EntityManager.Exists(road) ||
-                !EntityManager.HasComponent<Road>(road) ||
-                !EntityManager.HasComponent<Curve>(road) ||
-                !EntityManager.HasBuffer<SubLane>(road))
+                !EntityManager.HasComponent<Game.Net.Road>(road) ||
+                !EntityManager.HasComponent<Game.Net.Curve>(road) ||
+                !EntityManager.HasBuffer<Game.Net.SubLane>(road))
             {
                 road = Entity.Null;
                 return false;
             }
 
-            Curve roadCurve =
-                EntityManager.GetComponentData<Curve>(road);
+            Game.Net.Curve roadCurve =
+                EntityManager.GetComponentData<Game.Net.Curve>(road);
 
             float curvePosition =
                 math.clamp(hit.m_CurvePosition, 0f, 1f);
@@ -212,8 +210,8 @@ namespace ParkingControl
 
             bool cursorOnGeometricLeft = cursorLateral >= 0f;
 
-            DynamicBuffer<SubLane> subLanes =
-                EntityManager.GetBuffer<SubLane>(
+            DynamicBuffer<Game.Net.SubLane> subLanes =
+                EntityManager.GetBuffer<Game.Net.SubLane>(
                     road,
                     isReadOnly: true);
 
@@ -228,8 +226,8 @@ namespace ParkingControl
                         EntityManager,
                         road,
                         lane,
-                        out ParkingLane parkingLane,
-                        out Curve laneCurve))
+                        out Game.Net.ParkingLane parkingLane,
+                        out Game.Net.Curve laneCurve))
                 {
                     continue;
                 }
@@ -264,7 +262,7 @@ namespace ParkingControl
                 bestDistanceSq = distanceSq;
                 rightSide =
                     (parkingLane.m_Flags &
-                        ParkingLaneFlags.RightSide) != 0;
+                        Game.Net.ParkingLaneFlags.RightSide) != 0;
 
                 found = true;
             }
@@ -285,7 +283,7 @@ namespace ParkingControl
                 return Entity.Null;
             }
 
-            if (EntityManager.HasComponent<Road>(entity))
+            if (EntityManager.HasComponent<Game.Net.Road>(entity))
             {
                 return entity;
             }
@@ -297,7 +295,7 @@ namespace ParkingControl
 
                 if (owner != Entity.Null &&
                     EntityManager.Exists(owner) &&
-                    EntityManager.HasComponent<Road>(owner))
+                    EntityManager.HasComponent<Game.Net.Road>(owner))
                 {
                     return owner;
                 }
@@ -371,11 +369,11 @@ namespace ParkingControl
         /// to the supplied road.
         /// </summary>
         internal static bool TryGetEligibleParkingLane(
-        EntityManager entityManager,
-        Entity road,
-        Entity lane,
-        out Game.Net.ParkingLane parkingLane,
-        out Game.Net.Curve curve)
+            EntityManager entityManager,
+            Entity road,
+            Entity lane,
+            out Game.Net.ParkingLane parkingLane,
+            out Game.Net.Curve curve)
         {
             parkingLane = default;
             curve = default;
@@ -387,7 +385,7 @@ namespace ParkingControl
                 !entityManager.HasComponent<Game.Net.ParkingLane>(lane) ||
                 !entityManager.HasComponent<Owner>(lane) ||
                 !entityManager.HasComponent<Game.Prefabs.PrefabRef>(lane) ||
-                !entityManager.HasComponent<Game.Net.Curve>(lane)
+                !entityManager.HasComponent<Game.Net.Curve>(lane))
             {
                 return false;
             }
@@ -404,8 +402,8 @@ namespace ParkingControl
                 entityManager.GetComponentData<Game.Net.ParkingLane>(lane);
 
             if ((parkingLane.m_Flags &
-                (Game.Net.ParkingLaneFlags.VirtualLane |
-                    Game.Net.ParkingLaneFlags.SpecialVehicles)) != 0)
+                    (Game.Net.ParkingLaneFlags.VirtualLane |
+                        Game.Net.ParkingLaneFlags.SpecialVehicles)) != 0)
             {
                 return false;
             }
@@ -416,7 +414,7 @@ namespace ParkingControl
             if (prefabRef.m_Prefab == Entity.Null ||
                 !entityManager.Exists(prefabRef.m_Prefab) ||
                 !entityManager.HasComponent<Game.Prefabs.ParkingLaneData>(
-                    prefabRef.m_Prefab)
+                    prefabRef.m_Prefab))
             {
                 return false;
             }
@@ -430,7 +428,9 @@ namespace ParkingControl
                 return false;
             }
 
-            curve = entityManager.GetComponentData<Game.Net.Curve>(lane);
+            curve =
+                entityManager.GetComponentData<Game.Net.Curve>(lane);
+
             return true;
         }
     }
