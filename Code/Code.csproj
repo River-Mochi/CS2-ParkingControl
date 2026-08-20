@@ -80,6 +80,8 @@
         <Reference Include="Unity.Collections"><Private>false</Private></Reference>
         <Reference Include="Unity.Entities"><Private>false</Private></Reference>
         <Reference Include="Unity.Mathematics"><Private>false</Private></Reference>
+		<Reference Include="UnityEngine.AudioModule"><Private>false</Private>
+		</Reference>
     </ItemGroup>
 
     <ItemGroup>

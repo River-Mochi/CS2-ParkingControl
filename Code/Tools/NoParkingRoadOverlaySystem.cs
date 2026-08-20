@@ -6,13 +6,12 @@
 // This notice MUST be kept with copies or substantial portions of this code.
 // ================= </copyright> ======================
 
-// Purpose: Draws a side-specific preview for the No Parking road tool.
+// Purpose: Draws a side-specific cyan preview for the No Parking road tool.
 
 namespace ParkingControl
 {
     using Colossal.Mathematics;
     using Game;
-    using Game.Net;
     using Game.Rendering;
     using Unity.Burst;
     using Unity.Collections;
@@ -24,11 +23,11 @@ namespace ParkingControl
     {
         private const float kPreviewWidth = 3.8f;
 
-        private static readonly Color s_AddColor =
+        // Keep the side preview cyan whether the ban is being added or is
+        // already present. Availability is shown separately by the game's
+        // Highlighted road outline, matching vanilla upgrade-tool behavior.
+        private static readonly Color s_PreviewColor =
             new(0.10f, 0.80f, 1.00f, 0.60f);
-
-        private static readonly Color s_RemoveColor =
-            new(1.00f, 0.15f, 0.15f, 0.60f);
 
         private OverlayRenderSystem m_OverlayRenderSystem = null!;
         private RenderingSystem m_RenderingSystem = null!;
@@ -41,14 +40,13 @@ namespace ParkingControl
             public NativeArray<Bezier4x3> Curves;
 
             public OverlayRenderSystem.Buffer OverlayBuffer;
-            public Color PreviewColor;
 
             public void Execute()
             {
                 for (int index = 0; index < Curves.Length; index++)
                 {
                     OverlayBuffer.DrawCurve(
-                        PreviewColor,
+                        s_PreviewColor,
                         Curves[index],
                         kPreviewWidth);
                 }
@@ -83,15 +81,16 @@ namespace ParkingControl
 
             if (road == Entity.Null ||
                 !EntityManager.Exists(road) ||
-                !EntityManager.HasBuffer<SubLane>(road))
+                !EntityManager.HasBuffer<Game.Net.SubLane>(road))
             {
                 return;
             }
 
-            bool rightSide = m_ToolSystem.PreviewRightSide;
+            bool rightSide =
+                m_ToolSystem.PreviewRightSide;
 
-            DynamicBuffer<SubLane> subLanes =
-                EntityManager.GetBuffer<SubLane>(
+            DynamicBuffer<Game.Net.SubLane> subLanes =
+                EntityManager.GetBuffer<Game.Net.SubLane>(
                     road,
                     isReadOnly: true);
 
@@ -102,21 +101,22 @@ namespace ParkingControl
             {
                 for (int index = 0; index < subLanes.Length; index++)
                 {
-                    Entity lane = subLanes[index].m_SubLane;
+                    Entity lane =
+                        subLanes[index].m_SubLane;
 
                     if (!NoParkingRoadToolSystem.TryGetEligibleParkingLane(
                             EntityManager,
                             road,
                             lane,
-                            out ParkingLane parkingLane,
-                            out Curve curve))
+                            out Game.Net.ParkingLane parkingLane,
+                            out Game.Net.Curve curve))
                     {
                         continue;
                     }
 
                     bool laneRightSide =
                         (parkingLane.m_Flags &
-                            ParkingLaneFlags.RightSide) != 0;
+                            Game.Net.ParkingLaneFlags.RightSide) != 0;
 
                     if (laneRightSide == rightSide)
                     {
@@ -130,11 +130,6 @@ namespace ParkingControl
                     return;
                 }
 
-                Color previewColor =
-                    m_ToolSystem.PreviewRemoving
-                        ? s_RemoveColor
-                        : s_AddColor;
-
                 OverlayRenderSystem.Buffer buffer =
                     m_OverlayRenderSystem.GetBuffer(
                         out JobHandle dependencies);
@@ -144,7 +139,6 @@ namespace ParkingControl
                     {
                         Curves = curves.AsArray(),
                         OverlayBuffer = buffer,
-                        PreviewColor = previewColor,
                     }
                     .Schedule(
                         JobHandle.CombineDependencies(
@@ -152,7 +146,8 @@ namespace ParkingControl
                             dependencies));
 
                 m_OverlayRenderSystem.AddBufferWriter(drawHandle);
-                Dependency = curves.Dispose(drawHandle);
+                Dependency =
+                    curves.Dispose(drawHandle);
             }
             catch
             {

@@ -1,4 +1,4 @@
-// <copyright file="NoParkingRoadToolSystem.cs" company="River-Mochi">
+﻿// <copyright file="NoParkingRoadToolSystem.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -6,7 +6,7 @@
 // This notice MUST be kept with copies or substantial portions of this code.
 // ================= </copyright> ======================
 
-// Purpose: Lets the player toggle No Parking on one side of an existing road.
+// Purpose: Lets the player add/remove No Parking on one side of an existing road.
 
 namespace ParkingControl
 {
@@ -16,81 +16,114 @@ namespace ParkingControl
     using Unity.Entities;
     using Unity.Jobs;
     using Unity.Mathematics;
+    using UnityEngine.InputSystem;
 
     public sealed partial class NoParkingRoadToolSystem : ToolBaseSystem
     {
         internal const string kToolId = "ParkingControl.NoParking";
 
         private Game.Prefabs.PrefabBase? m_ToolPrefab;
+        private Game.Audio.AudioManager m_AudioManager = null!;
+        private EntityQuery m_SoundQuery;
+
+        private bool m_IsAdding;
+        private bool m_IsRemoving;
+
         private Entity m_PreviewRoad;
         private bool m_PreviewRightSide;
         private bool m_PreviewRemoving;
 
-        /// <inheritdoc/>
+        private Entity m_HighlightedRoad;
+        private bool m_OwnsRoadHighlight;
+
         public override string toolID => kToolId;
 
-        /// <summary>
-        /// Gets whether this tool is currently active.
-        /// </summary>
         internal bool IsToolActive => Enabled;
-
-        /// <summary>
-        /// Gets the road currently previewed by the tool.
-        /// </summary>
         internal Entity PreviewRoad => m_PreviewRoad;
-
-        /// <summary>
-        /// Gets whether the preview represents the parking lane's right side.
-        /// </summary>
         internal bool PreviewRightSide => m_PreviewRightSide;
-
-        /// <summary>
-        /// Gets whether clicking will remove an existing manual ban.
-        /// </summary>
         internal bool PreviewRemoving => m_PreviewRemoving;
 
-        /// <inheritdoc/>
         protected override void OnCreate()
         {
             base.OnCreate();
+
+            m_AudioManager =
+                World.GetOrCreateSystemManaged<Game.Audio.AudioManager>();
+
+            m_SoundQuery = SystemAPI.QueryBuilder()
+                .WithAll<Game.Prefabs.ToolUXSoundSettingsData>()
+                .Build();
+
             ClearPreview();
         }
 
-        /// <inheritdoc/>
         protected override void OnStartRunning()
         {
             base.OnStartRunning();
 
             applyAction.shouldBeEnabled = true;
-            secondaryApplyAction.shouldBeEnabled = false;
-            cancelAction.shouldBeEnabled = true;
+            secondaryApplyAction.shouldBeEnabled = true;
+
+            // RMB is the native Secondary Apply action for removing a ban.
+            // Escape is handled manually in OnUpdate().
+            cancelAction.shouldBeEnabled = false;
+
+            m_IsAdding = false;
+            m_IsRemoving = false;
 
             requireNet = Game.Net.Layer.Road;
             allowUnderground = false;
 
             ClearPreview();
+
+#if DEBUG
+            CS2Shared.RiverMochi.LogUtils.Info(
+                $"{Mod.ModTag} [RoadTool] ACTIVE: " +
+                $"activeTool={m_ToolSystem.activeTool?.toolID ?? "(null)"}.");
+#endif
         }
 
-        /// <inheritdoc/>
         protected override void OnStopRunning()
         {
             applyAction.shouldBeEnabled = false;
             secondaryApplyAction.shouldBeEnabled = false;
             cancelAction.shouldBeEnabled = false;
 
+            m_IsAdding = false;
+            m_IsRemoving = false;
+
             requireNet = Game.Net.Layer.None;
             allowUnderground = false;
 
             ClearPreview();
 
+#if DEBUG
+            CS2Shared.RiverMochi.LogUtils.Info(
+                $"{Mod.ModTag} [RoadTool] INACTIVE.");
+#endif
+
             base.OnStopRunning();
         }
 
-        /// <inheritdoc/>
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
-            if (cancelAction.WasPressedThisFrame())
+            bool escapePressed = false;
+
+            try
             {
+                Keyboard? keyboard = Keyboard.current;
+                escapePressed =
+                    keyboard != null &&
+                    keyboard.escapeKey.wasPressedThisFrame;
+            }
+            catch
+            {
+            }
+
+            if (escapePressed)
+            {
+                m_IsAdding = false;
+                m_IsRemoving = false;
                 ClearPreview();
 
                 if (m_ToolSystem.activeTool == this)
@@ -101,10 +134,26 @@ namespace ParkingControl
                 return inputDeps;
             }
 
-            if (!TryGetRoadSideUnderCursor(
+            bool hasRoadSide =
+                TryGetRoadSideUnderCursor(
                     out Entity road,
-                    out bool rightSide))
+                    out bool rightSide);
+
+            if (!hasRoadSide)
             {
+                // A drag starts only when the mouse button is first pressed
+                // over a valid road side. This prevents the UI tile click
+                // that activates the tool from accidentally painting a road.
+                if (applyAction.WasReleasedThisFrame())
+                {
+                    m_IsAdding = false;
+                }
+
+                if (secondaryApplyAction.WasReleasedThisFrame())
+                {
+                    m_IsRemoving = false;
+                }
+
                 ClearPreview();
                 return inputDeps;
             }
@@ -113,27 +162,83 @@ namespace ParkingControl
             m_PreviewRightSide = rightSide;
             m_PreviewRemoving = IsManualBanSet(road, rightSide);
 
-            if (!applyAction.WasPressedThisFrame())
+            // Keep the current phase-1 preview: a cyan side strip plus the
+            // game's normal Highlighted outline while an add is available.
+            UpdateRoadHighlight(
+                road,
+                shouldHighlight: !m_PreviewRemoving);
+
+            // Start add-paint only when LMB is initially pressed over a valid
+            // road side. While held, every newly hovered unbanned road side
+            // is changed immediately.
+            if (applyAction.WasPressedThisFrame())
             {
+                m_IsAdding = true;
+                m_IsRemoving = false;
+            }
+
+            if (applyAction.WasReleasedThisFrame())
+            {
+                m_IsAdding = false;
+            }
+
+            // Same behavior for RMB removal using ToolBaseSystem's native
+            // Secondary Apply action, rather than reading Mouse.current.
+            if (secondaryApplyAction.WasPressedThisFrame())
+            {
+                m_IsRemoving = true;
+                m_IsAdding = false;
+            }
+
+            if (secondaryApplyAction.WasReleasedThisFrame())
+            {
+                m_IsRemoving = false;
+            }
+
+            if (m_IsAdding &&
+                applyAction.IsPressed() &&
+                !m_PreviewRemoving)
+            {
+                if (SetManualBan(
+                        road,
+                        rightSide,
+                        banned: true))
+                {
+                    PlayNetBuildSound();
+                }
+
+                m_PreviewRemoving = true;
+                ClearRoadHighlight();
                 return inputDeps;
             }
 
-            ToggleManualBan(road, rightSide);
+            if (m_IsRemoving &&
+                secondaryApplyAction.IsPressed() &&
+                m_PreviewRemoving)
+            {
+                if (SetManualBan(
+                        road,
+                        rightSide,
+                        banned: false))
+                {
+                    PlayNetBuildSound();
+                }
 
-            // Refresh immediately so the overlay changes cyan -> red,
-            // or red -> cyan, in the same interaction.
-            m_PreviewRemoving = IsManualBanSet(road, rightSide);
+                m_PreviewRemoving = false;
+
+                UpdateRoadHighlight(
+                    road,
+                    shouldHighlight: true);
+            }
 
             return inputDeps;
         }
 
-        /// <inheritdoc/>
         public override Game.Prefabs.PrefabBase? GetPrefab()
         {
             return m_ToolPrefab;
         }
 
-        /// <inheritdoc/>
         public override bool TrySetPrefab(Game.Prefabs.PrefabBase prefab)
         {
             if (prefab == null ||
@@ -149,7 +254,6 @@ namespace ParkingControl
             return true;
         }
 
-        /// <inheritdoc/>
         public override void InitializeRaycast()
         {
             base.InitializeRaycast();
@@ -166,13 +270,22 @@ namespace ParkingControl
             rightSide = false;
 
             if (!GetRaycastResult(
-                    out Entity hitEntity,
+                    out Entity hitOwner,
                     out RaycastHit hit))
             {
                 return false;
             }
 
-            road = ResolveRoadEntity(hitEntity);
+            road = ResolveRoadEntity(hitOwner);
+
+            // At intersections the raycast owner can be a node while the
+            // concrete hit entity is the road edge.
+            if (road == Entity.Null &&
+                hit.m_HitEntity != Entity.Null)
+            {
+                road = ResolveRoadEntity(hit.m_HitEntity);
+            }
+
             if (road == Entity.Null ||
                 !EntityManager.Exists(road) ||
                 !EntityManager.HasComponent<Game.Net.Road>(road) ||
@@ -201,14 +314,16 @@ namespace ParkingControl
                         curvePosition).xz,
                     new float2(0f, 1f));
 
-            float2 leftDirection = MathUtils.Left(tangent);
+            float2 leftDirection =
+                MathUtils.Left(tangent);
 
             float cursorLateral =
                 math.dot(
                     hit.m_HitPosition.xz - roadPosition.xz,
                     leftDirection);
 
-            bool cursorOnGeometricLeft = cursorLateral >= 0f;
+            bool cursorOnGeometricLeft =
+                cursorLateral >= 0f;
 
             DynamicBuffer<Game.Net.SubLane> subLanes =
                 EntityManager.GetBuffer<Game.Net.SubLane>(
@@ -242,9 +357,11 @@ namespace ParkingControl
                         lanePosition.xz - roadPosition.xz,
                         leftDirection);
 
-                bool laneOnGeometricLeft = laneLateral >= 0f;
+                bool laneOnGeometricLeft =
+                    laneLateral >= 0f;
 
-                if (laneOnGeometricLeft != cursorOnGeometricLeft)
+                if (laneOnGeometricLeft !=
+                    cursorOnGeometricLeft)
                 {
                     continue;
                 }
@@ -260,6 +377,7 @@ namespace ParkingControl
                 }
 
                 bestDistanceSq = distanceSq;
+
                 rightSide =
                     (parkingLane.m_Flags &
                         Game.Net.ParkingLaneFlags.RightSide) != 0;
@@ -314,60 +432,157 @@ namespace ParkingControl
                     .IsBanned(rightSide);
         }
 
-        private void ToggleManualBan(
+        private bool SetManualBan(
             Entity road,
-            bool rightSide)
+            bool rightSide,
+            bool banned)
         {
-            ManualRoadParkingBan ban =
-                EntityManager.HasComponent<ManualRoadParkingBan>(road)
+            bool hasComponent =
+                EntityManager.HasComponent<ManualRoadParkingBan>(road);
+
+            ManualRoadParkingBan manualBan =
+                hasComponent
                     ? EntityManager
                         .GetComponentData<ManualRoadParkingBan>(road)
                     : default;
 
-            bool newValue = !ban.IsBanned(rightSide);
-            ban.SetBanned(rightSide, newValue);
-
-            if (ban.IsEmpty)
+            if (manualBan.IsBanned(rightSide) == banned)
             {
-                if (EntityManager.HasComponent<ManualRoadParkingBan>(road))
+                return false;
+            }
+
+            manualBan.SetBanned(
+                rightSide,
+                banned);
+
+            if (manualBan.IsEmpty)
+            {
+                if (hasComponent)
                 {
                     EntityManager.RemoveComponent<ManualRoadParkingBan>(road);
                 }
             }
-            else if (EntityManager.HasComponent<ManualRoadParkingBan>(road))
+            else if (hasComponent)
             {
-                EntityManager.SetComponentData(road, ban);
+                EntityManager.SetComponentData(
+                    road,
+                    manualBan);
             }
             else
             {
-                EntityManager.AddComponentData(road, ban);
+                EntityManager.AddComponentData(
+                    road,
+                    manualBan);
             }
 
-            // Only this road needs immediate reconciliation.
             NoStreetParkingSystem.RequestRoadReconcile(road);
             ParkingStatusCache.MarkDirty();
 
 #if DEBUG
-            string side = rightSide ? "Right" : "Left";
-            string state = newValue ? "BAN" : "ALLOW";
+            string side =
+                rightSide ? "Right" : "Left";
+
+            string state =
+                banned ? "BAN" : "ALLOW";
 
             CS2Shared.RiverMochi.LogUtils.Info(
                 $"{Mod.ModTag} [RoadTool] {state}: " +
                 $"road={road.Index}:{road.Version}, side={side}.");
 #endif
+
+            return true;
+        }
+
+        private void PlayNetBuildSound()
+        {
+            if (m_SoundQuery.IsEmptyIgnoreFilter)
+            {
+                return;
+            }
+
+            Game.Prefabs.ToolUXSoundSettingsData soundSettings =
+                m_SoundQuery.GetSingleton<Game.Prefabs.ToolUXSoundSettingsData>();
+
+            if (soundSettings.m_NetBuildSound != Entity.Null)
+            {
+                m_AudioManager.PlayUISound(
+                    soundSettings.m_NetBuildSound);
+            }
+        }
+
+        private void UpdateRoadHighlight(
+            Entity road,
+            bool shouldHighlight)
+        {
+            if (!shouldHighlight)
+            {
+                ClearRoadHighlight();
+                return;
+            }
+
+            if (road == m_HighlightedRoad)
+            {
+                return;
+            }
+
+            ClearRoadHighlight();
+
+            if (road == Entity.Null ||
+                !EntityManager.Exists(road))
+            {
+                return;
+            }
+
+            m_HighlightedRoad = road;
+
+            // Never remove a Highlighted component PC did not add.
+            if (EntityManager.HasComponent<Highlighted>(road))
+            {
+                m_OwnsRoadHighlight = false;
+                return;
+            }
+
+            EntityManager.AddComponent<Highlighted>(road);
+            m_OwnsRoadHighlight = true;
+
+            MarkBatchesUpdated(road);
+        }
+
+        private void ClearRoadHighlight()
+        {
+            if (m_HighlightedRoad != Entity.Null &&
+                m_OwnsRoadHighlight &&
+                EntityManager.Exists(m_HighlightedRoad) &&
+                EntityManager.HasComponent<Highlighted>(
+                    m_HighlightedRoad))
+            {
+                EntityManager.RemoveComponent<Highlighted>(
+                    m_HighlightedRoad);
+
+                MarkBatchesUpdated(m_HighlightedRoad);
+            }
+
+            m_HighlightedRoad = Entity.Null;
+            m_OwnsRoadHighlight = false;
+        }
+
+        private void MarkBatchesUpdated(Entity road)
+        {
+            if (!EntityManager.HasComponent<BatchesUpdated>(road))
+            {
+                EntityManager.AddComponent<BatchesUpdated>(road);
+            }
         }
 
         private void ClearPreview()
         {
+            ClearRoadHighlight();
+
             m_PreviewRoad = Entity.Null;
             m_PreviewRightSide = false;
             m_PreviewRemoving = false;
         }
 
-        /// <summary>
-        /// Checks whether one sublane is an ordinary car-parking lane belonging
-        /// to the supplied road.
-        /// </summary>
         internal static bool TryGetEligibleParkingLane(
             EntityManager entityManager,
             Entity road,
@@ -423,7 +638,8 @@ namespace ParkingControl
                 entityManager.GetComponentData<Game.Prefabs.ParkingLaneData>(
                     prefabRef.m_Prefab);
 
-            if ((parkingLaneData.m_RoadTypes & Game.Net.RoadTypes.Car) == 0)
+            if ((parkingLaneData.m_RoadTypes &
+                    Game.Net.RoadTypes.Car) == 0)
             {
                 return false;
             }

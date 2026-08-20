@@ -67,6 +67,12 @@ namespace ParkingControl
             NoParkingRoadToolSystem toolSystem =
                 s_World.GetOrCreateSystemManaged<NoParkingRoadToolSystem>();
 
+            // ToolSystem activates a prefab by asking registered tool systems
+            // in list order whether they accept it. Our cloned FencePrefab is
+            // also a NetPrefab, so vanilla NetToolSystem would accept it first
+            // unless this very specific tool is placed before NetToolSystem.
+            EnsureActivationOrder(toolSystem);
+
             // Hot-reload/re-entry safety: reuse our existing prefab if it
             // already exists instead of creating a duplicate.
             PrefabID toolId = new(
@@ -184,6 +190,69 @@ namespace ParkingControl
 
                 return false;
             }
+        }
+
+        private static void EnsureActivationOrder(
+            NoParkingRoadToolSystem toolSystem)
+        {
+            if (s_World == null)
+            {
+                return;
+            }
+
+            Game.Tools.ToolSystem toolRegistry =
+                s_World.GetOrCreateSystemManaged<Game.Tools.ToolSystem>();
+
+            System.Collections.Generic.List<Game.Tools.ToolBaseSystem> tools =
+                toolRegistry.tools;
+
+            int parkingToolIndex = tools.IndexOf(toolSystem);
+            int netToolIndex =
+                tools.FindIndex(
+                    tool => tool is Game.Tools.NetToolSystem);
+
+            if (parkingToolIndex < 0 || netToolIndex < 0)
+            {
+                LogUtils.Warn(
+                    $"{Mod.ModTag} [RoadTool] Could not establish tool " +
+                    $"activation order (NoParking={parkingToolIndex}, " +
+                    $"NetTool={netToolIndex}).");
+
+                return;
+            }
+
+            if (parkingToolIndex > netToolIndex)
+            {
+                tools.RemoveAt(parkingToolIndex);
+
+                // Removing our later item does not move NetToolSystem, but
+                // resolve it again so this remains correct if list ordering
+                // changes in a future game version.
+                netToolIndex =
+                    tools.FindIndex(
+                        tool => tool is Game.Tools.NetToolSystem);
+
+                if (netToolIndex < 0)
+                {
+                    tools.Add(toolSystem);
+                    LogUtils.Warn(
+                        $"{Mod.ModTag} [RoadTool] NetToolSystem disappeared " +
+                        "while reordering tools.");
+
+                    return;
+                }
+
+                tools.Insert(netToolIndex, toolSystem);
+            }
+
+            int finalParkingIndex = tools.IndexOf(toolSystem);
+            int finalNetIndex =
+                tools.FindIndex(
+                    tool => tool is Game.Tools.NetToolSystem);
+
+            LogUtils.Info(
+                $"{Mod.ModTag} [RoadTool] Activation order ready: " +
+                $"NoParking={finalParkingIndex}, NetTool={finalNetIndex}.");
         }
 
         private static bool TryResolvePlacement(
