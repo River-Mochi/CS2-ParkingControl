@@ -6,7 +6,9 @@
 // This notice MUST be kept with copies or substantial portions of this code.
 // ================= </copyright> ======================
 
-// Purpose: Shows native CS2 LMB/RMB action hints while Manual No Parking is active.
+// Purpose: Renames the game's native Apply / Secondary Apply hints while
+// Manual No Parking is active. The vanilla InputHintsTooltipSystem renders
+// the actual mouse/controller icons; do not add duplicate InputHintTooltips here.
 
 namespace ParkingControl
 {
@@ -23,9 +25,6 @@ namespace ParkingControl
 
         private DisplayNameOverride? m_ApplyOverride;
         private DisplayNameOverride? m_SecondaryOverride;
-
-        private InputHintTooltip? m_ApplyHint;
-        private InputHintTooltip? m_SecondaryHint;
 
         protected override void OnCreate()
         {
@@ -79,13 +78,10 @@ namespace ParkingControl
             EnsureOverrides();
             SetOverridesActive(true);
 
-            ShowHint(
-                m_ApplyAction,
-                ref m_ApplyHint);
-
-            ShowHint(
-                m_SecondaryApplyAction,
-                ref m_SecondaryHint);
+            // Do NOT call AddMouseTooltip() for Apply / Secondary Apply.
+            // CS2's InputHintsTooltipSystem already enumerates the active
+            // ToolBaseSystem actions and adds these exact tooltip paths.
+            // We only override their display names to Upgrade / Downgrade.
         }
 
         private void EnsureOverrides()
@@ -134,25 +130,6 @@ namespace ParkingControl
             {
                 m_SecondaryOverride.active = active;
             }
-        }
-
-        private void ShowHint(
-            ProxyAction? action,
-            ref InputHintTooltip? cachedHint)
-        {
-            if (action == null ||
-                !action.isSet)
-            {
-                return;
-            }
-
-            cachedHint ??=
-                new InputHintTooltip(action);
-
-            cachedHint.Refresh(
-                InputManager.DeviceType.Mouse);
-
-            AddMouseTooltip(cachedHint);
         }
     }
 }
