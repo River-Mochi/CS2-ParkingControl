@@ -1,4 +1,4 @@
-// <copyright file="NoParkingRoadToolBuilder.cs" company="River-Mochi">
+﻿// <copyright file="ManualNoParkingToolBuilder.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -16,7 +16,7 @@ namespace ParkingControl
     using Unity.Entities;
     using UnityEngine;
 
-    internal static class NoParkingRoadToolBuilder
+    internal static class ManualNoParkingToolBuilder
     {
         internal const string kIconPath =
             "coui://ui-mods/images/ForbidParking.svg";

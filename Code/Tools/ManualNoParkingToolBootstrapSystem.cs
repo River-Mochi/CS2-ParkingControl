@@ -1,4 +1,4 @@
-// <copyright file="NoParkingRoadToolBootstrapSystem.cs" company="River-Mochi">
+﻿// <copyright file="ManualNoParkingToolBootstrapSystem.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -14,7 +14,7 @@ namespace ParkingControl
     using CS2Shared.RiverMochi;
     using Game;
 
-    public sealed partial class NoParkingRoadToolBootstrapSystem : GameSystemBase
+    public sealed partial class ManualNoParkingToolBootstrapSystem : GameSystemBase
     {
         private const int kMaxTries = 1800;
         private const int kDebugLogEvery = 120;
@@ -71,7 +71,7 @@ namespace ParkingControl
                 return;
             }
 
-            if (NoParkingRoadToolBuilder.TryInstantiate())
+            if (ManualNoParkingToolBuilder.TryInstantiate())
             {
                 m_Armed = false;
                 Enabled = false;

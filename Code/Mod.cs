@@ -1,4 +1,4 @@
-// <copyright file="Mod.cs" company="River-Mochi">
+﻿// <copyright file="Mod.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -104,11 +104,11 @@ namespace ParkingControl
             AssetDatabase.global.LoadSettings(ModId, settings, new PCSettings(this));
             settings.RegisterInOptionsUI();
 
-            NoParkingRoadToolBuilder.Initialize(force: true);         
+            ManualNoParkingToolBuilder.Initialize(force: true);         
             updateSystem.UpdateAt<ParkingPolicySystem>(SystemUpdatePhase.PrefabUpdate);
 
             // Roads Services tab No Parking tool.
-            updateSystem.UpdateAt<NoParkingRoadToolBootstrapSystem>(
+            updateSystem.UpdateAt<ManualNoParkingToolBootstrapSystem>(
                 SystemUpdatePhase.Modification3);
             updateSystem.UpdateAt<NoParkingRoadToolSystem>(
                 SystemUpdatePhase.ToolUpdate);

@@ -1,4 +1,4 @@
-// <copyright file="LocaleEN.cs" company="River-Mochi">
+﻿// <copyright file="LocaleEN.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -64,9 +64,9 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Show instructions" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
                     "Shows how to use <by District> mode.\n" +
-                    "OFF = citywide and district restrictions are disabled; mostly back to game defaults.\n" +
-                    "- The single-road <No Parking> tool still applies just like applying a wide sidewalk.\n" +
-                    "Whole City = eligible street parking is blocked citywide."
+                    "1.a. OFF = citywide and district restrictions are disabled; mostly back to game defaults.\n" +
+                    "1.b. Single-road <No Parking> button in the Road Services panel still applies just like applying a crosswalk.\n" +
+                    "2. Whole City = blocks all city eligible street public parking."
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "Show status" },
