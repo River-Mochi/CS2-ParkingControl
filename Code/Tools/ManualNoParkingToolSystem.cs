@@ -6,10 +6,11 @@
 // This notice MUST be kept with copies or substantial portions of this code.
 // ================= </copyright> ======================
 
-// Purpose: Lets the player add/remove No Parking on one side of an existing road.
+// Purpose: Lets the player add/remove No Parking on one side of existing roads.
 
 namespace ParkingControl
 {
+    using System.Collections.Generic;
     using Colossal.Mathematics;
     using Game.Common;
     using Game.Tools;
@@ -18,30 +19,59 @@ namespace ParkingControl
     using Unity.Mathematics;
     using UnityEngine.InputSystem;
 
-    public sealed partial class NoParkingRoadToolSystem : ToolBaseSystem
+    public sealed partial class ManualNoParkingToolSystem : ToolBaseSystem
     {
         internal const string kToolId = "ParkingControl.NoParking";
+
+        internal readonly struct RoadSideSelection
+        {
+            internal RoadSideSelection(
+                Entity road,
+                bool rightSide,
+                bool removing)
+            {
+                Road = road;
+                RightSide = rightSide;
+                Removing = removing;
+            }
+
+            internal Entity Road { get; }
+
+            internal bool RightSide { get; }
+
+            internal bool Removing { get; }
+        }
+
+        private enum SelectionMode
+        {
+            None,
+            Add,
+            Remove,
+        }
+
+        private readonly List<RoadSideSelection> m_SelectedSides = new(32);
 
         private Game.Prefabs.PrefabBase? m_ToolPrefab;
         private Game.Audio.AudioManager m_AudioManager = null!;
         private EntityQuery m_SoundQuery;
 
-        private bool m_IsAdding;
-        private bool m_IsRemoving;
+        private SelectionMode m_SelectionMode;
 
         private Entity m_PreviewRoad;
         private bool m_PreviewRightSide;
         private bool m_PreviewRemoving;
 
-        private Entity m_HighlightedRoad;
-        private bool m_OwnsRoadHighlight;
-
         public override string toolID => kToolId;
 
         internal bool IsToolActive => Enabled;
+
         internal Entity PreviewRoad => m_PreviewRoad;
+
         internal bool PreviewRightSide => m_PreviewRightSide;
+
         internal bool PreviewRemoving => m_PreviewRemoving;
+
+        internal IReadOnlyList<RoadSideSelection> SelectedSides => m_SelectedSides;
 
         protected override void OnCreate()
         {
@@ -54,6 +84,7 @@ namespace ParkingControl
                 .WithAll<Game.Prefabs.ToolUXSoundSettingsData>()
                 .Build();
 
+            ClearSelection();
             ClearPreview();
         }
 
@@ -64,16 +95,13 @@ namespace ParkingControl
             applyAction.shouldBeEnabled = true;
             secondaryApplyAction.shouldBeEnabled = true;
 
-            // RMB is the native Secondary Apply action for removing a ban.
-            // Escape is handled manually in OnUpdate().
+            // RMB is native Secondary Apply. Escape stays explicit below.
             cancelAction.shouldBeEnabled = false;
-
-            m_IsAdding = false;
-            m_IsRemoving = false;
 
             requireNet = Game.Net.Layer.Road;
             allowUnderground = false;
 
+            ClearSelection();
             ClearPreview();
 
 #if DEBUG
@@ -89,12 +117,10 @@ namespace ParkingControl
             secondaryApplyAction.shouldBeEnabled = false;
             cancelAction.shouldBeEnabled = false;
 
-            m_IsAdding = false;
-            m_IsRemoving = false;
-
             requireNet = Game.Net.Layer.None;
             allowUnderground = false;
 
+            ClearSelection();
             ClearPreview();
 
 #if DEBUG
@@ -107,23 +133,9 @@ namespace ParkingControl
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
-            bool escapePressed = false;
-
-            try
+            if (WasEscapePressed())
             {
-                Keyboard? keyboard = Keyboard.current;
-                escapePressed =
-                    keyboard != null &&
-                    keyboard.escapeKey.wasPressedThisFrame;
-            }
-            catch
-            {
-            }
-
-            if (escapePressed)
-            {
-                m_IsAdding = false;
-                m_IsRemoving = false;
+                ClearSelection();
                 ClearPreview();
 
                 if (m_ToolSystem.activeTool == this)
@@ -139,96 +151,92 @@ namespace ParkingControl
                     out Entity road,
                     out bool rightSide);
 
-            if (!hasRoadSide)
+            bool currentBanned =
+                hasRoadSide &&
+                IsManualBanSet(road, rightSide);
+
+            if (hasRoadSide)
             {
-                // A drag starts only when the mouse button is first pressed
-                // over a valid road side. This prevents the UI tile click
-                // that activates the tool from accidentally painting a road.
-                if (applyAction.WasReleasedThisFrame())
-                {
-                    m_IsAdding = false;
-                }
-
-                if (secondaryApplyAction.WasReleasedThisFrame())
-                {
-                    m_IsRemoving = false;
-                }
-
+                m_PreviewRoad = road;
+                m_PreviewRightSide = rightSide;
+                m_PreviewRemoving = currentBanned;
+            }
+            else
+            {
                 ClearPreview();
-                return inputDeps;
             }
 
-            m_PreviewRoad = road;
-            m_PreviewRightSide = rightSide;
-            m_PreviewRemoving = IsManualBanSet(road, rightSide);
-
-            // Keep the current phase-1 preview: a cyan side strip plus the
-            // game's normal Highlighted outline while an add is available.
-            UpdateRoadHighlight(
-                road,
-                shouldHighlight: !m_PreviewRemoving);
-
-            // Start add-paint only when LMB is initially pressed over a valid
-            // road side. While held, every newly hovered unbanned road side
-            // is changed immediately.
+            // Match the working Easy Zoning / vanilla-style interaction:
+            // press -> collect sides while held -> apply once on release.
             if (applyAction.WasPressedThisFrame())
             {
-                m_IsAdding = true;
-                m_IsRemoving = false;
-            }
+                BeginSelection(SelectionMode.Add);
 
-            if (applyAction.WasReleasedThisFrame())
-            {
-                m_IsAdding = false;
-            }
-
-            // Same behavior for RMB removal using ToolBaseSystem's native
-            // Secondary Apply action, rather than reading Mouse.current.
-            if (secondaryApplyAction.WasPressedThisFrame())
-            {
-                m_IsRemoving = true;
-                m_IsAdding = false;
-            }
-
-            if (secondaryApplyAction.WasReleasedThisFrame())
-            {
-                m_IsRemoving = false;
-            }
-
-            if (m_IsAdding &&
-                applyAction.IsPressed() &&
-                !m_PreviewRemoving)
-            {
-                if (SetManualBan(
-                        road,
-                        rightSide,
-                        banned: true))
+                if (hasRoadSide && !currentBanned)
                 {
-                    PlayNetBuildSound();
+                    AddSelection(road, rightSide, removing: false);
+                }
+            }
+            else if (secondaryApplyAction.WasPressedThisFrame())
+            {
+                BeginSelection(SelectionMode.Remove);
+
+                if (hasRoadSide && currentBanned)
+                {
+                    AddSelection(road, rightSide, removing: true);
+                }
+            }
+
+            if (m_SelectionMode == SelectionMode.Add &&
+                applyAction.IsPressed() &&
+                hasRoadSide &&
+                !currentBanned)
+            {
+                AddSelection(road, rightSide, removing: false);
+            }
+            else if (m_SelectionMode == SelectionMode.Remove &&
+                secondaryApplyAction.IsPressed() &&
+                hasRoadSide &&
+                currentBanned)
+            {
+                AddSelection(road, rightSide, removing: true);
+            }
+
+            if (m_SelectionMode == SelectionMode.Add &&
+                applyAction.WasReleasedThisFrame())
+            {
+                if (!hasRoadSide)
+                {
+                    ClearSelection();
+                    return inputDeps;
                 }
 
-                m_PreviewRemoving = true;
-                ClearRoadHighlight();
+                if (!currentBanned)
+                {
+                    AddSelection(road, rightSide, removing: false);
+                }
+
+                ApplySelection(banned: true);
+                ClearSelection();
                 return inputDeps;
             }
 
-            if (m_IsRemoving &&
-                secondaryApplyAction.IsPressed() &&
-                m_PreviewRemoving)
+            if (m_SelectionMode == SelectionMode.Remove &&
+                secondaryApplyAction.WasReleasedThisFrame())
             {
-                if (SetManualBan(
-                        road,
-                        rightSide,
-                        banned: false))
+                if (!hasRoadSide)
                 {
-                    PlayNetBuildSound();
+                    ClearSelection();
+                    return inputDeps;
                 }
 
-                m_PreviewRemoving = false;
+                if (currentBanned)
+                {
+                    AddSelection(road, rightSide, removing: true);
+                }
 
-                UpdateRoadHighlight(
-                    road,
-                    shouldHighlight: true);
+                ApplySelection(banned: false);
+                ClearSelection();
             }
 
             return inputDeps;
@@ -260,6 +268,111 @@ namespace ParkingControl
 
             m_ToolRaycastSystem.typeMask = TypeMask.Net;
             m_ToolRaycastSystem.netLayerMask = Game.Net.Layer.Road;
+        }
+
+        internal bool IsSelected(
+            Entity road,
+            bool rightSide)
+        {
+            for (int index = 0; index < m_SelectedSides.Count; index++)
+            {
+                RoadSideSelection selection = m_SelectedSides[index];
+
+                if (selection.Road == road &&
+                    selection.RightSide == rightSide)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool WasEscapePressed()
+        {
+            try
+            {
+                Keyboard? keyboard = Keyboard.current;
+
+                return keyboard != null &&
+                    keyboard.escapeKey.wasPressedThisFrame;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private void BeginSelection(SelectionMode mode)
+        {
+            m_SelectedSides.Clear();
+            m_SelectionMode = mode;
+        }
+
+        private void ClearSelection()
+        {
+            m_SelectedSides.Clear();
+            m_SelectionMode = SelectionMode.None;
+        }
+
+        private void AddSelection(
+            Entity road,
+            bool rightSide,
+            bool removing)
+        {
+            if (IsSelected(road, rightSide))
+            {
+                return;
+            }
+
+            m_SelectedSides.Add(
+                new RoadSideSelection(
+                    road,
+                    rightSide,
+                    removing));
+
+            PlaySelectSound();
+        }
+
+        private void ApplySelection(bool banned)
+        {
+            int changed = 0;
+
+            for (int index = 0; index < m_SelectedSides.Count; index++)
+            {
+                RoadSideSelection selection = m_SelectedSides[index];
+
+                if (selection.Road == Entity.Null ||
+                    !EntityManager.Exists(selection.Road))
+                {
+                    continue;
+                }
+
+                if (SetManualBan(
+                        selection.Road,
+                        selection.RightSide,
+                        banned))
+                {
+                    changed++;
+                }
+            }
+
+            if (changed == 0)
+            {
+                return;
+            }
+
+            ParkingStatusCache.MarkDirty();
+
+            // Keep the existing add/remove confirmation sound for this pass.
+            // We can give RMB its own native sound after the audio test.
+            PlayNetBuildSound();
+
+#if DEBUG
+            CS2Shared.RiverMochi.LogUtils.Info(
+                $"{Mod.ModTag} [RoadTool] Applied " +
+                $"{(banned ? "BAN" : "ALLOW")} to {changed} road side(s).");
+#endif
         }
 
         private bool TryGetRoadSideUnderCursor(
@@ -476,7 +589,6 @@ namespace ParkingControl
             }
 
             NoStreetParkingSystem.RequestRoadReconcile(road);
-            ParkingStatusCache.MarkDirty();
 
 #if DEBUG
             string side =
@@ -493,7 +605,20 @@ namespace ParkingControl
             return true;
         }
 
+        private void PlaySelectSound()
+        {
+            PlaySound(
+                settings => settings.m_SelectEntitySound);
+        }
+
         private void PlayNetBuildSound()
+        {
+            PlaySound(
+                settings => settings.m_NetBuildSound);
+        }
+
+        private void PlaySound(
+            System.Func<Game.Prefabs.ToolUXSoundSettingsData, Entity> selector)
         {
             if (m_SoundQuery.IsEmptyIgnoreFilter)
             {
@@ -503,81 +628,16 @@ namespace ParkingControl
             Game.Prefabs.ToolUXSoundSettingsData soundSettings =
                 m_SoundQuery.GetSingleton<Game.Prefabs.ToolUXSoundSettingsData>();
 
-            if (soundSettings.m_NetBuildSound != Entity.Null)
+            Entity sound = selector(soundSettings);
+
+            if (sound != Entity.Null)
             {
-                m_AudioManager.PlayUISound(
-                    soundSettings.m_NetBuildSound);
-            }
-        }
-
-        private void UpdateRoadHighlight(
-            Entity road,
-            bool shouldHighlight)
-        {
-            if (!shouldHighlight)
-            {
-                ClearRoadHighlight();
-                return;
-            }
-
-            if (road == m_HighlightedRoad)
-            {
-                return;
-            }
-
-            ClearRoadHighlight();
-
-            if (road == Entity.Null ||
-                !EntityManager.Exists(road))
-            {
-                return;
-            }
-
-            m_HighlightedRoad = road;
-
-            // Never remove a Highlighted component PC did not add.
-            if (EntityManager.HasComponent<Highlighted>(road))
-            {
-                m_OwnsRoadHighlight = false;
-                return;
-            }
-
-            EntityManager.AddComponent<Highlighted>(road);
-            m_OwnsRoadHighlight = true;
-
-            MarkBatchesUpdated(road);
-        }
-
-        private void ClearRoadHighlight()
-        {
-            if (m_HighlightedRoad != Entity.Null &&
-                m_OwnsRoadHighlight &&
-                EntityManager.Exists(m_HighlightedRoad) &&
-                EntityManager.HasComponent<Highlighted>(
-                    m_HighlightedRoad))
-            {
-                EntityManager.RemoveComponent<Highlighted>(
-                    m_HighlightedRoad);
-
-                MarkBatchesUpdated(m_HighlightedRoad);
-            }
-
-            m_HighlightedRoad = Entity.Null;
-            m_OwnsRoadHighlight = false;
-        }
-
-        private void MarkBatchesUpdated(Entity road)
-        {
-            if (!EntityManager.HasComponent<BatchesUpdated>(road))
-            {
-                EntityManager.AddComponent<BatchesUpdated>(road);
+                m_AudioManager.PlayUISound(sound);
             }
         }
 
         private void ClearPreview()
         {
-            ClearRoadHighlight();
-
             m_PreviewRoad = Entity.Null;
             m_PreviewRightSide = false;
             m_PreviewRemoving = false;

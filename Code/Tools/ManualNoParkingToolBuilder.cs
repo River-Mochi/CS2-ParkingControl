@@ -27,9 +27,6 @@ namespace ParkingControl
         private static PrefabSystem? s_PrefabSystem;
         private static bool s_Instantiated;
 
-        /// <summary>
-        /// Resets cached world references after a mod load/hot reload.
-        /// </summary>
         internal static void Initialize(bool force = false)
         {
             if (!force && s_World != null)
@@ -44,10 +41,6 @@ namespace ParkingControl
             s_Instantiated = false;
         }
 
-        /// <summary>
-        /// Creates or reconnects the No Parking Roads Services tile.
-        /// </summary>
-        /// <returns>True once the tool prefab is available.</returns>
         internal static bool TryInstantiate()
         {
             if (s_Instantiated)
@@ -64,20 +57,14 @@ namespace ParkingControl
                 return false;
             }
 
-            NoParkingRoadToolSystem toolSystem =
-                s_World.GetOrCreateSystemManaged<NoParkingRoadToolSystem>();
+            ManualNoParkingToolSystem toolSystem =
+                s_World.GetOrCreateSystemManaged<ManualNoParkingToolSystem>();
 
-            // ToolSystem activates a prefab by asking registered tool systems
-            // in list order whether they accept it. Our cloned FencePrefab is
-            // also a NetPrefab, so vanilla NetToolSystem would accept it first
-            // unless this very specific tool is placed before NetToolSystem.
             EnsureActivationOrder(toolSystem);
 
-            // Hot-reload/re-entry safety: reuse our existing prefab if it
-            // already exists instead of creating a duplicate.
             PrefabID toolId = new(
                 "FencePrefab",
-                NoParkingRoadToolSystem.kToolId);
+                ManualNoParkingToolSystem.kToolId);
 
             if (s_PrefabSystem.TryGetPrefab(
                     toolId,
@@ -114,10 +101,8 @@ namespace ParkingControl
                 PrefabBase toolPrefab =
                     s_PrefabSystem.DuplicatePrefab(
                         donorPrefab,
-                        NoParkingRoadToolSystem.kToolId);
+                        ManualNoParkingToolSystem.kToolId);
 
-                // Never alter the donor. Strip donor-specific parts from
-                // the duplicate before adding our own tool metadata.
                 if (toolPrefab.Has<Unlockable>())
                 {
                     toolPrefab.Remove<Unlockable>();
@@ -133,8 +118,6 @@ namespace ParkingControl
                     toolPrefab.Remove<UIObject>();
                 }
 
-                // Forbid Right Turn / Crosswalk contain real vanilla
-                // upgrade behavior. Our clone must not inherit that state.
                 if (toolPrefab.Has<NetUpgrade>())
                 {
                     toolPrefab.Remove<NetUpgrade>();
@@ -143,7 +126,7 @@ namespace ParkingControl
                 UIObject uiObject =
                     ScriptableObject.CreateInstance<UIObject>();
 
-                uiObject.name = NoParkingRoadToolSystem.kToolId;
+                uiObject.name = ManualNoParkingToolSystem.kToolId;
                 uiObject.m_Icon = kIconPath;
                 uiObject.m_IsDebugObject = donorUI.m_IsDebugObject;
                 uiObject.m_Group = donorUI.m_Group;
@@ -152,14 +135,11 @@ namespace ParkingControl
 
                 toolPrefab.AddComponentFrom(uiObject);
 
-                // Keep the prefab recognizable as a Roads Services
-                // tool-selector asset, but with no vanilla upgrade flags.
                 NetUpgrade netUpgrade =
                     ScriptableObject.CreateInstance<NetUpgrade>();
 
                 toolPrefab.AddComponentFrom(netUpgrade);
 
-                // Re-index the duplicate after changing its components.
                 s_PrefabSystem.UpdatePrefab(toolPrefab);
 
                 if (!toolSystem.TrySetPrefab(toolPrefab))
@@ -193,7 +173,7 @@ namespace ParkingControl
         }
 
         private static void EnsureActivationOrder(
-            NoParkingRoadToolSystem toolSystem)
+            ManualNoParkingToolSystem toolSystem)
         {
             if (s_World == null)
             {
@@ -225,9 +205,6 @@ namespace ParkingControl
             {
                 tools.RemoveAt(parkingToolIndex);
 
-                // Removing our later item does not move NetToolSystem, but
-                // resolve it again so this remains correct if list ordering
-                // changes in a future game version.
                 netToolIndex =
                     tools.FindIndex(
                         tool => tool is Game.Tools.NetToolSystem);
@@ -235,6 +212,7 @@ namespace ParkingControl
                 if (netToolIndex < 0)
                 {
                     tools.Add(toolSystem);
+
                     LogUtils.Warn(
                         $"{Mod.ModTag} [RoadTool] NetToolSystem disappeared " +
                         "while reordering tools.");
@@ -279,10 +257,6 @@ namespace ParkingControl
                 out PrefabBase? crosswalkPrefab,
                 out UIObject? crosswalkUI);
 
-            // Preferred layout:
-            //
-            // Forbid Right Turn    No Parking    ...    Crosswalk
-            //
             if (haveForbidRight &&
                 forbidRightPrefab != null &&
                 forbidRightUI != null)
@@ -291,8 +265,6 @@ namespace ParkingControl
                 donorUI = forbidRightUI;
                 priority = forbidRightUI.m_Priority + 1;
 
-                // Protect the requested ordering if CO ever narrows the
-                // priority gap between the two vanilla buttons.
                 if (haveCrosswalk &&
                     crosswalkUI != null &&
                     priority >= crosswalkUI.m_Priority)
@@ -303,7 +275,6 @@ namespace ParkingControl
                 return true;
             }
 
-            // Stable fallback already proven by Easy Zoning.
             if (haveCrosswalk &&
                 crosswalkPrefab != null &&
                 crosswalkUI != null)
@@ -319,7 +290,6 @@ namespace ParkingControl
                 return true;
             }
 
-            // Final exact-name fallback. No reflection/random donor scan.
             if (TryGetRoadServicesPrefab(
                     prefabSystem,
                     "FencePrefab",

@@ -22,9 +22,6 @@ namespace ParkingControl
     using Game.SceneFlow;
     using Game.Serialization;
 
-    /// <summary>
-    /// Parking Control mod entry point.
-    /// </summary>
     public sealed class Mod : IMod
     {
         public const string ModName = "Parking Control";
@@ -39,15 +36,10 @@ namespace ParkingControl
 
         private static bool s_BannerLogged;
 
-        /// <summary>
-        /// Gets the active Options UI settings instance.
-        /// </summary>
         public static PCSettings? Settings { get; private set; }
 
-        /// <inheritdoc/>
         public void OnLoad(UpdateSystem updateSystem)
         {
-            // ShellOpen also configures LogUtils with this mod's exact log file.
             ShellOpen.Configure(s_Log, ModId, ModTag);
             ParkingStatusCache.InvalidateCache();
 
@@ -76,7 +68,6 @@ namespace ParkingControl
                 }
                 else
                 {
-                    // Localization must exist before the Options UI reads setting labels.
                     localizationManager.AddSource("en-US", new LocaleEN(settings));
                     localizationManager.AddSource("fr-FR", new LocaleFR(settings));
                     localizationManager.AddSource("es-ES", new LocaleES(settings));
@@ -88,7 +79,6 @@ namespace ParkingControl
                     localizationManager.AddSource("pt-BR", new LocalePT_BR(settings));
                     localizationManager.AddSource("zh-HANS", new LocaleZH_HANS(settings));
                     localizationManager.AddSource("zh-HANT", new LocaleZH_HANT(settings));
-                    // 3rd party mod needed for game non supported languages
                     localizationManager.AddSource("th-TH", new LocaleTH(settings));
                     localizationManager.AddSource("tr-TR", new LocaleTR(settings));
                     localizationManager.AddSource("vi-VN", new LocaleVI(settings));
@@ -104,15 +94,17 @@ namespace ParkingControl
             AssetDatabase.global.LoadSettings(ModId, settings, new PCSettings(this));
             settings.RegisterInOptionsUI();
 
-            ManualNoParkingToolBuilder.Initialize(force: true);         
+            ManualNoParkingToolBuilder.Initialize(force: true);
             updateSystem.UpdateAt<ParkingPolicySystem>(SystemUpdatePhase.PrefabUpdate);
 
             // Roads Services tab No Parking tool.
-            updateSystem.UpdateAt<ManualNoParkingToolBootstrapSystem>(
+            updateSystem.UpdateAt<ManualNoParkingBootstrapSystem>(
                 SystemUpdatePhase.Modification3);
-            updateSystem.UpdateAt<NoParkingRoadToolSystem>(
+            updateSystem.UpdateAt<ManualNoParkingToolSystem>(
                 SystemUpdatePhase.ToolUpdate);
-            updateSystem.UpdateAt<NoParkingRoadOverlaySystem>(
+            updateSystem.UpdateAt<ManualNoParkingTooltipSystem>(
+                SystemUpdatePhase.UITooltip);
+            updateSystem.UpdateAt<ManualNoParkingOverlaySystem>(
                 SystemUpdatePhase.Rendering);
 
             updateSystem.UpdateAfter<NoStreetParkingSystem, ParkingLaneDataSystem>(
@@ -134,7 +126,6 @@ namespace ParkingControl
                 $"{ModTag} Loaded. No-street-parking scope: {settings.Scope}.");
         }
 
-        /// <inheritdoc/>
         public void OnDispose()
         {
             Settings?.UnregisterInOptionsUI();

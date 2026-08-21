@@ -1,4 +1,4 @@
-﻿// <copyright file="ManualNoParkingToolBootstrapSystem.cs" company="River-Mochi">
+﻿// <copyright file="ManualNoParkingBootstrapSystem.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -6,7 +6,7 @@
 // This notice MUST be kept with copies or substantial portions of this code.
 // ================= </copyright> ======================
 
-// Purpose: Waits for the vanilla Roads Services prefabs, then creates the No Parking tile.
+// Purpose: Waits for vanilla Roads Services prefabs, then creates the No Parking tile.
 
 namespace ParkingControl
 {
@@ -14,7 +14,7 @@ namespace ParkingControl
     using CS2Shared.RiverMochi;
     using Game;
 
-    public sealed partial class ManualNoParkingToolBootstrapSystem : GameSystemBase
+    public sealed partial class ManualNoParkingBootstrapSystem : GameSystemBase
     {
         private const int kMaxTries = 1800;
         private const int kDebugLogEvery = 120;
@@ -22,7 +22,6 @@ namespace ParkingControl
         private bool m_Armed;
         private int m_Tries;
 
-        /// <inheritdoc/>
         protected override void OnCreate()
         {
             base.OnCreate();
@@ -32,7 +31,6 @@ namespace ParkingControl
             Enabled = false;
         }
 
-        /// <inheritdoc/>
         protected override void OnGameLoadingComplete(
             Purpose purpose,
             GameMode mode)
@@ -62,7 +60,6 @@ namespace ParkingControl
 #endif
         }
 
-        /// <inheritdoc/>
         protected override void OnUpdate()
         {
             if (!m_Armed)
