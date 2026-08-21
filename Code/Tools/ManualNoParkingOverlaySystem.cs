@@ -1,4 +1,4 @@
-// <copyright file="ManualNoParkingOverlaySystem.cs" company="River-Mochi">
+﻿// <copyright file="ManualNoParkingOverlaySystem.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -249,12 +249,20 @@ namespace ParkingControl
                 JobHandle disposeAppliedPerimeter =
                     appliedPerimeterCurves.Dispose(drawHandle);
 
-                Dependency =
+               JobHandle disposeSideCurves =
                     JobHandle.CombineDependencies(
                         disposeAvailable,
-                        disposeApplied,
+                        disposeApplied);
+
+               JobHandle disposePerimeterCurves =
+                    JobHandle.CombineDependencies(
                         disposeAvailablePerimeter,
                         disposeAppliedPerimeter);
+
+                Dependency =
+                    JobHandle.CombineDependencies(
+                        disposeSideCurves,
+                        disposePerimeterCurves);
             }
             catch
             {
@@ -400,7 +408,7 @@ namespace ParkingControl
                     .GetSingleton<Game.Prefabs.RenderingSettingsData>();
 
             // Available side follows the game's current HoveredColor. If
-            // Hover Colors changes that global value, PC follows it too.
+            // Mochi's Hover Colors mod changes that global value, PC follows it too.
             availableOutline = renderingSettings.m_HoveredColor;
             availableFill = renderingSettings.m_HoveredColor;
             availableOutline.a = kSideOutlineAlpha;
@@ -408,7 +416,7 @@ namespace ParkingControl
 
             // Applied side uses the game's WarningColor rather than a PC-only
             // hard-coded red. This matches the same warning palette Hover
-            // Colors uses for its recommended bulldozer behavior.
+            // Colors mod uses for its recommended bulldozer behavior.
             appliedOutline = renderingSettings.m_WarningColor;
             appliedFill = renderingSettings.m_WarningColor;
             appliedOutline.a = kSideOutlineAlpha;
