@@ -1,4 +1,4 @@
-// <copyright file="LocaleEN.cs" company="River-Mochi">
+﻿// <copyright file="LocaleEN.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -83,16 +83,25 @@ namespace ParkingControl
                     "Roads outside banned parking districts keep normal street parking." },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
 
-
                 // In-city Roads Services tool.
                 { $"Assets.NAME[{ManualNoParkingToolSystem.kToolId}]", "No Parking" },
                 { $"Assets.DESCRIPTION[{ManualNoParkingToolSystem.kToolId}]",
-                    "Toggle roadside parking on one side of a road." },
+                    "Toggle roadside parking on one side of a road. For multiple sides, drag over them before releasing the Left Mouse button." },
                 // In-city district policy.
                 { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "Roadside Parking Ban" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]",
                     "Prevents cars and motorcycles from parking on roadsides in this district. " +
-                    "Existing parked vehicles leave when their owners next use them." },
+                    "Existing parked vehicles leave when their owners next use them." 
+                },
+                // Native mouse action hints for the No Parking road tool.
+                {
+                    $"Common.ACTION[{ManualNoParkingTooltipSystem.kUpgradeHintId}]",
+                    "Upgrade"
+                },
+                {
+                    $"Common.ACTION[{ManualNoParkingTooltipSystem.kDowngradeHintId}]",
+                    "Downgrade"
+                },
 
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Street Parking" },

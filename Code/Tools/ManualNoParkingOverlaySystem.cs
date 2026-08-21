@@ -407,32 +407,29 @@ namespace ParkingControl
                 m_RenderSettingsQuery
                     .GetSingleton<Game.Prefabs.RenderingSettingsData>();
 
-            // Available side follows the game's current HoveredColor. If
-            // Mochi's Hover Colors mod changes that global value, PC follows it too.
+            // Available: road-tool hover color over the parking side.
             availableOutline = renderingSettings.m_HoveredColor;
             availableFill = renderingSettings.m_HoveredColor;
             availableOutline.a = kSideOutlineAlpha;
             availableFill.a = kSideFillAlpha;
 
-            // Applied side uses the game's WarningColor rather than a PC-only
-            // hard-coded red. This matches the same warning palette Hover
-            // Colors mod uses for its recommended bulldozer behavior.
-            appliedOutline = renderingSettings.m_WarningColor;
-            appliedFill = renderingSettings.m_WarningColor;
+            // Already No Parking: game error color shows RMB can remove it.
+            appliedOutline = renderingSettings.m_ErrorColor;
+            appliedFill = renderingSettings.m_ErrorColor;
             appliedOutline.a = kSideOutlineAlpha;
             appliedFill.a = kSideFillAlpha;
 
-            // Available road perimeter follows current OwnerColor.
+            // Keep the whole road perimeter in the road-tool Owner color
+            // for both add and remove states.
             availablePerimeterColor = renderingSettings.m_OwnerColor;
-
-            // Already-applied road perimeter matches the WarningColor strip.
-            appliedPerimeterColor = renderingSettings.m_WarningColor;
+            appliedPerimeterColor = renderingSettings.m_OwnerColor;
 
             return availableOutline.a > 0f ||
                 appliedOutline.a > 0f ||
                 availablePerimeterColor.a > 0f ||
                 appliedPerimeterColor.a > 0f;
         }
+
 
         private static Bezier4x3 MakeLineCurve(
             float3 start,

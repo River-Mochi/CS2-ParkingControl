@@ -1,4 +1,4 @@
-// <copyright file="ManualNoParkingTooltipSystem.cs" company="River-Mochi">
+﻿// <copyright file="ManualNoParkingTooltipSystem.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -6,9 +6,8 @@
 // This notice MUST be kept with copies or substantial portions of this code.
 // ================= </copyright> ======================
 
-// Purpose: Renames the game's native Apply / Secondary Apply hints while
-// Manual No Parking is active. The vanilla InputHintsTooltipSystem renders
-// the actual mouse/controller icons; do not add duplicate InputHintTooltips here.
+// Purpose: Renames the game's native mouse Apply / Secondary Apply hints while
+// Manual No Parking is active. Vanilla draws the mouse/controller icons.
 
 namespace ParkingControl
 {
@@ -18,6 +17,9 @@ namespace ParkingControl
 
     public sealed partial class ManualNoParkingTooltipSystem : TooltipSystemBase
     {
+        internal const string kUpgradeHintId = "ParkingControl.Upgrade";
+        internal const string kDowngradeHintId = "ParkingControl.Downgrade";
+
         private ToolSystem m_ToolSystem = null!;
 
         private ProxyAction? m_ApplyAction;
@@ -78,10 +80,8 @@ namespace ParkingControl
             EnsureOverrides();
             SetOverridesActive(true);
 
-            // Do NOT call AddMouseTooltip() for Apply / Secondary Apply.
-            // CS2's InputHintsTooltipSystem already enumerates the active
-            // ToolBaseSystem actions and adds these exact tooltip paths.
-            // We only override their display names to Upgrade / Downgrade.
+            // Vanilla InputHintsTooltipSystem draws the actual mouse hints.
+            // We only provide the localized action names.
         }
 
         private void EnsureOverrides()
@@ -93,7 +93,7 @@ namespace ParkingControl
                     new DisplayNameOverride(
                         "ParkingControl.HintTooltip.Upgrade",
                         m_ApplyAction,
-                        "Upgrade",
+                        kUpgradeHintId,
                         1);
             }
 
@@ -104,18 +104,18 @@ namespace ParkingControl
                     new DisplayNameOverride(
                         "ParkingControl.HintTooltip.Downgrade",
                         m_SecondaryApplyAction,
-                        "Downgrade",
+                        kDowngradeHintId,
                         1);
             }
 
             if (m_ApplyOverride != null)
             {
-                m_ApplyOverride.displayName = "Upgrade";
+                m_ApplyOverride.displayName = kUpgradeHintId;
             }
 
             if (m_SecondaryOverride != null)
             {
-                m_SecondaryOverride.displayName = "Downgrade";
+                m_SecondaryOverride.displayName = kDowngradeHintId;
             }
         }
 
