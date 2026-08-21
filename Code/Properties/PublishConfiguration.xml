@@ -1,4 +1,4 @@
-<Publish>
+﻿<Publish>
 <!--Id must be set in order to update existed mod. it is not required for publishing mod for the first time-->
 <ModId Value="" />
 <!--Name of the mod to display to players-->
@@ -31,9 +31,11 @@ Want clean curbs without changing your road design?
 - Existing parked cars leave when their owners next use them.
 - For faster clearing, temporarily add a vanilla feature such as bike lanes.
 - Make sure your city has enough off-street parking. When parking is unavailable, the game may use outside-connection storage or staging as it does in vanilla.
-- The mod uses vanilla features (e.g. the game’s own no-parking flag) and does not delete vehicles or deal with bicycles.
+- The mod uses vanilla features (e.g. the game’s own ParkingDisabled flag).
 - Safe to remove anytime and designed to not impact performance.
 - Some vanilla roads already don't allow parking, e.g. 3-lane small roads.
+- Optional: pair with "Outline + Guideline" mod to customize the single "no parking" road preview outline.
+- No Parking disables curb parking without changing the road layout. It does not create driving lane, Wide Sidewalk, or narrower road.
 
 ## Support and Feedback
 - Don't forget the like button (top right), it helps people know about the mod.
