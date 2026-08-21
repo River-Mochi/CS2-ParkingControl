@@ -288,7 +288,7 @@ namespace ParkingControl
             return false;
         }
 
-        private bool WasEscapePressed()
+        private static bool WasEscapePressed()
         {
             try
             {

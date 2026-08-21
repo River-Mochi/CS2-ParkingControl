@@ -1,4 +1,4 @@
-// <copyright file="ManualRoadParkingBan.cs" company="River-Mochi">
+﻿// <copyright file="ManualRoadParkingBan.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -72,7 +72,7 @@ namespace ParkingControl
         public readonly bool IsEmpty => m_Sides == ManualParkingSides.None;
 
         /// <inheritdoc/>
-        public void Serialize<TWriter>(TWriter writer)
+        public readonly void Serialize<TWriter>(TWriter writer)
             where TWriter : IWriter
         {
             writer.Write((uint)m_Sides);
