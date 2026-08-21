@@ -1,4 +1,4 @@
-// <copyright file="LocaleTR.cs" company="River-Mochi">
+﻿// <copyright file="LocaleTR.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -55,8 +55,8 @@ namespace ParkingControl
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowStatus)), "<Geçerli park toplamlarını aşağıda gösterir.>\nDurum yalnızca Seçenekler menüsü açıkken toplanır; şehir oynanırken arka planda durum taraması yapılmaz." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.DistrictInstructions)), "<Bölge modu>\n1. Yukarıdan <Bölgeye göre> seçin.\n2. Şehirde bir bölge oluşturun/seçin.\n3. <Politikalar> panelini açın ve **Yol Kenarı Park Yasağı [✓]** seçeneğini etkinleştirin.\n4. Park yasağı ile park ücretini aynı anda etkinleştirebilirsiniz. Ücret, hâlâ kalan veya içeri sızan araçlardan alınır.\nYasaklı bölgelerin dışındaki yollar normal yol kenarı parkını korur." },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
-                { $"Assets.NAME[{NoParkingRoadToolSystem.kToolId}]", "Park Yasak" },
-                { $"Assets.DESCRIPTION[{NoParkingRoadToolSystem.kToolId}]", "Bir yolun tek tarafındaki yol kenarı parkını açıp kapatır." },
+                { $"Assets.NAME[{ManualNoParkingToolSystem.kToolId}]", "Park Yasak" },
+                { $"Assets.DESCRIPTION[{ManualNoParkingToolSystem.kToolId}]", "Bir yolun tek tarafındaki yol kenarı parkını açıp kapatır." },
                 { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "Yol Kenarı Park Yasağı" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]", "Bu bölgede otomobillerin ve motosikletlerin yol kenarına park etmesini engeller. Halihazırda park etmiş araçlar, sahipleri aracı bir sonraki kullandığında ayrılır." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Yol Kenarı Parkı" },

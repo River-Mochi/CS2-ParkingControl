@@ -1,4 +1,4 @@
-// <copyright file="LocaleTH.cs" company="River-Mochi">
+﻿// <copyright file="LocaleTH.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -55,8 +55,8 @@ namespace ParkingControl
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowStatus)), "<แสดงยอดรวมการจอดรถปัจจุบันด้านล่าง>\nสถานะจะถูกรวบรวมเฉพาะขณะที่เปิดเมนูตัวเลือกเท่านั้น ไม่มีการสแกนสถานะเบื้องหลังระหว่างเล่นเมือง" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.DistrictInstructions)), "<โหมดตามเขต>\n1. เลือก <ตามเขต> ด้านบน\n2. สร้าง/เลือกเขตในเมือง\n3. เปิดแผง <นโยบาย> แล้วเปิด **ห้ามจอดรถริมถนน [✓]**\n4. สามารถเปิดทั้งการห้ามจอดและค่าจอดรถพร้อมกันได้ ค่าจอดรถจะคิดกับรถที่ยังคงอยู่หรือเล็ดลอดเข้ามา\nถนนนอกเขตที่ห้ามจอดยังคงมีการจอดริมถนนตามปกติ" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
-                { $"Assets.NAME[{NoParkingRoadToolSystem.kToolId}]", "ห้ามจอดรถ" },
-                { $"Assets.DESCRIPTION[{NoParkingRoadToolSystem.kToolId}]", "เปิดหรือปิดการจอดรถริมถนนบนด้านหนึ่งของถนน" },
+                { $"Assets.NAME[{ManualNoParkingToolSystem.kToolId}]", "ห้ามจอดรถ" },
+                { $"Assets.DESCRIPTION[{ManualNoParkingToolSystem.kToolId}]", "เปิดหรือปิดการจอดรถริมถนนบนด้านหนึ่งของถนน" },
                 { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "ห้ามจอดรถริมถนน" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]", "ป้องกันรถยนต์และรถจักรยานยนต์ไม่ให้จอดริมถนนในเขตนี้ รถที่จอดอยู่แล้วจะออกไปเมื่อเจ้าของนำรถไปใช้ครั้งถัดไป" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "การจอดรถริมถนน" },

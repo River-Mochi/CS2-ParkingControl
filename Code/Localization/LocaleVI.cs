@@ -1,4 +1,4 @@
-// <copyright file="LocaleVI.cs" company="River-Mochi">
+﻿// <copyright file="LocaleVI.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -55,8 +55,8 @@ namespace ParkingControl
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowStatus)), "<Hiện tổng số đỗ xe hiện tại bên dưới.>\nTrạng thái chỉ được thu thập khi menu Tùy chọn đang mở; không có quét trạng thái nền trong lúc chơi thành phố." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.DistrictInstructions)), "<Chế độ theo khu vực>\n1. Chọn <Theo khu vực> ở trên.\n2. Tạo/chọn một khu vực trong thành phố.\n3. Mở bảng <Chính sách> và bật **Cấm đỗ xe ven đường [✓]**.\n4. Có thể bật đồng thời lệnh cấm và phí đỗ xe. Phí vẫn được tính cho những xe còn lại hoặc lọt vào.\nCác đường ngoài khu vực bị cấm vẫn giữ đỗ xe ven đường bình thường." },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
-                { $"Assets.NAME[{NoParkingRoadToolSystem.kToolId}]", "Cấm đỗ xe" },
-                { $"Assets.DESCRIPTION[{NoParkingRoadToolSystem.kToolId}]", "Bật hoặc tắt đỗ xe ven đường ở một bên đường." },
+                { $"Assets.NAME[{ManualNoParkingToolSystem.kToolId}]", "Cấm đỗ xe" },
+                { $"Assets.DESCRIPTION[{ManualNoParkingToolSystem.kToolId}]", "Bật hoặc tắt đỗ xe ven đường ở một bên đường." },
                 { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "Cấm đỗ xe ven đường" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]", "Ngăn ô tô và xe máy đỗ ven đường trong khu vực này. Các xe đang đỗ sẽ rời đi khi chủ xe sử dụng xe lần tiếp theo." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Đỗ xe ven đường" },

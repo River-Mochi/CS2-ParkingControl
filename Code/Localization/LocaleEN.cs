@@ -85,8 +85,8 @@ namespace ParkingControl
 
 
                 // In-city Roads Services tool.
-                { $"Assets.NAME[{NoParkingRoadToolSystem.kToolId}]", "No Parking" },
-                { $"Assets.DESCRIPTION[{NoParkingRoadToolSystem.kToolId}]",
+                { $"Assets.NAME[{ManualNoParkingToolSystem.kToolId}]", "No Parking" },
+                { $"Assets.DESCRIPTION[{ManualNoParkingToolSystem.kToolId}]",
                     "Toggle roadside parking on one side of a road." },
                 // In-city district policy.
                 { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "Roadside Parking Ban" },
