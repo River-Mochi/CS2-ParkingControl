@@ -166,8 +166,7 @@ namespace ParkingControl
                 ClearPreview();
             }
 
-            // Match the working Easy Zoning / vanilla-style interaction:
-            // press -> collect sides while held -> apply once on release.
+            // Start a new drag selection.
             if (applyAction.WasPressedThisFrame())
             {
                 BeginSelection(SelectionMode.Add);
@@ -187,10 +186,27 @@ namespace ParkingControl
                 }
             }
 
-               if (m_SelectionMode == SelectionMode.Add &&
+            // Keep collecting road sides while the mouse button stays held.
+            if (m_SelectionMode == SelectionMode.Add &&
+                applyAction.IsPressed() &&
+                hasRoadSide &&
+                !currentBanned)
+            {
+                AddSelection(road, rightSide, removing: false);
+            }
+            else if (m_SelectionMode == SelectionMode.Remove &&
+                secondaryApplyAction.IsPressed() &&
+                hasRoadSide &&
+                currentBanned)
+            {
+                AddSelection(road, rightSide, removing: true);
+            }
+
+            // LMB release commits everything already collected.
+            if (m_SelectionMode == SelectionMode.Add &&
                 applyAction.WasReleasedThisFrame())
             {
-                // The release point is optional. Keep everything collected while dragging.
+                // Release can be over an intersection, gap, or not eligible road.
                 if (hasRoadSide && !currentBanned)
                 {
                     AddSelection(road, rightSide, removing: false);
@@ -201,31 +217,12 @@ namespace ParkingControl
                 return inputDeps;
             }
 
+            // RMB release commits everything already collected.
             if (m_SelectionMode == SelectionMode.Remove &&
                 secondaryApplyAction.WasReleasedThisFrame())
             {
-                // Same for RMB: releasing over an ineligible road/gap must not cancel the drag.
+                // Release can be over an intersection, gap, or ineligible road.
                 if (hasRoadSide && currentBanned)
-                {
-                    AddSelection(road, rightSide, removing: true);
-                }
-
-                ApplySelection(banned: false);
-                ClearSelection();
-            } 
-
-
-
-            if (m_SelectionMode == SelectionMode.Remove &&
-                secondaryApplyAction.WasReleasedThisFrame())
-            {
-                if (!hasRoadSide)
-                {
-                    ClearSelection();
-                    return inputDeps;
-                }
-
-                if (currentBanned)
                 {
                     AddSelection(road, rightSide, removing: true);
                 }
@@ -235,7 +232,8 @@ namespace ParkingControl
             }
 
             return inputDeps;
-        }
+        }   
+
 
         public override Game.Prefabs.PrefabBase? GetPrefab()
         {
