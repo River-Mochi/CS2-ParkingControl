@@ -1,4 +1,4 @@
-// <copyright file="LocaleEN.cs" company="River-Mochi">
+﻿// <copyright file="LocaleEN.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -105,18 +105,24 @@ namespace ParkingControl
 
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Street Parking" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Parked> = cars still parked on streets banned by the selected mode.\n" +
+               { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
+                    "<Parked> = cars still parked on road sides currently set to No Parking (by this mod).\n" +
                     "<Lanes> = roadside parking sections holding those cars. One lane can hold many.\n" +
-                    "<Disabled> = street-parking lanes closed to new parking.\n" +
+                    "<Disabled> = targeted street-parking sections closed to new parking.\n" +
+                    "<OFF + manual No Parking> = OFF disables citywide and District bans, but road sides manually set to No Parking stay active. This row then shows only those manual bans.\n" +
+                    "This is intentional; allows players to still manually use the No Parking button inside the city to change single roads even if District Policy or whole city ban is off.\n" +
+                    "<---------------------->\n" +
                     "<by District> shows:\n" +
                     "- Occupied lanes in banned districts / occupied lanes citywide.\n" +
                     "- Disabled lanes / eligible city lanes.\n" +
                     "- Enabled districts / total districts.\n" +
-                    "<New or rebuilt roads> may briefly accept a few cars while their lanes update. " +
+                     "<---------------------->\n" +
+                    "Note: <New or rebuilt roads> may briefly accept a few cars while their lanes update. " +
                     "Cars already parked leave naturally when citizens use them.\n" +
-                    "<CHECK> = some selected roads are not blocked yet. Run the city briefly and check again. " +
-                    "If <CHECK> remains, include a parking log report when asking for help." },
+                    "<CHECK> = some targeted road sides are not blocked yet. Run the city briefly and check again. " +
+                    "If <CHECK> remains, include a parking log report when asking for help."
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Street use" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
                     "This row includes the <whole city>, not just districts.\n" +
