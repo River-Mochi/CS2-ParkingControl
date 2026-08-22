@@ -1,4 +1,4 @@
-// <copyright file="ManualNoParkingToolSystem.cs" company="River-Mochi">
+﻿// <copyright file="ManualNoParkingToolSystem.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -187,31 +187,11 @@ namespace ParkingControl
                 }
             }
 
-            if (m_SelectionMode == SelectionMode.Add &&
-                applyAction.IsPressed() &&
-                hasRoadSide &&
-                !currentBanned)
-            {
-                AddSelection(road, rightSide, removing: false);
-            }
-            else if (m_SelectionMode == SelectionMode.Remove &&
-                secondaryApplyAction.IsPressed() &&
-                hasRoadSide &&
-                currentBanned)
-            {
-                AddSelection(road, rightSide, removing: true);
-            }
-
-            if (m_SelectionMode == SelectionMode.Add &&
+               if (m_SelectionMode == SelectionMode.Add &&
                 applyAction.WasReleasedThisFrame())
             {
-                if (!hasRoadSide)
-                {
-                    ClearSelection();
-                    return inputDeps;
-                }
-
-                if (!currentBanned)
+                // The release point is optional. Keep everything collected while dragging.
+                if (hasRoadSide && !currentBanned)
                 {
                     AddSelection(road, rightSide, removing: false);
                 }
@@ -220,6 +200,21 @@ namespace ParkingControl
                 ClearSelection();
                 return inputDeps;
             }
+
+            if (m_SelectionMode == SelectionMode.Remove &&
+                secondaryApplyAction.WasReleasedThisFrame())
+            {
+                // Same for RMB: releasing over an ineligible road/gap must not cancel the drag.
+                if (hasRoadSide && currentBanned)
+                {
+                    AddSelection(road, rightSide, removing: true);
+                }
+
+                ApplySelection(banned: false);
+                ClearSelection();
+            } 
+
+
 
             if (m_SelectionMode == SelectionMode.Remove &&
                 secondaryApplyAction.WasReleasedThisFrame())
