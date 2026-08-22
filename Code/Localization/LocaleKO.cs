@@ -60,13 +60,13 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "사용법 표시" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
                     "<구역별> 모드 사용법을 표시합니다.\n" +
-                    "꺼짐 = 노상 주차 제한이 비활성화됩니다.\n" +
-                    "도시 전체 = 대상 노상 주차가 도시 전체에서 차단됩니다." },
+                    "1.a. 꺼짐 = 도시 전체 및 구역 제한을 비활성화해 대부분 게임 기본 상태로 돌아갑니다.\n" +
+                    "1.b. 도로 서비스 패널의 개별 도로 <주차 금지> 버튼은 횡단보도를 적용하는 것처럼 계속 사용할 수 있습니다.\n" +
+                    "2. 도시 전체 = 도시의 대상 공공 노상 주차를 모두 차단합니다." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "상태 표시" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowStatus)),
                     "<현재 주차 합계를 아래에 표시합니다.>\n" +
-                    "상태는 옵션 메뉴가 열려 있을 때만 수집되며, 도시 " +
-                    "플레이 중에는 백그라운드 상태 스캔을 하지 않습니다." },
+                    "상태는 옵션 메뉴가 열려 있을 때만 수집되며, 도시 플레이 중에는 백그라운드 상태 스캔을 하지 않습니다." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.DistrictInstructions)),
                     "<구역 모드>\n" +
                     "1. 위에서 <구역별>을 선택합니다.\n" +
@@ -76,11 +76,15 @@ namespace ParkingControl
                     "주차 금지 구역 밖의 도로는 일반 노상 주차를 유지합니다." },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
 
+                // In-city Roads Services tool.
+                { $"Assets.NAME[{ManualNoParkingToolSystem.kToolId}]", "주차 금지" },
+                { $"Assets.DESCRIPTION[{ManualNoParkingToolSystem.kToolId}]", "도로 한쪽의 도로변 주차를 켜거나 끕니다. 여러 쪽을 변경하려면 왼쪽 마우스 버튼을 놓기 전에 그 위로 드래그하세요." },
                 // In-city district policy.
                 { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "도로변 주차 금지" },
-                { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]",
-                    "이 구역에서는 자동차와 오토바이가 도로변에 주차하지 못하게 " +
-                    "합니다. 이미 주차된 차량은 소유자가 다음에 사용할 때 이동합니다." },
+                { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]", "이 구역에서는 자동차와 오토바이가 도로변에 주차하지 못하게 합니다. 이미 주차된 차량은 소유자가 다음에 사용할 때 이동합니다." },
+                // Native mouse action hints for the No Parking road tool.
+                { $"Common.ACTION[{ManualNoParkingTooltipSystem.kUpgradeHintId}]", "추가" },
+                { $"Common.ACTION[{ManualNoParkingTooltipSystem.kDowngradeHintId}]", "해제" },
 
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "노상 주차" },
@@ -92,10 +96,8 @@ namespace ParkingControl
                     "- 금지 구역의 점유 차선 / 도시 전체 점유 차선.\n" +
                     "- 비활성 차선 / 도시의 대상 차선.\n" +
                     "- 활성화된 구역 / 전체 구역.\n" +
-                    "<새로 만든 도로나 재건한 도로>는 차선이 업데이트되는 동안 잠깐 몇 대가 주차할 수 있습니다. " +
-                    "이미 주차된 차량은 시민이 사용할 때 자연스럽게 이동합니다.\n" +
-                    "<확인> = 선택한 도로 일부가 아직 차단되지 않았습니다. 도시를 잠시 실행한 뒤 " +
-                    "다시 확인하세요. <확인>이 계속되면 도움을 요청할 때 주차 로그 보고서를 포함하세요." },
+                    "<새로 만든 도로나 재건한 도로>는 차선이 업데이트되는 동안 잠깐 몇 대가 주차할 수 있습니다. 이미 주차된 차량은 시민이 사용할 때 자연스럽게 이동합니다.\n" +
+                    "<확인> = 선택한 도로 일부가 아직 차단되지 않았습니다. 도시를 잠시 실행한 뒤 다시 확인하세요. <확인>이 계속되면 도움을 요청할 때 주차 로그 보고서를 포함하세요." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "도로 사용" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
                     "이 행은 구역뿐 아니라 <도시 전체>를 포함합니다.\n" +
@@ -118,8 +120,7 @@ namespace ParkingControl
                     "<OC> = 도시 경계의 외부 연결 보관소. 일부 유입 가구 차량은 대기 구역으로 여기에서 시작합니다.\n" +
                     "주차 차선이 지정되지 않은 차량은 여기에서 제외되고 정보 탭의 로그 보고서에만 표시됩니다." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.UpdatedStatus)), "업데이트" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.UpdatedStatus)),
-                    "이 도시 전체 상태 값이 마지막으로 새로 고침된 시간입니다." },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.UpdatedStatus)), "이 도시 전체 상태 값이 마지막으로 새로 고침된 시간입니다." },
 
                 // About tab.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NameText)), "모드 이름" },
@@ -133,20 +134,16 @@ namespace ParkingControl
                     "궁금하다면 같은 도시가 로드된 상태에서 나중에 두 번째 보고서를 작성하세요.\n" +
                     "- 서로 다른 범주에서 최대 20개의 샘플 Entity ID를 비교합니다.\n" +
                     "- 각 샘플이 그대로인지, 운전을 시작했는지, 다른 곳에 주차했는지, 사라졌는지 보여 줍니다.\n" +
-                    "- 도시에서 Entity ID 번호를 추적하려면 Scene Explorer 모드가 필요합니다."
-                },
+                    "- 도시에서 Entity ID 번호를 추적하려면 Scene Explorer 모드가 필요합니다." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenLog)), "로그 열기" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)),
-                    "<Logs/ParkingControl.log>를 열거나, 파일이 아직 없으면 Logs 폴더를 엽니다." },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)), "<Logs/ParkingControl.log>를 열거나, 파일이 아직 없으면 Logs 폴더를 엽니다." },
                 // Dynamic values used by the live status rows.
                 { ParkingStatusLocale.kLoadCity, "아직 불러온 도시가 없습니다." },
                 { ParkingStatusLocale.kCollecting, "주차 상태를 수집하는 중..." },
                 { ParkingStatusLocale.kUnavailable, "주차 상태를 사용할 수 없습니다." },
                 { ParkingStatusLocale.kCollectionFailed, "주차 상태를 수집하지 못했습니다. ParkingControl.log를 확인하세요." },
-                { ParkingStatusLocale.kCompactEnforcementFormat,
-                    "{0} 주차 ({1} 차선) | {2}/{3} 비활성{4}" },
-                { ParkingStatusLocale.kDistrictEnforcementFormat,
-                    "{0} 주차 ({1}/{2} 차선) | {3}/{4} 비활성 | {5}/{6} 구역{7}" },
+                { ParkingStatusLocale.kCompactEnforcementFormat, "{0} 주차 ({1} 차선) | {2}/{3} 비활성{4}" },
+                { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} 주차 ({1}/{2} 차선) | {3}/{4} 비활성 | {5}/{6} 구역{7}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} 도로 | {1} 표시 | {2} 실내 | {3} OC" },
                 { ParkingStatusLocale.kSupplyFormat, "{0} 공공 {1}/{2} | {3} 건물 {4}/{5}" },
                 { ParkingStatusLocale.kShareFormat, "{0} 노상 주차 {1} | {2} 활성" },

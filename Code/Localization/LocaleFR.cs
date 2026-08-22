@@ -60,13 +60,13 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Afficher les instructions" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
                     "Explique comment utiliser le mode <Par quartier>.\n" +
-                    "DÉSACTIVÉ = les restrictions de stationnement sur rue sont désactivées.\n" +
-                    "Ville entière = le stationnement admissible sur rue est bloqué dans toute la ville." },
+                    "1.a. DÉSACTIVÉ = les restrictions de toute la ville et des quartiers sont désactivées ; retour en grande partie aux règles normales du jeu.\n" +
+                    "1.b. Le bouton <Interdiction de stationner> pour une seule route dans le panneau Services routiers fonctionne toujours, comme l’ajout d’un passage piéton.\n" +
+                    "2. Ville entière = bloque tout le stationnement public sur rue admissible de la ville." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "Afficher l’état" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowStatus)),
                     "<Affiche ci-dessous les totaux actuels de stationnement.>\n" +
-                    "Le statut n’est collecté que lorsque le menu Options est " +
-                    "ouvert ; aucun scan en arrière-plan ne tourne pendant la partie." },
+                    "Le statut n’est collecté que lorsque le menu Options est ouvert ; aucun scan en arrière-plan ne tourne pendant la partie." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.DistrictInstructions)),
                     "<Mode par quartier>\n" +
                     "1. Choisissez <Par quartier> ci-dessus.\n" +
@@ -76,11 +76,17 @@ namespace ParkingControl
                     "Les routes hors des quartiers avec interdiction gardent le stationnement normal sur rue." },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
 
+                // In-city Roads Services tool.
+                { $"Assets.NAME[{ManualNoParkingToolSystem.kToolId}]", "Interdiction de stationner" },
+                { $"Assets.DESCRIPTION[{ManualNoParkingToolSystem.kToolId}]",
+                    "Active ou désactive le stationnement en bord de route d’un côté de la route. Pour plusieurs côtés, faites glisser dessus avant de relâcher le bouton gauche de la souris." },
                 // In-city district policy.
                 { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "Interdiction de stationner en bord de route" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]",
-                    "Empêche les voitures et motos de stationner en bord de route dans ce quartier. " +
-                    "Les véhicules déjà garés partent lorsque leurs propriétaires les réutilisent." },
+                    "Empêche les voitures et motos de stationner en bord de route dans ce quartier. Les véhicules déjà garés partent lorsque leurs propriétaires les réutilisent." },
+                // Native mouse action hints for the No Parking road tool.
+                { $"Common.ACTION[{ManualNoParkingTooltipSystem.kUpgradeHintId}]", "Ajouter" },
+                { $"Common.ACTION[{ManualNoParkingTooltipSystem.kDowngradeHintId}]", "Retirer" },
 
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Parking sur rue" },
@@ -92,10 +98,8 @@ namespace ParkingControl
                     "- Voies occupées dans les quartiers interdits / voies occupées dans toute la ville.\n" +
                     "- Voies fermées / voies admissibles de la ville.\n" +
                     "- Quartiers activés / quartiers totaux.\n" +
-                    "<Rues nouvelles ou reconstruites> peuvent accepter brièvement quelques voitures pendant la mise à jour de leurs voies. " +
-                    "Les voitures déjà garées partent lorsque les citoyens les utilisent.\n" +
-                    "<VÉRIF.> = certaines routes sélectionnées ne sont pas encore bloquées. Faites tourner la ville un moment puis " +
-                    "revérifiez. Si <VÉRIF.> reste affiché, joignez un rapport de stationnement quand vous demandez de l’aide." },
+                    "<Rues nouvelles ou reconstruites> peuvent accepter brièvement quelques voitures pendant la mise à jour de leurs voies. Les voitures déjà garées partent lorsque les citoyens les utilisent.\n" +
+                    "<VÉRIF.> = certaines routes sélectionnées ne sont pas encore bloquées. Faites tourner la ville un moment puis revérifiez. Si <VÉRIF.> reste affiché, joignez un rapport de stationnement quand vous demandez de l’aide." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Usage des rues" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
                     "Cette ligne couvre <toute la ville>, pas seulement les quartiers.\n" +
@@ -118,8 +122,7 @@ namespace ParkingControl
                     "<OC> = stockage de connexion extérieure à la limite de la ville ; certaines voitures de ménages entrants commencent là comme zone de transit.\n" +
                     "Les voitures sans voie de stationnement attribuée sont omises ici et visibles uniquement dans le rapport du journal, onglet À propos." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.UpdatedStatus)), "Mis à jour" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.UpdatedStatus)),
-                    "Heure de la dernière actualisation de ces valeurs de statut à l’échelle de la ville." },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.UpdatedStatus)), "Heure de la dernière actualisation de ces valeurs de statut à l’échelle de la ville." },
 
                 // About tab.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NameText)), "Nom du mod" },
@@ -133,20 +136,16 @@ namespace ParkingControl
                     "Si vous êtes curieux, écrivez un 2e rapport plus tard dans la même ville chargée.\n" +
                     "- Compare jusqu’à 20 ID d’entité échantillonnés de différentes catégories.\n" +
                     "- Indique si chaque échantillon est resté, a commencé à rouler, s’est garé ailleurs ou a disparu.\n" +
-                    "- Le mod Scene Explorer est nécessaire pour suivre les numéros d’ID d’entité dans la ville."
-                },
+                    "- Le mod Scene Explorer est nécessaire pour suivre les numéros d’ID d’entité dans la ville." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenLog)), "Ouvrir le journal" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)),
-                    "Ouvre <Logs/ParkingControl.log>, ou le dossier Logs si le fichier n’existe pas encore." },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)), "Ouvre <Logs/ParkingControl.log>, ou le dossier Logs si le fichier n’existe pas encore." },
                 // Dynamic values used by the live status rows.
                 { ParkingStatusLocale.kLoadCity, "Aucune ville chargée." },
                 { ParkingStatusLocale.kCollecting, "Collecte de l’état du stationnement..." },
                 { ParkingStatusLocale.kUnavailable, "L’état du stationnement n’est pas disponible." },
                 { ParkingStatusLocale.kCollectionFailed, "Impossible de collecter l’état du stationnement ; consultez ParkingControl.log." },
-                { ParkingStatusLocale.kCompactEnforcementFormat,
-                    "{0} garées ({1} voies) | {2}/{3} fermées{4}" },
-                { ParkingStatusLocale.kDistrictEnforcementFormat,
-                    "{0} garées ({1}/{2} voies) | {3}/{4} fermées | {5}/{6} quartiers{7}" },
+                { ParkingStatusLocale.kCompactEnforcementFormat, "{0} garées ({1} voies) | {2}/{3} fermées{4}" },
+                { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} garées ({1}/{2} voies) | {3}/{4} fermées | {5}/{6} quartiers{7}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} rue | {1} visibles | {2} intérieur | {3} OC" },
                 { ParkingStatusLocale.kSupplyFormat, "{0} public {1}/{2} | {3} bâtiment {4}/{5}" },
                 { ParkingStatusLocale.kShareFormat, "{0} sur rue {1} | {2} actifs" },

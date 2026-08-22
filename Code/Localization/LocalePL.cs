@@ -60,13 +60,13 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Pokaż instrukcje" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
                     "Pokazuje, jak korzystać z trybu <Według dzielnic>.\n" +
-                    "WYŁ. = ograniczenia parkowania przy ulicy są wyłączone.\n" +
-                    "Całe miasto = odpowiednie miejsca przy ulicy są zablokowane w całym mieście." },
+                    "1.a. WYŁ. = ograniczenia dla całego miasta i dzielnic są wyłączone; zachowanie wraca w większości do ustawień gry.\n" +
+                    "1.b. Przycisk <Zakaz parkowania> dla pojedynczej drogi w panelu Usługi drogowe nadal działa, podobnie jak dodawanie przejścia dla pieszych.\n" +
+                    "2. Całe miasto = blokuje wszystkie odpowiednie publiczne miejsca parkingowe przy ulicach w mieście." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "Pokaż stan" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowStatus)),
                     "<Pokaż poniżej bieżące dane o parkowaniu.>\n" +
-                    "Stan jest zbierany tylko wtedy, gdy menu Opcje jest " +
-                    "otwarte; podczas gry nie działa żaden skan stanu w tle." },
+                    "Stan jest zbierany tylko wtedy, gdy menu Opcje jest otwarte; podczas gry nie działa żaden skan stanu w tle." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.DistrictInstructions)),
                     "<Tryb dzielnic>\n" +
                     "1. Wybierz wyżej <Według dzielnic>.\n" +
@@ -76,11 +76,17 @@ namespace ParkingControl
                     "Poza dzielnicami z zakazem pozostaje zwykłe parkowanie przy ulicy." },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
 
+                // In-city Roads Services tool.
+                { $"Assets.NAME[{ManualNoParkingToolSystem.kToolId}]", "Zakaz parkowania" },
+                { $"Assets.DESCRIPTION[{ManualNoParkingToolSystem.kToolId}]",
+                    "Włącza lub wyłącza parkowanie przy drodze po jednej stronie. Aby zmienić kilka stron, przeciągnij po nich przed puszczeniem lewego przycisku myszy." },
                 // In-city district policy.
                 { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "Zakaz parkowania przy drodze" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]",
-                    "Uniemożliwia samochodom i motocyklom parkowanie przy drodze w tej " +
-                    "dzielnicy. Już zaparkowane pojazdy odjadą, gdy właściciele ponownie ich użyją." },
+                    "Uniemożliwia samochodom i motocyklom parkowanie przy drodze w tej dzielnicy. Już zaparkowane pojazdy odjadą, gdy właściciele ponownie ich użyją." },
+                // Native mouse action hints for the No Parking road tool.
+                { $"Common.ACTION[{ManualNoParkingTooltipSystem.kUpgradeHintId}]", "Dodaj" },
+                { $"Common.ACTION[{ManualNoParkingTooltipSystem.kDowngradeHintId}]", "Usuń" },
 
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Parking uliczny" },
@@ -92,10 +98,8 @@ namespace ParkingControl
                     "- Zajęte pasy w dzielnicach z zakazem / zajęte pasy w całym mieście.\n" +
                     "- Wyłączone pasy / odpowiednie pasy w mieście.\n" +
                     "- Włączone dzielnice / wszystkie dzielnice.\n" +
-                    "<Nowe lub przebudowane drogi> mogą przez chwilę przyjąć kilka aut podczas aktualizacji pasów. " +
-                    "Już zaparkowane auta odjadą, gdy mieszkańcy ich użyją.\n" +
-                    "<SPRAWDŹ> = niektóre wybrane drogi nie są jeszcze zablokowane. Uruchom miasto na chwilę i " +
-                    "sprawdź ponownie. Jeśli <SPRAWDŹ> pozostaje, dołącz raport parkowania przy prośbie o pomoc." },
+                    "<Nowe lub przebudowane drogi> mogą przez chwilę przyjąć kilka aut podczas aktualizacji pasów. Już zaparkowane auta odjadą, gdy mieszkańcy ich użyją.\n" +
+                    "<SPRAWDŹ> = niektóre wybrane drogi nie są jeszcze zablokowane. Uruchom miasto na chwilę i sprawdź ponownie. Jeśli <SPRAWDŹ> pozostaje, dołącz raport parkowania przy prośbie o pomoc." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Użycie ulic" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
                     "Ten wiersz obejmuje <całe miasto>, nie tylko dzielnice.\n" +
@@ -118,8 +122,7 @@ namespace ParkingControl
                     "<OC> = magazyn połączenia zewnętrznego na granicy miasta; niektóre auta przybywających gospodarstw zaczynają tam jako strefa oczekiwania.\n" +
                     "Auta bez przypisanego pasa parkingowego są tu pomijane i pokazywane tylko w raporcie logu na karcie O modzie." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.UpdatedStatus)), "Zaktualizowano" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.UpdatedStatus)),
-                    "Czas ostatniego odświeżenia tych wartości stanu dla całego miasta." },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.UpdatedStatus)), "Czas ostatniego odświeżenia tych wartości stanu dla całego miasta." },
 
                 // About tab.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NameText)), "Nazwa moda" },
@@ -133,20 +136,16 @@ namespace ParkingControl
                     "Jeśli chcesz sprawdzić szczegóły, utwórz później drugi raport w tym samym wczytanym mieście.\n" +
                     "- Porównuje do 20 przykładowych ID encji z różnych kategorii.\n" +
                     "- Pokazuje, czy każdy przykład pozostał, ruszył, zaparkował gdzie indziej czy zniknął.\n" +
-                    "- Mod Scene Explorer jest potrzebny do śledzenia numerów ID encji w mieście."
-                },
+                    "- Mod Scene Explorer jest potrzebny do śledzenia numerów ID encji w mieście." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenLog)), "Otwórz log" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)),
-                    "Otwiera <Logs/ParkingControl.log> albo folder Logs, jeśli plik jeszcze nie istnieje." },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)), "Otwiera <Logs/ParkingControl.log> albo folder Logs, jeśli plik jeszcze nie istnieje." },
                 // Dynamic values used by the live status rows.
                 { ParkingStatusLocale.kLoadCity, "Nie wczytano miasta." },
                 { ParkingStatusLocale.kCollecting, "Trwa zbieranie stanu parkowania..." },
                 { ParkingStatusLocale.kUnavailable, "Stan parkowania jest niedostępny." },
                 { ParkingStatusLocale.kCollectionFailed, "Nie udało się zebrać stanu parkowania; zobacz ParkingControl.log." },
-                { ParkingStatusLocale.kCompactEnforcementFormat,
-                    "{0} zapark. ({1} pasy) | {2}/{3} wył.{4}" },
-                { ParkingStatusLocale.kDistrictEnforcementFormat,
-                    "{0} zapark. ({1}/{2} pasy) | {3}/{4} wył. | {5}/{6} dzielnic{7}" },
+                { ParkingStatusLocale.kCompactEnforcementFormat, "{0} zapark. ({1} pasy) | {2}/{3} wył.{4}" },
+                { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} zapark. ({1}/{2} pasy) | {3}/{4} wył. | {5}/{6} dzielnic{7}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} ulica | {1} widoczne | {2} wewnątrz | {3} OC" },
                 { ParkingStatusLocale.kSupplyFormat, "{0} publ. {1}/{2} | {3} budynki {4}/{5}" },
                 { ParkingStatusLocale.kShareFormat, "{0} na ulicy {1} | {2} aktywne" },
