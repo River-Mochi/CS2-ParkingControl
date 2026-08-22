@@ -1,4 +1,4 @@
-// <copyright file="Mod.cs" company="River-Mochi">
+﻿// <copyright file="Mod.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -21,6 +21,7 @@ namespace ParkingControl
     using Game.Pathfind;
     using Game.SceneFlow;
     using Game.Serialization;
+    using static Game.UI.Menu.AssetUploadPanelUISystem;
 
     public sealed class Mod : IMod
     {
@@ -82,6 +83,7 @@ namespace ParkingControl
                     localizationManager.AddSource("th-TH", new LocaleTH(settings));
                     localizationManager.AddSource("tr-TR", new LocaleTR(settings));
                     localizationManager.AddSource("vi-VN", new LocaleVI(settings));
+                    localizationManager.AddSource("uk-UA", new LocaleUK(settings));
                 }
             }
             catch (Exception ex)
