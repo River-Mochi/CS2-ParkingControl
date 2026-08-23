@@ -1,4 +1,4 @@
-// <copyright file="ParkingStatusSystem.Report.cs" company="River-Mochi">
+﻿// <copyright file="ParkingStatusSystem.Report.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -65,7 +65,7 @@ namespace ParkingControl
                 enforcementDisabledCurbLanes,
                 snapshot.TrackedCurbLanes);
 
-            StringBuilder text = new StringBuilder(8192);
+            StringBuilder text = new(8192);
             text.AppendLine();
             text.AppendLine($"==================== {Mod.ModTag} PARKING REPORT ====================");
             text.AppendLine("-------------------- SUMMARY --------------------");
@@ -276,7 +276,7 @@ namespace ParkingControl
             ParkingReportDetails details)
         {
             List<DistrictParkingStats> districts =
-                new List<DistrictParkingStats>(details.DistrictParking.Values);
+                new(details.DistrictParking.Values);
             districts.Sort((left, right) => string.Compare(
                 GetDistrictName(left.District),
                 GetDistrictName(right.District),

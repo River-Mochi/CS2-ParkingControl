@@ -21,7 +21,6 @@ namespace ParkingControl
     using Game.Pathfind;
     using Game.SceneFlow;
     using Game.Serialization;
-    using static Game.UI.Menu.AssetUploadPanelUISystem;
 
     public sealed class Mod : IMod
     {

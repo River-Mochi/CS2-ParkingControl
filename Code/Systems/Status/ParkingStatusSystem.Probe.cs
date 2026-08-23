@@ -1,4 +1,4 @@
-// <copyright file="ParkingStatusSystem.Probe.cs" company="River-Mochi">
+﻿// <copyright file="ParkingStatusSystem.Probe.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -92,7 +92,7 @@ namespace ParkingControl
             // as soon as the on-demand snapshot is complete.
             int occupiedLaneCapacity = Math.Max(1, m_CurbLaneQuery.CalculateEntityCount());
             using NativeHashSet<Entity> occupiedCurbLanes =
-                new NativeHashSet<Entity>(occupiedLaneCapacity, Allocator.Temp);
+                new(occupiedLaneCapacity, Allocator.Temp);
 
             using (NativeArray<Entity> districts = m_DistrictQuery.ToEntityArray(Allocator.Temp))
             {
@@ -754,37 +754,35 @@ namespace ParkingControl
             ref BufferLookup<Game.Net.SubNet> subNetLookup,
             ref BufferLookup<Game.Objects.SubObject> subObjectLookup)
         {
-            using (NativeArray<Entity> facilities = m_ParkingFacilityQuery.ToEntityArray(Allocator.Temp))
+            using NativeArray<Entity> facilities = m_ParkingFacilityQuery.ToEntityArray(Allocator.Temp);
+            snapshot.OfficialParkingFacilities = facilities.Length;
+            foreach (Entity facility in facilities)
             {
-                snapshot.OfficialParkingFacilities = facilities.Length;
-                foreach (Entity facility in facilities)
+                int laneCount = 0;
+                int capacity = 0;
+                int occupied = 0;
+                int parkingFee = 0;
+                Game.Vehicles.VehicleUtils.GetParkingData(
+                    facility,
+                    ref laneCount,
+                    ref capacity,
+                    ref occupied,
+                    ref parkingFee,
+                    ref parkingLaneLookup,
+                    ref prefabRefLookup,
+                    ref curveLookup,
+                    ref parkingLaneDataLookup,
+                    ref parkedCarLookup,
+                    ref garageLaneLookup,
+                    ref laneObjectLookup,
+                    ref subLaneLookup,
+                    ref subNetLookup,
+                    ref subObjectLookup);
+                snapshot.OfficialParkingOccupied += occupied;
+                if (capacity > 0)
                 {
-                    int laneCount = 0;
-                    int capacity = 0;
-                    int occupied = 0;
-                    int parkingFee = 0;
-                    Game.Vehicles.VehicleUtils.GetParkingData(
-                        facility,
-                        ref laneCount,
-                        ref capacity,
-                        ref occupied,
-                        ref parkingFee,
-                        ref parkingLaneLookup,
-                        ref prefabRefLookup,
-                        ref curveLookup,
-                        ref parkingLaneDataLookup,
-                        ref parkedCarLookup,
-                        ref garageLaneLookup,
-                        ref laneObjectLookup,
-                        ref subLaneLookup,
-                        ref subNetLookup,
-                        ref subObjectLookup);
-                    snapshot.OfficialParkingOccupied += occupied;
-                    if (capacity > 0)
-                    {
-                        // Continuous unslotted lanes have no exact capacity and are omitted.
-                        snapshot.OfficialParkingCapacity += capacity;
-                    }
+                    // Continuous unslotted lanes have no exact capacity and are omitted.
+                    snapshot.OfficialParkingCapacity += capacity;
                 }
             }
         }

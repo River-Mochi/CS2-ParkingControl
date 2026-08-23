@@ -11,7 +11,6 @@
 
 namespace ParkingControl
 {
-    using CS2Shared.RiverMochi;
     using Game;
     using Game.Common;
     using Game.Net;
@@ -264,7 +263,7 @@ namespace ParkingControl
                 ParkingStatusCache.MarkDirty();
 
 #if DEBUG
-                LogUtils.Info(
+                CS2Shared.RiverMochi.LogUtils.Info(
                     $"{Mod.ModTag} [RoadTool] Cleared " +
                     $"{prunedManualSides} stale manual road-side ban(s).");
 #endif
@@ -276,7 +275,7 @@ namespace ParkingControl
                 int ownedLanes =
                     m_ModifiedParkingLanesQuery.CalculateEntityCount();
 
-                LogUtils.Info(
+                CS2Shared.RiverMochi.LogUtils.Info(
                     $"{Mod.ModTag} Street parking reconciled ({scope}): " +
                     $"{result.m_Changed} lane flags changed, " +
                     $"{ownedLanes} lanes owned by Parking Control.");
