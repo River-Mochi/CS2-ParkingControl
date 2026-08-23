@@ -53,7 +53,7 @@ namespace ParkingControl
                     "- As faixas elegíveis são bloqueadas para impedir novos estacionamentos na rua.\n" +
                     "- Carros já estacionados saem naturalmente quando voltam a ser usados.\n" +
                     "- Estacionamentos pagos e vagas normais de edifícios continuam disponíveis.\n" +
-                    "**Rodovias e vias assimétricas de 3 faixas já não permitem estacionamento na rua.**" },
+                    "**Algumas vias já não permitem estacionamento na rua, como rodovias e pequenas vielas de mão dupla.**" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Cidade inteira" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "Por distrito" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "DESLIGADO" },
@@ -91,15 +91,17 @@ namespace ParkingControl
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Estac. na rua" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Estac.> = carros que ainda estão em ruas onde o modo selecionado proíbe estacionar.\n" +
-                    "<Faixas> = trechos de estacionamento junto à via onde esses carros estão. Uma faixa pode conter vários.\n" +
-                    "<Desat.> = faixas de estacionamento na rua fechadas para novos veículos.\n" +
-                    "<Por distrito> mostra:\n" +
+                    "<Estac.> = carros que ainda estão em lados da via marcados como Proibido estacionar pelo Parking Control.\n" +
+                    "<Faixas> = trechos de estacionamento junto à via onde esses carros estão. Um trecho pode conter vários carros.\n" +
+                    "<Desat.> = trechos de faixa de estacionamento fechados para novos veículos. Uma via pode ter vários trechos.\n" +
+                    "<DESLIGADO + Proibido estacionar manual> = DESLIGADO desativa as proibições da cidade inteira e por distrito, mas os lados da via marcados manualmente como Proibido estacionar continuam ativos. Esta linha mostra então apenas essas proibições manuais.\n" +
+                    "<---------------------->\n" +
+                    "Se <Por distrito> estiver selecionado, mostra:\n" +
                     "- Faixas ocupadas em distritos com proibição / faixas ocupadas na cidade inteira.\n" +
                     "- Faixas desativadas / faixas elegíveis da cidade.\n" +
                     "- Distritos ativados / distritos totais.\n" +
-                    "<Vias novas ou reconstruídas> podem aceitar alguns carros por pouco tempo enquanto as faixas são atualizadas. Carros já estacionados saem quando os cidadãos os usam.\n" +
-                    "<VERIFICAR> = algumas vias selecionadas ainda não estão bloqueadas. Deixe a cidade rodar um pouco e verifique novamente. Se <VERIFICAR> continuar, inclua um relatório de estacionamento ao pedir ajuda." },
+                    "<---------------------->\n" +
+                    "Nota: depois de alterar ou reconstruir vias, a contagem de trechos desativados pode levar um pouco de tempo enquanto o CS2 reconstrói as faixas de estacionamento. Deixe a cidade rodar um pouco e reabra as Opções." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Uso das ruas" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
                     "Esta linha inclui a <cidade inteira>, não apenas os distritos.\n" +

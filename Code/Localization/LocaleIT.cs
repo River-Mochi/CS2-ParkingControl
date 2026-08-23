@@ -53,7 +53,7 @@ namespace ParkingControl
                     "- Le corsie idonee vengono bloccate per impedire nuovi parcheggi su strada.\n" +
                     "- Le auto già parcheggiate se ne vanno quando vengono usate di nuovo.\n" +
                     "- I parcheggi a pagamento e quelli normali degli edifici restano utilizzabili.\n" +
-                    "**Autostrade e strade asimmetriche a 3 corsie escludono già il parcheggio su strada.**" },
+                    "**Alcune strade escludono già il parcheggio su strada, come le autostrade e i piccoli vicoli a doppio senso.**" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Intera città" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "Per distretto" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "DISATTIVATO" },
@@ -91,15 +91,17 @@ namespace ParkingControl
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Sosta su strada" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<In sosta> = auto ancora parcheggiate sulle strade dove la modalità scelta vieta il parcheggio.\n" +
-                    "<Corsie> = tratti di parcheggio a bordo strada che contengono quelle auto. Una corsia può contenerne diverse.\n" +
-                    "<Chiuse> = corsie di parcheggio su strada chiuse ai nuovi veicoli.\n" +
-                    "<Per distretto> mostra:\n" +
+                    "<In sosta> = auto ancora parcheggiate sui lati della strada impostati su Divieto di sosta da Parking Control.\n" +
+                    "<Corsie> = tratti di parcheggio a bordo strada che contengono quelle auto. Un tratto può contenere molte auto.\n" +
+                    "<Chiuse> = tratti di corsia di parcheggio chiusi ai nuovi veicoli. Una strada può contenere più tratti.\n" +
+                    "<DISATTIVATO + Divieto di sosta manuale> = DISATTIVATO disattiva i divieti per tutta la città e per distretto, ma i lati della strada impostati manualmente su Divieto di sosta restano attivi. Questa riga mostra quindi solo quei divieti manuali.\n" +
+                    "<---------------------->\n" +
+                    "Se è selezionato <Per distretto>, mostra:\n" +
                     "- Corsie occupate nei distretti con divieto / corsie occupate in tutta la città.\n" +
                     "- Corsie disattivate / corsie idonee della città.\n" +
                     "- Distretti attivati / distretti totali.\n" +
-                    "<Strade nuove o ricostruite> possono accettare brevemente qualche auto mentre le corsie si aggiornano. Le auto già parcheggiate se ne vanno quando i cittadini le usano.\n" +
-                    "<CONTROLLA> = alcune strade selezionate non sono ancora bloccate. Fai andare la città per un po’ e ricontrolla. Se <CONTROLLA> resta, includi un rapporto parcheggi quando chiedi assistenza." },
+                    "<---------------------->\n" +
+                    "Nota: dopo aver modificato o ricostruito strade, il numero di tratti disattivati può richiedere un po' di tempo mentre CS2 ricostruisce le corsie di parcheggio. Fai andare la città per un po' e riapri le Opzioni." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Uso strade" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
                     "Questa riga include <l’intera città>, non solo i distretti.\n" +

@@ -56,7 +56,7 @@ namespace ParkingControl
                     "- Các làn đỗ xe ven đường đủ điều kiện sẽ bị khóa để ngăn xe mới đỗ vào.\n" +
                     "- Xe đang đỗ sẽ rời đi tự nhiên khi chủ xe sử dụng xe lần tiếp theo.\n" +
                     "- Bãi đỗ xe có thu phí và chỗ đỗ xe thông thường của công trình vẫn sử dụng được.\n" +
-                    "**Một số loại đường vốn đã không cho đỗ xe ven đường, như đường cao tốc và đường 3 làn bất đối xứng.**" },
+                    "**Một số loại đường vốn đã không cho đỗ xe ven đường, như đường cao tốc và hẻm nhỏ hai chiều.**" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Toàn thành phố" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "Theo khu vực" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "TẮT" },
@@ -92,15 +92,17 @@ namespace ParkingControl
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Đỗ xe ven đường" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Đang đỗ> = xe vẫn đang đỗ trên các đường bị cấm theo chế độ đã chọn.\n" +
-                    "<Làn> = các đoạn đỗ xe ven đường đang chứa những xe đó. Một làn có thể chứa nhiều xe.\n" +
-                    "<Đã khóa> = các làn đỗ xe ven đường đã đóng với xe mới.\n" +
-                    "<Theo khu vực> hiển thị:\n" +
+                    "<Đang đỗ> = xe vẫn đang đỗ ở các bên đường được Parking Control đặt thành Cấm đỗ xe.\n" +
+                    "<Làn> = các đoạn đỗ xe ven đường đang chứa những xe đó. Một đoạn có thể chứa nhiều xe.\n" +
+                    "<Đã khóa> = các đoạn làn đỗ xe đã đóng với xe mới. Một con đường có thể có nhiều đoạn.\n" +
+                    "<TẮT + Cấm đỗ xe thủ công> = TẮT vô hiệu hóa lệnh cấm toàn thành phố và theo khu vực, nhưng các bên đường được đặt Cấm đỗ xe thủ công vẫn hoạt động. Dòng này khi đó chỉ hiển thị các lệnh cấm thủ công đó.\n" +
+                    "<---------------------->\n" +
+                    "Nếu chọn <Theo khu vực>, dòng này hiển thị:\n" +
                     "- Làn có xe đỗ trong khu vực bị cấm / làn có xe đỗ toàn thành phố.\n" +
                     "- Làn đã khóa / làn đủ điều kiện toàn thành phố.\n" +
                     "- Khu vực đã bật / tổng số khu vực.\n" +
-                    "<Đường mới hoặc vừa xây lại> có thể tạm thời nhận một vài xe khi các làn đang cập nhật. Xe đã đỗ sẽ rời đi tự nhiên khi người dân sử dụng xe.\n" +
-                    "<KIỂM TRA> = một số đường đã chọn chưa bị chặn. Hãy chạy thành phố một lúc rồi kiểm tra lại. Nếu <KIỂM TRA> vẫn còn, hãy kèm báo cáo nhật ký đỗ xe khi yêu cầu trợ giúp." },
+                    "<---------------------->\n" +
+                    "Lưu ý: sau khi thay đổi hoặc xây lại đường, số đoạn đã khóa có thể cần một chút thời gian trong khi CS2 xây lại các làn đỗ xe. Hãy chạy thành phố một lúc rồi mở lại Tùy chọn." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Sử dụng đường" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
                     "Dòng này gồm dữ liệu của <toàn thành phố>, không chỉ các khu vực.\n" +

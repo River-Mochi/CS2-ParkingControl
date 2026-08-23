@@ -53,7 +53,7 @@ namespace ParkingControl
                     "- Geeignete Straßenparkspuren werden für neues Parken gesperrt.\n" +
                     "- Bereits geparkte Autos fahren weg, wenn sie das nächste Mal benutzt werden.\n" +
                     "- Kostenpflichtige Parkplätze und normale Gebäudeparkplätze bleiben nutzbar.\n" +
-                    "**Autobahnen und asymmetrische 3-spurige Straßen erlauben bereits kein Straßenparken.**" },
+                    "**Einige Straßen erlauben bereits kein Straßenparken, z. B. Autobahnen und kleine zweispurige Gassen.**" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Ganze Stadt" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "Nach Bezirk" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "AUS" },
@@ -91,15 +91,17 @@ namespace ParkingControl
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Straßenparken" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Geparkt> = Autos, die noch auf Straßen parken, auf denen der gewählte Modus das Parken verbietet.\n" +
-                    "<Spuren> = Straßenrand-Parkabschnitte mit diesen Autos. Eine Spur kann mehrere Autos aufnehmen.\n" +
-                    "<Gesperrt> = Straßenparkspuren, die kein neues Parken zulassen.\n" +
-                    "<Nach Bezirk> zeigt:\n" +
+                    "<Geparkt> = Autos, die noch auf Straßenseiten parken, die Parking Control auf Parkverbot gesetzt hat.\n" +
+                    "<Spuren> = Parkabschnitte am Straßenrand mit diesen Autos. Ein Abschnitt kann viele Autos aufnehmen.\n" +
+                    "<Gesperrt> = Parkspurabschnitte, die für neues Parken gesperrt sind. Eine Straße kann mehrere Abschnitte enthalten.\n" +
+                    "<AUS + manuelles Parkverbot> = AUS schaltet stadtweite und Bezirksverbote aus, aber manuell auf Parkverbot gesetzte Straßenseiten bleiben aktiv. Diese Zeile zeigt dann nur diese manuellen Verbote.\n" +
+                    "<---------------------->\n" +
+                    "Wenn <Nach Bezirk> gewählt ist, zeigt diese Zeile:\n" +
                     "- Belegte Spuren in Bezirken mit Verbot / belegte Spuren stadtweit.\n" +
-                    "- Deaktivierte Spuren / geeignete Spuren der Stadt.\n" +
+                    "- Gesperrte Spuren / geeignete Spuren der Stadt.\n" +
                     "- Aktivierte Bezirke / gesamte Bezirke.\n" +
-                    "<Neue oder umgebaute Straßen> können kurzzeitig einige Autos aufnehmen, während ihre Spuren aktualisiert werden. Bereits geparkte Autos fahren weg, wenn Bürger sie benutzen.\n" +
-                    "<PRÜFEN> = einige ausgewählte Straßen sind noch nicht blockiert. Lass die Stadt kurz laufen und prüfe erneut. Bleibt <PRÜFEN>, füge bei einer Support-Anfrage einen Parkbericht aus dem Log bei." },
+                    "<---------------------->\n" +
+                    "Hinweis: Nach dem Ändern oder Umbauen von Straßen kann die Zahl der gesperrten Abschnitte etwas Zeit brauchen, während CS2 die Parkspuren neu erstellt. Lass die Stadt kurz laufen und öffne die Optionen erneut." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Straßennutzung" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
                     "Diese Zeile umfasst die <ganze Stadt>, nicht nur Bezirke.\n" +

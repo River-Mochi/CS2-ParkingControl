@@ -56,7 +56,7 @@ namespace ParkingControl
                     "- Uygun yol kenarı park şeritleri yeni araçların park etmesini önlemek için kapatılır.\n" +
                     "- Halihazırda park etmiş araçlar, sahipleri aracı bir sonraki kullandığında doğal olarak ayrılır.\n" +
                     "- Ücretli otoparklar ve binaların normal park alanları kullanılabilir durumda kalır.\n" +
-                    "**Otoyollar ve asimetrik 3 şeritli yollar gibi bazı yollar zaten yol kenarı parkına izin vermez.**" },
+                    "**Otoyollar ve küçük çift yönlü ara sokaklar gibi bazı yollar zaten yol kenarı parkına izin vermez.**" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Tüm Şehir" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "Bölgeye göre" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "KAPALI" },
@@ -94,15 +94,17 @@ namespace ParkingControl
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Yol Kenarı Parkı" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Park etmiş> = seçili mod tarafından yasaklanan yollarda hâlâ park etmiş araçlar.\n" +
-                    "<Şeritler> = bu araçların bulunduğu yol kenarı park bölümleri. Bir şerit birden fazla araç tutabilir.\n" +
-                    "<Devre dışı> = yeni park etmeye kapatılmış yol kenarı park şeritleri.\n" +
-                    "<Bölgeye göre> şunları gösterir:\n" +
+                    "<Park etmiş> = Parking Control tarafından Park Yasak olarak ayarlanmış yol kenarlarında hâlâ park etmiş araçlar.\n" +
+                    "<Şeritler> = bu araçların bulunduğu yol kenarı park bölümleri. Bir bölüm birden fazla araç tutabilir.\n" +
+                    "<Devre dışı> = yeni park etmeye kapalı park şeridi bölümleri. Bir yolda birden fazla bölüm bulunabilir.\n" +
+                    "<KAPALI + elle Park Yasak> = KAPALI şehir geneli ve bölge yasaklarını kapatır, ancak elle Park Yasak olarak ayarlanan yol kenarları etkin kalır. Bu satır yalnızca bu elle ayarlanan yasakları gösterir.\n" +
+                    "<---------------------->\n" +
+                    "<Bölgeye göre> seçiliyse şunları gösterir:\n" +
                     "- Yasaklı bölgelerde dolu şeritler / şehir genelinde dolu şeritler.\n" +
                     "- Devre dışı şeritler / şehirdeki uygun şeritler.\n" +
                     "- Etkin bölgeler / toplam bölgeler.\n" +
-                    "<Yeni veya yeniden yapılan yollar>, şeritleri güncellenirken kısa süreliğine birkaç aracı kabul edebilir. Zaten park etmiş araçlar, vatandaşlar onları kullandığında doğal olarak ayrılır.\n" +
-                    "<KONTROL> = seçili bazı yollar henüz engellenmemiş. Şehri kısa süre çalıştırıp tekrar kontrol edin. <KONTROL> devam ederse yardım isterken park günlüğü raporunu ekleyin." },
+                    "<---------------------->\n" +
+                    "Not: yolları değiştirdikten veya yeniden yaptıktan sonra CS2 park şeritlerini yeniden oluştururken devre dışı bölüm sayısının güncellenmesi biraz zaman alabilir. Şehri kısa süre çalıştırıp Seçenekler'i yeniden açın." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Yol kullanımı" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
                     "Bu satır yalnızca bölgeleri değil <tüm şehri> kapsar.\n" +

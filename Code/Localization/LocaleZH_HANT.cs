@@ -53,7 +53,7 @@ namespace ParkingControl
                     "- 符合條件的停車車道會被停用，以阻止新的路邊停車。\n" +
                     "- 已停放車輛會在下次使用時自然駛離。\n" +
                     "- 收費停車場和一般建築停車位仍可使用。\n" +
-                    "**高速公路和非對稱三車道路本來就不允許路邊停車。**" },
+                    "**有些道路本來就不允許路邊停車，例如高速公路和小型雙向巷道。**" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "全城" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "按行政區" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "關閉" },
@@ -89,15 +89,17 @@ namespace ParkingControl
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "路邊停車" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<已停放> = 仍停在所選模式禁止停車道路上的車輛。\n" +
-                    "<車道> = 停放這些車輛的路邊停車路段。一條車道可停多輛車。\n" +
-                    "<已停用> = 禁止新車輛停車的路邊停車車道。\n" +
-                    "<按行政區>顯示：\n" +
+                    "<已停放> = 仍停在被 Parking Control 設為禁止停車路側的車輛。\n" +
+                    "<車道> = 停放這些車輛的路邊停車路段。一個路段可停多輛車。\n" +
+                    "<已停用> = 禁止新車輛停車的停車車道路段。一條道路可包含多個路段。\n" +
+                    "<關閉 + 手動禁止停車> = 關閉會停用全城和行政區禁停，但手動設為禁止停車的路側仍保持生效。此行隨後只顯示這些手動禁停。\n" +
+                    "<---------------------->\n" +
+                    "如果選擇<按行政區>，則顯示：\n" +
                     "- 禁停行政區內的已占用車道 / 全城已占用車道。\n" +
                     "- 已停用車道 / 全城符合條件的車道。\n" +
                     "- 已啟用行政區 / 行政區總數。\n" +
-                    "<新建或重建道路>在車道更新時可能短暫允許少量車輛停車。已停車輛會在市民使用時自然離開。\n" +
-                    "<檢查> = 某些選定道路尚未被阻止停車。讓城市運行一會兒後再檢查。如果<檢查>仍然存在，求助時請附上停車日誌報告。" },
+                    "<---------------------->\n" +
+                    "注意：更改或重建道路後，CS2 重建停車車道期間，已停用數量可能需要一點時間才能更新。讓城市運行一會兒，然後重新開啟選項。" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "道路使用" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
                     "此列包含<全城>，不只是行政區。\n" +

@@ -53,7 +53,7 @@ namespace ParkingControl
                     "- 対象の駐車車線を無効にして、新たな路上駐車を防ぎます。\n" +
                     "- すでに駐車中の車は、次に使われたとき自然に移動します。\n" +
                     "- 有料駐車場と通常の建物内駐車は引き続き利用できます。\n" +
-                    "**高速道路と非対称3車線道路は、もともと路上駐車できません。**" },
+                    "**高速道路や小型の双方向路地など、一部の道路はもともと路上駐車できません。**" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "市全体" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "地区ごと" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "オフ" },
@@ -89,15 +89,17 @@ namespace ParkingControl
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "路上駐車" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<駐車中> = 選択したモードで駐車禁止になっている道路にまだ駐車している車。\n" +
-                    "<車線> = それらの車がある道路脇の駐車区間。1つの車線に複数台駐車できます。\n" +
-                    "<無効> = 新たな駐車を受け付けない路上駐車車線。\n" +
-                    "<地区ごと>では次を表示します:\n" +
+                    "<駐車中> = Parking Controlで駐車禁止に設定されている道路側にまだ駐車している車。\n" +
+                    "<車線> = それらの車がある道路脇の駐車区間。1区間に複数台駐車できます。\n" +
+                    "<無効> = 新たな駐車を受け付けない駐車車線区間。1本の道路に複数の区間がある場合があります。\n" +
+                    "<オフ + 手動駐車禁止> = オフでは市全体と地区の禁止を解除しますが、手動で駐車禁止にした道路側はそのまま有効です。この行には手動の禁止だけが表示されます。\n" +
+                    "<---------------------->\n" +
+                    "<地区ごと>を選択している場合は次を表示します:\n" +
                     "- 禁止地区内の駐車中車線 / 市全体の駐車中車線。\n" +
                     "- 無効な車線 / 市内の対象車線。\n" +
                     "- 有効な地区 / 全地区。\n" +
-                    "<新設・再建した道路>は、車線の更新中に一時的に数台の車を受け入れることがあります。すでに駐車中の車は、市民が使うと自然に移動します。\n" +
-                    "<確認> = 選択した道路の一部がまだ禁止されていません。少し都市を動かして再確認してください。<確認>が続く場合は、問い合わせ時に駐車ログレポートを添付してください。" },
+                    "<---------------------->\n" +
+                    "注: 道路を変更または再建した後は、CS2が駐車車線を再構築する間、無効数の反映に少し時間がかかる場合があります。都市を少し進めてからオプションを開き直してください。" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "路上利用" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
                     "この行は地区だけでなく<市全体>を集計します。\n" +

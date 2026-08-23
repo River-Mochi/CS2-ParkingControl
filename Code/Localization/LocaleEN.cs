@@ -50,9 +50,9 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "No street parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
                     "Choose:\n" +
-                    "**by District**\n" +
-                    "**Whole City**\n" +
-                    " or **OFF**.\n" +
+                    "<1. by District>\n" +
+                    "<2. Whole City>\n" +
+                    "<3. OFF>\n" +
                     "- Eligible lanes are flagged to prevent new street parking.\n" +
                     "- Existing parked cars leave naturally when they are next used.\n" +
                     "- Fee-based parking lots and normal building parking remain usable.\n" +
@@ -116,8 +116,8 @@ namespace ParkingControl
                     "- Disabled lanes / eligible city lanes.\n" +
                     "- Enabled districts / total districts.\n" +
                     "<---------------------->\n" +
-                    "Note: after changing or rebuilding roads, the disabled count may need a little time while CS2 rebuilds parking lanes. " +
-                    "Run the city briefly and reopen Options."
+                    "**Note: after changing or rebuilding roads, the disabled count may need a little time while CS2 rebuilds parking lanes. " +
+                    "Run the city briefly and reopen Options > Status.**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Street use" },

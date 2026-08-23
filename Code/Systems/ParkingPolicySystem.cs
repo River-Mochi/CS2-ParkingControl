@@ -1,4 +1,4 @@
-// <copyright file="ParkingPolicySystem.cs" company="River-Mochi">
+﻿// <copyright file="ParkingPolicySystem.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -156,10 +156,12 @@ namespace ParkingControl
             // Hiding the row does not clear its runtime district selections.
             m_Prefab.m_Visibility = visibility;
             World.GetExistingSystemManaged<SelectedInfoUISystem>()?.RequestUpdate();
+#if DEBUG
             LogUtils.Info(
                 $"{Mod.ModTag} District policy row " +
                 $"{(visibility == PolicyVisibility.Default ? "shown" : "hidden")} " +
                 $"for scope {Mod.Settings?.Scope}.");
+#endif
         }
     }
 }

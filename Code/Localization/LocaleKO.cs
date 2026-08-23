@@ -53,7 +53,7 @@ namespace ParkingControl
                     "- 대상 주차 차선을 비활성화해 새 노상 주차를 막습니다.\n" +
                     "- 이미 주차된 차량은 다음에 사용될 때 자연스럽게 이동합니다.\n" +
                     "- 유료 주차장과 일반 건물 주차는 계속 이용할 수 있습니다.\n" +
-                    "**고속도로와 비대칭 3차선 도로는 원래 노상 주차를 허용하지 않습니다.**" },
+                    "**고속도로와 작은 양방향 골목길처럼 일부 도로는 원래 노상 주차를 허용하지 않습니다.**" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "도시 전체" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "구역별" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "꺼짐" },
@@ -89,15 +89,17 @@ namespace ParkingControl
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "노상 주차" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<주차됨> = 선택한 모드에서 주차가 금지된 도로에 아직 주차된 차량.\n" +
-                    "<차선> = 해당 차량이 있는 도로변 주차 구간. 한 차선에 여러 차량이 주차될 수 있습니다.\n" +
-                    "<비활성> = 새 차량 주차가 금지된 노상 주차 차선.\n" +
-                    "<구역별>에서는 다음을 표시합니다:\n" +
+                    "<주차됨> = Parking Control에서 주차 금지로 설정한 도로변에 아직 주차된 차량.\n" +
+                    "<차선> = 해당 차량이 있는 도로변 주차 구간. 한 구간에 여러 차량이 주차될 수 있습니다.\n" +
+                    "<비활성> = 새 주차가 차단된 주차 차선 구간. 한 도로에 여러 구간이 있을 수 있습니다.\n" +
+                    "<꺼짐 + 수동 주차 금지> = 꺼짐은 도시 전체 및 구역별 금지를 끄지만, 수동으로 주차 금지로 설정한 도로변은 계속 적용됩니다. 이 행에는 수동 금지만 표시됩니다.\n" +
+                    "<---------------------->\n" +
+                    "<구역별>을 선택하면 다음을 표시합니다:\n" +
                     "- 금지 구역의 점유 차선 / 도시 전체 점유 차선.\n" +
                     "- 비활성 차선 / 도시의 대상 차선.\n" +
                     "- 활성화된 구역 / 전체 구역.\n" +
-                    "<새로 만든 도로나 재건한 도로>는 차선이 업데이트되는 동안 잠깐 몇 대가 주차할 수 있습니다. 이미 주차된 차량은 시민이 사용할 때 자연스럽게 이동합니다.\n" +
-                    "<확인> = 선택한 도로 일부가 아직 차단되지 않았습니다. 도시를 잠시 실행한 뒤 다시 확인하세요. <확인>이 계속되면 도움을 요청할 때 주차 로그 보고서를 포함하세요." },
+                    "<---------------------->\n" +
+                    "참고: 도로를 변경하거나 다시 지은 뒤에는 CS2가 주차 차선을 다시 만드는 동안 비활성 수치가 반영되기까지 잠시 걸릴 수 있습니다. 도시를 잠시 실행한 뒤 옵션을 다시 여세요." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "도로 사용" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
                     "이 행은 구역뿐 아니라 <도시 전체>를 포함합니다.\n" +

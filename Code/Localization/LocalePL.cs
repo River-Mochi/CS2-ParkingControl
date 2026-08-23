@@ -53,7 +53,7 @@ namespace ParkingControl
                     "- Odpowiednie pasy są blokowane, aby uniemożliwić nowe parkowanie przy ulicy.\n" +
                     "- Już zaparkowane auta odjadą, gdy zostaną ponownie użyte.\n" +
                     "- Płatne parkingi i zwykłe miejsca przy budynkach pozostają dostępne.\n" +
-                    "**Autostrady i asymetryczne drogi 3-pasmowe już nie pozwalają na parkowanie przy ulicy.**" },
+                    "**Niektóre drogi już nie pozwalają na parkowanie przy ulicy, np. autostrady i małe dwukierunkowe alejki.**" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Całe miasto" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "Według dzielnic" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "WYŁ." },
@@ -91,15 +91,17 @@ namespace ParkingControl
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Parking uliczny" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Zaparkowane> = auta nadal stojące na ulicach, gdzie wybrany tryb zakazuje parkowania.\n" +
-                    "<Pasy> = odcinki parkingowe przy drodze zajęte przez te auta. Jeden pas może mieścić kilka aut.\n" +
-                    "<Wyłączone> = pasy parkowania przy ulicy zamknięte dla nowych pojazdów.\n" +
-                    "<Według dzielnic> pokazuje:\n" +
+                    "<Zaparkowane> = auta nadal stojące po stronach dróg ustawionych przez Parking Control na Zakaz parkowania.\n" +
+                    "<Pasy> = odcinki parkingowe przy drodze zajęte przez te auta. Jeden odcinek może mieścić wiele aut.\n" +
+                    "<Wyłączone> = odcinki pasów parkingowych zamknięte dla nowych pojazdów. Jedna droga może zawierać kilka odcinków.\n" +
+                    "<WYŁ. + ręczny Zakaz parkowania> = WYŁ. wyłącza zakazy dla całego miasta i dzielnic, ale ręcznie ustawione strony dróg z Zakazem parkowania pozostają aktywne. Ten wiersz pokazuje wtedy tylko te ręczne zakazy.\n" +
+                    "<---------------------->\n" +
+                    "Jeśli wybrano <Według dzielnic>, pokazuje:\n" +
                     "- Zajęte pasy w dzielnicach z zakazem / zajęte pasy w całym mieście.\n" +
                     "- Wyłączone pasy / odpowiednie pasy w mieście.\n" +
                     "- Włączone dzielnice / wszystkie dzielnice.\n" +
-                    "<Nowe lub przebudowane drogi> mogą przez chwilę przyjąć kilka aut podczas aktualizacji pasów. Już zaparkowane auta odjadą, gdy mieszkańcy ich użyją.\n" +
-                    "<SPRAWDŹ> = niektóre wybrane drogi nie są jeszcze zablokowane. Uruchom miasto na chwilę i sprawdź ponownie. Jeśli <SPRAWDŹ> pozostaje, dołącz raport parkowania przy prośbie o pomoc." },
+                    "<---------------------->\n" +
+                    "Uwaga: po zmianie lub przebudowie dróg liczba wyłączonych odcinków może potrzebować chwili, gdy CS2 przebudowuje pasy parkingowe. Uruchom miasto na chwilę i ponownie otwórz Opcje." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Użycie ulic" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
                     "Ten wiersz obejmuje <całe miasto>, nie tylko dzielnice.\n" +

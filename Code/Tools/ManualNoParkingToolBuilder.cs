@@ -1,4 +1,4 @@
-// <copyright file="ManualNoParkingToolBuilder.cs" company="River-Mochi">
+﻿// <copyright file="ManualNoParkingToolBuilder.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -154,10 +154,15 @@ namespace ParkingControl
                 s_Instantiated = true;
 
                 LogUtils.Info(
-                    $"{Mod.ModTag} [RoadTool] No Parking tile created: " +
+                    $"{Mod.ModTag} No Parking road tool ready.");
+
+#if DEBUG
+                LogUtils.Info(
+                    $"{Mod.ModTag} [RoadTool] Tile details: " +
                     $"anchor={donorPrefab.name}, " +
                     $"group={donorUI.m_Group?.name ?? "(null)"}, " +
                     $"priority={priority}.");
+#endif
 
                 return true;
             }
@@ -228,9 +233,11 @@ namespace ParkingControl
                 tools.FindIndex(
                     tool => tool is Game.Tools.NetToolSystem);
 
+#if DEBUG
             LogUtils.Info(
                 $"{Mod.ModTag} [RoadTool] Activation order ready: " +
                 $"NoParking={finalParkingIndex}, NetTool={finalNetIndex}.");
+#endif
         }
 
         private static bool TryResolvePlacement(

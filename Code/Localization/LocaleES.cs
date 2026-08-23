@@ -53,7 +53,7 @@ namespace ParkingControl
                     "- Los carriles aptos se bloquean para impedir nuevos aparcamientos en la calle.\n" +
                     "- Los coches ya aparcados se van cuando vuelven a usarse.\n" +
                     "- Los aparcamientos de pago y el aparcamiento normal de edificios siguen disponibles.\n" +
-                    "**Las autopistas y las carreteras asimétricas de 3 carriles ya excluyen el aparcamiento en la calle.**" },
+                    "**Algunas carreteras ya excluyen el aparcamiento en la calle, como las autopistas y los callejones pequeños de doble sentido.**" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Toda la ciudad" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "Por distrito" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "DESACTIVADO" },
@@ -91,15 +91,17 @@ namespace ParkingControl
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Aparc. en calle" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Aparc.> = coches que siguen aparcados en calles donde el modo elegido prohíbe aparcar.\n" +
-                    "<Carr.> = tramos de aparcamiento junto a la vía que contienen esos coches. Un carril puede contener varios.\n" +
-                    "<Desact.> = carriles de aparcamiento en calle cerrados a nuevos vehículos.\n" +
-                    "<Por distrito> muestra:\n" +
+                    "<Aparc.> = coches que siguen aparcados en lados de la carretera marcados como Prohibido aparcar por Parking Control.\n" +
+                    "<Carr.> = tramos de aparcamiento junto a la vía que contienen esos coches. Un tramo puede contener muchos coches.\n" +
+                    "<Desact.> = tramos de carril de aparcamiento cerrados a nuevos vehículos. Una carretera puede contener varios tramos.\n" +
+                    "<DESACTIVADO + Prohibido aparcar manual> = DESACTIVADO desactiva las prohibiciones de toda la ciudad y por distrito, pero los lados de carretera marcados manualmente como Prohibido aparcar siguen activos. Esta fila muestra entonces solo esas prohibiciones manuales.\n" +
+                    "<---------------------->\n" +
+                    "Si está seleccionado <Por distrito>, muestra:\n" +
                     "- Carriles ocupados en distritos con prohibición / carriles ocupados en toda la ciudad.\n" +
                     "- Carriles desactivados / carriles aptos de la ciudad.\n" +
                     "- Distritos activados / distritos totales.\n" +
-                    "<Carreteras nuevas o reconstruidas> pueden aceptar unos pocos coches mientras se actualizan sus carriles. Los coches ya aparcados se van cuando los ciudadanos los usan.\n" +
-                    "<REVISAR> = algunas calles seleccionadas aún no están bloqueadas. Deja correr la ciudad un poco y vuelve a comprobar. Si sigue <REVISAR>, incluye un informe de aparcamiento al pedir ayuda." },
+                    "<---------------------->\n" +
+                    "Nota: después de cambiar o reconstruir carreteras, el recuento de tramos desactivados puede tardar un poco mientras CS2 reconstruye los carriles de aparcamiento. Deja correr la ciudad un poco y vuelve a abrir Opciones." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Uso de calles" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
                     "Esta fila incluye <toda la ciudad>, no solo los distritos.\n" +

@@ -53,7 +53,7 @@ namespace ParkingControl
                     "- Les voies admissibles sont bloquées pour empêcher tout nouveau stationnement sur rue.\n" +
                     "- Les voitures déjà garées partent naturellement lorsqu’elles sont réutilisées.\n" +
                     "- Les parkings payants et le stationnement normal des bâtiments restent disponibles.\n" +
-                    "**Les autoroutes et les routes asymétriques à 3 voies excluent déjà le stationnement sur rue.**" },
+                    "**Certaines routes excluent déjà le stationnement sur rue, comme les autoroutes et les petites ruelles à double sens.**" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Ville entière" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "Par quartier" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "DÉSACTIVÉ" },
@@ -91,15 +91,17 @@ namespace ParkingControl
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Parking sur rue" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Garées> = voitures encore garées dans les rues où le mode choisi interdit le stationnement.\n" +
-                    "<Voies> = sections de stationnement en bord de route occupées par ces voitures. Une voie peut en contenir plusieurs.\n" +
-                    "<Fermées> = voies de stationnement sur rue fermées aux nouveaux véhicules.\n" +
-                    "<Par quartier> affiche :\n" +
+                    "<Garées> = voitures encore garées sur des côtés de route définis sur Interdiction de stationner par Parking Control.\n" +
+                    "<Voies> = sections de stationnement en bord de route occupées par ces voitures. Une section peut contenir plusieurs voitures.\n" +
+                    "<Fermées> = sections de voie de stationnement fermées aux nouveaux véhicules. Une route peut contenir plusieurs sections.\n" +
+                    "<DÉSACTIVÉ + interdiction manuelle> = DÉSACTIVÉ coupe les interdictions pour toute la ville et par quartier, mais les côtés de route réglés manuellement sur Interdiction de stationner restent actifs. Cette ligne affiche alors uniquement ces interdictions manuelles.\n" +
+                    "<---------------------->\n" +
+                    "Si <Par quartier> est sélectionné, cette ligne affiche :\n" +
                     "- Voies occupées dans les quartiers interdits / voies occupées dans toute la ville.\n" +
                     "- Voies fermées / voies admissibles de la ville.\n" +
                     "- Quartiers activés / quartiers totaux.\n" +
-                    "<Rues nouvelles ou reconstruites> peuvent accepter brièvement quelques voitures pendant la mise à jour de leurs voies. Les voitures déjà garées partent lorsque les citoyens les utilisent.\n" +
-                    "<VÉRIF.> = certaines routes sélectionnées ne sont pas encore bloquées. Faites tourner la ville un moment puis revérifiez. Si <VÉRIF.> reste affiché, joignez un rapport de stationnement quand vous demandez de l’aide." },
+                    "<---------------------->\n" +
+                    "Remarque : après avoir modifié ou reconstruit des routes, le nombre de sections fermées peut demander un peu de temps pendant que CS2 reconstruit les voies de stationnement. Faites tourner la ville un moment puis rouvrez les Options." },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Usage des rues" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
                     "Cette ligne couvre <toute la ville>, pas seulement les quartiers.\n" +
