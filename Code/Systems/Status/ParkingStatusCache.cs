@@ -1,4 +1,4 @@
-// <copyright file="ParkingStatusCache.cs" company="River-Mochi">
+﻿// <copyright file="ParkingStatusCache.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -232,36 +232,42 @@ namespace ParkingControl
 
         private static void PublishSnapshotRows(ParkingSnapshot snapshot)
         {
-            bool districtScope = snapshot.Scope == PCSettings.ParkingScope.ByDistrict;
-            bool offScope = snapshot.Scope == PCSettings.ParkingScope.Off;
+           
+            bool districtScope =
+                snapshot.Scope == PCSettings.ParkingScope.ByDistrict;
 
-            int parked = offScope
-                ? 0
-                : districtScope
+            bool offScope =
+                snapshot.Scope == PCSettings.ParkingScope.Off;
+
+            bool manualOnlyScope =
+                offScope && snapshot.TargetCurbLanes > 0;
+
+            int parked =
+                districtScope || manualOnlyScope
                     ? snapshot.TargetStreetParked
-                    : snapshot.StreetParked;
+                    : offScope
+                        ? 0
+                        : snapshot.StreetParked;
 
-            int occupiedLanes = offScope
-                ? 0
-                : districtScope
+            int occupiedLanes =
+                districtScope || manualOnlyScope
                     ? snapshot.OccupiedTargetCurbLanes
-                    : snapshot.OccupiedCurbLanes;
+                    : offScope
+                        ? 0
+                        : snapshot.OccupiedCurbLanes;
 
-            int disabledLanes = districtScope
-                ? snapshot.DisabledTargetCurbLanes
-                : snapshot.DisabledCurbLanes;
+            int disabledLanes =
+                districtScope || manualOnlyScope
+                    ? snapshot.DisabledTargetCurbLanes
+                    : snapshot.DisabledCurbLanes;
 
-            int targetLanes = districtScope
-                ? snapshot.TargetCurbLanes
-                : snapshot.CurbLanes;
-            string status = ParkingStatusSystem.GetOwnershipStatus(
-                snapshot.RestrictionEnabled,
-                targetLanes,
-                disabledLanes,
-                snapshot.TrackedCurbLanes);
-            string statusSuffix = status == "CHECK"
-                ? " | " + LocalizeOwnershipStatus(status)
-                : string.Empty;
+            int targetLanes =
+                districtScope || manualOnlyScope
+                    ? snapshot.TargetCurbLanes
+                    : snapshot.CurbLanes;
+
+            // Counts stay factual; normal road rebuilds should not look like a mod failure.
+            string statusSuffix = string.Empty;
 
             string enforcement = districtScope
                 ? ParkingStatusLocale.Format(
@@ -311,17 +317,6 @@ namespace ParkingControl
                 CultureInfo.CurrentCulture);
 
             PublishRows(enforcement, share, supply, vehicles, updated);
-        }
-
-        private static string LocalizeOwnershipStatus(string status)
-        {
-            return status switch
-            {
-                "OK" => ParkingStatusLocale.Get(ParkingStatusLocale.kStatusOk, "OK"),
-                "OFF" => ParkingStatusLocale.Get(ParkingStatusLocale.kStatusOff, "OFF"),
-                "CHECK" => ParkingStatusLocale.Get(ParkingStatusLocale.kStatusCheck, "CHECK"),
-                _ => status,
-            };
         }
 
         private static string Format(int value)

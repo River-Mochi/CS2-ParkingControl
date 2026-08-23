@@ -1,4 +1,4 @@
-// <copyright file="Mod.cs" company="River-Mochi">
+﻿// <copyright file="Mod.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -22,9 +22,6 @@ namespace ParkingControl
     using Game.SceneFlow;
     using Game.Serialization;
 
-    /// <summary>
-    /// Parking Control mod entry point.
-    /// </summary>
     public sealed class Mod : IMod
     {
         public const string ModName = "Parking Control";
@@ -39,15 +36,10 @@ namespace ParkingControl
 
         private static bool s_BannerLogged;
 
-        /// <summary>
-        /// Gets the active Options UI settings instance.
-        /// </summary>
         public static PCSettings? Settings { get; private set; }
 
-        /// <inheritdoc/>
         public void OnLoad(UpdateSystem updateSystem)
         {
-            // ShellOpen also configures LogUtils with this mod's exact log file.
             ShellOpen.Configure(s_Log, ModId, ModTag);
             ParkingStatusCache.InvalidateCache();
 
@@ -76,7 +68,6 @@ namespace ParkingControl
                 }
                 else
                 {
-                    // Localization must exist before the Options UI reads setting labels.
                     localizationManager.AddSource("en-US", new LocaleEN(settings));
                     localizationManager.AddSource("fr-FR", new LocaleFR(settings));
                     localizationManager.AddSource("es-ES", new LocaleES(settings));
@@ -88,6 +79,10 @@ namespace ParkingControl
                     localizationManager.AddSource("pt-BR", new LocalePT_BR(settings));
                     localizationManager.AddSource("zh-HANS", new LocaleZH_HANS(settings));
                     localizationManager.AddSource("zh-HANT", new LocaleZH_HANT(settings));
+                    localizationManager.AddSource("th-TH", new LocaleTH(settings));
+                    localizationManager.AddSource("tr-TR", new LocaleTR(settings));
+                    localizationManager.AddSource("vi-VN", new LocaleVI(settings));
+                    localizationManager.AddSource("uk-UA", new LocaleUK(settings));
                 }
             }
             catch (Exception ex)
@@ -100,7 +95,18 @@ namespace ParkingControl
             AssetDatabase.global.LoadSettings(ModId, settings, new PCSettings(this));
             settings.RegisterInOptionsUI();
 
+            ManualNoParkingToolBuilder.Initialize(force: true);
             updateSystem.UpdateAt<ParkingPolicySystem>(SystemUpdatePhase.PrefabUpdate);
+
+            // Roads Services tab No Parking tool.
+            updateSystem.UpdateAt<ManualNoParkingBootstrapSystem>(
+                SystemUpdatePhase.Modification3);
+            updateSystem.UpdateAt<ManualNoParkingToolSystem>(
+                SystemUpdatePhase.ToolUpdate);
+            updateSystem.UpdateAt<ManualNoParkingTooltipSystem>(
+                SystemUpdatePhase.UITooltip);
+            updateSystem.UpdateAt<ManualNoParkingOverlaySystem>(
+                SystemUpdatePhase.Rendering);
 
             updateSystem.UpdateAfter<NoStreetParkingSystem, ParkingLaneDataSystem>(
                 SystemUpdatePhase.ModificationEnd);
@@ -117,11 +123,18 @@ namespace ParkingControl
 
             NoStreetParkingSystem.RequestReconcile();
 
+            string scopeText = settings.Scope switch
+            {
+                PCSettings.ParkingScope.WholeCity => "Whole City",
+                PCSettings.ParkingScope.ByDistrict => "by District",
+                _ => "OFF",
+            };
+
             LogUtils.Info(
-                $"{ModTag} Loaded. No-street-parking scope: {settings.Scope}.");
+                $"{ModTag} Parking Ban dropdown selection: {scopeText}.");
+
         }
 
-        /// <inheritdoc/>
         public void OnDispose()
         {
             Settings?.UnregisterInOptionsUI();

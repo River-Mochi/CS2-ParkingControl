@@ -1,4 +1,4 @@
-// <copyright file="ParkingPolicySystem.cs" company="River-Mochi">
+﻿// <copyright file="ParkingPolicySystem.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -81,8 +81,8 @@ namespace ParkingControl
             if (restored > 0)
             {
                 LogUtils.Info(
-                    $"{Mod.ModTag} Restored {restored} district parking " +
-                    "selection(s) from save markers.");
+                    $"{Mod.ModTag} Restored district Parking Ban in " +
+                    $"{restored} {(restored == 1 ? "district" : "districts")}.");
             }
         }
 
@@ -130,7 +130,8 @@ namespace ParkingControl
             m_Prefab = prefab;
             m_Installed = true;
             NoStreetParkingSystem.RequestReconcile();
-            LogUtils.Info($"{Mod.ModTag} District policy registered as {kPrefabName}.");
+
+            LogUtils.Info($"{Mod.ModTag} Custom District policy ready.");
         }
 
         private static PolicyVisibility GetVisibility()
@@ -156,10 +157,12 @@ namespace ParkingControl
             // Hiding the row does not clear its runtime district selections.
             m_Prefab.m_Visibility = visibility;
             World.GetExistingSystemManaged<SelectedInfoUISystem>()?.RequestUpdate();
+#if DEBUG
             LogUtils.Info(
                 $"{Mod.ModTag} District policy row " +
                 $"{(visibility == PolicyVisibility.Default ? "shown" : "hidden")} " +
                 $"for scope {Mod.Settings?.Scope}.");
+#endif
         }
     }
 }

@@ -3,8 +3,9 @@
 
 import type { ModRegistrar } from "cs2/modding";
 
-// Ensure the custom district icon is emitted to coui://ui-mods/images/.
+// Ensure custom icons are emitted to coui://ui-mods/images/.
 import "../images/PC-DistrictParkingBan.svg";
+import "../images/ForbidParking.svg";
 
 const register: ModRegistrar = () => {
 };

@@ -276,9 +276,12 @@ namespace ParkingControl
         /// </summary>
         public enum ParkingScope
         {
-            WholeCity,
-            ByDistrict,
-            Off,
+            // order here controls the Options dropdown order.
+            // Explicit values preserves existing settings files.
+            ByDistrict = 1,
+            WholeCity = 0,
+            Off = 2,
+
         }
     }
 }

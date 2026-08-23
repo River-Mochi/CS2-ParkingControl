@@ -102,7 +102,9 @@ namespace ParkingControl
         public int Districts;
         public int DistrictsWithPolicy;
 
-        public readonly bool RestrictionEnabled => Scope != PCSettings.ParkingScope.Off;
+        public readonly bool RestrictionEnabled =>
+            Scope != PCSettings.ParkingScope.Off ||
+            TargetCurbLanes > 0;
 
         public readonly int ParkedElsewhere =>
             VisibleOffStreet + HiddenInBuildings + OutsideConnection + UnassignedOrUnknownParked;

@@ -1,4 +1,4 @@
-// <copyright file="ParkingStatusSystem.Probe.cs" company="River-Mochi">
+﻿// <copyright file="ParkingStatusSystem.Probe.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -21,6 +21,9 @@ namespace ParkingControl
         /// </summary>
         private ParkingSnapshot BuildSnapshot(ParkingReportDetails? details)
         {
+            ComponentLookup<ManualRoadParkingBan> manualRoadBanLookup =
+                GetComponentLookup<ManualRoadParkingBan>(true);
+
             ComponentLookup<Game.Prefabs.BicycleData> bicycleDataLookup =
                 GetComponentLookup<Game.Prefabs.BicycleData>(true);
             ComponentLookup<Game.Buildings.Building> buildingLookup =
@@ -89,13 +92,14 @@ namespace ParkingControl
             // as soon as the on-demand snapshot is complete.
             int occupiedLaneCapacity = Math.Max(1, m_CurbLaneQuery.CalculateEntityCount());
             using NativeHashSet<Entity> occupiedCurbLanes =
-                new NativeHashSet<Entity>(occupiedLaneCapacity, Allocator.Temp);
+                new(occupiedLaneCapacity, Allocator.Temp);
 
             using (NativeArray<Entity> districts = m_DistrictQuery.ToEntityArray(Allocator.Temp))
             {
                 snapshot.Districts = districts.Length;
                 foreach (Entity district in districts)
                 {
+                    // no manual lookup if PolicyActive
                     bool policyActive = NoStreetParkingSystem.IsDistrictPolicyActive(
                         district,
                         policyEntity,
@@ -187,6 +191,7 @@ namespace ParkingControl
                         districtStats.EligibleLanes++;
                     }
 
+                    // Yes, manual lookup
                     bool isTarget = NoStreetParkingSystem.IsRestrictionTarget(
                         lane,
                         parkingLane,
@@ -194,6 +199,7 @@ namespace ParkingControl
                         policyEntity,
                         ownerLookup,
                         borderDistrictLookup,
+                        manualRoadBanLookup,
                         policyLookup);
                     if (isTarget)
                     {
@@ -407,14 +413,17 @@ namespace ParkingControl
                             snapshot.ParkedVehicles++;
                             snapshot.StreetParked++;
                             Game.Net.ParkingLane streetLane = parkingLaneLookup[parkedLane];
-                            bool restrictionTarget = NoStreetParkingSystem.IsRestrictionTarget(
-                                parkedLane,
-                                streetLane,
-                                scope,
-                                policyEntity,
-                                ownerLookup,
-                                borderDistrictLookup,
-                                policyLookup);
+
+                        bool restrictionTarget = NoStreetParkingSystem.IsRestrictionTarget(
+                            parkedLane,
+                            streetLane,
+                            scope,
+                            policyEntity,
+                            ownerLookup,
+                            borderDistrictLookup,
+                            manualRoadBanLookup,
+                            policyLookup);
+
                             bool firstParkedCarOnLane = occupiedCurbLanes.Add(parkedLane);
                             if (firstParkedCarOnLane)
                             {
@@ -745,37 +754,35 @@ namespace ParkingControl
             ref BufferLookup<Game.Net.SubNet> subNetLookup,
             ref BufferLookup<Game.Objects.SubObject> subObjectLookup)
         {
-            using (NativeArray<Entity> facilities = m_ParkingFacilityQuery.ToEntityArray(Allocator.Temp))
+            using NativeArray<Entity> facilities = m_ParkingFacilityQuery.ToEntityArray(Allocator.Temp);
+            snapshot.OfficialParkingFacilities = facilities.Length;
+            foreach (Entity facility in facilities)
             {
-                snapshot.OfficialParkingFacilities = facilities.Length;
-                foreach (Entity facility in facilities)
+                int laneCount = 0;
+                int capacity = 0;
+                int occupied = 0;
+                int parkingFee = 0;
+                Game.Vehicles.VehicleUtils.GetParkingData(
+                    facility,
+                    ref laneCount,
+                    ref capacity,
+                    ref occupied,
+                    ref parkingFee,
+                    ref parkingLaneLookup,
+                    ref prefabRefLookup,
+                    ref curveLookup,
+                    ref parkingLaneDataLookup,
+                    ref parkedCarLookup,
+                    ref garageLaneLookup,
+                    ref laneObjectLookup,
+                    ref subLaneLookup,
+                    ref subNetLookup,
+                    ref subObjectLookup);
+                snapshot.OfficialParkingOccupied += occupied;
+                if (capacity > 0)
                 {
-                    int laneCount = 0;
-                    int capacity = 0;
-                    int occupied = 0;
-                    int parkingFee = 0;
-                    Game.Vehicles.VehicleUtils.GetParkingData(
-                        facility,
-                        ref laneCount,
-                        ref capacity,
-                        ref occupied,
-                        ref parkingFee,
-                        ref parkingLaneLookup,
-                        ref prefabRefLookup,
-                        ref curveLookup,
-                        ref parkingLaneDataLookup,
-                        ref parkedCarLookup,
-                        ref garageLaneLookup,
-                        ref laneObjectLookup,
-                        ref subLaneLookup,
-                        ref subNetLookup,
-                        ref subObjectLookup);
-                    snapshot.OfficialParkingOccupied += occupied;
-                    if (capacity > 0)
-                    {
-                        // Continuous unslotted lanes have no exact capacity and are omitted.
-                        snapshot.OfficialParkingCapacity += capacity;
-                    }
+                    // Continuous unslotted lanes have no exact capacity and are omitted.
+                    snapshot.OfficialParkingCapacity += capacity;
                 }
             }
         }

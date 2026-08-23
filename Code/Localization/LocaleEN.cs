@@ -1,4 +1,4 @@
-// <copyright file="LocaleEN.cs" company="River-Mochi">
+﻿// <copyright file="LocaleEN.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -49,11 +49,14 @@ namespace ParkingControl
                 // Street-parking controls.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "No street parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
-                    "Choose **Whole City**, **by District**, or **OFF**.\n" +
+                    "Choose:\n" +
+                    "<1. by District>\n" +
+                    "<2. Whole City>\n" +
+                    "<3. OFF>\n" +
                     "- Eligible lanes are flagged to prevent new street parking.\n" +
                     "- Existing parked cars leave naturally when they are next used.\n" +
                     "- Fee-based parking lots and normal building parking remain usable.\n" +
-                    "**Some roads already exclude street parking, like Highways and asymmetric 3-lane roads.**"
+                    "**Some roads already exclude street parking, like Highways and small 2-way alley roads.**"
                 },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Whole City" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "by District" },
@@ -61,8 +64,11 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Show instructions" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
                     "Shows how to use <by District> mode.\n" +
-                    "OFF = street-parking restrictions are disabled.\n" +
-                    "Whole City = eligible street parking is blocked citywide." },
+                    "1.a. OFF = citywide and district restrictions are disabled; mostly back to game defaults.\n" +
+                    "1.b. Single-road <No Parking> button in the Road Services panel still applies just like applying a crosswalk.\n" +
+                    "2. Whole City = blocks all city eligible street public parking."
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "Show status" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowStatus)),
                     "<Show current parking totals below.>\n" +
@@ -77,26 +83,43 @@ namespace ParkingControl
                     "Roads outside banned parking districts keep normal street parking." },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
 
+                // In-city Roads Services tool.
+                { $"Assets.NAME[{ManualNoParkingToolSystem.kToolId}]", "No Parking" },
+                { $"Assets.DESCRIPTION[{ManualNoParkingToolSystem.kToolId}]",
+                    "Toggle roadside parking on one side of a road. For multiple sides, drag over them before releasing the Left Mouse button." },
                 // In-city district policy.
                 { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "Roadside Parking Ban" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]",
                     "Prevents cars and motorcycles from parking on roadsides in this district. " +
-                    "Existing parked vehicles leave when their owners next use them." },
+                    "Existing parked vehicles leave when their owners next use them." 
+                },
+                // Native mouse action hints for the No Parking road tool.
+                {
+                    $"Common.ACTION[{ManualNoParkingTooltipSystem.kUpgradeHintId}]",
+                    "Upgrade"
+                },
+                {
+                    $"Common.ACTION[{ManualNoParkingTooltipSystem.kDowngradeHintId}]",
+                    "Downgrade"
+                },
 
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Street Parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Parked> = cars still parked on streets banned by the selected mode.\n" +
-                    "<Lanes> = roadside parking sections holding those cars. One lane can hold many.\n" +
-                    "<Disabled> = street-parking lanes closed to new parking.\n" +
-                    "<by District> shows:\n" +
+                    "<Parked> = cars still parked on road sides currently set to No Parking by Parking Control.\n" +
+                    "<Lanes> = roadside parking sections holding those cars. One section can hold many cars.\n" +
+                    "<Disabled> = parking-lane sections closed to new parking. One road can contain several sections.\n" +
+                    "<OFF + manual No Parking> = OFF turns off citywide and District bans, but manually set No Parking road sides stay active. This row then shows only those manual bans.\n" +
+                    "<---------------------->\n" +
+                    "If <by District> is selected then this shows:\n" +
                     "- Occupied lanes in banned districts / occupied lanes citywide.\n" +
                     "- Disabled lanes / eligible city lanes.\n" +
                     "- Enabled districts / total districts.\n" +
-                    "<New or rebuilt roads> may briefly accept a few cars while their lanes update. " +
-                    "Cars already parked leave naturally when citizens use them.\n" +
-                    "<CHECK> = some selected roads are not blocked yet. Run the city briefly and check again. " +
-                    "If <CHECK> remains, include a parking log report when asking for help." },
+                    "<---------------------->\n" +
+                    "**Note: after changing or rebuilding roads, the disabled count may need a little time while CS2 rebuilds parking lanes. " +
+                    "Run the city briefly and reopen Options > Status.**"
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Street use" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
                     "This row includes the <whole city>, not just districts.\n" +
