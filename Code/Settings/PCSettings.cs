@@ -148,7 +148,7 @@ namespace ParkingControl
 #endif
 
         /// <summary>
-        /// Opens River-Mochi's Cities: Skylines II Paradox Mods page.
+        /// Opens River-Mochi's Paradox Mods page.
         /// </summary>
         [SettingsUIButtonGroup(kAboutLinksRow)]
         [SettingsUIButton]
@@ -277,11 +277,10 @@ namespace ParkingControl
         public enum ParkingScope
         {
             // order here controls the Options dropdown order.
-            // Explicit values preserves existing settings files.
+            // Explicit values preserve existing settings files.
             ByDistrict = 1,
             WholeCity = 0,
             Off = 2,
-
         }
     }
 }
