@@ -81,8 +81,8 @@ namespace ParkingControl
             if (restored > 0)
             {
                 LogUtils.Info(
-                    $"{Mod.ModTag} Restored {restored} district parking " +
-                    "selection(s) from save markers.");
+                    $"{Mod.ModTag} Restored district Parking Ban in " +
+                    $"{restored} {(restored == 1 ? "district" : "districts")}.");
             }
         }
 
@@ -130,7 +130,8 @@ namespace ParkingControl
             m_Prefab = prefab;
             m_Installed = true;
             NoStreetParkingSystem.RequestReconcile();
-            LogUtils.Info($"{Mod.ModTag} District policy registered as {kPrefabName}.");
+
+            LogUtils.Info($"{Mod.ModTag} Custom District policy ready.");
         }
 
         private static PolicyVisibility GetVisibility()
