@@ -1,10 +1,10 @@
-<Publish>
+﻿<Publish>
 <!--Id must be set in order to update existed mod. it is not required for publishing mod for the first time-->
-<ModId Value="" />
+<ModId Value="155806" />
 <!--Name of the mod to display to players-->
 <DisplayName Value="Parking Control" />
 <!--Short description of the mod-->
-<ShortDescription Value="No Street Parking without tedious changes of each road. Pick Citywide or per District." />
+<ShortDescription Value="Ban public street parking without tedious work. Pick per District or CityWide, or use the single road button even for 1-way alleys." />
 <!--Long description of the mod. Single line or multi line. Supports minimal markdown subset-->
 <!--LongDescription Value="No Street Parking" /-->
 <LongDescription>
@@ -21,15 +21,15 @@ Want clean curbs without changing your road design?
 - ✅**by District** - enable **Roadside Parking Ban** in the District Policies panel.
 - ✅**Whole City** - prevent street parking citywide.
 - ✅**OFF** - turn off citywide and District bans. Manually set "No Parking" roads stay active.
-- NEW ✅**Manual roads** - set No Parking on single road sides. Left-click to add it, or hold Left Mouse and drag across multiple roads. Right-click to remove it.
+- NEW ✅**Manual individual roads** - use new No Parking button 🚫 (near crosswalks). Left-click to add the ban, or hold Left Mouse and drag across multiple roads. Right-click to remove it.
 
 - 🚙 Parking lots and building parking stay working normally.
-- 🗒️ Optional Status rows show where cars are parking and how much parking is being used; better details than the game's info view.
+- 🗒️ Optional Status rows shows how much parking is being used; better details than the game's info view.
 
 ## Good to know
 - Make sure your city has enough off-street parking. When parking is unavailable, the game may use outside-connection storage/staging as it does in vanilla now.
 - Some vanilla roads already don't allow parking, e.g. 3-lane small roads, or 2-way alley.
-- Optional: **Mochi's Hover Colors** by River-mochi is supported. The No Parking road tool follows MHC's **Bulldozer + Roads** color setting, just like normal road tools.
+- Optional: **Mochi's Hover Colors** by River-mochi is supported. The "No Parking" manual road tool follows MHC's **Bulldozer + Roads** colors, just like normal road tools.
 
 ## Support and Feedback
 - Support by clicking Like 👍 (top right). It helps people know about the mod.
@@ -37,10 +37,10 @@ Want clean curbs without changing your road design?
 
 **Planned:** centralized parking-fee controls.
 
-## Credit and Thanks
+## Credits and Thanks
 
 - River-mochi - mod author
-- Dataknase, Maintyper, DragonFire_DFS - testing
+- Dataknase, Maintyper, DragonFire - testing
 
 - 12+ Languages: Hello, Hallo, Hola, Bonjour, Ciao, こんにちは, 안녕하세요, Cześć, Olá, สวัสดี, Merhaba, Xin chào, 你好, 你好, Привіт
 
@@ -65,7 +65,7 @@ tags: Disable road parking, clear roadside, no cars
 <!--Tag, can be set multiple times-->
 <Tag Value="Code Mod" />
 <!--Link to the forum post where the mod can be discussed-->
-<ForumLink Value="" />
+<ForumLink Value="https://forum.paradoxplaza.com/forum/threads/parking-control.1938802/" />
 <!--Version of the mod-->
 <ModVersion Value="0.5.0" />
 <!--Recommended version of the base game to use the mod-->
