@@ -1,4 +1,4 @@
-// <copyright file="ParkingStatusCache.cs" company="River-Mochi">
+﻿// <copyright file="ParkingStatusCache.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -265,14 +265,9 @@ namespace ParkingControl
                 districtScope || manualOnlyScope
                     ? snapshot.TargetCurbLanes
                     : snapshot.CurbLanes;
-            string status = ParkingStatusSystem.GetOwnershipStatus(
-                snapshot.RestrictionEnabled,
-                targetLanes,
-                disabledLanes,
-                snapshot.TrackedCurbLanes);
-            string statusSuffix = status == "CHECK"
-                ? " | " + LocalizeOwnershipStatus(status)
-                : string.Empty;
+
+            // Counts stay factual; normal road rebuilds should not look like a mod failure.
+            string statusSuffix = string.Empty;
 
             string enforcement = districtScope
                 ? ParkingStatusLocale.Format(
@@ -322,17 +317,6 @@ namespace ParkingControl
                 CultureInfo.CurrentCulture);
 
             PublishRows(enforcement, share, supply, vehicles, updated);
-        }
-
-        private static string LocalizeOwnershipStatus(string status)
-        {
-            return status switch
-            {
-                "OK" => ParkingStatusLocale.Get(ParkingStatusLocale.kStatusOk, "OK"),
-                "OFF" => ParkingStatusLocale.Get(ParkingStatusLocale.kStatusOff, "OFF"),
-                "CHECK" => ParkingStatusLocale.Get(ParkingStatusLocale.kStatusCheck, "CHECK"),
-                _ => status,
-            };
         }
 
         private static string Format(int value)

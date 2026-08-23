@@ -108,7 +108,7 @@ namespace ParkingControl
                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "<Parked> = cars still parked on road sides currently set to No Parking (by this mod).\n" +
                     "<Lanes> = roadside parking sections holding those cars. One lane can hold many.\n" +
-                    "<Disabled> = targeted street-parking sections closed to new parking.\n" +
+                    "<Disabled> = parking lane sections closed to new parking. One road can contain several sections.\n" +
                     "<OFF + manual No Parking> = OFF disables citywide and District bans, but road sides manually set to No Parking stay active. This row then shows only those manual bans.\n" +
                     "This is intentional; allows players to still manually use the No Parking button inside the city to change single roads even if District Policy or whole city ban is off.\n" +
                     "<---------------------->\n" +
@@ -119,8 +119,7 @@ namespace ParkingControl
                      "<---------------------->\n" +
                     "Note: <New or rebuilt roads> may briefly accept a few cars while their lanes update. " +
                     "Cars already parked leave naturally when citizens use them.\n" +
-                    "<CHECK> = some targeted road sides are not blocked yet. Run the city briefly and check again. " +
-                    "If <CHECK> remains, include a parking log report when asking for help."
+                    "<CHECK> = some targeted road sides are not blocked yet. Run the city briefly and check again. "
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Street use" },

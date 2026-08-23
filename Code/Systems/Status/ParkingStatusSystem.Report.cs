@@ -1,4 +1,4 @@
-// <copyright file="ParkingStatusSystem.Report.cs" company="River-Mochi">
+﻿// <copyright file="ParkingStatusSystem.Report.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -103,27 +103,48 @@ namespace ParkingControl
         /// </summary>
         private void WriteReport(ParkingSnapshot snapshot, ParkingReportDetails details)
         {
-            int otherDisabledCurbLanes = Math.Max(
-                0,
-                snapshot.DisabledCurbLanes - snapshot.TrackedCurbLanes);
+           int otherDisabledCurbLanes = Math.Max(
+            0,
+            snapshot.DisabledCurbLanes - snapshot.TrackedCurbLanes);
+
+            bool districtScope =
+                snapshot.Scope == PCSettings.ParkingScope.ByDistrict;
+
+            bool offScope =
+                snapshot.Scope == PCSettings.ParkingScope.Off;
+
+            bool manualOnlyScope =
+                offScope && snapshot.TargetCurbLanes > 0;
+
+            bool useTargetSubset =
+                districtScope || manualOnlyScope;
+
+            int enforcementCurbLanes =
+                useTargetSubset
+                    ? snapshot.TargetCurbLanes
+                    : offScope
+                        ? 0
+                        : snapshot.CurbLanes;
+
+            int enforcementDisabledCurbLanes =
+                useTargetSubset
+                    ? snapshot.DisabledTargetCurbLanes
+                    : offScope
+                        ? 0
+                        : snapshot.DisabledCurbLanes;
+
             string enforcementStatus = GetOwnershipStatus(
                 snapshot.RestrictionEnabled,
-                snapshot.Scope == PCSettings.ParkingScope.ByDistrict
-                    ? snapshot.TargetCurbLanes
-                    : snapshot.CurbLanes,
-                snapshot.Scope == PCSettings.ParkingScope.ByDistrict
-                    ? snapshot.DisabledTargetCurbLanes
-                    : snapshot.DisabledCurbLanes,
+                enforcementCurbLanes,
+                enforcementDisabledCurbLanes,
                 snapshot.TrackedCurbLanes);
-            string enforcementDetails = GetOwnershipDetails(
-                snapshot.RestrictionEnabled,
-                snapshot.Scope == PCSettings.ParkingScope.ByDistrict
-                    ? snapshot.TargetCurbLanes
-                    : snapshot.CurbLanes,
-                snapshot.Scope == PCSettings.ParkingScope.ByDistrict
-                    ? snapshot.DisabledTargetCurbLanes
-                    : snapshot.DisabledCurbLanes,
-                snapshot.TrackedCurbLanes);
+
+        string enforcementDetails = GetOwnershipDetails(
+            snapshot.RestrictionEnabled,
+            enforcementCurbLanes,
+            enforcementDisabledCurbLanes,
+            snapshot.TrackedCurbLanes);
+         
             StringBuilder text = new StringBuilder(8192);
             text.AppendLine();
             text.AppendLine($"==================== {Mod.ModTag} PARKING REPORT ====================");
@@ -347,11 +368,15 @@ namespace ParkingControl
             {
                 bool effective = snapshot.Scope == PCSettings.ParkingScope.WholeCity ||
                     (snapshot.Scope == PCSettings.ParkingScope.ByDistrict && district.PolicyActive);
-                string status = GetOwnershipStatus(
-                    effective,
-                    district.EligibleLanes,
-                    district.DisabledLanes,
-                    district.TrackedLanes);
+
+                string status = effective
+                    ? GetOwnershipStatus(
+                        restrictionEnabled: true,
+                        district.EligibleLanes,
+                        district.DisabledLanes,
+                        district.TrackedLanes)
+                    : "OFF";
+
                 string change = "<first>";
                 if (m_HasPreviousReport)
                 {
