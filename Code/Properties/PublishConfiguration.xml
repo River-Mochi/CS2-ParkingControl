@@ -71,7 +71,7 @@ tags: Disable road parking, clear roadside, no cars
 <!--Link to the forum post where the mod can be discussed-->
 <ForumLink Value="https://forum.paradoxplaza.com/forum/threads/parking-control.1938802/" />
 <!--Version of the mod-->
-<ModVersion Value="0.5.1" />
+<ModVersion Value="0.5.2" />
 <!--Recommended version of the base game to use the mod-->
 <GameVersion Value="1.6.*" />
 <!--Dependency for the mod, can be set multiple times-->
