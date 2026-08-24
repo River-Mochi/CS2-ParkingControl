@@ -64,11 +64,13 @@ namespace ParkingControl
             {
                 for (int index = 0; index < AvailableSideCurves.Length; index++)
                 {
+                    // blue applied
                     OverlayBuffer.DrawCurve(
                         AvailableOutlineColor,
                         AvailableFillColor,
                         kSideOutlineWidth,
-                        (OverlayRenderSystem.StyleFlags)0,
+
+                       OverlayRenderSystem.StyleFlags.Projected,
                         AvailableSideCurves[index],
                         kSidePreviewWidth,
                         new float2(0.25f, 0.25f));
@@ -76,11 +78,13 @@ namespace ParkingControl
 
                 for (int index = 0; index < AppliedSideCurves.Length; index++)
                 {
+                    // red applied
                     OverlayBuffer.DrawCurve(
                         AppliedOutlineColor,
                         AppliedFillColor,
                         kSideOutlineWidth,
-                        (OverlayRenderSystem.StyleFlags)0,
+
+                        OverlayRenderSystem.StyleFlags.Projected,
                         AppliedSideCurves[index],
                         kSidePreviewWidth,
                         new float2(0.25f, 0.25f));
