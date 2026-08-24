@@ -13,9 +13,9 @@ namespace ParkingControl
     using CS2Shared.RiverMochi;
     using Game;
     using Game.Common;
+    using Game.Tools;
     using Unity.Collections;
     using Unity.Entities;
-    using Temp = Game.Tools.Temp;
 
     /// <summary>
     /// Migrates native policy selections to serializable district markers before prefab collection.

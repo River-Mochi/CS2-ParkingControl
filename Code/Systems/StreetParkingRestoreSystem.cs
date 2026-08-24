@@ -12,10 +12,9 @@ namespace ParkingControl
 {
     using Game;
     using Game.Common;
+    using Game.Net;
     using Unity.Collections;
     using Unity.Entities;
-    using ParkingLane = Game.Net.ParkingLane;
-    using ParkingLaneFlags = Game.Net.ParkingLaneFlags;
 
     /// <summary>
     /// Restores the live vanilla lane flags from the runtime-only ownership markers.

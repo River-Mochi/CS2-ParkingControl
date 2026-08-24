@@ -12,9 +12,9 @@ namespace ParkingControl
 {
     using Game;
     using Game.Common;
+    using Game.Tools;
     using Unity.Collections;
     using Unity.Entities;
-    using Temp = Game.Tools.Temp;
 
     /// <summary>
     /// Restores runtime policy-buffer entries after loading and after save serialization.
