@@ -64,7 +64,7 @@ namespace ParkingControl
             {
                 for (int index = 0; index < AvailableSideCurves.Length; index++)
                 {
-                    // blue applied
+                    // blue: allows parking, manual no parking not applied yet.
                     OverlayBuffer.DrawCurve(
                         AvailableOutlineColor,
                         AvailableFillColor,
@@ -78,7 +78,7 @@ namespace ParkingControl
 
                 for (int index = 0; index < AppliedSideCurves.Length; index++)
                 {
-                    // red applied
+                    // red: no parking already applied.
                     OverlayBuffer.DrawCurve(
                         AppliedOutlineColor,
                         AppliedFillColor,
