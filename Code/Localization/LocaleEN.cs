@@ -114,10 +114,10 @@ namespace ParkingControl
                     "If <by District> is selected then this shows:\n" +
                     "- Occupied lanes in banned districts / occupied lanes citywide.\n" +
                     "- Disabled lanes / eligible city lanes.\n" +
-                    "- Enabled districts / total districts.\n" +
+                    "- Enabled districts / total districts.\n\n" +
                     "<---------------------->\n" +
                     "**Note: after changing or rebuilding roads, the disabled count may need a little time while CS2 rebuilds parking lanes. " +
-                    "Run the city briefly and reopen Options > Status.**"
+                    "Run the city briefly and reopen Options > Status. If CHECK remains, use About tab > [Write report] and send Logs/ParkingControl.log and list of mods for support.**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Street use" },
@@ -154,7 +154,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VersionText)), "Version" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenParadox)), "Paradox Mods link" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenParadox)), "Open the author's page on Paradox Mods." },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ReportToLog)), "Write parking report" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ReportToLog)), "Write Report" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ReportToLog)),
                     "Write street-parking and related details to \n" +
                     "<Logs/ParkingControl.log>.\n" +

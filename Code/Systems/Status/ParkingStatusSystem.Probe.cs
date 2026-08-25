@@ -152,7 +152,7 @@ namespace ParkingControl
                             if (buildingLaneData.m_SlotInterval != 0f &&
                                 curveLookup.TryGetComponent(lane, out Game.Net.Curve buildingCurve))
                             {
-                                // Visible lots use fixed geometry, so do not infer extra spaces.
+                                // Visible lots use fixed geometry, don't infer extra spaces.
                                 snapshot.BuildingParkingLanes++;
                                 snapshot.BuildingFixedSlotLanes++;
                                 snapshot.BuildingParkingCapacity += Math.Max(
@@ -192,23 +192,38 @@ namespace ParkingControl
                     }
 
                     // Yes, manual lookup
-                    bool isTarget = NoStreetParkingSystem.IsRestrictionTarget(
-                        lane,
-                        parkingLane,
-                        scope,
-                        policyEntity,
-                        ownerLookup,
-                        borderDistrictLookup,
-                        manualRoadBanLookup,
-                        policyLookup);
+                    bool manualTarget =
+                        NoStreetParkingSystem.IsManualRestrictionTarget(
+                            lane,
+                            parkingLane,
+                            ownerLookup,
+                            manualRoadBanLookup);
+
+                    bool scopeTarget =
+                        NoStreetParkingSystem.IsScopeRestrictionTarget(
+                            lane,
+                            parkingLane,
+                            scope,
+                            policyEntity,
+                            ownerLookup,
+                            borderDistrictLookup,
+                            policyLookup);
+
+                    bool isTarget = manualTarget || scopeTarget;
+
                     if (isTarget)
                     {
                         snapshot.TargetCurbLanes++;
                     }
 
-                    if ((parkingLane.m_Flags & Game.Net.ParkingLaneFlags.ParkingDisabled) != 0)
+                    bool parkingDisabled =
+                        (parkingLane.m_Flags &
+                            Game.Net.ParkingLaneFlags.ParkingDisabled) != 0;
+
+                    if (parkingDisabled)
                     {
                         snapshot.DisabledCurbLanes++;
+
                         if (districtStats != null)
                         {
                             districtStats.DisabledLanes++;
@@ -220,14 +235,57 @@ namespace ParkingControl
                         }
                     }
 
-                    if (stateLookup.HasComponent(lane))
+                    bool streetParkingState =
+                        stateLookup.HasComponent(lane);
+
+                    if (streetParkingState)
                     {
                         snapshot.TrackedCurbLanes++;
+
                         if (districtStats != null)
                         {
                             districtStats.TrackedLanes++;
                         }
                     }
+
+                    if (details != null &&
+                        isTarget &&
+                        !parkingDisabled)
+                    {
+                        details.UnresolvedTargetLaneCount++;
+
+                        if (details.UnresolvedTargetLanes.Count <
+                            kUnresolvedLaneSampleLimit)
+                        {
+                            Entity road = ownerLookup[lane].m_Owner;
+
+                            Entity district =
+                                NoStreetParkingSystem.GetLaneDistrict(
+                                    lane,
+                                    parkingLane,
+                                    ownerLookup,
+                                    borderDistrictLookup);
+
+                            bool rightSide =
+                                (parkingLane.m_Flags &
+                                    Game.Net.ParkingLaneFlags.RightSide) != 0;
+
+                            details.UnresolvedTargetLanes.Add(
+                                new UnresolvedTargetLane(
+                                    lane,
+                                    road,
+                                    district,
+                                    rightSide,
+                                    manualTarget,
+                                    scopeTarget,
+                                    parkingDisabled,
+                                    streetParkingState));
+                        }
+                    }
+
+
+
+
 
                     Entity prefab = prefabRefLookup[lane].m_Prefab;
                     if (parkingLaneDataLookup.TryGetComponent(
@@ -603,6 +661,12 @@ namespace ParkingControl
                 }
             }
 
+            // found a real mismatch, so request one full reconcile when sim resumes (low cost hardening).
+            if (snapshot.TargetCurbLanes > snapshot.DisabledTargetCurbLanes ||
+                snapshot.TrackedCurbLanes > snapshot.DisabledCurbLanes)
+            {
+                NoStreetParkingSystem.RequestReconcile();
+            }
             return snapshot;
         }
 

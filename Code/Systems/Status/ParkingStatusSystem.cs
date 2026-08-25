@@ -23,6 +23,7 @@ namespace ParkingControl
     public sealed partial class ParkingStatusSystem : GameSystemBase
     {
         private const int kVehicleSampleLimit = 20;
+        private const int kUnresolvedLaneSampleLimit = 100;
 
         private EntityQuery m_CurbLaneQuery;
         private EntityQuery m_DistrictQuery;

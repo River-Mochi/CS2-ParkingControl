@@ -90,6 +90,8 @@ namespace ParkingControl
                 $"(ParkingControlTracked={snapshot.TrackedCurbLanes}, VanillaOrOther={otherDisabledCurbLanes})");
             text.AppendLine($"EnforcementStatus={enforcementStatus}");
             text.AppendLine($"EnforcementDetails={enforcementDetails}");
+
+            AppendUnresolvedTargetLanes(text, snapshot, details);
             text.AppendLine(
                 $"OccupiedStreetParkingLanes={snapshot.OccupiedCurbLanes}/{snapshot.CurbLanes} " +
                 $"({FormatPercent(snapshot.OccupiedCurbLanes, snapshot.CurbLanes)} of lane entities; not a parking-space percentage)");
@@ -313,6 +315,58 @@ namespace ParkingControl
                     $"{district.StreetCars} parked ({district.OccupiedLanes} lanes) | " +
                     $"{district.DisabledLanes}/{district.EligibleLanes} disabled | " +
                     $"{status} | Change={change}");
+            }
+        }
+
+        private void AppendUnresolvedTargetLanes(
+            StringBuilder text,
+            ParkingSnapshot snapshot,
+            ParkingReportDetails details)
+        {
+            text.AppendLine();
+            text.AppendLine(
+                "-------------------- UNRESOLVED TARGET LANES --------------------");
+
+            text.AppendLine(
+                $"UnresolvedTargetLanes={details.UnresolvedTargetLaneCount} " +
+                $"(showing {details.UnresolvedTargetLanes.Count})");
+
+            if (details.UnresolvedTargetLanes.Count == 0)
+            {
+                text.AppendLine("  <none>");
+                return;
+            }
+
+            foreach (UnresolvedTargetLane item in
+                details.UnresolvedTargetLanes)
+            {
+                string source;
+
+                if (item.ManualTarget && item.ScopeTarget)
+                {
+                    source = "Both";
+                }
+                else if (item.ManualTarget)
+                {
+                    source = "Manual";
+                }
+                else
+                {
+                    source =
+                        snapshot.Scope == PCSettings.ParkingScope.ByDistrict
+                            ? "District"
+                            : "WholeCity";
+                }
+
+                text.AppendLine(
+                    $"  Lane={FormatEntity(item.Lane)} | " +
+                    $"Road={FormatEntity(item.Road)} | " +
+                    $"Side={(item.RightSide ? "Right" : "Left")} | " +
+                    $"District={GetDistrictName(item.District)} " +
+                    $"[{FormatEntity(item.District)}] | " +
+                    $"Source={source} | " +
+                    $"ParkingDisabled={item.ParkingDisabled} | " +
+                    $"StreetParkingState={item.StreetParkingState}");
             }
         }
 

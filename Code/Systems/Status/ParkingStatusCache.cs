@@ -266,8 +266,25 @@ namespace ParkingControl
                     ? snapshot.TargetCurbLanes
                     : snapshot.CurbLanes;
 
-            // Counts stay factual; normal road rebuilds should not look like a mod failure.
-            string statusSuffix = string.Empty;
+
+            string ownershipStatus =
+                ParkingStatusSystem.GetOwnershipStatus(
+                    snapshot.RestrictionEnabled,
+                    targetLanes,
+                    disabledLanes,
+                    snapshot.TrackedCurbLanes);
+
+            string statusSuffix =
+                string.Equals(
+                    ownershipStatus,
+                    "CHECK",
+                    StringComparison.Ordinal)
+                    ? " | " +
+                        ParkingStatusLocale.Get(
+                            ParkingStatusLocale.kStatusCheck,
+                            "CHECK")
+                    : string.Empty;
+
 
             string enforcement = districtScope
                 ? ParkingStatusLocale.Format(

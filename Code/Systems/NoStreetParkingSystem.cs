@@ -11,6 +11,7 @@
 
 namespace ParkingControl
 {
+    using System.Collections.Generic;
     using Game;
     using Game.Common;
     using Game.Net;
@@ -23,8 +24,11 @@ namespace ParkingControl
     public sealed partial class NoStreetParkingSystem : GameSystemBase
     {
         private static bool s_ReconcileRequested = true;
+
         private static bool s_SaveRecoveryRequested;
-        private static Entity s_RoadReconcileRequested;
+
+        // dragging can change several roads before this system gets its turn.
+        private static readonly HashSet<Entity> s_RoadReconcileRequests = new();
 
         private EntityQuery m_AllParkingLanesQuery;
         private EntityQuery m_ChangedParkingLanesQuery;
@@ -48,11 +52,11 @@ namespace ParkingControl
         /// <summary>
         /// Requests immediate reconciliation of one road after a manual tool change.
         /// </summary>
-        internal static void RequestRoadReconcile(Entity road)
+       internal static void RequestRoadReconcile(Entity road)
         {
             if (road != Entity.Null)
             {
-                s_RoadReconcileRequested = road;
+                s_RoadReconcileRequests.Add(road);
             }
         }
 
@@ -121,7 +125,7 @@ namespace ParkingControl
                 (purpose == Colossal.Serialization.Entities.Purpose.NewGame ||
                     purpose == Colossal.Serialization.Entities.Purpose.LoadGame);
 
-            s_RoadReconcileRequested = Entity.Null;
+            s_RoadReconcileRequested.Clear();
 
             if (m_IsGame)
             {
@@ -131,6 +135,7 @@ namespace ParkingControl
         }
 
         /// <inheritdoc/>
+
         protected override void OnUpdate()
         {
             if (!m_IsGame)
@@ -163,10 +168,11 @@ namespace ParkingControl
             bool hasManualRoadBans =
                 !m_ManualRoadBanQuery.IsEmptyIgnoreFilter;
 
-            Entity requestedRoad = s_RoadReconcileRequested;
+            bool hasRequestedRoads =
+                s_RoadReconcileRequests.Count > 0;
 
             if (!fullReconcile &&
-                requestedRoad == Entity.Null &&
+                !hasRequestedRoads &&
                 !changedManualRoads &&
                 (!changedParkingLanes ||
                     (scope == PCSettings.ParkingScope.Off &&
@@ -195,7 +201,8 @@ namespace ParkingControl
             }
             else
             {
-                if (requestedRoad != Entity.Null)
+                // Every distinct road touched by the drag gets reconciled.
+                foreach (Entity requestedRoad in s_RoadReconcileRequests)
                 {
                     prunedManualSides +=
                         PruneInvalidManualBan(requestedRoad);
@@ -217,7 +224,7 @@ namespace ParkingControl
 
                     foreach (Entity road in changedRoads)
                     {
-                        if (road == requestedRoad)
+                        if (s_RoadReconcileRequests.Contains(road))
                         {
                             continue;
                         }
@@ -235,11 +242,11 @@ namespace ParkingControl
                     }
                 }
 
-                // Newly rebuilt lanes still need the broader scope/manual
-                // rule evaluated, but this scans only lanes flagged changed.
+                // Road rebuilds can make vanilla recalculate ParkingDisabled.
+                // Recheck only the lanes that CS2 already marked as changed.
                 if (changedParkingLanes &&
                     (scope != PCSettings.ParkingScope.Off ||
-                        !m_ManualRoadBanQuery.IsEmptyIgnoreFilter))
+                        hasManualRoadBans))
                 {
                     ReconcileResult changedResult =
                         ReconcileStreetParking(
@@ -256,20 +263,20 @@ namespace ParkingControl
 
             s_ReconcileRequested = false;
             s_SaveRecoveryRequested = false;
-            s_RoadReconcileRequested = Entity.Null;
+            s_RoadReconcileRequests.Clear();
 
             if (prunedManualSides > 0)
             {
                 ParkingStatusCache.MarkDirty();
 
-#if DEBUG
+        #if DEBUG
                 CS2Shared.RiverMochi.LogUtils.Info(
                     $"{Mod.ModTag} [RoadTool] Cleared " +
                     $"{prunedManualSides} stale manual road-side ban(s).");
-#endif
+        #endif
             }
 
-#if DEBUG
+        #if DEBUG
             if (fullReconcile)
             {
                 int ownedLanes =
@@ -280,8 +287,9 @@ namespace ParkingControl
                     $"{result.m_Changed} lane flags changed, " +
                     $"{ownedLanes} lanes owned by Parking Control.");
             }
-#endif
+        #endif
         }
+
 
         private ReconcileResult ReconcileStreetParking(
             PCSettings.ParkingScope scope,
@@ -501,11 +509,6 @@ namespace ParkingControl
             ParkingLane parkingLane = parkingLaneLookup[entity];
             bool hasState = stateLookup.HasComponent(entity);
 
-            bool recalculatedByVanilla =
-                createdLookup.HasComponent(entity) ||
-                updatedLookup.HasComponent(entity) ||
-                pathfindUpdatedLookup.HasComponent(entity);
-
             bool isStreetParking =
                 IsStreetCarParkingLane(
                     entity,
@@ -527,48 +530,48 @@ namespace ParkingControl
                     manualBanLookup,
                     policyLookup);
 
+            bool parkingDisabled =
+                (parkingLane.m_Flags &
+                    ParkingLaneFlags.ParkingDisabled) != 0;
+
             if (!shouldRestrict)
             {
-                if (hasState)
+                if (!hasState)
                 {
-                    if (!recalculatedByVanilla &&
-                        (parkingLane.m_Flags &
-                            ParkingLaneFlags.ParkingDisabled) != 0)
-                    {
-                        parkingLane.m_Flags &=
-                            ~ParkingLaneFlags.ParkingDisabled;
-
-                        parkingLaneLookup[entity] = parkingLane;
-                        result.m_Changed++;
-
-                        QueuePathfindUpdate(
-                            entity,
-                            createdLookup,
-                            updatedLookup,
-                            pathfindUpdatedLookup,
-                            ref pathfindUpdateEntities);
-                    }
-
-                    removeStateEntities.Add(entity);
+                    return;
                 }
 
+                // We own this flag, so remove it when PC no longer targets the lane.
+                if (parkingDisabled)
+                {
+                    parkingLane.m_Flags &=
+                        ~ParkingLaneFlags.ParkingDisabled;
+
+                    parkingLaneLookup[entity] = parkingLane;
+                    result.m_Changed++;
+
+                    QueuePathfindUpdate(
+                        entity,
+                        createdLookup,
+                        updatedLookup,
+                        pathfindUpdatedLookup,
+                        ref pathfindUpdateEntities);
+                }
+
+                removeStateEntities.Add(entity);
                 return;
             }
 
-            // If vanilla recalculated this lane and independently disabled it,
-            // stop claiming ownership of that restriction.
-            if ((parkingLane.m_Flags &
-                    ParkingLaneFlags.ParkingDisabled) != 0)
+            if (parkingDisabled)
             {
-                if (hasState && recalculatedByVanilla)
-                {
-                    removeStateEntities.Add(entity);
-                }
-
+                // Keep our ownership marker. Updated/PathfindUpdated can be ours too,
+                // so they are not proof that vanilla owns this flag.
                 return;
             }
 
-            parkingLane.m_Flags |= ParkingLaneFlags.ParkingDisabled;
+            parkingLane.m_Flags |=
+                ParkingLaneFlags.ParkingDisabled;
+
             parkingLaneLookup[entity] = parkingLane;
             result.m_Changed++;
 
@@ -584,6 +587,7 @@ namespace ParkingControl
                 pathfindUpdatedLookup,
                 ref pathfindUpdateEntities);
         }
+
 
         private void ApplyPendingChanges(
             ref NativeList<Entity> addStateEntities,
@@ -616,6 +620,7 @@ namespace ParkingControl
         /// <summary>
         /// Returns whether this road side is covered by any Parking Control rule.
         /// </summary>
+
         internal static bool IsRestrictionTarget(
             Entity lane,
             ParkingLane parkingLane,
@@ -626,22 +631,52 @@ namespace ParkingControl
             ComponentLookup<ManualRoadParkingBan> manualBanLookup,
             BufferLookup<Game.Policies.Policy> policyLookup)
         {
+            return IsManualRestrictionTarget(
+                    lane,
+                    parkingLane,
+                    ownerLookup,
+                    manualBanLookup) ||
+                IsScopeRestrictionTarget(
+                    lane,
+                    parkingLane,
+                    scope,
+                    policyEntity,
+                    ownerLookup,
+                    borderDistrictLookup,
+                    policyLookup);
+        }
+
+        internal static bool IsManualRestrictionTarget(
+            Entity lane,
+            ParkingLane parkingLane,
+            ComponentLookup<Owner> ownerLookup,
+            ComponentLookup<ManualRoadParkingBan> manualBanLookup)
+        {
             Entity road = ownerLookup[lane].m_Owner;
 
-            if (manualBanLookup.TryGetComponent(
+            if (!manualBanLookup.TryGetComponent(
                     road,
                     out ManualRoadParkingBan manualBan))
             {
-                bool rightSide =
-                    (parkingLane.m_Flags &
-                        ParkingLaneFlags.RightSide) != 0;
-
-                if (manualBan.IsBanned(rightSide))
-                {
-                    return true;
-                }
+                return false;
             }
 
+            bool rightSide =
+                (parkingLane.m_Flags &
+                    ParkingLaneFlags.RightSide) != 0;
+
+            return manualBan.IsBanned(rightSide);
+        }
+
+        internal static bool IsScopeRestrictionTarget(
+            Entity lane,
+            ParkingLane parkingLane,
+            PCSettings.ParkingScope scope,
+            Entity policyEntity,
+            ComponentLookup<Owner> ownerLookup,
+            ComponentLookup<Game.Areas.BorderDistrict> borderDistrictLookup,
+            BufferLookup<Game.Policies.Policy> policyLookup)
+        {
             if (scope == PCSettings.ParkingScope.WholeCity)
             {
                 return true;

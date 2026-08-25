@@ -133,6 +133,7 @@ namespace ParkingControl
             UnknownMissingSourceSamples = new List<Entity>(sampleLimit);
             UnknownNoSourceSamples = new List<Entity>(sampleLimit);
             SampleTransitions = new List<VehicleSampleTransition>(sampleLimit * 3);
+            UnresolvedTargetLanes = new List<UnresolvedTargetLane>(sampleLimit);
         }
 
         public Dictionary<Entity, DistrictParkingStats> DistrictParking { get; } =
@@ -159,6 +160,9 @@ namespace ParkingControl
         public List<Entity> UnknownNoSourceSamples { get; }
 
         public List<VehicleSampleTransition> SampleTransitions { get; }
+
+        public int UnresolvedTargetLaneCount { get; set; }
+        public List<UnresolvedTargetLane> UnresolvedTargetLanes { get; }
     }
 
     /// <summary>
@@ -185,6 +189,49 @@ namespace ParkingControl
         public int StreetCars { get; set; }
 
         public int OccupiedLanes { get; set; }
+    }
+
+
+    /// <summary>
+    /// Log-only details for one target curb lane that was not disabled at snapshot time.
+    /// </summary>
+    internal readonly struct UnresolvedTargetLane
+    {
+        public UnresolvedTargetLane(
+            Entity lane,
+            Entity road,
+            Entity district,
+            bool rightSide,
+            bool manualTarget,
+            bool scopeTarget,
+            bool parkingDisabled,
+            bool streetParkingState)
+        {
+            Lane = lane;
+            Road = road;
+            District = district;
+            RightSide = rightSide;
+            ManualTarget = manualTarget;
+            ScopeTarget = scopeTarget;
+            ParkingDisabled = parkingDisabled;
+            StreetParkingState = streetParkingState;
+        }
+
+        public Entity Lane { get; }
+
+        public Entity Road { get; }
+
+        public Entity District { get; }
+
+        public bool RightSide { get; }
+
+        public bool ManualTarget { get; }
+
+        public bool ScopeTarget { get; }
+
+        public bool ParkingDisabled { get; }
+
+        public bool StreetParkingState { get; }
     }
 
     /// <summary>

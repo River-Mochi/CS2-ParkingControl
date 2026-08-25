@@ -108,7 +108,11 @@ namespace ParkingControl
             updateSystem.UpdateAt<ManualNoParkingOverlaySystem>(
                 SystemUpdatePhase.Rendering);
 
+            // Vanilla recalculates parking first; PC reapplies its flag before LanesModified
+            // rebuilds the parking path data.
             updateSystem.UpdateAfter<NoStreetParkingSystem, ParkingLaneDataSystem>(
+                SystemUpdatePhase.ModificationEnd);
+            updateSystem.UpdateBefore<NoStreetParkingSystem, LanesModifiedSystem>(
                 SystemUpdatePhase.ModificationEnd);
             updateSystem.UpdateAfter<ParkingStatusSystem, NoStreetParkingSystem>(
                 SystemUpdatePhase.ModificationEnd);
