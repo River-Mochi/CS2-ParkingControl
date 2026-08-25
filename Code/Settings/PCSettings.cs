@@ -72,6 +72,22 @@ namespace ParkingControl
         public bool ShowInstructions { get; set; }
 
         /// <summary>
+        /// Requests a one-time vanilla relocation of cars still parked on banned curb lanes.
+        /// </summary>
+        [SettingsUIButton]
+        [SettingsUISection(kActionsTab, kStreetParkingGroup)]
+        public bool RelocateParkedCars
+        {
+            set
+            {
+                if (value)
+                {
+                    ParkingRelocationSystem.RequestRelocation();
+                }
+            }
+        }
+
+        /// <summary>
         /// Gets or sets a value indicating whether live parking status rows are shown.
         /// </summary>
         [SettingsUISection(kActionsTab, kStatusGroup)]

@@ -69,6 +69,14 @@ namespace ParkingControl
                     "2. Whole City = blocks all city eligible street public parking."
                 },
 
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.RelocateParkedCars)), "Relocate parked cars" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.RelocateParkedCars)),
+                    "<One-time action>: asks CS2 to move cars still parked on street-parking lanes currently banned by Parking Control.\n" +
+                    "Works with Whole City, District, and manual road bans.\n" +
+                    "Cars are not deleted; game handles it in it's own ParkingLocationSystem.\n" +
+                    "Run the city after clicking and save."
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "Show status" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowStatus)),
                     "<Show current parking totals below.>\n" +
