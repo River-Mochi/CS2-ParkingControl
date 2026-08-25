@@ -14,6 +14,7 @@ namespace ParkingControl
     using Game;
     using Game.Common;
     using Game.Net;
+    using Game.Tools;
     using Game.Vehicles;
     using Unity.Collections;
     using Unity.Entities;
@@ -44,7 +45,7 @@ namespace ParkingControl
 
             m_ParkingLanesQuery = SystemAPI.QueryBuilder()
                 .WithAll<ParkingLane, Owner, Game.Prefabs.PrefabRef>()
-                .WithNone<Deleted, Game.Tools.Temp>()
+                .WithNone<Deleted, Temp>()
                 .Build();
         }
 
