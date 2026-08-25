@@ -21,6 +21,7 @@ namespace ParkingControl
     using Game.Pathfind;
     using Game.SceneFlow;
     using Game.Serialization;
+    using Game.Vehicles;
 
     public sealed class Mod : IMod
     {
@@ -111,7 +112,7 @@ namespace ParkingControl
             // One-shot button: mark occupied banned lanes before vanilla moves their cars.
             updateSystem.UpdateBefore<
                 ParkingRelocationSystem,
-                Game.Vehicles.FixParkingLocationSystem>(
+                FixParkingLocationSystem>(
                 SystemUpdatePhase.Modification5);
 
             // Run after vanilla/replacement parking-lane calculations but before
