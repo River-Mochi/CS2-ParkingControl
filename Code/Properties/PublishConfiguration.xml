@@ -81,7 +81,8 @@ tags: Disable road parking, clear roadside, no cars
 <!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
 <ChangeLog Value="" />
 <ChangeLog>
-- added better color preview overlays when using Manual single road tool button.
+- Added compatibility workaround for Realistic parking mod.
+- added better color preview overlays when using manual road tool button.
 - set per District dropdown for first time install.
 - Added manual No Parking button in the game's Road Services tab. Add/remove one side only or drag across multiple road sides.
 </ChangeLog>
