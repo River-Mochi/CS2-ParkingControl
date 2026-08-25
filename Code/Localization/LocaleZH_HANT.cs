@@ -44,7 +44,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStatusGroup), "私人車輛狀態" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "模組資訊" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "連結" },
-                { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutDiagnosticsGroup), "診斷" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutDebugGroup), "診斷" },
 
                 // Street-parking controls.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "禁止路邊停車" },

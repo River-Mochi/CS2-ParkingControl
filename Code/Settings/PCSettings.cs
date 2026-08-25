@@ -24,8 +24,8 @@ namespace ParkingControl
     /// </summary>
     [FileLocation("ModsSettings/" + Mod.ModId + "/" + Mod.ModId)]
     [SettingsUITabOrder(kActionsTab, kAboutTab)]
-    [SettingsUIGroupOrder(kStreetParkingGroup, kStatusGroup, kAboutInfoGroup, kAboutLinksGroup, kAboutDiagnosticsGroup)]
-    [SettingsUIShowGroupName(kStreetParkingGroup, kStatusGroup, kAboutLinksGroup, kAboutDiagnosticsGroup)]
+    [SettingsUIGroupOrder(kStreetParkingGroup, kStatusGroup, kAboutInfoGroup, kAboutLinksGroup, kAboutDebugGroup)]
+    [SettingsUIShowGroupName(kStreetParkingGroup, kStatusGroup, kAboutLinksGroup, kAboutDebugGroup)]
     public class PCSettings : ModSetting
     {
         internal const string kActionsTab = "Actions";
@@ -34,10 +34,10 @@ namespace ParkingControl
         internal const string kStatusGroup = "Status";
         internal const string kAboutInfoGroup = "AboutInfo";
         internal const string kAboutLinksGroup = "AboutLinks";
-        internal const string kAboutDiagnosticsGroup = "AboutDiagnostics";
+        internal const string kAboutDebugGroup = "AboutDebug";
 
         private const string kAboutLinksRow = nameof(kAboutLinksRow);
-        private const string kAboutDiagnosticsRow = nameof(kAboutDiagnosticsRow);
+        private const string kAboutDebugRow = nameof(kAboutDebugRow);
         private const string kUrlParadox =
             "https://mods.paradoxplaza.com/authors/River-mochi/cities_skylines_2?games=cities_skylines_2&orderBy=desc&sortBy=best&time=alltime";
 
@@ -167,9 +167,9 @@ namespace ParkingControl
         /// <summary>
         /// Writes an on-demand parking report to the mod log.
         /// </summary>
-        [SettingsUIButtonGroup(kAboutDiagnosticsRow)]
+        [SettingsUIButtonGroup(kAboutDebugRow)]
         [SettingsUIButton]
-        [SettingsUISection(kAboutTab, kAboutDiagnosticsGroup)]
+        [SettingsUISection(kAboutTab, kAboutDebugGroup)]
         public bool ReportToLog
         {
             set
@@ -184,9 +184,9 @@ namespace ParkingControl
         /// <summary>
         /// Opens the mod log, or its containing folder if the log does not exist yet.
         /// </summary>
-        [SettingsUIButtonGroup(kAboutDiagnosticsRow)]
+        [SettingsUIButtonGroup(kAboutDebugRow)]
         [SettingsUIButton]
-        [SettingsUISection(kAboutTab, kAboutDiagnosticsGroup)]
+        [SettingsUISection(kAboutTab, kAboutDebugGroup)]
         public bool OpenLog
         {
             set

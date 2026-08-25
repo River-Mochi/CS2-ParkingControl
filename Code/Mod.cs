@@ -107,8 +107,14 @@ namespace ParkingControl
                 SystemUpdatePhase.UITooltip);
             updateSystem.UpdateAt<ManualNoParkingOverlaySystem>(
                 SystemUpdatePhase.Rendering);
-                   
-            // Run after parking-lane recalculation/replacements, but before
+
+            // One-shot button: mark occupied banned lanes before vanilla moves their cars.
+            updateSystem.UpdateBefore<
+                ParkingRelocationSystem,
+                Game.Vehicles.FixParkingLocationSystem>(
+                SystemUpdatePhase.Modification5);
+
+            // Run after vanilla/replacement parking-lane calculations but before
             // CS2 rebuilds parking path data from those lanes.
             updateSystem.UpdateBefore<NoStreetParkingSystem, LanesModifiedSystem>(
                 SystemUpdatePhase.ModificationEnd);
@@ -135,7 +141,6 @@ namespace ParkingControl
 
             LogUtils.Info(
                 $"{ModTag} Parking Ban dropdown selection: {scopeText}.");
-
         }
 
         public void OnDispose()
