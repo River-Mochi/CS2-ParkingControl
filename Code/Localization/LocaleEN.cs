@@ -74,7 +74,7 @@ namespace ParkingControl
                     "<One-time action>: asks CS2 to move cars still parked on street-parking lanes currently banned by Parking Control.\n" +
                     "Works with Whole City, District, and manual road bans.\n" +
                     "Cars are not deleted; game handles it in it's own ParkingLocationSystem.\n" +
-                    "Run the city after clicking and save."
+                    "**Run the city after clicking and save.**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "Show status" },
@@ -88,7 +88,7 @@ namespace ParkingControl
                     "2. Create/select a district in the city.\n" +
                     "3. Open the <Policies> panel and enable **Roadside Parking Ban [✓]**.\n" +
                     "4. It's okay to have both the Ban and the Parking fee enabled. Fee is charged to any cars still remaining or sneaking in.\n" +
-                    "Roads outside banned parking districts keep normal street parking." },
+                    "**Roads outside of banned parking districts keep normal street parking.**" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
 
                 // In-city Roads Services tool.
