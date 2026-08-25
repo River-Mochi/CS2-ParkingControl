@@ -14,7 +14,7 @@ namespace ParkingControl
     using Colossal.Mathematics;
     using Game;
     using Game.Rendering;
-    using Unity.Burst;
+
     using Unity.Collections;
     using Unity.Entities;
     using Unity.Jobs;
@@ -39,8 +39,6 @@ namespace ParkingControl
         private ManualNoParkingToolSystem m_ToolSystem = null!;
         private EntityQuery m_RenderSettingsQuery;
 
-
-        [BurstCompile]
         private struct DrawPreviewJob : IJob
         {
             [ReadOnly]
