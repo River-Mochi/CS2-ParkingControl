@@ -25,7 +25,10 @@ namespace ParkingControl
     {
         private const float kSidePreviewWidth = 3.8f;
         private const float kSideOutlineWidth = 0.12f;
-        private const float kRoadPerimeterWidth = 0.30f;
+
+        private const float kRoadPerimeterWidthClose = 0.30f;   // green outline
+        private const float kRoadPerimeterWidthFar = 0.55f;     // green lines far
+
         private const float kSideFillAlpha = 0.40f;
         private const float kSideOutlineAlpha = 0.78f;
 
@@ -35,6 +38,8 @@ namespace ParkingControl
         private RenderingSystem m_RenderingSystem = null!;
         private ManualNoParkingToolSystem m_ToolSystem = null!;
         private EntityQuery m_RenderSettingsQuery;
+
+        private CameraUpdateSystem m_CameraUpdateSystem = null!;    // for green outline
 
         [BurstCompile]
         private struct DrawPreviewJob : IJob
@@ -59,6 +64,8 @@ namespace ParkingControl
             public Color AppliedPerimeterColor;
 
             public OverlayRenderSystem.Buffer OverlayBuffer;
+
+            public float RoadPerimeterWidth;    // for green outline
 
             public void Execute()
             {
@@ -95,7 +102,7 @@ namespace ParkingControl
                     OverlayBuffer.DrawCurve(
                         AvailablePerimeterColor,
                         AvailablePerimeterCurves[index],
-                        kRoadPerimeterWidth);
+                        RoadPerimeterWidth);
                 }
 
                 for (int index = 0; index < AppliedPerimeterCurves.Length; index++)
@@ -103,7 +110,7 @@ namespace ParkingControl
                     OverlayBuffer.DrawCurve(
                         AppliedPerimeterColor,
                         AppliedPerimeterCurves[index],
-                        kRoadPerimeterWidth);
+                        RoadPerimeterWidth);
                 }
             }
         }
@@ -117,6 +124,9 @@ namespace ParkingControl
 
             m_RenderingSystem =
                 World.GetOrCreateSystemManaged<RenderingSystem>();
+
+            m_CameraUpdateSystem =
+                World.GetOrCreateSystemManaged<CameraUpdateSystem>();
 
             m_ToolSystem =
                 World.GetOrCreateSystemManaged<ManualNoParkingToolSystem>();
@@ -218,6 +228,23 @@ namespace ParkingControl
                 OverlayRenderSystem.Buffer buffer =
                     m_OverlayRenderSystem.GetBuffer(
                         out JobHandle dependencies);
+
+                float zoomLevel =
+                    m_CameraUpdateSystem != null
+                        ? m_CameraUpdateSystem.zoom
+                        : 5000f;
+
+                float rawZoom =
+                    Mathf.Clamp01((zoomLevel - 1000f) / 13000f);
+
+                float normalizedZoom =
+                    Mathf.Pow(rawZoom, 0.6f);
+
+                float roadPerimeterWidth =
+                    Mathf.Lerp(
+                        kRoadPerimeterWidthClose,
+                        kRoadPerimeterWidthFar,
+                        normalizedZoom);
 
                 JobHandle drawHandle =
                     new DrawPreviewJob

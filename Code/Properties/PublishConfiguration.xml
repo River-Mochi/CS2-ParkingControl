@@ -81,9 +81,9 @@ tags: Disable road parking, clear roadside, no cars
 <!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
 <ChangeLog Value="" />
 <ChangeLog>
+- added better color preview overlays when using Manual single road tool button.
 - set per District dropdown for first time install.
 - Added manual No Parking button in the game's Road Services tab. Add/remove one side only or drag across multiple road sides.
-- Added Thai, Vietnamese, Turkish, and Ukrainian translations.
 </ChangeLog>
 <!--External link, can be set multiple times. supported types are "discord", "github", "youtube", "twitch", "paypal", "patreon", "buymeacoffee", "kofi", "crowdin", "gitlab", "gofundme"-->
 <ExternalLink Type="discord" Url="https://discord.gg/gwXgvtyhjc" />
