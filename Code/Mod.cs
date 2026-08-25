@@ -107,13 +107,12 @@ namespace ParkingControl
                 SystemUpdatePhase.UITooltip);
             updateSystem.UpdateAt<ManualNoParkingOverlaySystem>(
                 SystemUpdatePhase.Rendering);
-
-            // Vanilla recalculates parking first; PC reapplies its flag before LanesModified
-            // rebuilds the parking path data.
-            updateSystem.UpdateAfter<NoStreetParkingSystem, ParkingLaneDataSystem>(
-                SystemUpdatePhase.ModificationEnd);
+                   
+            // Run after parking-lane recalculation/replacements, but before
+            // CS2 rebuilds parking path data from those lanes.
             updateSystem.UpdateBefore<NoStreetParkingSystem, LanesModifiedSystem>(
                 SystemUpdatePhase.ModificationEnd);
+
             updateSystem.UpdateAfter<ParkingStatusSystem, NoStreetParkingSystem>(
                 SystemUpdatePhase.ModificationEnd);
             updateSystem.UpdateBefore<DistrictPolicySaveSystem, BeginPrefabSerializationSystem>(
