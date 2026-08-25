@@ -22,6 +22,7 @@ namespace ParkingControl
         public DateTime CapturedAtLocal;
         public uint SimulationFrame;
         public PCSettings.ParkingScope Scope;
+
         public int CurbLanes;
         public int TargetCurbLanes;
         public int DisabledCurbLanes;
@@ -29,6 +30,21 @@ namespace ParkingControl
         public int TrackedCurbLanes;
         public int OccupiedCurbLanes;
         public int OccupiedTargetCurbLanes;
+
+        // Scope-only counters keep District/Whole City separate from manual road bans.
+        public int ScopeTargetCurbLanes;
+        public int DisabledScopeTargetCurbLanes;
+        public int TrackedScopeTargetCurbLanes;
+        public int OccupiedScopeTargetCurbLanes;
+        public int ScopeTargetStreetParked;
+
+        // Manual counters can overlap scope counters; combined Target* counters stay unique.
+        public int ManualTargetCurbLanes;
+        public int DisabledManualTargetCurbLanes;
+        public int TrackedManualTargetCurbLanes;
+        public int OccupiedManualTargetCurbLanes;
+        public int ManualTargetStreetParked;
+
         public int FixedSlotCurbLanes;
         public int FixedSlotCurbCapacity;
         public int FixedSlotCurbParked;
@@ -162,6 +178,7 @@ namespace ParkingControl
         public List<VehicleSampleTransition> SampleTransitions { get; }
 
         public int UnresolvedTargetLaneCount { get; set; }
+
         public List<UnresolvedTargetLane> UnresolvedTargetLanes { get; }
     }
 
@@ -190,7 +207,6 @@ namespace ParkingControl
 
         public int OccupiedLanes { get; set; }
     }
-
 
     /// <summary>
     /// Log-only details for one target curb lane that was not disabled at snapshot time.

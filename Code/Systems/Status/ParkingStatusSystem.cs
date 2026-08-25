@@ -173,10 +173,15 @@ namespace ParkingControl
                     ? new ParkingReportDetails(kVehicleSampleLimit)
                     : null;
                 ParkingSnapshot snapshot = BuildSnapshot(details);
+
+                // These counters are UI/report-only and keep scope bans separate from manual bans.
+                AddScopeManualCounters(ref snapshot);
+
                 ParkingStatusCache.Publish(snapshot);
 
                 if (reportRequested && details != null)
                 {
+                    WriteScopeManualReportSummary(snapshot);
                     WriteReport(snapshot, details);
                 }
             }

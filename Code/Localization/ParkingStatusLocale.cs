@@ -32,6 +32,9 @@ namespace ParkingControl
         internal const string kStatusOk = Mod.ModId + ".Status.OK";
         internal const string kStatusOff = Mod.ModId + ".Status.OFF";
         internal const string kStatusCheck = Mod.ModId + ".Status.CHECK";
+        internal const string kRatingPoor = Mod.ModId + ".Status.RatingPoor";
+        internal const string kRatingGood = Mod.ModId + ".Status.RatingGood";
+        internal const string kRatingNA = Mod.ModId + ".Status.RatingNA";
 
         /// <summary>
         /// Gets the currently active game locale ID.

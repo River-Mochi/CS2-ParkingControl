@@ -111,7 +111,16 @@ namespace ParkingControl
         public string EnforcementStatus => ParkingStatusCache.EnforcementRow;
 
         /// <summary>
-        /// Gets the cached citywide street-parking share.
+        /// Gets the cached manual No Parking status.
+        /// </summary>
+        [Exclude]
+        [SettingsUIHideByCondition(typeof(PCSettings), nameof(HideStatus))]
+        [SettingsUIValueVersion(typeof(ParkingStatusCache), nameof(ParkingStatusCache.GetUiVersion))]
+        [SettingsUISection(kActionsTab, kStatusGroup)]
+        public string ManualStatus => ParkingStatusCache.ManualRow;
+
+        /// <summary>
+        /// Gets the cached citywide parking-use summary.
         /// </summary>
         [Exclude]
         [SettingsUIHideByCondition(typeof(PCSettings), nameof(HideStatus))]
@@ -120,7 +129,7 @@ namespace ParkingControl
         public string ShareStatus => ParkingStatusCache.ShareRow;
 
         /// <summary>
-        /// Gets the cached parking-supply status.
+        /// Gets the cached parking-capacity rating.
         /// </summary>
         [Exclude]
         [SettingsUIHideByCondition(typeof(PCSettings), nameof(HideStatus))]

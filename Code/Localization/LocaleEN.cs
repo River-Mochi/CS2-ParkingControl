@@ -95,12 +95,14 @@ namespace ParkingControl
                 { $"Assets.NAME[{ManualNoParkingToolSystem.kToolId}]", "No Parking" },
                 { $"Assets.DESCRIPTION[{ManualNoParkingToolSystem.kToolId}]",
                     "Toggle roadside parking on one side of a road. For multiple sides, drag over them before releasing the Left Mouse button." },
+
                 // In-city district policy.
                 { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "Roadside Parking Ban" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]",
                     "Prevents cars and motorcycles from parking on roadsides in this district. " +
-                    "Existing parked vehicles leave when their owners next use them." 
+                    "Existing parked vehicles leave when their owners next use them."
                 },
+
                 // Native mouse action hints for the No Parking road tool.
                 {
                     $"Common.ACTION[{ManualNoParkingTooltipSystem.kUpgradeHintId}]",
@@ -114,34 +116,42 @@ namespace ParkingControl
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Street Parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Parked> = cars still parked on road sides currently set to No Parking by Parking Control.\n" +
-                    "<Lanes> = roadside parking sections holding those cars. One section can hold many cars.\n" +
-                    "<Disabled> = parking-lane sections closed to new parking. One road can contain several sections.\n" +
-                    "<OFF + manual No Parking> = OFF turns off citywide and District bans, but manually set No Parking road sides stay active. This row then shows only those manual bans.\n" +
+                    "Shows only the selected <Whole City> or <by District> Parking Ban scope. Manual No Parking roads are listed separately.\n" +
+                    "<Parked> = cars still parked on streets covered by the selected scope.\n" +
+                    "<Disabled> = disabled curb-lane sections / target curb-lane sections.\n" +
+                    "<Dist> = districts with the Parking Ban / total districts.\n" +
                     "<---------------------->\n" +
-                    "If <by District> is selected then this shows:\n" +
-                    "- Occupied lanes in banned districts / occupied lanes citywide.\n" +
-                    "- Disabled lanes / eligible city lanes.\n" +
-                    "- Enabled districts / total districts.\n\n" +
-                    "<---------------------->\n" +
-                    "**Note: after changing or rebuilding roads, the disabled count may need a little time while CS2 rebuilds parking lanes. " +
-                    "Run the city briefly and reopen Options > Status. If CHECK remains, use About tab > [Write report] and send Logs/ParkingControl.log and list of mods for support.**"
+                    "**After changing or rebuilding roads, the disabled count may need a little time while CS2 rebuilds parking lanes. " +
+                    "Run the city briefly and reopen Options > Status. If CHECK remains, use About > Debug > Write Report and send Logs/ParkingControl.log and your mod list.**"
                 },
 
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Street use" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "This row includes the <whole city>, not just districts.\n" +
-                    "<Street parked> = percentage parked on streets instead of in public or building parking.\n" +
-                    "<Active> = personal vehicles driving or waiting in traffic.\n" +
-                    "<Formula> = street ÷ (street + occupied public + occupied building).\n" +
-                    "**Outside connection (OC) storage and cars without an assigned parking lane are excluded.**" },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Parking spaces" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "Shows citywide parking occupancy.\n" +
-                    "<Public> spaces used = facilities counted by the vanilla Parking InfoView.\n" +
-                    "<Building> spaces used = parking included with homes, workplaces, and shops.\n" +
-                    "**Higher % usage = more parking may be needed.**" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ManualStatus)), "Manual No Parking" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ManualStatus)),
+                    "Shows only road sides set with Parking Control's manual <No Parking> road tool.\n" +
+                    "<Parked> = cars still parked on those manually banned road sides.\n" +
+                    "<Disabled> = disabled curb-lane sections / manually targeted curb-lane sections.\n" +
+                    "Manual bans can overlap Whole City or District bans, so do not add this row to <Street Parking> totals.\n" +
+                    "**If CHECK remains after running the city briefly, use About > Debug > Write Report.**"
+                },
 
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Parking use" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
+                    "<Public> = occupied parking spaces in parking facilities.\n" +
+                    "Roughly matches CS2's Roads parking InfoView panel.\n" +
+                    "<Bldg> = vehicles parked at buildings or garages.\n" +
+                    "<Street/total> = cars parked on streets ÷ total known in-city parked cars.\n" +
+                    "**Outside connections and unknown staging are excluded from the total.**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Parking rating" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
+                    "Rates how much exact-capacity parking is still <free>.\n" +
+                    "<POOR> = less than 15% free.\n" +
+                    "<OK> = 15% to less than 30% free.\n" +
+                    "<GOOD> = 30% or more free.\n" +
+                    "<Public> uses parking facilities counted by CS2's Roads parking InfoView.\n" +
+                    "<Bldg> uses exact-capacity parking at buildings and garages."
+                },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Car Locations" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VehicleStatus)),
@@ -174,21 +184,28 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenLog)), "Open log" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)),
                     "Open <Logs/ParkingControl.log>, or the Logs folder if the file does not exist yet." },
+
                 // Dynamic values used by the live status rows.
                 { ParkingStatusLocale.kLoadCity, "No city loaded yet." },
                 { ParkingStatusLocale.kCollecting, "Parking status is being collected..." },
                 { ParkingStatusLocale.kUnavailable, "Parking status is unavailable." },
                 { ParkingStatusLocale.kCollectionFailed, "Parking status could not be collected; see ParkingControl.log." },
                 { ParkingStatusLocale.kCompactEnforcementFormat,
-                    "{0} parked ({1} lanes) | {2}/{3} disabled{4}" },
+                    "{0} parked | {1}/{2} disabled{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat,
-                    "{0} parked ({1}/{2} lanes) | {3}/{4} disabled | {5}/{6} districts{7}" },
-                { ParkingStatusLocale.kVehicleFormat, "{0} street | {1} visible | {2} inside | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} public {1}/{2} | {3} building {4}/{5}" },
-                { ParkingStatusLocale.kShareFormat, "{0} street parked {1} | {2} active" },
+                    "{0} parked | {1}/{2} disabled | {3}/{4} dist{5}" },
+                { ParkingStatusLocale.kVehicleFormat,
+                    "{0} street | {1} visible | {2} inside | {3} OC" },
+                { ParkingStatusLocale.kSupplyFormat,
+                    "{0} = {1} public free | {2} = {3} bldg free" },
+                { ParkingStatusLocale.kShareFormat,
+                    "{0} public | {1} bldg | {2}/{3} street" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "OFF" },
                 { ParkingStatusLocale.kStatusCheck, "CHECK" },
+                { ParkingStatusLocale.kRatingPoor, "POOR" },
+                { ParkingStatusLocale.kRatingGood, "GOOD" },
+                { ParkingStatusLocale.kRatingNA, "N/A" },
             };
         }
 
