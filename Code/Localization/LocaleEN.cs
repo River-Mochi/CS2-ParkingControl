@@ -54,7 +54,7 @@ namespace ParkingControl
                     "<2. Whole City>\n" +
                     "<3. OFF>\n" +
                     "- Eligible lanes are flagged to prevent new street parking.\n" +
-                    "- Existing parked cars leave naturally when they are next used.\n" +
+                    "- Existing parked cars leave naturally when they are next used; use <Relocate parked cars> to ask CS2 to move them sooner.\n" +
                     "- Fee-based parking lots and normal building parking remain usable.\n" +
                     "**Some roads already exclude street parking, like Highways and small 2-way alley roads.**"
                 },
@@ -69,14 +69,6 @@ namespace ParkingControl
                     "2. Whole City = blocks all city eligible street public parking."
                 },
 
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.RelocateParkedCars)), "Relocate parked cars" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.RelocateParkedCars)),
-                    "<One-time action>: asks CS2 to move cars still parked on street-parking lanes currently banned by Parking Control.\n" +
-                    "Works with Whole City, District, and manual road bans.\n" +
-                    "Cars are not deleted; game handles it in it's own ParkingLocationSystem.\n" +
-                    "**Run the city after clicking and save.**"
-                },
-
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "Show status" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowStatus)),
                     "<Show current parking totals below.>\n" +
@@ -88,8 +80,16 @@ namespace ParkingControl
                     "2. Create/select a district in the city.\n" +
                     "3. Open the <Policies> panel and enable **Roadside Parking Ban [✓]**.\n" +
                     "4. It's okay to have both the Ban and the Parking fee enabled. Fee is charged to any cars still remaining or sneaking in.\n" +
-                    "**Roads outside of banned parking districts keep normal street parking.**" },
+                    "5. Optional: use <Relocate parked cars> to ask CS2 to move existing cars off banned curb lanes sooner.\n" +
+                    "Roads outside banned parking districts keep normal street parking." },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.RelocateParkedCars)),
+                    "Relocate parked cars" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.RelocateParkedCars)),
+                    "One-time action: asks CS2's own parking relocation system to move cars still parked on curb lanes currently banned by Parking Control.\n" +
+                    "Works with Whole City, District, and manual No Parking bans.\n" +
+                    "Cars are not deleted. Close Options and run the city after clicking." },
 
                 // In-city Roads Services tool.
                 { $"Assets.NAME[{ManualNoParkingToolSystem.kToolId}]", "No Parking" },
