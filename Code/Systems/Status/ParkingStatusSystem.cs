@@ -26,6 +26,7 @@ namespace ParkingControl
         private const int kUnresolvedLaneSampleLimit = 100;
 
         private EntityQuery m_CurbLaneQuery;
+        private EntityQuery m_DistrictPolicyPrefabQuery;
         private EntityQuery m_DistrictQuery;
         private EntityQuery m_GarageLaneQuery;
         private EntityQuery m_ParkingFacilityQuery;
@@ -76,6 +77,13 @@ namespace ParkingControl
                 .WithAll<Game.Areas.District, Game.Policies.Policy>()
                 .WithNone<Game.Common.Deleted, Game.Tools.Temp>()
                 .Build();
+
+            // Report-only: find district policies that can modify ParkingFee even if
+            // another mod damages or removes their PolicySliderData component.
+            m_DistrictPolicyPrefabQuery = SystemAPI.QueryBuilder()
+                .WithAll<Game.Prefabs.PolicyData, Game.Prefabs.DistrictModifierData>()
+                .Build();
+
             m_GarageLaneQuery = SystemAPI.QueryBuilder()
                 .WithAll<Game.Net.GarageLane>()
                 .WithNone<Game.Common.Deleted, Game.Tools.Temp>()
@@ -182,6 +190,7 @@ namespace ParkingControl
                 if (reportRequested && details != null)
                 {
                     WriteScopeManualReportSummary(snapshot);
+                    WriteParkingFeePolicyDiagnostic();
                     WriteReport(snapshot, details);
                 }
             }
