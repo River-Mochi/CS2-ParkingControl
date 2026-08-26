@@ -81,10 +81,11 @@ tags: Disable road parking, clear roadside, no cars
 <!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
 <ChangeLog Value="" />
 <ChangeLog>
-- Added compatibility workaround for Realistic parking mod.
-- added better color preview overlays when using manual road tool button.
-- set per District dropdown for first time install.
-- Added manual No Parking button in the game's Road Services tab. Add/remove one side only or drag across multiple road sides.
+- Improved compatibility with Realistic Parking so No Parking restrictions stay applied.
+- Added Relocate parked cars action to ask CS2 to move cars off currently banned curb lanes sooner.
+- Added clearer parking Status rows.
+- Improved the manual No Parking road tool color preview overlay. 
+- Improved handling of new and rebuilt roads so Parking Control reapplies restrictions after CS2 rebuilds their parking lanes.
 </ChangeLog>
 <!--External link, can be set multiple times. supported types are "discord", "github", "youtube", "twitch", "paypal", "patreon", "buymeacoffee", "kofi", "crowdin", "gitlab", "gofundme"-->
 <ExternalLink Type="discord" Url="https://discord.gg/gwXgvtyhjc" />
