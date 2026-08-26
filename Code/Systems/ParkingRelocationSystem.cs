@@ -23,8 +23,8 @@ namespace ParkingControl
     public sealed partial class ParkingRelocationSystem : GameSystemBase
     {
         // Roughly a few seconds between passes in normal play. Small batches avoid a relocation spike.
-        private const int kUpdateInterval = 512;
-        private const int kCarsPerPass = 64;
+        private const int kUpdateInterval = 1024;
+        private const int kCarsPerPass = 32;
 
         private EntityQuery m_RequestLaneQuery;
         private NativeQueue<Entity> m_PendingCars;
