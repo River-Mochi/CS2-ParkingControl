@@ -80,8 +80,8 @@ namespace ParkingControl
                     "2. Create/select a district in the city.\n" +
                     "3. Open the <Policies> panel and enable **Roadside Parking Ban [✓]**.\n" +
                     "4. It's okay to have both the Ban and the Parking fee enabled. Fee is charged to any cars still remaining or sneaking in.\n" +
-                    "5. Optional: use <Relocate parked cars> to ask CS2 to move existing cars off banned curb lanes sooner.\n" +
-                    "Roads outside banned parking districts keep normal street parking." },
+                    "Roads outside banned parking districts keep normal street parking."
+                },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.RelocateParkedCars)),
@@ -99,8 +99,8 @@ namespace ParkingControl
                 // In-city district policy.
                 { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "Roadside Parking Ban" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]",
-                    "Prevents cars and motorcycles from parking on roadsides in this district. " +
-                    "Existing parked vehicles leave when their owners next use them."
+                    "Prevents cars and motorcycles from parking on roadsides in this district.\n" +
+                    "- Existing parked cars move gradually; large banned areas take longer."
                 },
 
                 // Native mouse action hints for the No Parking road tool.

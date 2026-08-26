@@ -109,7 +109,7 @@ namespace ParkingControl
             updateSystem.UpdateAt<ManualNoParkingOverlaySystem>(
                 SystemUpdatePhase.Rendering);
 
-            // One-shot button: mark occupied banned lanes before vanilla moves their cars.
+            // Feed small automatic batches to vanilla parking relocation (game handles it for us).
             updateSystem.UpdateBefore<
                 ParkingRelocationSystem,
                 FixParkingLocationSystem>(

@@ -6,36 +6,37 @@
 // This notice MUST be kept with copies or substantial portions of this code.
 // ================= </copyright> ======================
 
-// Purpose: One-time request that lets vanilla relocate cars from currently banned curb lanes.
+// Purpose: Gradually hands cars from newly banned curb lanes to vanilla parking relocation.
 
 namespace ParkingControl
 {
     using CS2Shared.RiverMochi;
     using Game;
-    using Game.Common;
-    using Game.Net;
-    using Game.Tools;
-    using Game.Vehicles;
+    using Unity.Burst;
+    using Unity.Burst.Intrinsics;
     using Unity.Collections;
     using Unity.Entities;
 
     /// <summary>
-    /// Marks occupied banned curb lanes Updated so vanilla FixParkingLocationSystem moves their cars.
+    /// Queues cars once when PC first bans their curb lane, then feeds small batches to vanilla.
     /// </summary>
     public sealed partial class ParkingRelocationSystem : GameSystemBase
     {
-        private static bool s_RequestPending;
+        // Roughly a few seconds between passes in normal play. Small batches avoid a relocation spike.
+        private const int kUpdateInterval = 512;
+        private const int kCarsPerPass = 64;
 
-        private EntityQuery m_ParkingLanesQuery;
+        private EntityQuery m_RequestLaneQuery;
+        private NativeQueue<Entity> m_PendingCars;
         private bool m_IsGame;
-        private bool m_RelocateNextPass;
+        private bool m_HadQueuedWork;
+        private int m_TotalSent;
+        private int m_TotalSkipped;
 
-        /// <summary>
-        /// Queues one relocation pass after Parking Control enforcement has refreshed.
-        /// </summary>
-        internal static void RequestRelocation()
+        /// <inheritdoc/>
+        public override int GetUpdateInterval(SystemUpdatePhase phase)
         {
-            s_RequestPending = true;
+            return kUpdateInterval;
         }
 
         /// <inheritdoc/>
@@ -43,10 +44,16 @@ namespace ParkingControl
         {
             base.OnCreate();
 
-            m_ParkingLanesQuery = SystemAPI.QueryBuilder()
-                .WithAll<ParkingLane, Owner, Game.Prefabs.PrefabRef>()
-                .WithNone<Deleted, Temp>()
+            m_RequestLaneQuery = SystemAPI.QueryBuilder()
+                .WithAll<
+                    ParkingRelocationRequest,
+                    Game.Net.ParkingLane,
+                    Game.Net.LaneObject>()
+                .WithNone<Game.Common.Deleted, Game.Tools.Temp>()
                 .Build();
+
+            m_PendingCars = new Unity.Collections.NativeQueue<Unity.Entities.Entity>(
+                Unity.Collections.Allocator.Persistent);
         }
 
         /// <inheritdoc/>
@@ -61,8 +68,25 @@ namespace ParkingControl
                 (purpose == Colossal.Serialization.Entities.Purpose.NewGame ||
                     purpose == Colossal.Serialization.Entities.Purpose.LoadGame);
 
-            s_RequestPending = false;
-            m_RelocateNextPass = false;
+            if (m_PendingCars.IsCreated)
+            {
+                m_PendingCars.Clear();
+            }
+
+            m_HadQueuedWork = false;
+            m_TotalSent = 0;
+            m_TotalSkipped = 0;
+        }
+
+        /// <inheritdoc/>
+        protected override void OnDestroy()
+        {
+            if (m_PendingCars.IsCreated)
+            {
+                m_PendingCars.Dispose();
+            }
+
+            base.OnDestroy();
         }
 
         /// <inheritdoc/>
@@ -73,147 +97,227 @@ namespace ParkingControl
                 return;
             }
 
-            if (s_RequestPending)
-            {
-                s_RequestPending = false;
-                m_RelocateNextPass = true;
+            CollectNewLaneRequests();
 
-                // First let PC refresh ParkingDisabled and the path graph.
-                NoStreetParkingSystem.RequestReconcile();
+            if (m_PendingCars.Count == 0)
+            {
+                FinishLogIfNeeded();
                 return;
             }
 
-            if (!m_RelocateNextPass)
+            int sent = SendNextBatchToVanilla();
+            if (sent > 0)
+            {
+                ParkingStatusCache.MarkDirty();
+            }
+
+            if (m_PendingCars.Count == 0)
+            {
+                FinishLogIfNeeded();
+            }
+        }
+
+        private void CollectNewLaneRequests()
+        {
+            if (m_RequestLaneQuery.IsEmptyIgnoreFilter)
             {
                 return;
             }
 
-            m_RelocateNextPass = false;
             Dependency.Complete();
 
-            PCSettings.ParkingScope scope =
-                Mod.Settings?.Scope ?? PCSettings.ParkingScope.Off;
+            int queueBefore = m_PendingCars.Count;
 
-            Entity policyEntity = ParkingPolicySystem.PolicyEntity;
-
-            ComponentLookup<ParkingLane> parkingLaneLookup =
-                SystemAPI.GetComponentLookup<ParkingLane>(true);
-
-            ComponentLookup<Owner> ownerLookup =
-                SystemAPI.GetComponentLookup<Owner>(true);
-
-            ComponentLookup<Game.Prefabs.PrefabRef> prefabRefLookup =
-                SystemAPI.GetComponentLookup<Game.Prefabs.PrefabRef>(true);
-
-            ComponentLookup<Game.Prefabs.ParkingLaneData> parkingLaneDataLookup =
-                SystemAPI.GetComponentLookup<Game.Prefabs.ParkingLaneData>(true);
-
-            ComponentLookup<Road> roadLookup =
-                SystemAPI.GetComponentLookup<Road>(true);
-
-            ComponentLookup<Game.Areas.BorderDistrict> borderDistrictLookup =
-                SystemAPI.GetComponentLookup<Game.Areas.BorderDistrict>(true);
-
-            ComponentLookup<ManualRoadParkingBan> manualBanLookup =
-                SystemAPI.GetComponentLookup<ManualRoadParkingBan>(true);
-
-            BufferLookup<Game.Policies.Policy> policyLookup =
-                SystemAPI.GetBufferLookup<Game.Policies.Policy>(true);
-
-            BufferLookup<LaneObject> laneObjectLookup =
-                SystemAPI.GetBufferLookup<LaneObject>(true);
-
-            ComponentLookup<ParkedCar> parkedCarLookup =
-                SystemAPI.GetComponentLookup<ParkedCar>(true);
-
-            ComponentLookup<Updated> updatedLookup =
-                SystemAPI.GetComponentLookup<Updated>(true);
-
-            int occupiedTargetLanes = 0;
-            int parkedCars = 0;
-
-            using NativeList<Entity> lanesToUpdate =
-                new(Allocator.Temp);
-
-            using NativeArray<Entity> parkingLanes =
-                m_ParkingLanesQuery.ToEntityArray(Allocator.Temp);
-
-            foreach (Entity lane in parkingLanes)
+            CollectCarsJob collectJob = new()
             {
-                ParkingLane parkingLane = parkingLaneLookup[lane];
+                m_EntityType = SystemAPI.GetEntityTypeHandle(),
+                m_LaneObjectType = SystemAPI.GetBufferTypeHandle<Game.Net.LaneObject>(true),
+                m_ParkedCarLookup = SystemAPI.GetComponentLookup<Game.Vehicles.ParkedCar>(true),
+                m_ParkingLaneLookup = SystemAPI.GetComponentLookup<Game.Net.ParkingLane>(true),
+                m_StateLookup = SystemAPI.GetComponentLookup<StreetParkingState>(true),
+                m_FixParkingLookup = SystemAPI.GetComponentLookup<Game.Vehicles.FixParkingLocation>(true),
+                m_Queue = m_PendingCars.AsParallelWriter(),
+            };
 
-                if (!NoStreetParkingSystem.IsStreetCarParkingLane(
-                        lane,
-                        parkingLane,
-                        ownerLookup,
-                        prefabRefLookup,
-                        parkingLaneDataLookup,
-                        roadLookup))
-                {
-                    continue;
-                }
+            Dependency = collectJob.ScheduleParallel(m_RequestLaneQuery, Dependency);
+            Dependency.Complete();
 
-                if (!NoStreetParkingSystem.IsRestrictionTarget(
-                        lane,
-                        parkingLane,
-                        scope,
-                        policyEntity,
-                        ownerLookup,
-                        borderDistrictLookup,
-                        manualBanLookup,
-                        policyLookup))
-                {
-                    continue;
-                }
+            using Unity.Collections.NativeArray<Unity.Entities.Entity> requestLanes =
+                m_RequestLaneQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
 
-                if (!laneObjectLookup.TryGetBuffer(
-                        lane,
-                        out DynamicBuffer<LaneObject> laneObjects))
-                {
-                    continue;
-                }
-
-                int carsOnLane = 0;
-
-                foreach (LaneObject laneObject in laneObjects)
-                {
-                    if (parkedCarLookup.HasComponent(laneObject.m_LaneObject))
-                    {
-                        carsOnLane++;
-                    }
-                }
-
-                if (carsOnLane == 0)
-                {
-                    continue;
-                }
-
-                occupiedTargetLanes++;
-                parkedCars += carsOnLane;
-
-                if (!updatedLookup.HasComponent(lane))
-                {
-                    lanesToUpdate.Add(lane);
-                }
+            int laneCount = requestLanes.Length;
+            if (laneCount > 0)
+            {
+                // Consume each lane request once. The car queue survives across later intervals.
+                EntityManager.RemoveComponent<ParkingRelocationRequest>(requestLanes);
             }
 
-            if (lanesToUpdate.Length > 0)
+            int added = m_PendingCars.Count - queueBefore;
+            if (added <= 0)
             {
-                // Vanilla FixParkingLocationSystem runs later this phase and
-                // relocates parked cars from Updated parking lanes.
-                EntityManager.AddComponent<Updated>(lanesToUpdate.AsArray());
-
-                // Parking-lane recalculation can clear our flag later; reapply it
-                // before LanesModified rebuilds the path data.
-                NoStreetParkingSystem.RequestReconcile();
+                return;
             }
 
-            ParkingStatusCache.MarkDirty();
+            m_HadQueuedWork = true;
+            LogUtils.Info(
+                $"{Mod.ModTag} Auto relocation queued: {added} parked car(s) from " +
+                $"{laneCount} newly banned curb lane(s). Max {kCarsPerPass} every " +
+                $"{kUpdateInterval} simulation frames.");
+        }
+
+        private int SendNextBatchToVanilla()
+        {
+            Unity.Entities.ComponentLookup<Game.Vehicles.ParkedCar> parkedCarLookup =
+                SystemAPI.GetComponentLookup<Game.Vehicles.ParkedCar>(true);
+
+            Unity.Entities.ComponentLookup<Game.Net.ParkingLane> parkingLaneLookup =
+                SystemAPI.GetComponentLookup<Game.Net.ParkingLane>(true);
+
+            Unity.Entities.ComponentLookup<StreetParkingState> stateLookup =
+                SystemAPI.GetComponentLookup<StreetParkingState>(true);
+
+            Unity.Entities.ComponentLookup<Game.Vehicles.FixParkingLocation> fixParkingLookup =
+                SystemAPI.GetComponentLookup<Game.Vehicles.FixParkingLocation>(true);
+
+            using Unity.Entities.EntityCommandBuffer commandBuffer =
+                new(Unity.Collections.Allocator.Temp);
+
+            int sent = 0;
+            int checkedCount = 0;
+
+            while (checkedCount < kCarsPerPass &&
+                m_PendingCars.TryDequeue(out Unity.Entities.Entity vehicle))
+            {
+                checkedCount++;
+
+                // The owner may have already used the car while it waited in our queue.
+                if (!SystemAPI.Exists(vehicle) ||
+                    fixParkingLookup.HasComponent(vehicle) ||
+                    !parkedCarLookup.TryGetComponent(
+                        vehicle,
+                        out Game.Vehicles.ParkedCar parkedCar))
+                {
+                    m_TotalSkipped++;
+                    continue;
+                }
+
+                Unity.Entities.Entity lane = parkedCar.m_Lane;
+                if (lane == Unity.Entities.Entity.Null ||
+                    !SystemAPI.Exists(lane) ||
+                    !stateLookup.HasComponent(lane) ||
+                    !parkingLaneLookup.TryGetComponent(
+                        lane,
+                        out Game.Net.ParkingLane parkingLane) ||
+                    (parkingLane.m_Flags & Game.Net.ParkingLaneFlags.ParkingDisabled) == 0)
+                {
+                    // The ban was removed, the road was rebuilt, or the car already moved elsewhere.
+                    m_TotalSkipped++;
+                    continue;
+                }
+
+                // This is the same vanilla repair component used when game edits invalidate
+                // a parked car location. resetLocation=vehicle keeps ownership/home state intact.
+                commandBuffer.AddComponent(
+                    vehicle,
+                    new Game.Vehicles.FixParkingLocation(
+                        Unity.Entities.Entity.Null,
+                        vehicle));
+
+                sent++;
+            }
+
+            if (sent > 0)
+            {
+                // Playback now so vanilla FixParkingLocationSystem sees these cars later this phase.
+                commandBuffer.Playback(EntityManager);
+                m_TotalSent += sent;
+            }
+
+            return sent;
+        }
+
+        private void FinishLogIfNeeded()
+        {
+            if (!m_HadQueuedWork)
+            {
+                return;
+            }
 
             LogUtils.Info(
-                $"{Mod.ModTag} Relocate parked cars: " +
-                $"{parkedCars} car(s) on {occupiedTargetLanes} banned curb lane(s); " +
-                $"{lanesToUpdate.Length} lane(s) queued for vanilla relocation.");
+                $"{Mod.ModTag} Auto relocation finished: {m_TotalSent} car(s) sent to " +
+                $"vanilla relocation; {m_TotalSkipped} already moved or no longer eligible.");
+
+            m_HadQueuedWork = false;
+            m_TotalSent = 0;
+            m_TotalSkipped = 0;
+        }
+
+        [BurstCompile]
+        private struct CollectCarsJob : IJobChunk
+        {
+            [ReadOnly]
+            public EntityTypeHandle m_EntityType;
+
+            [ReadOnly]
+            public BufferTypeHandle<Game.Net.LaneObject> m_LaneObjectType;
+
+            [ReadOnly]
+            public ComponentLookup<Game.Vehicles.ParkedCar> m_ParkedCarLookup;
+
+            [ReadOnly]
+            public ComponentLookup<Game.Net.ParkingLane> m_ParkingLaneLookup;
+
+            [ReadOnly]
+            public ComponentLookup<StreetParkingState> m_StateLookup;
+
+            [ReadOnly]
+            public ComponentLookup<Game.Vehicles.FixParkingLocation> m_FixParkingLookup;
+
+            public NativeQueue<Entity>.ParallelWriter m_Queue;
+
+            public void Execute(
+                in ArchetypeChunk chunk,
+                int unfilteredChunkIndex,
+                bool useEnabledMask,
+                in v128 chunkEnabledMask)
+            {
+                NativeArray<Entity> entities = chunk.GetNativeArray(m_EntityType);
+                BufferAccessor<Game.Net.LaneObject> laneObjects =
+                    chunk.GetBufferAccessor(ref m_LaneObjectType);
+
+                for (int i = 0; i < entities.Length; i++)
+                {
+                    Entity lane = entities[i];
+
+                    if (!m_StateLookup.HasComponent(lane))
+                    {
+                        continue;
+                    }
+
+                    Game.Net.ParkingLane parkingLane = m_ParkingLaneLookup[lane];
+                    if ((parkingLane.m_Flags & Game.Net.ParkingLaneFlags.ParkingDisabled) == 0)
+                    {
+                        continue;
+                    }
+
+                    DynamicBuffer<Game.Net.LaneObject> objects = laneObjects[i];
+                    foreach (Game.Net.LaneObject laneObject in objects)
+                    {
+                        Entity vehicle = laneObject.m_LaneObject;
+
+                        if (m_FixParkingLookup.HasComponent(vehicle) ||
+                            !m_ParkedCarLookup.TryGetComponent(
+                                vehicle,
+                                out Game.Vehicles.ParkedCar parkedCar) ||
+                            parkedCar.m_Lane != lane)
+                        {
+                            continue;
+                        }
+
+                        m_Queue.Enqueue(vehicle);
+                    }
+                }
+            }
         }
     }
 }

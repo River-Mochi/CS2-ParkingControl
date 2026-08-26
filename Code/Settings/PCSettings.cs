@@ -72,18 +72,16 @@ namespace ParkingControl
         public bool ShowInstructions { get; set; }
 
         /// <summary>
-        /// Requests a one-time vanilla relocation of cars still parked on banned curb lanes.
+        /// Legacy hidden button kept so existing locale IDs stay valid.
         /// </summary>
         [SettingsUIButton]
+        [SettingsUIHideByCondition(typeof(PCSettings), nameof(HideRelocateParkedCars))]
         [SettingsUISection(kActionsTab, kStreetParkingGroup)]
         public bool RelocateParkedCars
         {
             set
             {
-                if (value)
-                {
-                    ParkingRelocationSystem.RequestRelocation();
-                }
+                // Relocation is automatic and done by the game.
             }
         }
 
@@ -256,6 +254,11 @@ namespace ParkingControl
         private bool HideStatus()
         {
             return !ShowStatus;
+        }
+
+        private bool HideRelocateParkedCars()
+        {
+            return true;
         }
 
         private static void ReportToLogAction()
