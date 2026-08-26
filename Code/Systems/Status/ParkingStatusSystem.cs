@@ -190,7 +190,7 @@ namespace ParkingControl
                 if (reportRequested && details != null)
                 {
                     WriteScopeManualReportSummary(snapshot);
-                    WriteParkingFeePolicyDiagnostic();
+                    WriteParkingFeeDebug();
                     WriteReport(snapshot, details);
                 }
             }
