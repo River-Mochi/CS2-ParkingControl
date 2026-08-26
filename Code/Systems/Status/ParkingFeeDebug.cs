@@ -10,8 +10,14 @@
 
 namespace ParkingControl
 {
+    using System.Collections.Generic;
     using System.Globalization;
+    using System.Text;
     using CS2Shared.RiverMochi;
+    using Game.Policies;
+    using Game.Prefabs;
+    using Game.UI.InGame;
+    using Unity.Collections;
     using Unity.Entities;
 
     public sealed partial class ParkingStatusSystem
@@ -23,22 +29,22 @@ namespace ParkingControl
         {
             // SystemAPI lookups are cached by Entities source generation.
             // Fully qualify game types here because this helper is copied into generated code.
-            var modifierLookup =
+            BufferLookup<DistrictModifierData> modifierLookup =
                 SystemAPI.GetBufferLookup<Game.Prefabs.DistrictModifierData>(true);
-            var policyLookup =
+            BufferLookup<Policy> policyLookup =
                 SystemAPI.GetBufferLookup<Game.Policies.Policy>(true);
-            var sliderLookup =
+            ComponentLookup<PolicySliderData> sliderLookup =
                 SystemAPI.GetComponentLookup<Game.Prefabs.PolicySliderData>(true);
 
-            var parkingFeePolicies =
+            List<Entity> parkingFeePolicies =
                 new System.Collections.Generic.List<Unity.Entities.Entity>();
 
-            using (var policyEntities =
+            using (NativeArray<Entity> policyEntities =
                 m_DistrictPolicyPrefabQuery.ToEntityArray(Unity.Collections.Allocator.Temp))
             {
                 foreach (Unity.Entities.Entity policyEntity in policyEntities)
                 {
-                    if (!modifierLookup.TryGetBuffer(policyEntity, out var modifiers))
+                    if (!modifierLookup.TryGetBuffer(policyEntity, out DynamicBuffer<DistrictModifierData> modifiers))
                     {
                         continue;
                     }
@@ -55,7 +61,7 @@ namespace ParkingControl
                 }
             }
 
-            var selectedInfo =
+            SelectedInfoUISystem selectedInfo =
                 World.GetExistingSystemManaged<Game.UI.InGame.SelectedInfoUISystem>();
             Unity.Entities.Entity selectedEntity =
                 selectedInfo?.selectedEntity ?? Unity.Entities.Entity.Null;
@@ -67,7 +73,7 @@ namespace ParkingControl
                 selectedExists &&
                 SystemAPI.HasComponent<Game.Areas.District>(selectedEntity);
 
-            var text = new System.Text.StringBuilder(3072);
+            StringBuilder text = new System.Text.StringBuilder(3072);
             text.AppendLine();
             text.AppendLine(
                 $"==================== {Mod.ModTag} VANILLA PARKING FEE DEBUG ====================");
@@ -87,10 +93,10 @@ namespace ParkingControl
                 return;
             }
 
-            var districts =
+            List<Entity> districts =
                 new System.Collections.Generic.List<Unity.Entities.Entity>();
 
-            using (var districtEntities =
+            using (NativeArray<Entity> districtEntities =
                 m_DistrictQuery.ToEntityArray(Unity.Collections.Allocator.Temp))
             {
                 foreach (Unity.Entities.Entity district in districtEntities)
@@ -148,7 +154,7 @@ namespace ParkingControl
                     int entryCount = 0;
                     Game.Policies.Policy firstEntry = default;
 
-                    if (policyLookup.TryGetBuffer(district, out var policies))
+                    if (policyLookup.TryGetBuffer(district, out DynamicBuffer<Policy> policies))
                     {
                         foreach (Game.Policies.Policy policy in policies)
                         {
