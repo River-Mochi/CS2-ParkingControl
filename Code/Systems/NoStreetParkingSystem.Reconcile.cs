@@ -10,69 +10,69 @@
 
 namespace ParkingControl
 {
-    using Game.Common;
-    using Game.Net;
-    using Unity.Collections;
     using Unity.Entities;
 
     public sealed partial class NoStreetParkingSystem
     {
         private ReconcileResult ReconcileStreetParking(
             PCSettings.ParkingScope scope,
-            Entity policyEntity,
+            Unity.Entities.Entity policyEntity,
             bool fullReconcile)
         {
-            ComponentLookup<ParkingLane> parkingLaneLookup =
-                SystemAPI.GetComponentLookup<ParkingLane>();
+            Unity.Entities.ComponentLookup<Game.Net.ParkingLane> parkingLaneLookup =
+                SystemAPI.GetComponentLookup<Game.Net.ParkingLane>();
 
-            ComponentLookup<Owner> ownerLookup =
-                SystemAPI.GetComponentLookup<Owner>(true);
+            Unity.Entities.ComponentLookup<Game.Common.Owner> ownerLookup =
+                SystemAPI.GetComponentLookup<Game.Common.Owner>(true);
 
-            ComponentLookup<Game.Prefabs.PrefabRef> prefabRefLookup =
+            Unity.Entities.ComponentLookup<Game.Prefabs.PrefabRef> prefabRefLookup =
                 SystemAPI.GetComponentLookup<Game.Prefabs.PrefabRef>(true);
 
-            ComponentLookup<Game.Prefabs.ParkingLaneData> parkingLaneDataLookup =
+            Unity.Entities.ComponentLookup<Game.Prefabs.ParkingLaneData> parkingLaneDataLookup =
                 SystemAPI.GetComponentLookup<Game.Prefabs.ParkingLaneData>(true);
 
-            ComponentLookup<Road> roadLookup =
-                SystemAPI.GetComponentLookup<Road>(true);
+            Unity.Entities.ComponentLookup<Game.Net.Road> roadLookup =
+                SystemAPI.GetComponentLookup<Game.Net.Road>(true);
 
-            ComponentLookup<Game.Areas.BorderDistrict> borderDistrictLookup =
+            Unity.Entities.ComponentLookup<Game.Areas.BorderDistrict> borderDistrictLookup =
                 SystemAPI.GetComponentLookup<Game.Areas.BorderDistrict>(true);
 
-            ComponentLookup<ManualRoadParkingBan> manualBanLookup =
+            Unity.Entities.ComponentLookup<ManualRoadParkingBan> manualBanLookup =
                 SystemAPI.GetComponentLookup<ManualRoadParkingBan>(true);
 
-            ComponentLookup<StreetParkingState> stateLookup =
+            Unity.Entities.ComponentLookup<StreetParkingState> stateLookup =
                 SystemAPI.GetComponentLookup<StreetParkingState>(true);
 
-            ComponentLookup<Created> createdLookup =
-                SystemAPI.GetComponentLookup<Created>(true);
+            Unity.Entities.ComponentLookup<Game.Common.Created> createdLookup =
+                SystemAPI.GetComponentLookup<Game.Common.Created>(true);
 
-            ComponentLookup<Updated> updatedLookup =
-                SystemAPI.GetComponentLookup<Updated>(true);
+            Unity.Entities.ComponentLookup<Game.Common.Updated> updatedLookup =
+                SystemAPI.GetComponentLookup<Game.Common.Updated>(true);
 
-            ComponentLookup<PathfindUpdated> pathfindUpdatedLookup =
-                SystemAPI.GetComponentLookup<PathfindUpdated>(true);
+            Unity.Entities.ComponentLookup<Game.Common.PathfindUpdated> pathfindUpdatedLookup =
+                SystemAPI.GetComponentLookup<Game.Common.PathfindUpdated>(true);
 
-            BufferLookup<Game.Policies.Policy> policyLookup =
+            Unity.Entities.BufferLookup<Game.Policies.Policy> policyLookup =
                 SystemAPI.GetBufferLookup<Game.Policies.Policy>(true);
 
-            NativeList<Entity> addStateEntities = new(Allocator.Temp);
-            NativeList<Entity> removeStateEntities = new(Allocator.Temp);
-            NativeList<Entity> pathfindUpdateEntities = new(Allocator.Temp);
+            Unity.Collections.NativeList<Unity.Entities.Entity> addStateEntities =
+                new(Unity.Collections.Allocator.Temp);
+            Unity.Collections.NativeList<Unity.Entities.Entity> removeStateEntities =
+                new(Unity.Collections.Allocator.Temp);
+            Unity.Collections.NativeList<Unity.Entities.Entity> pathfindUpdateEntities =
+                new(Unity.Collections.Allocator.Temp);
 
             ReconcileResult result = default;
 
-            EntityQuery sourceQuery =
+            Unity.Entities.EntityQuery sourceQuery =
                 fullReconcile
                     ? m_AllParkingLanesQuery
                     : m_ChangedParkingLanesQuery;
 
-            using (NativeArray<Entity> parkingLaneEntities =
-                sourceQuery.ToEntityArray(Allocator.Temp))
+            using (Unity.Collections.NativeArray<Unity.Entities.Entity> parkingLaneEntities =
+                sourceQuery.ToEntityArray(Unity.Collections.Allocator.Temp))
             {
-                foreach (Entity entity in parkingLaneEntities)
+                foreach (Unity.Entities.Entity entity in parkingLaneEntities)
                 {
                     ReconcileLane(
                         entity,
@@ -106,68 +106,71 @@ namespace ParkingControl
         }
 
         private ReconcileResult ReconcileRoad(
-            Entity road,
+            Unity.Entities.Entity road,
             PCSettings.ParkingScope scope,
-            Entity policyEntity)
+            Unity.Entities.Entity policyEntity)
         {
             ReconcileResult result = default;
 
-            if (road == Entity.Null ||
+            if (road == Unity.Entities.Entity.Null ||
                 !EntityManager.Exists(road) ||
-                !EntityManager.HasComponent<Road>(road) ||
-                !EntityManager.HasBuffer<SubLane>(road))
+                !EntityManager.HasComponent<Game.Net.Road>(road) ||
+                !EntityManager.HasBuffer<Game.Net.SubLane>(road))
             {
                 return result;
             }
 
-            ComponentLookup<ParkingLane> parkingLaneLookup =
-                SystemAPI.GetComponentLookup<ParkingLane>();
+            Unity.Entities.ComponentLookup<Game.Net.ParkingLane> parkingLaneLookup =
+                SystemAPI.GetComponentLookup<Game.Net.ParkingLane>();
 
-            ComponentLookup<Owner> ownerLookup =
-                SystemAPI.GetComponentLookup<Owner>(true);
+            Unity.Entities.ComponentLookup<Game.Common.Owner> ownerLookup =
+                SystemAPI.GetComponentLookup<Game.Common.Owner>(true);
 
-            ComponentLookup<Game.Prefabs.PrefabRef> prefabRefLookup =
+            Unity.Entities.ComponentLookup<Game.Prefabs.PrefabRef> prefabRefLookup =
                 SystemAPI.GetComponentLookup<Game.Prefabs.PrefabRef>(true);
 
-            ComponentLookup<Game.Prefabs.ParkingLaneData> parkingLaneDataLookup =
+            Unity.Entities.ComponentLookup<Game.Prefabs.ParkingLaneData> parkingLaneDataLookup =
                 SystemAPI.GetComponentLookup<Game.Prefabs.ParkingLaneData>(true);
 
-            ComponentLookup<Road> roadLookup =
-                SystemAPI.GetComponentLookup<Road>(true);
+            Unity.Entities.ComponentLookup<Game.Net.Road> roadLookup =
+                SystemAPI.GetComponentLookup<Game.Net.Road>(true);
 
-            ComponentLookup<Game.Areas.BorderDistrict> borderDistrictLookup =
+            Unity.Entities.ComponentLookup<Game.Areas.BorderDistrict> borderDistrictLookup =
                 SystemAPI.GetComponentLookup<Game.Areas.BorderDistrict>(true);
 
-            ComponentLookup<ManualRoadParkingBan> manualBanLookup =
+            Unity.Entities.ComponentLookup<ManualRoadParkingBan> manualBanLookup =
                 SystemAPI.GetComponentLookup<ManualRoadParkingBan>(true);
 
-            ComponentLookup<StreetParkingState> stateLookup =
+            Unity.Entities.ComponentLookup<StreetParkingState> stateLookup =
                 SystemAPI.GetComponentLookup<StreetParkingState>(true);
 
-            ComponentLookup<Created> createdLookup =
-                SystemAPI.GetComponentLookup<Created>(true);
+            Unity.Entities.ComponentLookup<Game.Common.Created> createdLookup =
+                SystemAPI.GetComponentLookup<Game.Common.Created>(true);
 
-            ComponentLookup<Updated> updatedLookup =
-                SystemAPI.GetComponentLookup<Updated>(true);
+            Unity.Entities.ComponentLookup<Game.Common.Updated> updatedLookup =
+                SystemAPI.GetComponentLookup<Game.Common.Updated>(true);
 
-            ComponentLookup<PathfindUpdated> pathfindUpdatedLookup =
-                SystemAPI.GetComponentLookup<PathfindUpdated>(true);
+            Unity.Entities.ComponentLookup<Game.Common.PathfindUpdated> pathfindUpdatedLookup =
+                SystemAPI.GetComponentLookup<Game.Common.PathfindUpdated>(true);
 
-            BufferLookup<Game.Policies.Policy> policyLookup =
+            Unity.Entities.BufferLookup<Game.Policies.Policy> policyLookup =
                 SystemAPI.GetBufferLookup<Game.Policies.Policy>(true);
 
-            NativeList<Entity> addStateEntities = new(Allocator.Temp);
-            NativeList<Entity> removeStateEntities = new(Allocator.Temp);
-            NativeList<Entity> pathfindUpdateEntities = new(Allocator.Temp);
+            Unity.Collections.NativeList<Unity.Entities.Entity> addStateEntities =
+                new(Unity.Collections.Allocator.Temp);
+            Unity.Collections.NativeList<Unity.Entities.Entity> removeStateEntities =
+                new(Unity.Collections.Allocator.Temp);
+            Unity.Collections.NativeList<Unity.Entities.Entity> pathfindUpdateEntities =
+                new(Unity.Collections.Allocator.Temp);
 
-            DynamicBuffer<SubLane> subLanes =
-                EntityManager.GetBuffer<SubLane>(
+            Unity.Entities.DynamicBuffer<Game.Net.SubLane> subLanes =
+                EntityManager.GetBuffer<Game.Net.SubLane>(
                     road,
                     isReadOnly: true);
 
-            foreach (SubLane subLane in subLanes)
+            foreach (Game.Net.SubLane subLane in subLanes)
             {
-                Entity lane = subLane.m_SubLane;
+                Unity.Entities.Entity lane = subLane.m_SubLane;
 
                 if (!parkingLaneLookup.HasComponent(lane))
                 {
@@ -205,24 +208,24 @@ namespace ParkingControl
         }
 
         private static void ReconcileLane(
-            Entity entity,
+            Unity.Entities.Entity entity,
             PCSettings.ParkingScope scope,
-            Entity policyEntity,
-            ref ComponentLookup<ParkingLane> parkingLaneLookup,
-            ComponentLookup<Owner> ownerLookup,
-            ComponentLookup<Game.Prefabs.PrefabRef> prefabRefLookup,
-            ComponentLookup<Game.Prefabs.ParkingLaneData> parkingLaneDataLookup,
-            ComponentLookup<Road> roadLookup,
-            ComponentLookup<Game.Areas.BorderDistrict> borderDistrictLookup,
-            ComponentLookup<ManualRoadParkingBan> manualBanLookup,
-            ComponentLookup<StreetParkingState> stateLookup,
-            ComponentLookup<Created> createdLookup,
-            ComponentLookup<Updated> updatedLookup,
-            ComponentLookup<PathfindUpdated> pathfindUpdatedLookup,
-            BufferLookup<Game.Policies.Policy> policyLookup,
-            ref NativeList<Entity> addStateEntities,
-            ref NativeList<Entity> removeStateEntities,
-            ref NativeList<Entity> pathfindUpdateEntities,
+            Unity.Entities.Entity policyEntity,
+            ref Unity.Entities.ComponentLookup<Game.Net.ParkingLane> parkingLaneLookup,
+            Unity.Entities.ComponentLookup<Game.Common.Owner> ownerLookup,
+            Unity.Entities.ComponentLookup<Game.Prefabs.PrefabRef> prefabRefLookup,
+            Unity.Entities.ComponentLookup<Game.Prefabs.ParkingLaneData> parkingLaneDataLookup,
+            Unity.Entities.ComponentLookup<Game.Net.Road> roadLookup,
+            Unity.Entities.ComponentLookup<Game.Areas.BorderDistrict> borderDistrictLookup,
+            Unity.Entities.ComponentLookup<ManualRoadParkingBan> manualBanLookup,
+            Unity.Entities.ComponentLookup<StreetParkingState> stateLookup,
+            Unity.Entities.ComponentLookup<Game.Common.Created> createdLookup,
+            Unity.Entities.ComponentLookup<Game.Common.Updated> updatedLookup,
+            Unity.Entities.ComponentLookup<Game.Common.PathfindUpdated> pathfindUpdatedLookup,
+            Unity.Entities.BufferLookup<Game.Policies.Policy> policyLookup,
+            ref Unity.Collections.NativeList<Unity.Entities.Entity> addStateEntities,
+            ref Unity.Collections.NativeList<Unity.Entities.Entity> removeStateEntities,
+            ref Unity.Collections.NativeList<Unity.Entities.Entity> pathfindUpdateEntities,
             ref ReconcileResult result)
         {
             if (!parkingLaneLookup.HasComponent(entity) ||
@@ -232,7 +235,7 @@ namespace ParkingControl
                 return;
             }
 
-            ParkingLane parkingLane = parkingLaneLookup[entity];
+            Game.Net.ParkingLane parkingLane = parkingLaneLookup[entity];
             bool hasState = stateLookup.HasComponent(entity);
 
             bool isStreetParking =
@@ -258,7 +261,7 @@ namespace ParkingControl
 
             bool parkingDisabled =
                 (parkingLane.m_Flags &
-                    ParkingLaneFlags.ParkingDisabled) != 0;
+                    Game.Net.ParkingLaneFlags.ParkingDisabled) != 0;
 
             if (!shouldRestrict)
             {
@@ -271,7 +274,7 @@ namespace ParkingControl
                 if (parkingDisabled)
                 {
                     parkingLane.m_Flags &=
-                        ~ParkingLaneFlags.ParkingDisabled;
+                        ~Game.Net.ParkingLaneFlags.ParkingDisabled;
 
                     parkingLaneLookup[entity] = parkingLane;
                     result.m_Changed++;
@@ -296,7 +299,7 @@ namespace ParkingControl
             }
 
             parkingLane.m_Flags |=
-                ParkingLaneFlags.ParkingDisabled;
+                Game.Net.ParkingLaneFlags.ParkingDisabled;
 
             parkingLaneLookup[entity] = parkingLane;
             result.m_Changed++;
@@ -314,11 +317,10 @@ namespace ParkingControl
                 ref pathfindUpdateEntities);
         }
 
-
         private void ApplyPendingChanges(
-            ref NativeList<Entity> addStateEntities,
-            ref NativeList<Entity> removeStateEntities,
-            ref NativeList<Entity> pathfindUpdateEntities)
+            ref Unity.Collections.NativeList<Unity.Entities.Entity> addStateEntities,
+            ref Unity.Collections.NativeList<Unity.Entities.Entity> removeStateEntities,
+            ref Unity.Collections.NativeList<Unity.Entities.Entity> pathfindUpdateEntities)
         {
             if (addStateEntities.Length > 0)
             {
@@ -334,7 +336,7 @@ namespace ParkingControl
 
             if (pathfindUpdateEntities.Length > 0)
             {
-                EntityManager.AddComponent<PathfindUpdated>(
+                EntityManager.AddComponent<Game.Common.PathfindUpdated>(
                     pathfindUpdateEntities.AsArray());
             }
 
@@ -344,11 +346,11 @@ namespace ParkingControl
         }
 
         private static void QueuePathfindUpdate(
-            Entity entity,
-            ComponentLookup<Created> createdLookup,
-            ComponentLookup<Updated> updatedLookup,
-            ComponentLookup<PathfindUpdated> pathfindUpdatedLookup,
-            ref NativeList<Entity> pathfindUpdateEntities)
+            Unity.Entities.Entity entity,
+            Unity.Entities.ComponentLookup<Game.Common.Created> createdLookup,
+            Unity.Entities.ComponentLookup<Game.Common.Updated> updatedLookup,
+            Unity.Entities.ComponentLookup<Game.Common.PathfindUpdated> pathfindUpdatedLookup,
+            ref Unity.Collections.NativeList<Unity.Entities.Entity> pathfindUpdateEntities)
         {
             if (!createdLookup.HasComponent(entity) &&
                 !updatedLookup.HasComponent(entity) &&

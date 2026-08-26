@@ -14,7 +14,6 @@ namespace ParkingControl
     using System.Collections.Generic;
     using CS2Shared.RiverMochi;
     using Game;
-    using Game.Simulation;
     using Unity.Entities;
 
     /// <summary>
@@ -32,7 +31,7 @@ namespace ParkingControl
         private EntityQuery m_ParkingFacilityQuery;
         private EntityQuery m_PersonalVehicleQuery;
         private Game.UI.NameSystem m_NameSystem = null!;
-        private SimulationSystem m_SimulationSystem = null!;
+        private Game.Simulation.SimulationSystem m_SimulationSystem = null!;
         private bool m_HasPreviousReport;
         private bool m_ReportRequested;
         private bool m_StatusRequested;
@@ -65,7 +64,8 @@ namespace ParkingControl
         {
             base.OnCreate();
             m_NameSystem = World.GetOrCreateSystemManaged<Game.UI.NameSystem>();
-            m_SimulationSystem = World.GetOrCreateSystemManaged<SimulationSystem>();
+            m_SimulationSystem =
+                World.GetOrCreateSystemManaged<Game.Simulation.SimulationSystem>();
 
             // Fully qualified query types prevent similarly named Game components from
             // becoming ambiguous when another namespace is added to a partial file.
@@ -217,3 +217,4 @@ namespace ParkingControl
         }
     }
 }
+
