@@ -7,7 +7,7 @@
 // ================= </copyright> ======================
 
 // File: Utils/LogUtils.cs
-// Version: 0.6.9 based on River-Mochi shared CS2 utilities.
+// Version: 0.7.0 based on River-Mochi shared CS2 utilities.
 // Purpose: reduce Colossal logger NRE popups with direct .NET file logging.
 // Why: routine mod logs bypass Colossal's logger write path.
 //
@@ -330,8 +330,7 @@ namespace CS2Shared.RiverMochi
                     Directory.CreateDirectory(dir);
                 }
 
-                using FileStream stream = new FileStream(
-                    logPath,
+                using FileStream stream = new( logPath,
                     FileMode.Append,
                     FileAccess.Write,
                     FileShare.ReadWrite);
