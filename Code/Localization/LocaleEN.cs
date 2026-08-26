@@ -119,7 +119,7 @@ namespace ParkingControl
                     "Shows only the selected <Whole City> or <by District> Parking Ban scope. Manual No Parking roads are listed separately.\n" +
                     "<Parked> = cars still parked on streets covered by the selected scope.\n" +
                     "<Disabled> = disabled curb-lane sections / target curb-lane sections.\n" +
-                    "<Dist> = districts with the Parking Ban / total districts.\n" +
+                    "<Districts> = districts with the Parking Ban / total districts.\n" +
                     "<---------------------->\n" +
                     "**After changing or rebuilding roads, the disabled count may need a little time while CS2 rebuilds parking lanes. " +
                     "Run the city briefly and reopen Options > Status. If CHECK remains, use About > Debug > Write Report and send Logs/ParkingControl.log and your mod list.**"
@@ -139,7 +139,8 @@ namespace ParkingControl
                     "<Public> = occupied parking spaces in parking facilities.\n" +
                     "Roughly matches CS2's Roads parking InfoView panel.\n" +
                     "<Bldg> = vehicles parked at buildings or garages.\n" +
-                    "<Street/total> = cars parked on streets ÷ total known in-city parked cars.\n" +
+                    "<Street> = cars parked on streets.\n" +
+                    "<Total> = total known in-city parked cars (street + public + building).\n" +
                     "**Outside connections and unknown staging are excluded from the total.**"
                 },
 
@@ -192,14 +193,17 @@ namespace ParkingControl
                 { ParkingStatusLocale.kCollectionFailed, "Parking status could not be collected; see ParkingControl.log." },
                 { ParkingStatusLocale.kCompactEnforcementFormat,
                     "{0} parked | {1}/{2} disabled{3}" },
+                { ParkingStatusLocale.kManualEnforcementFormat,
+                    "{0} parked | {1}/{2} disabled lanes{3}" },
+
                 { ParkingStatusLocale.kDistrictEnforcementFormat,
-                    "{0} parked | {1}/{2} disabled | {3}/{4} dist{5}" },
+                    "{0} parked | {1}/{2} disabled | {3}/{4} districts{5}" },
                 { ParkingStatusLocale.kVehicleFormat,
                     "{0} street | {1} visible | {2} inside | {3} OC" },
                 { ParkingStatusLocale.kSupplyFormat,
                     "{0} = {1} public free | {2} = {3} bldg free" },
                 { ParkingStatusLocale.kShareFormat,
-                    "{0} public | {1} bldg | {2}/{3} street" },
+                    "{0} public | {1} bldg | {2} street | {3} total" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "OFF" },
                 { ParkingStatusLocale.kStatusCheck, "CHECK" },

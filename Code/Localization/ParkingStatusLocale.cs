@@ -24,7 +24,9 @@ namespace ParkingControl
         internal const string kCollecting = Mod.ModId + ".Status.Collecting";
         internal const string kUnavailable = Mod.ModId + ".Status.Unavailable";
         internal const string kCollectionFailed = Mod.ModId + ".Status.CollectionFailed";
+
         internal const string kCompactEnforcementFormat = Mod.ModId + ".Status.CompactEnforcementFormat";
+        internal const string kManualEnforcementFormat = Mod.ModId + ".Status.ManualEnforcementFormat";
         internal const string kDistrictEnforcementFormat = Mod.ModId + ".Status.DistrictEnforcementFormat";
         internal const string kVehicleFormat = Mod.ModId + ".Status.VehicleFormat";
         internal const string kSupplyFormat = Mod.ModId + ".Status.SupplyFormat";

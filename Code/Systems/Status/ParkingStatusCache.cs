@@ -29,14 +29,16 @@ namespace ParkingControl
             "Parking status could not be collected; see ParkingControl.log.";
         private const string kEnforcementFormatFallback =
             "{0} parked | {1}/{2} disabled{3}";
+        private const string kManualEnforcementFormatFallback =
+            "{0} parked | {1}/{2} disabled lanes{3}";
         private const string kDistrictEnforcementFormatFallback =
-            "{0} parked | {1}/{2} disabled | {3}/{4} dist{5}";
+            "{0} parked | {1}/{2} disabled | {3}/{4} districts{5}";
         private const string kVehicleFormatFallback =
             "{0} street | {1} visible | {2} inside | {3} OC";
         private const string kSupplyFormatFallback =
             "{0} = {1} public free | {2} = {3} bldg free";
         private const string kShareFormatFallback =
-            "{0} public | {1} bldg | {2}/{3} street";
+            "{0} public | {1} bldg | {2} street | {3} total";
 
         private static bool s_ForceRefresh = true;
         private static bool s_HasRequestedSimulationFrame;
@@ -315,8 +317,9 @@ namespace ParkingControl
 
             string manual = manualEnabled
                 ? ParkingStatusLocale.Format(
-                    ParkingStatusLocale.kCompactEnforcementFormat,
-                    kEnforcementFormatFallback,
+                    ParkingStatusLocale.kManualEnforcementFormat,
+                    kManualEnforcementFormatFallback,
+
                     Format(snapshot.ManualTargetStreetParked),
                     Format(snapshot.DisabledManualTargetCurbLanes),
                     Format(snapshot.ManualTargetCurbLanes),
