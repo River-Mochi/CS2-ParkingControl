@@ -14,7 +14,7 @@ namespace ParkingControl
     using System.Collections.Generic;
     using Game;
     using Game.Common;
-    using Game.Net;
+    using Game.Tools;
     using Unity.Collections;
     using Unity.Entities;
 
@@ -83,28 +83,28 @@ namespace ParkingControl
 
             m_AllParkingLanesQuery = SystemAPI.QueryBuilder()
                 .WithAll<Game.Net.ParkingLane, Game.Common.Owner, Game.Prefabs.PrefabRef>()
-                .WithNone<Game.Common.Deleted, Game.Tools.Temp>()
+                .WithNone<Game.Common.Deleted, Temp>()
                 .Build();
 
             m_ChangedParkingLanesQuery = SystemAPI.QueryBuilder()
                 .WithAll<Game.Net.ParkingLane, Game.Common.Owner, Game.Prefabs.PrefabRef>()
                 .WithAny<Game.Common.Created, Game.Common.Updated, Game.Common.PathfindUpdated>()
-                .WithNone<Game.Common.Deleted, Game.Tools.Temp>()
+                .WithNone<Deleted, Temp>()
                 .Build();
 
             m_ModifiedParkingLanesQuery = SystemAPI.QueryBuilder()
                 .WithAll<Game.Net.ParkingLane, StreetParkingState>()
-                .WithNone<Game.Common.Deleted, Game.Tools.Temp>()
+                .WithNone<Deleted, Temp>()
                 .Build();
 
             m_ManualRoadBanQuery = SystemAPI.QueryBuilder()
                 .WithAll<ManualRoadParkingBan, Game.Net.Road>()
-                .WithNone<Game.Common.Deleted, Game.Tools.Temp>()
+                .WithNone<Deleted, Temp>()
                 .Build();
 
             m_ChangedManualRoadBanQuery = SystemAPI.QueryBuilder()
                 .WithAll<ManualRoadParkingBan, Game.Net.Road, Game.Common.Updated>()
-                .WithNone<Game.Common.Deleted, Game.Tools.Temp>()
+                .WithNone<Deleted, Temp>()
                 .Build();
 
             m_PolicyModifyQuery = SystemAPI.QueryBuilder()
