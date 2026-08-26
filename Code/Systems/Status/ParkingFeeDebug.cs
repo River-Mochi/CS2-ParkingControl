@@ -10,14 +10,7 @@
 
 namespace ParkingControl
 {
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Text;
     using CS2Shared.RiverMochi;
-    using Game.Policies;
-    using Game.Prefabs;
-    using Game.UI.InGame;
-    using Unity.Collections;
     using Unity.Entities;
 
     public sealed partial class ParkingStatusSystem
@@ -27,32 +20,32 @@ namespace ParkingControl
         /// </summary>
         private void WriteParkingFeeDebug()
         {
-            // SystemAPI lookups are cached by Entities source generation.
-            // Fully qualify game types here because this helper is copied into generated code.
-            BufferLookup<DistrictModifierData> modifierLookup =
+            // SystemAPI methods are source-generated. Keep every non-BCL type in this
+            // method fully qualified so the generated partial does not depend on file usings.
+            Unity.Entities.BufferLookup<Game.Prefabs.DistrictModifierData> modifierLookup =
                 SystemAPI.GetBufferLookup<Game.Prefabs.DistrictModifierData>(true);
-            BufferLookup<Policy> policyLookup =
+            Unity.Entities.BufferLookup<Game.Policies.Policy> policyLookup =
                 SystemAPI.GetBufferLookup<Game.Policies.Policy>(true);
-            ComponentLookup<PolicySliderData> sliderLookup =
+            Unity.Entities.ComponentLookup<Game.Prefabs.PolicySliderData> sliderLookup =
                 SystemAPI.GetComponentLookup<Game.Prefabs.PolicySliderData>(true);
 
-            List<Entity> parkingFeePolicies =
-                new System.Collections.Generic.List<Unity.Entities.Entity>();
+            System.Collections.Generic.List<Unity.Entities.Entity> parkingFeePolicies = new();
 
-            using (NativeArray<Entity> policyEntities =
+            using (Unity.Collections.NativeArray<Unity.Entities.Entity> policyEntities =
                 m_DistrictPolicyPrefabQuery.ToEntityArray(Unity.Collections.Allocator.Temp))
             {
                 foreach (Unity.Entities.Entity policyEntity in policyEntities)
                 {
-                    if (!modifierLookup.TryGetBuffer(policyEntity, out DynamicBuffer<DistrictModifierData> modifiers))
+                    if (!modifierLookup.TryGetBuffer(
+                            policyEntity,
+                            out Unity.Entities.DynamicBuffer<Game.Prefabs.DistrictModifierData> modifiers))
                     {
                         continue;
                     }
 
                     foreach (Game.Prefabs.DistrictModifierData modifier in modifiers)
                     {
-                        if (modifier.m_Type ==
-                            Game.Areas.DistrictModifierType.ParkingFee)
+                        if (modifier.m_Type == Game.Areas.DistrictModifierType.ParkingFee)
                         {
                             parkingFeePolicies.Add(policyEntity);
                             break;
@@ -61,7 +54,7 @@ namespace ParkingControl
                 }
             }
 
-            SelectedInfoUISystem selectedInfo =
+            Game.UI.InGame.SelectedInfoUISystem selectedInfo =
                 World.GetExistingSystemManaged<Game.UI.InGame.SelectedInfoUISystem>();
             Unity.Entities.Entity selectedEntity =
                 selectedInfo?.selectedEntity ?? Unity.Entities.Entity.Null;
@@ -73,12 +66,11 @@ namespace ParkingControl
                 selectedExists &&
                 SystemAPI.HasComponent<Game.Areas.District>(selectedEntity);
 
-            StringBuilder text = new System.Text.StringBuilder(3072);
+            System.Text.StringBuilder text = new(3072);
             text.AppendLine();
             text.AppendLine(
                 $"==================== {Mod.ModTag} VANILLA PARKING FEE DEBUG ====================");
-            text.AppendLine(
-                $"ParkingFeePolicyCandidates={parkingFeePolicies.Count}");
+            text.AppendLine($"ParkingFeePolicyCandidates={parkingFeePolicies.Count}");
             text.AppendLine(
                 $"SelectedEntity={FormatEntity(selectedEntity)} | " +
                 $"SelectedDistrict={(selectedIsDistrict ? GetDistrictName(selectedEntity) : "NO")}");
@@ -93,10 +85,9 @@ namespace ParkingControl
                 return;
             }
 
-            List<Entity> districts =
-                new System.Collections.Generic.List<Unity.Entities.Entity>();
+            System.Collections.Generic.List<Unity.Entities.Entity> districts = new();
 
-            using (NativeArray<Entity> districtEntities =
+            using (Unity.Collections.NativeArray<Unity.Entities.Entity> districtEntities =
                 m_DistrictQuery.ToEntityArray(Unity.Collections.Allocator.Temp))
             {
                 foreach (Unity.Entities.Entity district in districtEntities)
@@ -116,11 +107,9 @@ namespace ParkingControl
                 policyIndex < parkingFeePolicies.Count;
                 policyIndex++)
             {
-                Unity.Entities.Entity policyEntity =
-                    parkingFeePolicies[policyIndex];
+                Unity.Entities.Entity policyEntity = parkingFeePolicies[policyIndex];
 
-                bool hasSliderData =
-                    sliderLookup.HasComponent(policyEntity);
+                bool hasSliderData = sliderLookup.HasComponent(policyEntity);
 
                 Game.Prefabs.PolicySliderData sliderData = hasSliderData
                     ? sliderLookup[policyEntity]
@@ -134,8 +123,7 @@ namespace ParkingControl
 
                 if (hasSliderData)
                 {
-                    bool rangeValid =
-                        sliderData.m_Range.max > sliderData.m_Range.min;
+                    bool rangeValid = sliderData.m_Range.max > sliderData.m_Range.min;
 
                     text.AppendLine(
                         $"  SliderRange={FormatDebugFloat(sliderData.m_Range.min)}.." +
@@ -154,7 +142,9 @@ namespace ParkingControl
                     int entryCount = 0;
                     Game.Policies.Policy firstEntry = default;
 
-                    if (policyLookup.TryGetBuffer(district, out DynamicBuffer<Policy> policies))
+                    if (policyLookup.TryGetBuffer(
+                            district,
+                            out Unity.Entities.DynamicBuffer<Game.Policies.Policy> policies))
                     {
                         foreach (Game.Policies.Policy policy in policies)
                         {
@@ -174,8 +164,7 @@ namespace ParkingControl
 
                     bool active =
                         hasStoredEntry &&
-                        (firstEntry.m_Flags &
-                            Game.Policies.PolicyFlags.Active) != 0;
+                        (firstEntry.m_Flags & Game.Policies.PolicyFlags.Active) != 0;
 
                     // Vanilla PoliciesUISystem uses the stored adjustment whenever
                     // a matching Policy buffer entry exists, even when inactive.
@@ -221,8 +210,7 @@ namespace ParkingControl
             }
 
             text.AppendLine();
-            text.AppendLine(
-                $"InvalidDistrictValues={invalidDistrictValues}");
+            text.AppendLine($"InvalidDistrictValues={invalidDistrictValues}");
             text.AppendLine(
                 "Interpretation: PolicySliderData=YES means vanilla C# has slider metadata. " +
                 "A stored UIValue outside SliderRange can survive in the district Policy buffer " +
@@ -235,7 +223,10 @@ namespace ParkingControl
 
         private static string FormatDebugFloat(float value)
         {
-            return value.ToString("0.###", CultureInfo.InvariantCulture);
+            return value.ToString(
+                "0.###",
+                System.Globalization.CultureInfo.InvariantCulture);
         }
     }
 }
+
