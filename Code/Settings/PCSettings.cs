@@ -256,7 +256,7 @@ namespace ParkingControl
             return !ShowStatus;
         }
 
-        private bool HideRelocateParkedCars()
+        private static bool HideRelocateParkedCars()
         {
             return true;
         }
