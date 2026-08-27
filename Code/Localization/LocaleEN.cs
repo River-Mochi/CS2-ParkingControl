@@ -54,7 +54,7 @@ namespace ParkingControl
                     "<2. Whole City>\n" +
                     "<3. OFF>\n" +
                     "- Eligible lanes are flagged to prevent new street parking.\n" +
-                    "- Existing parked cars leave naturally when they are next used; use <Relocate parked cars> to ask CS2 to move them sooner.\n" +
+                    "- Existing parked cars move gradually after parking is banned; large banned areas take longer.\n" +
                     "- Fee-based parking lots and normal building parking remain usable.\n" +
                     "**Some roads already exclude street parking, like Highways and small 2-way alley roads.**"
                 },
@@ -182,9 +182,19 @@ namespace ParkingControl
                     "- Shows if each sample stayed, started driving, parked elsewhere, or disappeared.\n" +
                     "- Scene Explorer mod is needed to track the Entity ID numbers in the city."
                 },
+    
+  
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenLog)), "Open log" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)),
                     "Open <Logs/ParkingControl.log>, or the Logs folder if the file does not exist yet." },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VerboseLog)), "Verbose log" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VerboseLog)),
+                    "Automatic DEBUG details.\n" +
+                    "Verbose logging is not for normal gameplay, turn OFF if not debugging.\n" +
+                    " Write Report still works when OFF."
+                },
 
                 // Dynamic values used by the live status rows.
                 { ParkingStatusLocale.kLoadCity, "No city loaded yet." },

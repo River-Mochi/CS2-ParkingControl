@@ -221,6 +221,13 @@ namespace ParkingControl
             }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether extra automatic DEBUG details are logged.
+        /// </summary>
+        [SettingsUIHideByCondition(typeof(PCSettings), nameof(HideVerboseLog))]
+        [SettingsUISection(kAboutTab, kAboutDebugGroup)]
+        public bool VerboseLog { get; set; }
+
         /// <inheritdoc/>
         public override void Apply()
         {
@@ -244,6 +251,11 @@ namespace ParkingControl
             m_ParkingScope = ParkingScope.ByDistrict;
             ShowInstructions = false;
             ShowStatus = false;
+#if DEBUG
+            VerboseLog = true;
+#else
+            VerboseLog = false;
+#endif
         }
 
         private bool HideInstructions()
@@ -259,6 +271,15 @@ namespace ParkingControl
         private static bool HideRelocateParkedCars()
         {
             return true;
+        }
+
+        private static bool HideVerboseLog()
+        {
+#if DEBUG
+            return false;
+#else
+            return true;
+#endif
         }
 
         private static void ReportToLogAction()

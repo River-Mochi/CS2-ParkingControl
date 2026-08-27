@@ -12,6 +12,7 @@ namespace ParkingControl
 {
     using CS2Shared.RiverMochi;
     using Game;
+    using Unity.Collections;
     using Unity.Entities;
 
     /// <summary>
@@ -20,7 +21,7 @@ namespace ParkingControl
     public sealed partial class ParkingRelocationSystem : GameSystemBase
     {
         // Tuning knobs: keep both PC work and vanilla parking searches spread out.
-        private const int kUpdateInterval = 4096;
+        private const uint kRelocationFrameInterval = 128;
         private const int kLaneRequestsPerPass = 32;
         private const int kCarsPerPass = 64;
 #if DEBUG
@@ -29,8 +30,11 @@ namespace ParkingControl
 
         private Unity.Entities.EntityQuery m_RequestLaneQuery;
         private Unity.Collections.NativeQueue<Unity.Entities.Entity> m_PendingCars;
+        private Game.Simulation.SimulationSystem m_SimulationSystem = null!;
         private bool m_IsGame;
         private bool m_HadQueuedWork;
+        private bool m_HasRelocationFrame;
+        private uint m_LastRelocationFrame;
         private int m_TotalLaneRequests;
         private int m_TotalQueued;
         private int m_TotalSent;
@@ -38,7 +42,7 @@ namespace ParkingControl
 
 #if DEBUG
         private readonly System.Collections.Generic.List<DebugRelocationSample> m_DebugSamples =
-            new(kDebugSampleLimit);
+            new System.Collections.Generic.List<DebugRelocationSample>(kDebugSampleLimit);
         private int m_DebugSamplesCaptured;
 #endif
 
@@ -68,15 +72,12 @@ namespace ParkingControl
 #endif
 
         /// <inheritdoc/>
-        public override int GetUpdateInterval(SystemUpdatePhase phase)
-        {
-            return kUpdateInterval;
-        }
-
-        /// <inheritdoc/>
         protected override void OnCreate()
         {
             base.OnCreate();
+
+            m_SimulationSystem =
+                World.GetOrCreateSystemManaged<Game.Simulation.SimulationSystem>();
 
             m_RequestLaneQuery = SystemAPI.QueryBuilder()
                 .WithAll<
@@ -108,6 +109,8 @@ namespace ParkingControl
                 m_PendingCars.Clear();
             }
 
+            m_HasRelocationFrame = false;
+            m_LastRelocationFrame = 0u;
             ResetCounters();
 #if DEBUG
             m_DebugSamples.Clear();
@@ -135,8 +138,39 @@ namespace ParkingControl
             }
 
 #if DEBUG
-            LogDebugRelocationSamples();
+            if (IsVerboseLoggingEnabled())
+            {
+                LogDebugRelocationSamples();
+            }
+            else if (m_DebugSamples.Count > 0)
+            {
+                m_DebugSamples.Clear();
+                m_DebugSamplesCaptured = 0;
+            }
 #endif
+
+            bool hasWork =
+                m_PendingCars.Count > 0 ||
+                !m_RequestLaneQuery.IsEmptyIgnoreFilter;
+
+            if (!hasWork)
+            {
+                m_HasRelocationFrame = false;
+                FinishLogIfNeeded();
+                return;
+            }
+
+            // Modification5 does not honor GameSystemBase.GetUpdateInterval().
+            // Gate on simulation frames so large bans drain gradually on every PC.
+            uint frameIndex = m_SimulationSystem.frameIndex;
+            if (m_HasRelocationFrame &&
+                unchecked(frameIndex - m_LastRelocationFrame) < kRelocationFrameInterval)
+            {
+                return;
+            }
+
+            m_HasRelocationFrame = true;
+            m_LastRelocationFrame = frameIndex;
 
             // Local ECB keeps structural changes batched but plays them back now,
             // so vanilla FixParkingLocationSystem sees this pass later in Modification5.
@@ -159,11 +193,12 @@ namespace ParkingControl
                 }
 
 #if DEBUG
-                if (lanesProcessed > 0 || sent > 0)
+                if (IsVerboseLoggingEnabled() &&
+                    (lanesProcessed > 0 || sent > 0))
                 {
                     LogUtils.Info(
                         $"{Mod.ModTag} Auto relocation pass: " +
-                        $"lanes={lanesProcessed}, sent={sent}, " +
+                        $"frame={frameIndex}, lanes={lanesProcessed}, sent={sent}, " +
                         $"pendingCars={m_PendingCars.Count}, " +
                         $"pendingLanes={m_RequestLaneQuery.CalculateEntityCount()}.");
                 }
@@ -172,6 +207,7 @@ namespace ParkingControl
                 if (m_PendingCars.Count == 0 &&
                     m_RequestLaneQuery.IsEmptyIgnoreFilter)
                 {
+                    m_HasRelocationFrame = false;
                     FinishLogIfNeeded();
                 }
             }
@@ -383,12 +419,18 @@ namespace ParkingControl
         }
 
 #if DEBUG
+        private static bool IsVerboseLoggingEnabled()
+        {
+            return Mod.Settings?.VerboseLog == true;
+        }
+
         private void CaptureDebugRelocationSample(
             Unity.Entities.Entity vehicle,
             Unity.Entities.Entity oldLane,
             ref Unity.Entities.ComponentLookup<Game.Objects.Transform> transformLookup)
         {
-            if (m_DebugSamplesCaptured >= kDebugSampleLimit)
+            if (!IsVerboseLoggingEnabled() ||
+                m_DebugSamplesCaptured >= kDebugSampleLimit)
             {
                 return;
             }
@@ -428,7 +470,7 @@ namespace ParkingControl
 
             LogUtils.Info(
                 $"{Mod.ModTag} Vanilla relocation sample results " +
-                $"(checked one PC interval after handoff):");
+                $"(checked after vanilla handoff):");
 
             foreach (DebugRelocationSample sample in m_DebugSamples)
             {
