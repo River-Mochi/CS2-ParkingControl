@@ -83,9 +83,9 @@ tags: Disable road parking, clear roadside, no cars
 <ChangeLog Value="" />
 <ChangeLog>
 - Improved compatibility with Realistic Parking so No Parking restrictions stay applied.
-- Added Relocate parked cars action to ask CS2 to move cars off currently banned curb lanes sooner.
+- Added gradual automatic relocation for cars parked on newly banned curb lanes.
 - Added clearer parking Status rows.
-- Improved the manual No Parking road tool color preview overlay. 
+- Improved the manual No Parking road tool color preview overlay.
 - Improved handling of new and rebuilt roads so Parking Control reapplies restrictions after CS2 rebuilds their parking lanes.
 </ChangeLog>
 <!--External link, can be set multiple times. supported types are "discord", "github", "youtube", "twitch", "paypal", "patreon", "buymeacoffee", "kofi", "crowdin", "gitlab", "gofundme"-->

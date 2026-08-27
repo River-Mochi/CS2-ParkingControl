@@ -84,13 +84,6 @@ namespace ParkingControl
                 },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
 
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.RelocateParkedCars)),
-                    "Relocate parked cars" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.RelocateParkedCars)),
-                    "One-time action: asks CS2's own parking relocation system to move cars still parked on curb lanes currently banned by Parking Control.\n" +
-                    "Works with Whole City, District, and manual No Parking bans.\n" +
-                    "Cars are not deleted. Close Options and run the city after clicking." },
-
                 // In-city Roads Services tool.
                 { $"Assets.NAME[{ManualNoParkingToolSystem.kToolId}]", "No Parking" },
                 { $"Assets.DESCRIPTION[{ManualNoParkingToolSystem.kToolId}]",
@@ -182,8 +175,6 @@ namespace ParkingControl
                     "- Shows if each sample stayed, started driving, parked elsewhere, or disappeared.\n" +
                     "- Scene Explorer mod is needed to track the Entity ID numbers in the city."
                 },
-    
-  
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenLog)), "Open log" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)),

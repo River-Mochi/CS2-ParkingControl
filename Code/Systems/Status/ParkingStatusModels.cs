@@ -79,7 +79,7 @@ namespace ParkingControl
         public int UnknownUnspawned;
         public int UnknownNullLaneUnspawned;
         public int UnknownWithTripSource;
-     
+
         public int UnknownWithoutTripSource;
         public int UnknownTripSourceOutside;
         public int UnknownTripSourceBuilding;

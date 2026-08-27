@@ -72,20 +72,6 @@ namespace ParkingControl
         public bool ShowInstructions { get; set; }
 
         /// <summary>
-        /// Legacy hidden button kept so existing locale IDs stay valid.
-        /// </summary>
-        [SettingsUIButton]
-        [SettingsUIHideByCondition(typeof(PCSettings), nameof(HideRelocateParkedCars))]
-        [SettingsUISection(kActionsTab, kStreetParkingGroup)]
-        public bool RelocateParkedCars
-        {
-            set
-            {
-                // Relocation is automatic and done by the game.
-            }
-        }
-
-        /// <summary>
         /// Gets or sets a value indicating whether live parking status rows are shown.
         /// </summary>
         [SettingsUISection(kActionsTab, kStatusGroup)]
@@ -262,11 +248,6 @@ namespace ParkingControl
         private bool HideStatus()
         {
             return !ShowStatus;
-        }
-
-        private static bool HideRelocateParkedCars()
-        {
-            return true;
         }
 
         private static bool HideVerboseLog()
