@@ -714,7 +714,9 @@ namespace ParkingControl
             ComponentLookup<Game.Buildings.Building> buildingLookup,
             ComponentLookup<Game.Common.Owner> ownerLookup)
         {
-            if (parkedCar.m_Lane == Entity.Null)
+
+            bool nullLane = parkedCar.m_Lane == Entity.Null;
+            if (nullLane)
             {
                 snapshot.UnknownNullLane++;
             }
@@ -726,7 +728,13 @@ namespace ParkingControl
             if (unspawnedLookup.HasComponent(vehicle))
             {
                 snapshot.UnknownUnspawned++;
+
+                if (nullLane)
+                {
+                    snapshot.UnknownNullLaneUnspawned++;
+                }
             }
+
 
             if (dummyTraffic)
             {

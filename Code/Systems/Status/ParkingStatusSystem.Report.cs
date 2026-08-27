@@ -125,10 +125,17 @@ namespace ParkingControl
                 $"ParkedElsewhere={snapshot.ParkedElsewhere} " +
                 $"(VisibleOffStreet={snapshot.VisibleOffStreet}, HiddenInBuildings={snapshot.HiddenInBuildings}, " +
                 $"OutsideConnection={snapshot.OutsideConnection}, UnassignedOrUnknown={snapshot.UnassignedOrUnknownParked})");
+
             text.AppendLine(
                 $"UnknownParkedDetails={snapshot.UnassignedOrUnknownParked} total " +
                 $"(NullLane={snapshot.UnknownNullLane}, MissingLaneEntity={snapshot.UnknownMissingLane}, " +
-                $"Unspawned={snapshot.UnknownUnspawned})");
+                $"Unspawned={snapshot.UnknownUnspawned}, " +
+                $"NullLaneUnspawned={snapshot.UnknownNullLaneUnspawned})");
+
+            text.AppendLine(
+                $"LocationFallbacks=OutsideConnection={snapshot.OutsideConnection}, " +
+                $"NullLaneUnspawned={snapshot.UnknownNullLaneUnspawned}");
+
             text.AppendLine(
                 $"UnknownOwnership=ValidLiveHousehold={snapshot.UnknownValidHouseholdOwned}, " +
                 $"HouseholdInvalid={snapshot.UnknownHouseholdOwnershipInvalid}, " +
@@ -196,8 +203,11 @@ namespace ParkingControl
                     $"    ParkedElsewhere={FormatDelta(snapshot.ParkedElsewhere - m_PreviousReport.ParkedElsewhere)}");
                 text.AppendLine(
                     $"    OutsideConnection={FormatDelta(snapshot.OutsideConnection - m_PreviousReport.OutsideConnection)}");
+
                 text.AppendLine(
                     $"    OutsideHidden={FormatDelta(snapshot.OutsideConnectionHidden - m_PreviousReport.OutsideConnectionHidden)}");
+                text.AppendLine(
+                    $"    NullLaneUnspawned={FormatDelta(snapshot.UnknownNullLaneUnspawned - m_PreviousReport.UnknownNullLaneUnspawned)}");
             }
             else
             {

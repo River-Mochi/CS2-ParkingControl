@@ -251,11 +251,7 @@ namespace ParkingControl
             m_ParkingScope = ParkingScope.ByDistrict;
             ShowInstructions = false;
             ShowStatus = false;
-#if DEBUG
-            VerboseLog = true;
-#else
             VerboseLog = false;
-#endif
         }
 
         private bool HideInstructions()
