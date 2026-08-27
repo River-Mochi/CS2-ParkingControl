@@ -12,7 +12,6 @@ namespace ParkingControl
 {
     using CS2Shared.RiverMochi;
     using Game;
-    using Unity.Collections;
     using Unity.Entities;
 
     /// <summary>
@@ -21,9 +20,12 @@ namespace ParkingControl
     public sealed partial class ParkingRelocationSystem : GameSystemBase
     {
         // Tuning knobs: keep both PC work and vanilla parking searches spread out.
-        private const int kUpdateInterval = 512;
+        private const int kUpdateInterval = 4096;
         private const int kLaneRequestsPerPass = 32;
         private const int kCarsPerPass = 64;
+#if DEBUG
+        private const int kDebugSampleLimit = 10;
+#endif
 
         private Unity.Entities.EntityQuery m_RequestLaneQuery;
         private Unity.Collections.NativeQueue<Unity.Entities.Entity> m_PendingCars;
@@ -33,6 +35,37 @@ namespace ParkingControl
         private int m_TotalQueued;
         private int m_TotalSent;
         private int m_TotalSkipped;
+
+#if DEBUG
+        private readonly System.Collections.Generic.List<DebugRelocationSample> m_DebugSamples =
+            new(kDebugSampleLimit);
+        private int m_DebugSamplesCaptured;
+#endif
+
+#if DEBUG
+        private readonly struct DebugRelocationSample
+        {
+            public DebugRelocationSample(
+                Unity.Entities.Entity vehicle,
+                Unity.Entities.Entity oldLane,
+                Unity.Mathematics.float3 oldPosition,
+                bool hadTransform)
+            {
+                Vehicle = vehicle;
+                OldLane = oldLane;
+                OldPosition = oldPosition;
+                HadTransform = hadTransform;
+            }
+
+            public Unity.Entities.Entity Vehicle { get; }
+
+            public Unity.Entities.Entity OldLane { get; }
+
+            public Unity.Mathematics.float3 OldPosition { get; }
+
+            public bool HadTransform { get; }
+        }
+#endif
 
         /// <inheritdoc/>
         public override int GetUpdateInterval(SystemUpdatePhase phase)
@@ -76,6 +109,10 @@ namespace ParkingControl
             }
 
             ResetCounters();
+#if DEBUG
+            m_DebugSamples.Clear();
+            m_DebugSamplesCaptured = 0;
+#endif
         }
 
         /// <inheritdoc/>
@@ -96,6 +133,10 @@ namespace ParkingControl
             {
                 return;
             }
+
+#if DEBUG
+            LogDebugRelocationSamples();
+#endif
 
             // Local ECB keeps structural changes batched but plays them back now,
             // so vanilla FixParkingLocationSystem sees this pass later in Modification5.
@@ -241,6 +282,14 @@ namespace ParkingControl
             Unity.Entities.ComponentLookup<Game.Vehicles.FixParkingLocation> fixParkingLookup =
                 SystemAPI.GetComponentLookup<Game.Vehicles.FixParkingLocation>(true);
 
+            Unity.Entities.ComponentLookup<Game.Common.Updated> updatedLookup =
+                SystemAPI.GetComponentLookup<Game.Common.Updated>(true);
+
+#if DEBUG
+            Unity.Entities.ComponentLookup<Game.Objects.Transform> transformLookup =
+                SystemAPI.GetComponentLookup<Game.Objects.Transform>(true);
+#endif
+
             int sent = 0;
             int checkedCount = 0;
 
@@ -274,11 +323,19 @@ namespace ParkingControl
                     continue;
                 }
 
+#if DEBUG
+                CaptureDebugRelocationSample(
+                    vehicle,
+                    oldLane,
+                    ref transformLookup);
+#endif
+
                 QueueVanillaRelocation(
                     ref commandBuffer,
                     vehicle,
                     oldLane,
-                    parkedCar);
+                    parkedCar,
+                    !updatedLookup.HasComponent(vehicle));
 
                 sent++;
             }
@@ -300,7 +357,8 @@ namespace ParkingControl
             ref Unity.Entities.EntityCommandBuffer commandBuffer,
             Unity.Entities.Entity vehicle,
             Unity.Entities.Entity oldLane,
-            Game.Vehicles.ParkedCar parkedCar)
+            Game.Vehicles.ParkedCar parkedCar,
+            bool addUpdated)
         {
             // Vanilla normally allows the current lane to be reconsidered even when disabled.
             // Null the current assignment so its search must choose a new valid lane instead.
@@ -316,7 +374,116 @@ namespace ParkingControl
                 new Game.Vehicles.FixParkingLocation(
                     oldLane,
                     vehicle));
+
+            // FixParkingLocationSystem only queries repair entities that are also Updated.
+            if (addUpdated)
+            {
+                commandBuffer.AddComponent<Game.Common.Updated>(vehicle);
+            }
         }
+
+#if DEBUG
+        private void CaptureDebugRelocationSample(
+            Unity.Entities.Entity vehicle,
+            Unity.Entities.Entity oldLane,
+            ref Unity.Entities.ComponentLookup<Game.Objects.Transform> transformLookup)
+        {
+            if (m_DebugSamplesCaptured >= kDebugSampleLimit)
+            {
+                return;
+            }
+
+            bool hadTransform = transformLookup.TryGetComponent(
+                vehicle,
+                out Game.Objects.Transform transform);
+
+            m_DebugSamples.Add(
+                new DebugRelocationSample(
+                    vehicle,
+                    oldLane,
+                    hadTransform ? transform.m_Position : default,
+                    hadTransform));
+
+            m_DebugSamplesCaptured++;
+        }
+
+        private void LogDebugRelocationSamples()
+        {
+            if (m_DebugSamples.Count == 0)
+            {
+                return;
+            }
+
+            Unity.Entities.ComponentLookup<Game.Vehicles.ParkedCar> parkedCarLookup =
+                SystemAPI.GetComponentLookup<Game.Vehicles.ParkedCar>(true);
+
+            Unity.Entities.ComponentLookup<Game.Objects.Unspawned> unspawnedLookup =
+                SystemAPI.GetComponentLookup<Game.Objects.Unspawned>(true);
+
+            Unity.Entities.ComponentLookup<Game.Vehicles.FixParkingLocation> fixParkingLookup =
+                SystemAPI.GetComponentLookup<Game.Vehicles.FixParkingLocation>(true);
+
+            Unity.Entities.ComponentLookup<Game.Objects.Transform> transformLookup =
+                SystemAPI.GetComponentLookup<Game.Objects.Transform>(true);
+
+            LogUtils.Info(
+                $"{Mod.ModTag} Vanilla relocation sample results " +
+                $"(checked one PC interval after handoff):");
+
+            foreach (DebugRelocationSample sample in m_DebugSamples)
+            {
+                if (!SystemAPI.Exists(sample.Vehicle))
+                {
+                    LogUtils.Info(
+                        $"{Mod.ModTag}   Entity={FormatEntity(sample.Vehicle)} | " +
+                        $"OldLane={FormatEntity(sample.OldLane)} | NoLongerExists=YES");
+                    continue;
+                }
+
+                bool hasParkedCar = parkedCarLookup.TryGetComponent(
+                    sample.Vehicle,
+                    out Game.Vehicles.ParkedCar parkedCar);
+
+                bool hasTransform = transformLookup.TryGetComponent(
+                    sample.Vehicle,
+                    out Game.Objects.Transform transform);
+
+                string parkedLane = hasParkedCar
+                    ? FormatEntity(parkedCar.m_Lane)
+                    : "<no ParkedCar>";
+
+                string oldPosition = sample.HadTransform
+                    ? FormatPosition(sample.OldPosition)
+                    : "<none>";
+
+                string position = hasTransform
+                    ? FormatPosition(transform.m_Position)
+                    : "<none>";
+
+                LogUtils.Info(
+                    $"{Mod.ModTag}   Entity={FormatEntity(sample.Vehicle)} | " +
+                    $"OldLane={FormatEntity(sample.OldLane)} | " +
+                    $"ParkedLane={parkedLane} | " +
+                    $"Unspawned={(unspawnedLookup.HasComponent(sample.Vehicle) ? "YES" : "NO")} | " +
+                    $"FixPending={(fixParkingLookup.HasComponent(sample.Vehicle) ? "YES" : "NO")} | " +
+                    $"OldPos={oldPosition} | Pos={position}");
+            }
+
+            m_DebugSamples.Clear();
+        }
+
+        private static string FormatEntity(Unity.Entities.Entity entity)
+        {
+            return entity == Unity.Entities.Entity.Null
+                ? "Null"
+                : $"{entity.Index}:{entity.Version}";
+        }
+
+        private static string FormatPosition(Unity.Mathematics.float3 position)
+        {
+            return $"({position.x:0.##}, {position.y:0.##}, {position.z:0.##})";
+        }
+#endif
 
         private void FinishLogIfNeeded()
         {
@@ -342,6 +509,9 @@ namespace ParkingControl
             m_TotalQueued = 0;
             m_TotalSent = 0;
             m_TotalSkipped = 0;
+#if DEBUG
+            m_DebugSamplesCaptured = 0;
+#endif
         }
     }
 }
