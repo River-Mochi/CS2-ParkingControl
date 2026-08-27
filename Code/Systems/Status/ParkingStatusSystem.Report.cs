@@ -76,6 +76,9 @@ namespace ParkingControl
             text.AppendLine(
                 $"DistrictPolicy=Active in {snapshot.DistrictsWithPolicy}/{snapshot.Districts} districts " +
                 $"(PolicyEntity={FormatEntity(ParkingPolicySystem.PolicyEntity)})");
+            ParkingRelocationSystem? relocationSystem =
+                World.GetExistingSystemManaged<ParkingRelocationSystem>();
+            AppendAutomaticRelocationReport(text, relocationSystem?.GetReport());
             text.AppendLine();
             text.AppendLine("-------------------- STREET PARKING CONTROL --------------------");
             text.AppendLine($"EligibleStreetParkingLanes={snapshot.CurbLanes}");
@@ -273,6 +276,68 @@ namespace ParkingControl
             m_HasPreviousReport = true;
         }
 
+        private static void AppendAutomaticRelocationReport(
+            StringBuilder text,
+            AutomaticRelocationReport? report)
+        {
+            text.AppendLine();
+            text.AppendLine("-------------------- AUTOMATIC RELOCATION --------------------");
+
+            if (!report.HasValue)
+            {
+                text.AppendLine("State=Unavailable (ParkingRelocationSystem was not loaded)");
+                return;
+            }
+
+            AutomaticRelocationReport automatic = report.Value;
+            text.AppendLine(
+                $"Tuning={automatic.FrameInterval} frames, " +
+                $"{automatic.LaneRequestsPerPass} lanes/pass, " +
+                $"{automatic.CarsPerPass} cars/pass");
+            text.AppendLine($"State={(automatic.IsActive ? "Active" : "Idle")}");
+            text.AppendLine($"CyclesStarted={automatic.CyclesStarted}");
+
+            if (!automatic.HasRun)
+            {
+                text.AppendLine("No automatic relocation has run since this city was loaded.");
+                text.AppendLine($"LaneRequestsPending={automatic.LaneRequestsPending}");
+                text.AppendLine($"CarsPending={automatic.CarsPending}");
+                text.AppendLine(
+                    $"VanillaFixParkingPendingAllSources=" +
+                    $"{automatic.VanillaFixParkingPendingAllSources} " +
+                    "(global count; includes vanilla and other mods)");
+                return;
+            }
+
+            text.AppendLine($"Passes={automatic.Passes}");
+            text.AppendLine($"LaneRequestsProcessed={automatic.LaneRequestsProcessed}");
+            text.AppendLine($"LaneRequestsPending={automatic.LaneRequestsPending}");
+            text.AppendLine($"CarsQueued={automatic.CarsQueued}");
+            text.AppendLine($"CarsSentToVanilla={automatic.CarsSentToVanilla}");
+            text.AppendLine($"CarsSkipped={automatic.CarsSkipped}");
+            text.AppendLine($"CarsPending={automatic.CarsPending}");
+            text.AppendLine($"StartFrame={automatic.StartFrame}");
+            text.AppendLine(
+                $"EndFrame={automatic.EndFrame}" +
+                (automatic.IsActive ? " (current)" : string.Empty));
+            text.AppendLine(
+                $"ElapsedSimulationFrames={automatic.ElapsedSimulationFrames}");
+            text.AppendLine(
+                $"ElapsedWallSeconds=" +
+                automatic.ElapsedWallSeconds.ToString(
+                    "0.000",
+                    System.Globalization.CultureInfo.InvariantCulture));
+            text.AppendLine(
+                $"MaxPCPassMilliseconds=" +
+                automatic.MaxPCPassMilliseconds.ToString(
+                    "0.000",
+                    System.Globalization.CultureInfo.InvariantCulture) +
+                " (PC collection, validation, and ECB playback only)");
+            text.AppendLine(
+                $"VanillaFixParkingPendingAllSources=" +
+                $"{automatic.VanillaFixParkingPendingAllSources} " +
+                "(global count; includes vanilla and other mods)");
+        }
         private static void ReplaceSamples(List<Entity> destination, List<Entity> source)
         {
             destination.Clear();

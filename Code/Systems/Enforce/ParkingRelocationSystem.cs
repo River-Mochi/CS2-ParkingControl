@@ -15,6 +15,29 @@ namespace ParkingControl
     using Unity.Collections;
     using Unity.Entities;
 
+    internal struct AutomaticRelocationReport
+    {
+        public bool HasRun;
+        public uint FrameInterval;
+        public int LaneRequestsPerPass;
+        public int CarsPerPass;
+        public bool IsActive;
+        public int CyclesStarted;
+        public int Passes;
+        public int LaneRequestsProcessed;
+        public int LaneRequestsPending;
+        public int CarsQueued;
+        public int CarsSentToVanilla;
+        public int CarsSkipped;
+        public int CarsPending;
+        public uint StartFrame;
+        public uint EndFrame;
+        public uint ElapsedSimulationFrames;
+        public double ElapsedWallSeconds;
+        public double MaxPCPassMilliseconds;
+        public int VanillaFixParkingPendingAllSources;
+    }
+
     /// <summary>
     /// Queues cars once when PC first bans their curb lane, then feeds small batches to vanilla.
     /// </summary>
@@ -29,16 +52,37 @@ namespace ParkingControl
 #endif
 
         private Unity.Entities.EntityQuery m_RequestLaneQuery;
+        private Unity.Entities.EntityQuery m_FixParkingQuery;
         private Unity.Collections.NativeQueue<Unity.Entities.Entity> m_PendingCars;
         private Game.Simulation.SimulationSystem m_SimulationSystem = null!;
         private bool m_IsGame;
         private bool m_HadQueuedWork;
         private bool m_HasRelocationFrame;
+        private bool m_RunActive;
+        private bool m_HasCompletedRun;
         private uint m_LastRelocationFrame;
+        private int m_CyclesStarted;
+        private long m_RunStartTimestamp;
         private int m_TotalLaneRequests;
         private int m_TotalQueued;
         private int m_TotalSent;
         private int m_TotalSkipped;
+        private RelocationRunStats m_CurrentRun;
+        private RelocationRunStats m_LastCompletedRun;
+
+        private struct RelocationRunStats
+        {
+            public int Passes;
+            public int LaneRequestsProcessed;
+            public int CarsQueued;
+            public int CarsSentToVanilla;
+            public int CarsSkipped;
+            public uint StartFrame;
+            public uint EndFrame;
+            public uint ElapsedSimulationFrames;
+            public double ElapsedWallSeconds;
+            public double MaxPCPassMilliseconds;
+        }
 
 #if DEBUG
         private readonly System.Collections.Generic.List<DebugRelocationSample> m_DebugSamples =
@@ -87,6 +131,11 @@ namespace ParkingControl
                 .WithNone<Game.Common.Deleted, Game.Tools.Temp>()
                 .Build();
 
+            m_FixParkingQuery = SystemAPI.QueryBuilder()
+                .WithAll<Game.Vehicles.FixParkingLocation>()
+                .WithNone<Game.Tools.Temp>()
+                .Build();
+
             m_PendingCars =
                 new Unity.Collections.NativeQueue<Unity.Entities.Entity>(
                     Unity.Collections.Allocator.Persistent);
@@ -112,6 +161,7 @@ namespace ParkingControl
             m_HasRelocationFrame = false;
             m_LastRelocationFrame = 0u;
             ResetCounters();
+            ResetRunHistory();
 #if DEBUG
             m_DebugSamples.Clear();
             m_DebugSamplesCaptured = 0;
@@ -149,6 +199,8 @@ namespace ParkingControl
             }
 #endif
 
+            uint frameIndex = m_SimulationSystem.frameIndex;
+
             bool hasWork =
                 m_PendingCars.Count > 0 ||
                 !m_RequestLaneQuery.IsEmptyIgnoreFilter;
@@ -156,13 +208,18 @@ namespace ParkingControl
             if (!hasWork)
             {
                 m_HasRelocationFrame = false;
+                FinishRunIfNeeded(frameIndex);
                 FinishLogIfNeeded();
                 return;
             }
 
+            if (!m_RunActive)
+            {
+                BeginRun(frameIndex);
+            }
+
             // Modification5 does not honor GameSystemBase.GetUpdateInterval().
             // Gate on simulation frames so large bans drain gradually on every PC.
-            uint frameIndex = m_SimulationSystem.frameIndex;
             if (m_HasRelocationFrame &&
                 unchecked(frameIndex - m_LastRelocationFrame) < kRelocationFrameInterval)
             {
@@ -174,8 +231,11 @@ namespace ParkingControl
 
             // Local ECB keeps structural changes batched but plays them back now,
             // so vanilla FixParkingLocationSystem sees this pass later in Modification5.
+            long passStartTimestamp = System.Diagnostics.Stopwatch.GetTimestamp();
             Unity.Entities.EntityCommandBuffer commandBuffer =
                 new(Unity.Collections.Allocator.Temp);
+
+            m_CurrentRun.Passes++;
 
             try
             {
@@ -208,12 +268,19 @@ namespace ParkingControl
                     m_RequestLaneQuery.IsEmptyIgnoreFilter)
                 {
                     m_HasRelocationFrame = false;
-                    FinishLogIfNeeded();
                 }
             }
             finally
             {
                 commandBuffer.Dispose();
+                RecordPassDuration(passStartTimestamp);
+            }
+
+            if (m_PendingCars.Count == 0 &&
+                m_RequestLaneQuery.IsEmptyIgnoreFilter)
+            {
+                FinishRunIfNeeded(frameIndex);
+                FinishLogIfNeeded();
             }
         }
 
@@ -293,6 +360,8 @@ namespace ParkingControl
                 m_HadQueuedWork = true;
                 m_TotalLaneRequests += laneLimit;
                 m_TotalQueued += added;
+                m_CurrentRun.LaneRequestsProcessed += laneLimit;
+                m_CurrentRun.CarsQueued += added;
             }
 
             return laneLimit;
@@ -342,6 +411,7 @@ namespace ParkingControl
                         out Game.Vehicles.ParkedCar parkedCar))
                 {
                     m_TotalSkipped++;
+                    m_CurrentRun.CarsSkipped++;
                     continue;
                 }
 
@@ -356,6 +426,7 @@ namespace ParkingControl
                 {
                     // The ban was removed, the road changed, or the car moved elsewhere.
                     m_TotalSkipped++;
+                    m_CurrentRun.CarsSkipped++;
                     continue;
                 }
 
@@ -377,6 +448,7 @@ namespace ParkingControl
             }
 
             m_TotalSent += sent;
+            m_CurrentRun.CarsSentToVanilla += sent;
             return sent;
         }
 
@@ -527,6 +599,105 @@ namespace ParkingControl
         }
 #endif
 
+        internal AutomaticRelocationReport GetReport()
+        {
+            RelocationRunStats stats =
+                m_RunActive ? m_CurrentRun : m_LastCompletedRun;
+
+            uint endFrame = m_RunActive
+                ? m_SimulationSystem.frameIndex
+                : stats.EndFrame;
+
+            uint elapsedSimulationFrames = m_RunActive
+                ? unchecked(endFrame - stats.StartFrame)
+                : stats.ElapsedSimulationFrames;
+
+            double elapsedWallSeconds = m_RunActive
+                ? GetElapsedWallSeconds(m_RunStartTimestamp)
+                : stats.ElapsedWallSeconds;
+
+            return new AutomaticRelocationReport
+            {
+                HasRun = m_RunActive || m_HasCompletedRun,
+                FrameInterval = kRelocationFrameInterval,
+                LaneRequestsPerPass = kLaneRequestsPerPass,
+                CarsPerPass = kCarsPerPass,
+                IsActive = m_RunActive,
+                CyclesStarted = m_CyclesStarted,
+                Passes = stats.Passes,
+                LaneRequestsProcessed = stats.LaneRequestsProcessed,
+                LaneRequestsPending = m_RequestLaneQuery.CalculateEntityCount(),
+                CarsQueued = stats.CarsQueued,
+                CarsSentToVanilla = stats.CarsSentToVanilla,
+                CarsSkipped = stats.CarsSkipped,
+                CarsPending = m_PendingCars.Count,
+                StartFrame = stats.StartFrame,
+                EndFrame = endFrame,
+                ElapsedSimulationFrames = elapsedSimulationFrames,
+                ElapsedWallSeconds = elapsedWallSeconds,
+                MaxPCPassMilliseconds = stats.MaxPCPassMilliseconds,
+                VanillaFixParkingPendingAllSources = m_FixParkingQuery.CalculateEntityCount(),
+            };
+        }
+
+        private void BeginRun(uint frameIndex)
+        {
+            m_RunActive = true;
+            m_CyclesStarted++;
+            m_RunStartTimestamp = System.Diagnostics.Stopwatch.GetTimestamp();
+            m_CurrentRun = new RelocationRunStats
+            {
+                StartFrame = frameIndex,
+                EndFrame = frameIndex,
+            };
+        }
+
+        private void FinishRunIfNeeded(uint frameIndex)
+        {
+            if (!m_RunActive)
+            {
+                return;
+            }
+
+            m_CurrentRun.EndFrame = frameIndex;
+            m_CurrentRun.ElapsedSimulationFrames =
+                unchecked(frameIndex - m_CurrentRun.StartFrame);
+            m_CurrentRun.ElapsedWallSeconds =
+                GetElapsedWallSeconds(m_RunStartTimestamp);
+            m_LastCompletedRun = m_CurrentRun;
+            m_HasCompletedRun = true;
+            m_RunActive = false;
+            m_RunStartTimestamp = 0L;
+        }
+
+        private void RecordPassDuration(long passStartTimestamp)
+        {
+            double passMilliseconds =
+                (System.Diagnostics.Stopwatch.GetTimestamp() - passStartTimestamp) *
+                1000d /
+                System.Diagnostics.Stopwatch.Frequency;
+
+            if (passMilliseconds > m_CurrentRun.MaxPCPassMilliseconds)
+            {
+                m_CurrentRun.MaxPCPassMilliseconds = passMilliseconds;
+            }
+        }
+
+        private void ResetRunHistory()
+        {
+            m_RunActive = false;
+            m_HasCompletedRun = false;
+            m_CyclesStarted = 0;
+            m_RunStartTimestamp = 0L;
+            m_CurrentRun = default;
+            m_LastCompletedRun = default;
+        }
+
+        private static double GetElapsedWallSeconds(long startTimestamp)
+        {
+            return (System.Diagnostics.Stopwatch.GetTimestamp() - startTimestamp) /
+                (double)System.Diagnostics.Stopwatch.Frequency;
+        }
         private void FinishLogIfNeeded()
         {
             if (!m_HadQueuedWork)
