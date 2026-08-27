@@ -97,7 +97,7 @@ namespace ParkingControl
                 return;
             }
 
-            // Local ECB keeps structural changes batched but plays them back now,
+            // Local ECB structural changes batched and played back,
             // so vanilla FixParkingLocationSystem sees this pass later in Modification5.
             using Unity.Entities.EntityCommandBuffer commandBuffer =
                 new(Unity.Collections.Allocator.Temp);
