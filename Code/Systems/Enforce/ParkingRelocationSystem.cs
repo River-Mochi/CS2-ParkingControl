@@ -97,39 +97,46 @@ namespace ParkingControl
                 return;
             }
 
-            // Local ECB structural changes batched and played back,
+            // Local ECB keeps structural changes batched but plays them back now,
             // so vanilla FixParkingLocationSystem sees this pass later in Modification5.
-            using Unity.Entities.EntityCommandBuffer commandBuffer =
+            Unity.Entities.EntityCommandBuffer commandBuffer =
                 new(Unity.Collections.Allocator.Temp);
 
-            int lanesProcessed = CollectSomeLaneRequests(ref commandBuffer);
-            int sent = SendNextBatchToVanilla(ref commandBuffer);
-
-            if (lanesProcessed > 0 || sent > 0)
+            try
             {
-                commandBuffer.Playback(EntityManager);
-            }
+                int lanesProcessed = CollectSomeLaneRequests(ref commandBuffer);
+                int sent = SendNextBatchToVanilla(ref commandBuffer);
 
-            if (sent > 0)
-            {
-                ParkingStatusCache.MarkDirty();
-            }
+                if (lanesProcessed > 0 || sent > 0)
+                {
+                    commandBuffer.Playback(EntityManager);
+                }
+
+                if (sent > 0)
+                {
+                    ParkingStatusCache.MarkDirty();
+                }
 
 #if DEBUG
-            if (lanesProcessed > 0 || sent > 0)
-            {
-                LogUtils.Info(
-                    $"{Mod.ModTag} Auto relocation pass: " +
-                    $"lanes={lanesProcessed}, sent={sent}, " +
-                    $"pendingCars={m_PendingCars.Count}, " +
-                    $"pendingLanes={m_RequestLaneQuery.CalculateEntityCount()}.");
-            }
+                if (lanesProcessed > 0 || sent > 0)
+                {
+                    LogUtils.Info(
+                        $"{Mod.ModTag} Auto relocation pass: " +
+                        $"lanes={lanesProcessed}, sent={sent}, " +
+                        $"pendingCars={m_PendingCars.Count}, " +
+                        $"pendingLanes={m_RequestLaneQuery.CalculateEntityCount()}.");
+                }
 #endif
 
-            if (m_PendingCars.Count == 0 &&
-                m_RequestLaneQuery.IsEmptyIgnoreFilter)
+                if (m_PendingCars.Count == 0 &&
+                    m_RequestLaneQuery.IsEmptyIgnoreFilter)
+                {
+                    FinishLogIfNeeded();
+                }
+            }
+            finally
             {
-                FinishLogIfNeeded();
+                commandBuffer.Dispose();
             }
         }
 
