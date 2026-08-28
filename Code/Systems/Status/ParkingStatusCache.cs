@@ -263,9 +263,7 @@ namespace ParkingControl
             string scopeSuffix =
                 string.Equals(scopeStatus, "CHECK", StringComparison.Ordinal)
                     ? " | " +
-                        ParkingStatusLocale.Get(
-                            ParkingStatusLocale.kStatusCheck,
-                            "CHECK")
+                        ParkingStatusLocale.Get(ParkingStatusLocale.kStatusCheck, "CHECK")
                     : string.Empty;
 
             string enforcement;
@@ -293,9 +291,7 @@ namespace ParkingControl
             }
             else
             {
-                enforcement = ParkingStatusLocale.Get(
-                    ParkingStatusLocale.kStatusOff,
-                    kScopeOffFallback);
+                enforcement = ParkingStatusLocale.Get(ParkingStatusLocale.kStatusOff, kScopeOffFallback);
             }
 
             bool manualEnabled =
@@ -313,23 +309,18 @@ namespace ParkingControl
             string manualSuffix =
                 string.Equals(manualStatus, "CHECK", StringComparison.Ordinal)
                     ? " | " +
-                        ParkingStatusLocale.Get(
-                            ParkingStatusLocale.kStatusCheck,
-                            "CHECK")
+                        ParkingStatusLocale.Get(ParkingStatusLocale.kStatusCheck, "CHECK")
                     : string.Empty;
 
             string manual = manualEnabled
                 ? ParkingStatusLocale.Format(
                     ParkingStatusLocale.kManualEnforcementFormat,
                     kManualEnforcementFormatFallback,
-
                     Format(snapshot.ManualTargetStreetParked),
                     Format(snapshot.DisabledManualTargetCurbLanes),
                     Format(snapshot.ManualTargetCurbLanes),
                     manualSuffix)
-                : ParkingStatusLocale.Get(
-                    ParkingStatusLocale.kManualNone,
-                    kManualNoneFallback);
+                : ParkingStatusLocale.Get(ParkingStatusLocale.kManualNone, kManualNoneFallback);
 
             string vehicles = ParkingStatusLocale.Format(
                 ParkingStatusLocale.kVehicleFormat,
@@ -402,9 +393,7 @@ namespace ParkingControl
         {
             if (capacity <= 0)
             {
-                return ParkingStatusLocale.Get(
-                    ParkingStatusLocale.kRatingNA,
-                    "N/A");
+                return ParkingStatusLocale.Get(ParkingStatusLocale.kRatingNA, "N/A");
             }
 
             double freePercent =
@@ -412,21 +401,15 @@ namespace ParkingControl
 
             if (freePercent < 15d)
             {
-                return ParkingStatusLocale.Get(
-                    ParkingStatusLocale.kRatingPoor,
-                    "POOR");
+                return ParkingStatusLocale.Get(ParkingStatusLocale.kRatingPoor, "POOR");
             }
 
             if (freePercent < 30d)
             {
-                return ParkingStatusLocale.Get(
-                    ParkingStatusLocale.kStatusOk,
-                    "OK");
+                return ParkingStatusLocale.Get(ParkingStatusLocale.kStatusOk, "OK");
             }
 
-            return ParkingStatusLocale.Get(
-                ParkingStatusLocale.kRatingGood,
-                "GOOD");
+            return ParkingStatusLocale.Get(ParkingStatusLocale.kRatingGood, "GOOD");
         }
 
         private static string FormatFreePercent(int occupied, int capacity)

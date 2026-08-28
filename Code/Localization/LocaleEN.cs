@@ -87,8 +87,7 @@ namespace ParkingControl
 
                 // In-city Roads Services tool.
                 { $"Assets.NAME[{ManualNoParkingToolSystem.kToolId}]", "No Parking" },
-                { $"Assets.DESCRIPTION[{ManualNoParkingToolSystem.kToolId}]",
-                    "Toggle roadside parking on one side of a road. For multiple sides, drag over them before releasing the Left Mouse button." },
+                { $"Assets.DESCRIPTION[{ManualNoParkingToolSystem.kToolId}]", "Toggle roadside parking on one side of a road. For multiple sides, drag over them before releasing the Left Mouse button." },
 
                 // In-city district policy.
                 { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "Roadside Parking Ban" },
@@ -98,14 +97,8 @@ namespace ParkingControl
                 },
 
                 // Native mouse action hints for the No Parking road tool.
-                {
-                    $"Common.ACTION[{ManualNoParkingTooltipSystem.kUpgradeHintId}]",
-                    "Upgrade"
-                },
-                {
-                    $"Common.ACTION[{ManualNoParkingTooltipSystem.kDowngradeHintId}]",
-                    "Downgrade"
-                },
+                { $"Common.ACTION[{ManualNoParkingTooltipSystem.kUpgradeHintId}]", "Upgrade" },
+                { $"Common.ACTION[{ManualNoParkingTooltipSystem.kDowngradeHintId}]", "Downgrade" },
 
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Street Parking" },
@@ -117,8 +110,7 @@ namespace ParkingControl
                     "<Districts> = districts with the Parking Ban / total districts.\n" +
                     "<CHECK> = some targeted curb-lane sections do not yet match the selected ban.\n" +
                     "<---------------------->\n" +
-                    "**If [CHECK] appears after changing or rebuilding roads, run the city for a while and reopen Options > Status. " +
-                    "If it remains, use About > Debug > Write Report.**"
+                    "**If [CHECK] appears after changing or rebuilding roads, run the city for a while and reopen Options > Status. If it remains, use About > Debug > Write Report.**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ManualStatus)), "Manual No Parking" },
@@ -161,8 +153,7 @@ namespace ParkingControl
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.UpdatedStatus)), "Updated" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.UpdatedStatus)),
-                    "Time when these citywide status values were last refreshed." },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.UpdatedStatus)), "Time when these citywide status values were last refreshed." },
 
                 // About tab.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NameText)), "Mod name" },
@@ -180,14 +171,13 @@ namespace ParkingControl
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenLog)), "Open log" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)),
-                    "Open <Logs/ParkingControl.log>, or the Logs folder if the file does not exist yet." },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)), "Open <Logs/ParkingControl.log>, or the Logs folder if the file does not exist yet." },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VerboseLog)), "Verbose log" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VerboseLog)),
                     "Automatic DEBUG details.\n" +
                     "Verbose logging is not for normal gameplay, turn OFF if not debugging.\n" +
-                    " Write Report still works when OFF."
+                    "Write Report still works when OFF."
                 },
 
                 // Dynamic values used by the live status rows.
@@ -195,22 +185,14 @@ namespace ParkingControl
                 { ParkingStatusLocale.kCollecting, "Parking status is being collected..." },
                 { ParkingStatusLocale.kUnavailable, "Parking status is unavailable." },
                 { ParkingStatusLocale.kCollectionFailed, "Parking status could not be collected; see ParkingControl.log." },
-                { ParkingStatusLocale.kCompactEnforcementFormat,
-                    "{0} parked | {1}/{2} disabled{3}" },
-                { ParkingStatusLocale.kManualEnforcementFormat,
-                    "{0} parked | {1}/{2} disabled lanes{3}" },
-
-                { ParkingStatusLocale.kDistrictEnforcementFormat,
-                    "{0} parked | {1}/{2} disabled | {3}/{4} districts{5}" },
-                { ParkingStatusLocale.kVehicleFormat,
-                    "{0} street | {1} visible | {2} inside | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat,
-                    "{0} = {1} public free | {2} = {3} bldg free" },
-                { ParkingStatusLocale.kShareFormat,
-                    "{0} public | {1} bldg | {2} street | {3} total" },
+                { ParkingStatusLocale.kCompactEnforcementFormat, "{0} parked | {1}/{2} disabled{3}" },
+                { ParkingStatusLocale.kManualEnforcementFormat, "{0} parked | {1}/{2} disabled lanes{3}" },
+                { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} parked | {1}/{2} disabled | {3}/{4} districts{5}" },
+                { ParkingStatusLocale.kVehicleFormat, "{0} street | {1} visible | {2} inside | {3} OC" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1} public free | {2} = {3} bldg free" },
+                { ParkingStatusLocale.kShareFormat, "{0} public | {1} bldg | {2} street | {3} total" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
-                { ParkingStatusLocale.kStatusOff,
-                    "OFF = Whole City/District bans disabled | manual roads still work" },
+                { ParkingStatusLocale.kStatusOff, "OFF = Whole City/District bans disabled | manual roads still work" },
                 { ParkingStatusLocale.kManualNone, "None set" },
                 { ParkingStatusLocale.kStatusCheck, "CHECK" },
                 { ParkingStatusLocale.kRatingPoor, "POOR" },

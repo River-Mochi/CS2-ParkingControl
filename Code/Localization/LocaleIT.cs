@@ -49,41 +49,53 @@ namespace ParkingControl
                 // Street-parking controls.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "Niente parcheggio su strada" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
-                    "Scegli **Intera città**, **Per distretto** oppure **DISATTIVATO**.\n" +
+                    "Scegli:\n" +
+                    "<1. Per distretto>\n" +
+                    "<2. Intera città>\n" +
+                    "<3. DISATTIVATO>\n" +
                     "- Le corsie idonee vengono bloccate per impedire nuovi parcheggi su strada.\n" +
-                    "- Le auto già parcheggiate se ne vanno quando vengono usate di nuovo.\n" +
+                    "- Le auto già parcheggiate si spostano gradualmente dopo il divieto; le aree grandi richiedono più tempo.\n" +
                     "- I parcheggi a pagamento e quelli normali degli edifici restano utilizzabili.\n" +
-                    "**Alcune strade escludono già il parcheggio su strada, come le autostrade e i piccoli vicoli a doppio senso.**" },
+                    "**Alcune strade escludono già il parcheggio su strada, come autostrade e piccoli vicoli a doppio senso.**"
+                },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Intera città" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "Per distretto" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "DISATTIVATO" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Mostra istruzioni" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
-                    "Mostra come usare la modalità <Per distretto>.\n" +
-                    "1.a. DISATTIVATO = le restrizioni cittadine e dei distretti sono disattivate; si torna in gran parte alle regole normali del gioco.\n" +
-                    "1.b. Il pulsante <Divieto di sosta> per una singola strada nel pannello Servizi stradali continua a funzionare, come applicare un attraversamento pedonale.\n" +
-                    "2. Intera città = blocca tutto il parcheggio pubblico su strada idoneo della città." },
+                    "Mostra come usare <Per distretto>.\n" +
+                    "1.a. DISATTIVATO = le restrizioni cittadine e dei distretti sono disattivate; si torna in gran parte alle regole normali.\n" +
+                    "1.b. Il pulsante <Divieto di sosta> per una strada nel pannello Servizi stradali continua a funzionare come un attraversamento pedonale.\n" +
+                    "2. Intera città = blocca tutto il parcheggio pubblico su strada idoneo."
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "Mostra stato" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowStatus)),
                     "<Mostra qui sotto i totali attuali dei parcheggi.>\n" +
-                    "Lo stato viene raccolto solo mentre il menu Opzioni è aperto; durante il gioco non viene eseguita alcuna scansione in background." },
+                    "Lo stato viene raccolto solo mentre il menu Opzioni è aperto;\n" +
+                    "durante il gioco non viene eseguita alcuna scansione in background."
+                },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.DistrictInstructions)),
                     "<Modalità per distretto>\n" +
                     "1. Scegli <Per distretto> qui sopra.\n" +
-                    "2. Crea o seleziona un distretto nella città.\n" +
+                    "2. Crea/seleziona un distretto.\n" +
                     "3. Apri <Politiche> e attiva **Divieto di parcheggio a bordo strada [✓]**.\n" +
-                    "4. Puoi attivare insieme il divieto e la tariffa di parcheggio. La tariffa viene applicata alle auto ancora presenti o che riescono comunque a parcheggiare.\n" +
-                    "Fuori dai distretti con divieto resta il parcheggio normale su strada." },
+                    "4. Divieto e tariffa possono essere attivi insieme. La tariffa viene applicata alle auto ancora presenti o che riescono comunque a parcheggiare.\n" +
+                    "Fuori dai distretti con divieto resta il parcheggio normale su strada."
+                },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
 
                 // In-city Roads Services tool.
                 { $"Assets.NAME[{ManualNoParkingToolSystem.kToolId}]", "Divieto di sosta" },
-                { $"Assets.DESCRIPTION[{ManualNoParkingToolSystem.kToolId}]",
-                    "Attiva o disattiva il parcheggio a bordo strada su un lato della strada. Per più lati, trascina su di essi prima di rilasciare il pulsante sinistro del mouse." },
+                { $"Assets.DESCRIPTION[{ManualNoParkingToolSystem.kToolId}]", "Attiva o disattiva il parcheggio su un lato della strada. Per più lati, trascina su di essi prima di rilasciare il pulsante sinistro del mouse." },
+
                 // In-city district policy.
                 { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "Divieto di parcheggio a bordo strada" },
                 { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]",
-                    "Impedisce ad auto e moto di parcheggiare a bordo strada in questo distretto. I veicoli già parcheggiati se ne vanno quando i proprietari li usano di nuovo." },
+                    "Impedisce ad auto e moto di parcheggiare a bordo strada in questo distretto.\n" +
+                    "- Le auto già parcheggiate si spostano gradualmente; le aree grandi richiedono più tempo."
+                },
+
                 // Native mouse action hints for the No Parking road tool.
                 { $"Common.ACTION[{ManualNoParkingTooltipSystem.kUpgradeHintId}]", "Aggiungi" },
                 { $"Common.ACTION[{ManualNoParkingTooltipSystem.kDowngradeHintId}]", "Rimuovi" },
@@ -91,38 +103,55 @@ namespace ParkingControl
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Sosta su strada" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<In sosta> = auto ancora parcheggiate sui lati della strada impostati su Divieto di sosta da Parking Control.\n" +
-                    "<Corsie> = tratti di parcheggio a bordo strada che contengono quelle auto. Un tratto può contenere molte auto.\n" +
-                    "<Chiuse> = tratti di corsia di parcheggio chiusi ai nuovi veicoli. Una strada può contenere più tratti.\n" +
-                    "<DISATTIVATO + Divieto di sosta manuale> = DISATTIVATO disattiva i divieti per tutta la città e per distretto, ma i lati della strada impostati manualmente su Divieto di sosta restano attivi. Questa riga mostra quindi solo quei divieti manuali.\n" +
+                    "Mostra solo l’ambito selezionato <Intera città> o <Per distretto>. I divieti manuali sono elencati a parte.\n" +
+                    "<DISATT.> = divieti città/distretto disattivati; le strade con <Divieto di sosta> manuale restano attive.\n" +
+                    "<In sosta> = auto ancora parcheggiate nelle strade dell’ambito selezionato.\n" +
+                    "<Chiuse> = sezioni di corsia a bordo strada disattivate / sezioni obiettivo.\n" +
+                    "<Distretti> = distretti con divieto / distretti totali.\n" +
+                    "<VERIF.> = alcune sezioni obiettivo non corrispondono ancora al divieto selezionato.\n" +
                     "<---------------------->\n" +
-                    "Se è selezionato <Per distretto>, mostra:\n" +
-                    "- Corsie occupate nei distretti con divieto / corsie occupate in tutta la città.\n" +
-                    "- Corsie disattivate / corsie idonee della città.\n" +
-                    "- Distretti attivati / distretti totali.\n" +
-                    "<---------------------->\n" +
-                    "Nota: dopo aver modificato o ricostruito strade, il numero di tratti disattivati può richiedere un po' di tempo mentre CS2 ricostruisce le corsie di parcheggio. Fai andare la città per un po' e riapri le Opzioni." },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Uso strade" },
+                    "**Se [VERIF.] appare dopo aver modificato o ricostruito strade, fai andare la città per un po’ e riapri Opzioni > Stato. Se resta, usa Informazioni > Diagnostica > Scrivi rapporto.**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ManualStatus)), "Divieto manuale" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ManualStatus)),
+                    "Mostra solo le strade impostate con lo strumento manuale <Divieto di sosta>.\n" +
+                    "<In sosta> = auto ancora parcheggiate su quelle strade vietate manualmente.\n" +
+                    "<Chiuse> = sezioni di corsia a bordo strada disattivate / selezionate manualmente.\n" +
+                    "I divieti manuali possono sovrapporsi a Intera città o distretti; non aggiungere questa riga ai totali <Sosta su strada>.\n" +
+                    "**Se [VERIF.] appare dopo aver fatto andare la città per un po’, usa Informazioni > Diagnostica > Scrivi rapporto e allegalo quando chiedi aiuto.**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Uso parcheggi" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "Questa riga include <l’intera città>, non solo i distretti.\n" +
-                    "<Parcheggiate in strada> = percentuale parcheggiata in strada invece che in parcheggi pubblici o degli edifici.\n" +
-                    "<Attive> = veicoli personali in marcia o fermi nel traffico.\n" +
-                    "<Formula> = strada ÷ (strada + pubblico occupato + edificio occupato).\n" +
-                    "**Il deposito delle connessioni esterne (OC) e le auto senza corsia di parcheggio assegnata sono esclusi.**" },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Posti auto" },
+                    "<Pubblico> = posti occupati nelle strutture di parcheggio.\n" +
+                    "Corrisponde circa al pannello parcheggi di Strade in CS2.\n" +
+                    "<Edif.> = veicoli parcheggiati in edifici o garage.\n" +
+                    "<Strada> = auto parcheggiate in strada.\n" +
+                    "<Totale> = auto parcheggiate note in città (strada + pubblico + edificio).\n" +
+                    "**Connessioni esterne e aree di attesa sconosciute sono escluse.**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Valutazione parcheggi" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "Mostra l’occupazione dei parcheggi in tutta la città.\n" +
-                    "<Pubblico> usato = strutture conteggiate dalla visualizzazione Informazioni parcheggi del gioco base.\n" +
-                    "<Edificio> usato = parcheggi inclusi con abitazioni, luoghi di lavoro e negozi.\n" +
-                    "**Una % di utilizzo più alta = potrebbero servire più parcheggi.**" },
+                    "Valuta quanto parcheggio a capacità esatta è ancora <libero>.\n" +
+                    "<SCARSO> = meno del 15% libero.\n" +
+                    "<OK> = dal 15% a meno del 30% libero.\n" +
+                    "<BUONO> = 30% o più libero.\n" +
+                    "<Pubblico> usa le strutture conteggiate dal pannello parcheggi di Strade in CS2.\n" +
+                    "<Edif.> usa parcheggi a capacità esatta in edifici e garage."
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Posizione auto" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VehicleStatus)),
-                    "Questa riga mostra dati di tutta la città, non solo dei distretti con il divieto.\n" +
+                    "Questa riga mostra dati di tutta la città, non solo dei distretti con divieto.\n" +
                     "<Strada> = parcheggiate su strade pubbliche.\n" +
-                    "<Visibili> = auto visibili e cliccabili nei parcheggi all’aperto o nei posti auto esterni degli edifici.\n" +
-                    "<Interno> = dentro edifici o garage.\n" +
-                    "<OC> = deposito della connessione esterna al confine della città; alcune auto delle famiglie in arrivo iniziano lì come area di attesa.\n" +
-                    "Le auto senza corsia di parcheggio assegnata sono omesse qui e mostrate solo nel rapporto del log nella scheda Informazioni." },
+                    "<Visibili> = auto visibili e cliccabili nei parcheggi all’aperto o nei posti esterni degli edifici.\n" +
+                    "<Interno> = in edifici o garage.\n" +
+                    "<OC> = deposito della connessione esterna al confine della città; alcune auto delle famiglie in arrivo iniziano lì (area di attesa).\n" +
+                    "Le auto senza corsia di parcheggio assegnata sono omesse qui e mostrate solo nel rapporto del log (scheda Informazioni)."
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.UpdatedStatus)), "Aggiornato" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.UpdatedStatus)), "Ora dell’ultimo aggiornamento di questi valori di stato dell’intera città." },
 
@@ -131,29 +160,44 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VersionText)), "Versione" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenParadox)), "Link Paradox Mods" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenParadox)), "Apre la pagina dell’autore su Paradox Mods." },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ReportToLog)), "Scrivi rapporto parcheggi" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ReportToLog)), "Scrivi rapporto" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ReportToLog)),
                     "Scrive i dettagli del parcheggio su strada e dati correlati in \n" +
                     "<Logs/ParkingControl.log>.\n" +
-                    "Se ti interessa, crea un 2° rapporto più tardi nella stessa città caricata.\n" +
+                    "Se serve, crea un 2° rapporto più tardi nella stessa città caricata.\n" +
                     "- Confronta fino a 20 ID entità di esempio da categorie diverse.\n" +
                     "- Mostra se ogni esempio è rimasto, ha iniziato a guidare, ha parcheggiato altrove o è scomparso.\n" +
-                    "- Il mod Scene Explorer è necessario per seguire i numeri degli ID entità nella città." },
+                    "- Scene Explorer è necessario per seguire gli ID entità nella città."
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenLog)), "Apri log" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)), "Apre <Logs/ParkingControl.log>, oppure la cartella Logs se il file non esiste ancora." },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VerboseLog)), "Log dettagliato" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VerboseLog)),
+                    "Dettagli DEBUG automatici.\n" +
+                    "Non è per il gioco normale; DISATTIVA se non stai facendo debug.\n" +
+                    "Scrivi rapporto funziona anche se DISATTIVATO."
+                },
+
                 // Dynamic values used by the live status rows.
                 { ParkingStatusLocale.kLoadCity, "Nessuna città caricata." },
                 { ParkingStatusLocale.kCollecting, "Raccolta dello stato dei parcheggi..." },
                 { ParkingStatusLocale.kUnavailable, "Lo stato dei parcheggi non è disponibile." },
                 { ParkingStatusLocale.kCollectionFailed, "Impossibile raccogliere lo stato dei parcheggi; consulta ParkingControl.log." },
-                { ParkingStatusLocale.kCompactEnforcementFormat, "{0} in sosta ({1} corsie) | {2}/{3} chiuse{4}" },
-                { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} in sosta ({1}/{2} corsie) | {3}/{4} chiuse | {5}/{6} distretti{7}" },
+                { ParkingStatusLocale.kCompactEnforcementFormat, "{0} in sosta | {1}/{2} chiuse{3}" },
+                { ParkingStatusLocale.kManualEnforcementFormat, "{0} in sosta | {1}/{2} corsie chiuse{3}" },
+                { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} in sosta | {1}/{2} chiuse | {3}/{4} distretti{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} strada | {1} visibili | {2} interno | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} pubblico {1}/{2} | {3} edificio {4}/{5}" },
-                { ParkingStatusLocale.kShareFormat, "{0} in strada {1} | {2} attive" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1} pubblico libero | {2} = {3} edif. libero" },
+                { ParkingStatusLocale.kShareFormat, "{0} pubblico | {1} edif. | {2} strada | {3} totale" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
-                { ParkingStatusLocale.kStatusOff, "DISATT." },
+                { ParkingStatusLocale.kStatusOff, "DISATT. = divieti città/distretto off | strade manuali attive" },
+                { ParkingStatusLocale.kManualNone, "Nessuno" },
                 { ParkingStatusLocale.kStatusCheck, "VERIF." },
+                { ParkingStatusLocale.kRatingPoor, "SCARSO" },
+                { ParkingStatusLocale.kRatingGood, "BUONO" },
+                { ParkingStatusLocale.kRatingNA, "N/D" },
             };
         }
 
