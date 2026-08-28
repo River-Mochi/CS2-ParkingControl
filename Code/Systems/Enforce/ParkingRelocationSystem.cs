@@ -664,8 +664,13 @@ namespace ParkingControl
                 unchecked(frameIndex - m_CurrentRun.StartFrame);
             m_CurrentRun.ElapsedWallSeconds =
                 GetElapsedWallSeconds(m_RunStartTimestamp);
-            m_LastCompletedRun = m_CurrentRun;
-            m_HasCompletedRun = true;
+            // New or rebuilt curb lanes can have no parked cars. Keep the last
+            // meaningful relocation run visible instead of replacing it with that empty work.
+            if (m_CurrentRun.CarsQueued > 0)
+            {
+                m_LastCompletedRun = m_CurrentRun;
+                m_HasCompletedRun = true;
+            }
             m_RunActive = false;
             m_RunStartTimestamp = 0L;
         }
