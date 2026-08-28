@@ -27,6 +27,9 @@ namespace ParkingControl
         private const string kUnavailableFallback = "Parking status is unavailable.";
         private const string kCollectionFailedFallback =
             "Parking status could not be collected; see ParkingControl.log.";
+        private const string kScopeOffFallback =
+            "OFF = Whole City/District bans disabled | manual roads still work";
+        private const string kManualNoneFallback = "None set";
         private const string kEnforcementFormatFallback =
             "{0} parked | {1}/{2} disabled{3}";
         private const string kManualEnforcementFormatFallback =
@@ -292,7 +295,7 @@ namespace ParkingControl
             {
                 enforcement = ParkingStatusLocale.Get(
                     ParkingStatusLocale.kStatusOff,
-                    "OFF");
+                    kScopeOffFallback);
             }
 
             bool manualEnabled =
@@ -325,8 +328,8 @@ namespace ParkingControl
                     Format(snapshot.ManualTargetCurbLanes),
                     manualSuffix)
                 : ParkingStatusLocale.Get(
-                    ParkingStatusLocale.kStatusOff,
-                    "OFF");
+                    ParkingStatusLocale.kManualNone,
+                    kManualNoneFallback);
 
             string vehicles = ParkingStatusLocale.Format(
                 ParkingStatusLocale.kVehicleFormat,

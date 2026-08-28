@@ -72,8 +72,9 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "Show status" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowStatus)),
                     "<Show current parking totals below.>\n" +
-                    "Status is collected only while the Options menu is open; " +
-                    "no background status scan runs during city play." },
+                    "Status is collected only while the Options menu is open;\n" +
+                    "no background status scan runs during city play."
+                },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.DistrictInstructions)),
                     "<District mode>\n" +
                     "1. Choose <by District> above.\n" +
@@ -110,21 +111,23 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Street Parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "Shows only the selected <Whole City> or <by District> Parking Ban scope. Manual No Parking roads are listed separately.\n" +
+                    "<OFF> = Whole City/District bans are disabled; manual <No Parking> road settings still apply.\n" +
                     "<Parked> = cars still parked on streets covered by the selected scope.\n" +
                     "<Disabled> = disabled curb-lane sections / target curb-lane sections.\n" +
                     "<Districts> = districts with the Parking Ban / total districts.\n" +
+                    "<CHECK> = some targeted curb-lane sections do not yet match the selected ban.\n" +
                     "<---------------------->\n" +
-                    "**After changing or rebuilding roads, the disabled count may need a little time while CS2 rebuilds parking lanes. " +
-                    "Run the city briefly and reopen Options > Status. If CHECK remains, use About > Debug > Write Report and send Logs/ParkingControl.log and your mod list.**"
+                    "**If [CHECK] appears after changing or rebuilding roads, run the city for a while and reopen Options > Status. " +
+                    "If it remains, use About > Debug > Write Report.**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ManualStatus)), "Manual No Parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ManualStatus)),
-                    "Shows only road sides set with Parking Control's manual <No Parking> road tool.\n" +
-                    "<Parked> = cars still parked on those manually banned road sides.\n" +
+                    "Shows only roads set with the in-city manual <No Parking> tool.\n" +
+                    "<Parked> = cars still parked on those manually banned roads.\n" +
                     "<Disabled> = disabled curb-lane sections / manually targeted curb-lane sections.\n" +
                     "Manual bans can overlap Whole City or District bans, so do not add this row to <Street Parking> totals.\n" +
-                    "**If CHECK remains after running the city briefly, use About > Debug > Write Report.**"
+                    "**If [CHECK] appears after running the city for a while, use About > Debug > Write Report and submit that when seeking help.**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Parking use" },
@@ -206,7 +209,9 @@ namespace ParkingControl
                 { ParkingStatusLocale.kShareFormat,
                     "{0} public | {1} bldg | {2} street | {3} total" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
-                { ParkingStatusLocale.kStatusOff, "OFF" },
+                { ParkingStatusLocale.kStatusOff,
+                    "OFF = Whole City/District bans disabled | manual roads still work" },
+                { ParkingStatusLocale.kManualNone, "None set" },
                 { ParkingStatusLocale.kStatusCheck, "CHECK" },
                 { ParkingStatusLocale.kRatingPoor, "POOR" },
                 { ParkingStatusLocale.kRatingGood, "GOOD" },

@@ -33,6 +33,7 @@ namespace ParkingControl
         internal const string kShareFormat = Mod.ModId + ".Status.ShareFormat";
         internal const string kStatusOk = Mod.ModId + ".Status.OK";
         internal const string kStatusOff = Mod.ModId + ".Status.OFF";
+        internal const string kManualNone = Mod.ModId + ".Status.ManualNone";
         internal const string kStatusCheck = Mod.ModId + ".Status.CHECK";
         internal const string kRatingPoor = Mod.ModId + ".Status.RatingPoor";
         internal const string kRatingGood = Mod.ModId + ".Status.RatingGood";
