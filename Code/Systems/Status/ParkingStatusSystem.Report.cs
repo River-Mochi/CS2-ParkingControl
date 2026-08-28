@@ -295,6 +295,20 @@ namespace ParkingControl
                 $"{automatic.LaneRequestsPerPass} lanes/pass, " +
                 $"{automatic.CarsPerPass} cars/pass");
             text.AppendLine($"State={(automatic.IsActive ? "Active" : "Idle")}");
+            text.AppendLine($"DelayedCleanup={automatic.CleanupState}");
+            text.AppendLine(
+                $"CleanupLaneRequestsPending=" +
+                $"{automatic.CleanupLaneRequestsPending}");
+            text.AppendLine(
+                $"ParkingControlFixParkingPending=" +
+                $"{automatic.ParkingControlFixParkingPending} " +
+                "(Parking Control handoffs only)");
+
+            if (automatic.CleanupDueFrame != 0u)
+            {
+                text.AppendLine($"CleanupDueFrame={automatic.CleanupDueFrame}");
+            }
+
             text.AppendLine($"CyclesStarted={automatic.CyclesStarted}");
 
             if (!automatic.HasRun)

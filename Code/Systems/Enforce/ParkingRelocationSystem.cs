@@ -36,6 +36,10 @@ namespace ParkingControl
         public double ElapsedWallSeconds;
         public double MaxPCPassMilliseconds;
         public int VanillaFixParkingPendingAllSources;
+        public int ParkingControlFixParkingPending;
+        public int CleanupLaneRequestsPending;
+        public string CleanupState;
+        public uint CleanupDueFrame;
     }
 
     /// <summary>
@@ -44,15 +48,19 @@ namespace ParkingControl
     public sealed partial class ParkingRelocationSystem : GameSystemBase
     {
         // Tuning knobs: keep both PC work and vanilla parking searches spread out.
-        private const uint kRelocationFrameInterval = 128;
+        private const uint kRelocationFrameInterval = 256;
         private const int kLaneRequestsPerPass = 32;
         private const int kCarsPerPass = 64;
+        private const uint kDelayedCleanupFrameDelay = 2048;
 #if DEBUG
         private const int kDebugSampleLimit = 10;
 #endif
 
         private Unity.Entities.EntityQuery m_RequestLaneQuery;
+        private Unity.Entities.EntityQuery m_CleanupLaneQuery;
         private Unity.Entities.EntityQuery m_FixParkingQuery;
+        private Unity.Entities.EntityQuery m_ParkingControlHandoffQuery;
+        private Unity.Entities.EntityQuery m_CompletedParkingControlHandoffQuery;
         private Unity.Collections.NativeQueue<Unity.Entities.Entity> m_PendingCars;
         private Game.Simulation.SimulationSystem m_SimulationSystem = null!;
         private bool m_IsGame;
@@ -61,6 +69,8 @@ namespace ParkingControl
         private bool m_RunActive;
         private bool m_HasCompletedRun;
         private uint m_LastRelocationFrame;
+        private uint m_CleanupDueFrame;
+        private DelayedCleanupState m_CleanupState;
         private int m_CyclesStarted;
         private long m_RunStartTimestamp;
         private int m_TotalLaneRequests;
@@ -69,6 +79,14 @@ namespace ParkingControl
         private int m_TotalSkipped;
         private RelocationRunStats m_CurrentRun;
         private RelocationRunStats m_LastCompletedRun;
+
+        private enum DelayedCleanupState
+        {
+            None,
+            WaitingForHandoff,
+            WaitingForDelay,
+            Running,
+        }
 
         private struct RelocationRunStats
         {
@@ -131,9 +149,29 @@ namespace ParkingControl
                 .WithNone<Game.Common.Deleted, Game.Tools.Temp>()
                 .Build();
 
+            m_CleanupLaneQuery = SystemAPI.QueryBuilder()
+                .WithAll<
+                    ParkingRelocationCleanupRequest,
+                    Game.Net.ParkingLane,
+                    Game.Net.LaneObject>()
+                .WithNone<Game.Common.Deleted, Game.Tools.Temp>()
+                .Build();
+
             m_FixParkingQuery = SystemAPI.QueryBuilder()
                 .WithAll<Game.Vehicles.FixParkingLocation>()
                 .WithNone<Game.Tools.Temp>()
+                .Build();
+
+            m_ParkingControlHandoffQuery = SystemAPI.QueryBuilder()
+                .WithAll<
+                    ParkingRelocationHandoff,
+                    Game.Vehicles.FixParkingLocation>()
+                .WithNone<Game.Tools.Temp>()
+                .Build();
+
+            m_CompletedParkingControlHandoffQuery = SystemAPI.QueryBuilder()
+                .WithAll<ParkingRelocationHandoff>()
+                .WithNone<Game.Vehicles.FixParkingLocation, Game.Tools.Temp>()
                 .Build();
 
             m_PendingCars =
@@ -160,6 +198,7 @@ namespace ParkingControl
 
             m_HasRelocationFrame = false;
             m_LastRelocationFrame = 0u;
+            ResetDelayedCleanup();
             ResetCounters();
             ResetRunHistory();
 #if DEBUG
@@ -200,35 +239,117 @@ namespace ParkingControl
 #endif
 
             uint frameIndex = m_SimulationSystem.frameIndex;
+            RemoveCompletedParkingControlHandoffs();
 
-            bool hasWork =
-                m_PendingCars.Count > 0 ||
-                !m_RequestLaneQuery.IsEmptyIgnoreFilter;
+            bool hasPrimaryWork =
+                !m_RequestLaneQuery.IsEmptyIgnoreFilter ||
+                (m_CleanupState != DelayedCleanupState.Running &&
+                    m_PendingCars.Count > 0);
 
-            if (!hasWork)
+            if (hasPrimaryWork)
             {
-                m_HasRelocationFrame = false;
-                FinishRunIfNeeded(frameIndex);
-                FinishLogIfNeeded();
+                // A new restriction joins the next cleanup window instead of waking an
+                // already scheduled cleanup early.
+                m_CleanupState = DelayedCleanupState.None;
+                ProcessPrimaryRelocationPass(frameIndex);
                 return;
             }
 
             if (!m_RunActive)
             {
+                return;
+            }
+
+            if (m_CleanupState == DelayedCleanupState.None)
+            {
+                BeginDelayedCleanupOrFinish(frameIndex);
+                return;
+            }
+
+            if (m_CleanupState == DelayedCleanupState.WaitingForHandoff)
+            {
+                if (!m_ParkingControlHandoffQuery.IsEmptyIgnoreFilter)
+                {
+                    return;
+                }
+
+                m_CleanupDueFrame = unchecked(
+                    frameIndex + kDelayedCleanupFrameDelay);
+                m_CleanupState = DelayedCleanupState.WaitingForDelay;
+                return;
+            }
+
+            if (m_CleanupState == DelayedCleanupState.WaitingForDelay)
+            {
+                if (unchecked(frameIndex - m_CleanupDueFrame) > uint.MaxValue / 2)
+                {
+                    return;
+                }
+
+                m_CleanupState = DelayedCleanupState.Running;
+            }
+
+            ProcessDelayedCleanupPass(frameIndex);
+        }
+
+        private void ProcessPrimaryRelocationPass(uint frameIndex)
+        {
+            if (!m_RunActive)
+            {
                 BeginRun(frameIndex);
             }
 
+            if (!IsRelocationPassDue(frameIndex))
+            {
+                return;
+            }
+
+            ProcessRelocationPass(frameIndex, delayedCleanup: false);
+
+            if (m_PendingCars.Count == 0 &&
+                m_RequestLaneQuery.IsEmptyIgnoreFilter)
+            {
+                m_HasRelocationFrame = false;
+                BeginDelayedCleanupOrFinish(frameIndex);
+            }
+        }
+
+        private void ProcessDelayedCleanupPass(uint frameIndex)
+        {
+            if (!IsRelocationPassDue(frameIndex))
+            {
+                return;
+            }
+
+            ProcessRelocationPass(frameIndex, delayedCleanup: true);
+
+            if (m_PendingCars.Count == 0 &&
+                m_CleanupLaneQuery.IsEmptyIgnoreFilter)
+            {
+                m_HasRelocationFrame = false;
+                FinishRunIfNeeded(frameIndex);
+                FinishLogIfNeeded();
+                ResetDelayedCleanup();
+            }
+        }
+
+        private bool IsRelocationPassDue(uint frameIndex)
+        {
             // Modification5 does not honor GameSystemBase.GetUpdateInterval().
             // Gate on simulation frames so large bans drain gradually on every PC.
             if (m_HasRelocationFrame &&
                 unchecked(frameIndex - m_LastRelocationFrame) < kRelocationFrameInterval)
             {
-                return;
+                return false;
             }
 
             m_HasRelocationFrame = true;
             m_LastRelocationFrame = frameIndex;
+            return true;
+        }
 
+        private void ProcessRelocationPass(uint frameIndex, bool delayedCleanup)
+        {
             // Local ECB keeps structural changes batched but plays them back now,
             // so vanilla FixParkingLocationSystem sees this pass later in Modification5.
             long passStartTimestamp = System.Diagnostics.Stopwatch.GetTimestamp();
@@ -239,7 +360,9 @@ namespace ParkingControl
 
             try
             {
-                int lanesProcessed = CollectSomeLaneRequests(ref commandBuffer);
+                int lanesProcessed = delayedCleanup
+                    ? CollectSomeCleanupLaneRequests(ref commandBuffer)
+                    : CollectSomeLaneRequests(ref commandBuffer);
                 int sent = SendNextBatchToVanilla(ref commandBuffer);
 
                 if (lanesProcessed > 0 || sent > 0)
@@ -257,37 +380,86 @@ namespace ParkingControl
                     (lanesProcessed > 0 || sent > 0))
                 {
                     LogUtils.Info(
-                        $"{Mod.ModTag} Auto relocation pass: " +
+                        $"{Mod.ModTag} Auto relocation " +
+                        $"{(delayedCleanup ? "cleanup" : "pass")}: " +
                         $"frame={frameIndex}, lanes={lanesProcessed}, sent={sent}, " +
                         $"pendingCars={m_PendingCars.Count}, " +
-                        $"pendingLanes={m_RequestLaneQuery.CalculateEntityCount()}.");
+                        $"pendingLanes=" +
+                        $"{(delayedCleanup ? m_CleanupLaneQuery : m_RequestLaneQuery).CalculateEntityCount()}.");
                 }
 #endif
-
-                if (m_PendingCars.Count == 0 &&
-                    m_RequestLaneQuery.IsEmptyIgnoreFilter)
-                {
-                    m_HasRelocationFrame = false;
-                }
             }
             finally
             {
                 commandBuffer.Dispose();
                 RecordPassDuration(passStartTimestamp);
             }
+        }
 
-            if (m_PendingCars.Count == 0 &&
-                m_RequestLaneQuery.IsEmptyIgnoreFilter)
+        private void BeginDelayedCleanupOrFinish(uint frameIndex)
+        {
+            if (m_CleanupLaneQuery.IsEmptyIgnoreFilter)
             {
                 FinishRunIfNeeded(frameIndex);
                 FinishLogIfNeeded();
+                ResetDelayedCleanup();
+                return;
+            }
+
+            if (!m_ParkingControlHandoffQuery.IsEmptyIgnoreFilter)
+            {
+                m_CleanupState = DelayedCleanupState.WaitingForHandoff;
+                return;
+            }
+
+            m_CleanupDueFrame = unchecked(frameIndex + kDelayedCleanupFrameDelay);
+            m_CleanupState = DelayedCleanupState.WaitingForDelay;
+        }
+
+        private void RemoveCompletedParkingControlHandoffs()
+        {
+            if (m_CompletedParkingControlHandoffQuery.IsEmptyIgnoreFilter)
+            {
+                return;
+            }
+
+            Dependency.Complete();
+
+            using Unity.Collections.NativeArray<Unity.Entities.Entity> completedHandoffs =
+                m_CompletedParkingControlHandoffQuery.ToEntityArray(
+                    Unity.Collections.Allocator.Temp);
+
+            if (completedHandoffs.Length > 0)
+            {
+                EntityManager.RemoveComponent<ParkingRelocationHandoff>(
+                    completedHandoffs);
             }
         }
 
         private int CollectSomeLaneRequests(
             ref Unity.Entities.EntityCommandBuffer commandBuffer)
         {
-            if (m_RequestLaneQuery.IsEmptyIgnoreFilter)
+            return CollectSomeLanes(
+                m_RequestLaneQuery,
+                false,
+                ref commandBuffer);
+        }
+
+        private int CollectSomeCleanupLaneRequests(
+            ref Unity.Entities.EntityCommandBuffer commandBuffer)
+        {
+            return CollectSomeLanes(
+                m_CleanupLaneQuery,
+                true,
+                ref commandBuffer);
+        }
+
+        private int CollectSomeLanes(
+            Unity.Entities.EntityQuery laneQuery,
+            bool delayedCleanup,
+            ref Unity.Entities.EntityCommandBuffer commandBuffer)
+        {
+            if (laneQuery.IsEmptyIgnoreFilter)
             {
                 return 0;
             }
@@ -310,7 +482,7 @@ namespace ParkingControl
                 SystemAPI.GetBufferLookup<Game.Net.LaneObject>(true);
 
             using Unity.Collections.NativeArray<Unity.Entities.Entity> requestLanes =
-                m_RequestLaneQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
+                laneQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
 
             int laneLimit = requestLanes.Length < kLaneRequestsPerPass
                 ? requestLanes.Length
@@ -323,7 +495,14 @@ namespace ParkingControl
                 Unity.Entities.Entity lane = requestLanes[i];
 
                 // Consume this one-shot request even if the road changed before our interval.
-                QueueRemoveLaneRequest(ref commandBuffer, lane);
+                if (delayedCleanup)
+                {
+                    QueueRemoveCleanupRequest(ref commandBuffer, lane);
+                }
+                else
+                {
+                    QueueRemoveLaneRequest(ref commandBuffer, lane);
+                }
 
                 if (!stateLookup.HasComponent(lane) ||
                     !parkingLaneLookup.TryGetComponent(
@@ -461,6 +640,13 @@ namespace ParkingControl
             commandBuffer.RemoveComponent<ParkingRelocationRequest>(lane);
         }
 
+        private static void QueueRemoveCleanupRequest(
+            ref Unity.Entities.EntityCommandBuffer commandBuffer,
+            Unity.Entities.Entity lane)
+        {
+            commandBuffer.RemoveComponent<ParkingRelocationCleanupRequest>(lane);
+        }
+
         private static void QueueVanillaRelocation(
             ref Unity.Entities.EntityCommandBuffer commandBuffer,
             Unity.Entities.Entity vehicle,
@@ -482,6 +668,8 @@ namespace ParkingControl
                 new Game.Vehicles.FixParkingLocation(
                     oldLane,
                     vehicle));
+
+            commandBuffer.AddComponent<ParkingRelocationHandoff>(vehicle);
 
             // FixParkingLocationSystem only queries repair entities that are also Updated.
             if (addUpdated)
@@ -637,6 +825,11 @@ namespace ParkingControl
                 ElapsedWallSeconds = elapsedWallSeconds,
                 MaxPCPassMilliseconds = stats.MaxPCPassMilliseconds,
                 VanillaFixParkingPendingAllSources = m_FixParkingQuery.CalculateEntityCount(),
+                ParkingControlFixParkingPending =
+                    m_ParkingControlHandoffQuery.CalculateEntityCount(),
+                CleanupLaneRequestsPending = m_CleanupLaneQuery.CalculateEntityCount(),
+                CleanupState = m_CleanupState.ToString(),
+                CleanupDueFrame = m_CleanupDueFrame,
             };
         }
 
@@ -696,6 +889,12 @@ namespace ParkingControl
             m_RunStartTimestamp = 0L;
             m_CurrentRun = default;
             m_LastCompletedRun = default;
+        }
+
+        private void ResetDelayedCleanup()
+        {
+            m_CleanupState = DelayedCleanupState.None;
+            m_CleanupDueFrame = 0u;
         }
 
         private static double GetElapsedWallSeconds(long startTimestamp)

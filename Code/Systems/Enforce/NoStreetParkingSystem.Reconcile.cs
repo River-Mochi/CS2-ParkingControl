@@ -46,6 +46,9 @@ namespace ParkingControl
             Unity.Entities.ComponentLookup<ParkingRelocationRequest> relocationRequestLookup =
                 SystemAPI.GetComponentLookup<ParkingRelocationRequest>(true);
 
+            Unity.Entities.ComponentLookup<ParkingRelocationCleanupRequest> cleanupRequestLookup =
+                SystemAPI.GetComponentLookup<ParkingRelocationCleanupRequest>(true);
+
             Unity.Entities.ComponentLookup<Game.Common.Created> createdLookup =
                 SystemAPI.GetComponentLookup<Game.Common.Created>(true);
 
@@ -62,7 +65,11 @@ namespace ParkingControl
                 new(Unity.Collections.Allocator.Temp);
             Unity.Collections.NativeList<Unity.Entities.Entity> relocationRequestEntities =
                 new(Unity.Collections.Allocator.Temp);
+            Unity.Collections.NativeList<Unity.Entities.Entity> cleanupRequestEntities =
+                new(Unity.Collections.Allocator.Temp);
             Unity.Collections.NativeList<Unity.Entities.Entity> removeStateEntities =
+                new(Unity.Collections.Allocator.Temp);
+            Unity.Collections.NativeList<Unity.Entities.Entity> removeCleanupRequestEntities =
                 new(Unity.Collections.Allocator.Temp);
             Unity.Collections.NativeList<Unity.Entities.Entity> pathfindUpdateEntities =
                 new(Unity.Collections.Allocator.Temp);
@@ -92,13 +99,16 @@ namespace ParkingControl
                         manualBanLookup,
                         stateLookup,
                         relocationRequestLookup,
+                        cleanupRequestLookup,
                         createdLookup,
                         updatedLookup,
                         pathfindUpdatedLookup,
                         policyLookup,
                         ref addStateEntities,
                         ref relocationRequestEntities,
+                        ref cleanupRequestEntities,
                         ref removeStateEntities,
+                        ref removeCleanupRequestEntities,
                         ref pathfindUpdateEntities,
                         ref result);
                 }
@@ -107,7 +117,9 @@ namespace ParkingControl
             ApplyPendingChanges(
                 ref addStateEntities,
                 ref relocationRequestEntities,
+                ref cleanupRequestEntities,
                 ref removeStateEntities,
+                ref removeCleanupRequestEntities,
                 ref pathfindUpdateEntities);
 
             return result;
@@ -155,6 +167,9 @@ namespace ParkingControl
             Unity.Entities.ComponentLookup<ParkingRelocationRequest> relocationRequestLookup =
                 SystemAPI.GetComponentLookup<ParkingRelocationRequest>(true);
 
+            Unity.Entities.ComponentLookup<ParkingRelocationCleanupRequest> cleanupRequestLookup =
+                SystemAPI.GetComponentLookup<ParkingRelocationCleanupRequest>(true);
+
             Unity.Entities.ComponentLookup<Game.Common.Created> createdLookup =
                 SystemAPI.GetComponentLookup<Game.Common.Created>(true);
 
@@ -171,7 +186,11 @@ namespace ParkingControl
                 new(Unity.Collections.Allocator.Temp);
             Unity.Collections.NativeList<Unity.Entities.Entity> relocationRequestEntities =
                 new(Unity.Collections.Allocator.Temp);
+            Unity.Collections.NativeList<Unity.Entities.Entity> cleanupRequestEntities =
+                new(Unity.Collections.Allocator.Temp);
             Unity.Collections.NativeList<Unity.Entities.Entity> removeStateEntities =
+                new(Unity.Collections.Allocator.Temp);
+            Unity.Collections.NativeList<Unity.Entities.Entity> removeCleanupRequestEntities =
                 new(Unity.Collections.Allocator.Temp);
             Unity.Collections.NativeList<Unity.Entities.Entity> pathfindUpdateEntities =
                 new(Unity.Collections.Allocator.Temp);
@@ -203,13 +222,16 @@ namespace ParkingControl
                     manualBanLookup,
                     stateLookup,
                     relocationRequestLookup,
+                    cleanupRequestLookup,
                     createdLookup,
                     updatedLookup,
                     pathfindUpdatedLookup,
                     policyLookup,
                     ref addStateEntities,
                     ref relocationRequestEntities,
+                    ref cleanupRequestEntities,
                     ref removeStateEntities,
+                    ref removeCleanupRequestEntities,
                     ref pathfindUpdateEntities,
                     ref result);
             }
@@ -217,7 +239,9 @@ namespace ParkingControl
             ApplyPendingChanges(
                 ref addStateEntities,
                 ref relocationRequestEntities,
+                ref cleanupRequestEntities,
                 ref removeStateEntities,
+                ref removeCleanupRequestEntities,
                 ref pathfindUpdateEntities);
 
             return result;
@@ -236,13 +260,16 @@ namespace ParkingControl
             Unity.Entities.ComponentLookup<ManualRoadParkingBan> manualBanLookup,
             Unity.Entities.ComponentLookup<StreetParkingState> stateLookup,
             Unity.Entities.ComponentLookup<ParkingRelocationRequest> relocationRequestLookup,
+            Unity.Entities.ComponentLookup<ParkingRelocationCleanupRequest> cleanupRequestLookup,
             Unity.Entities.ComponentLookup<Game.Common.Created> createdLookup,
             Unity.Entities.ComponentLookup<Game.Common.Updated> updatedLookup,
             Unity.Entities.ComponentLookup<Game.Common.PathfindUpdated> pathfindUpdatedLookup,
             Unity.Entities.BufferLookup<Game.Policies.Policy> policyLookup,
             ref Unity.Collections.NativeList<Unity.Entities.Entity> addStateEntities,
             ref Unity.Collections.NativeList<Unity.Entities.Entity> relocationRequestEntities,
+            ref Unity.Collections.NativeList<Unity.Entities.Entity> cleanupRequestEntities,
             ref Unity.Collections.NativeList<Unity.Entities.Entity> removeStateEntities,
+            ref Unity.Collections.NativeList<Unity.Entities.Entity> removeCleanupRequestEntities,
             ref Unity.Collections.NativeList<Unity.Entities.Entity> pathfindUpdateEntities,
             ref ReconcileResult result)
         {
@@ -306,6 +333,12 @@ namespace ParkingControl
                 }
 
                 removeStateEntities.Add(entity);
+
+                if (cleanupRequestLookup.HasComponent(entity))
+                {
+                    removeCleanupRequestEntities.Add(entity);
+                }
+
                 return;
             }
 
@@ -332,6 +365,11 @@ namespace ParkingControl
                 {
                     relocationRequestEntities.Add(entity);
                 }
+
+                if (!cleanupRequestLookup.HasComponent(entity))
+                {
+                    cleanupRequestEntities.Add(entity);
+                }
             }
 
             QueuePathfindUpdate(
@@ -345,7 +383,9 @@ namespace ParkingControl
         private void ApplyPendingChanges(
             ref Unity.Collections.NativeList<Unity.Entities.Entity> addStateEntities,
             ref Unity.Collections.NativeList<Unity.Entities.Entity> relocationRequestEntities,
+            ref Unity.Collections.NativeList<Unity.Entities.Entity> cleanupRequestEntities,
             ref Unity.Collections.NativeList<Unity.Entities.Entity> removeStateEntities,
+            ref Unity.Collections.NativeList<Unity.Entities.Entity> removeCleanupRequestEntities,
             ref Unity.Collections.NativeList<Unity.Entities.Entity> pathfindUpdateEntities)
         {
             if (addStateEntities.Length > 0)
@@ -360,10 +400,22 @@ namespace ParkingControl
                     relocationRequestEntities.AsArray());
             }
 
+            if (cleanupRequestEntities.Length > 0)
+            {
+                EntityManager.AddComponent<ParkingRelocationCleanupRequest>(
+                    cleanupRequestEntities.AsArray());
+            }
+
             if (removeStateEntities.Length > 0)
             {
                 EntityManager.RemoveComponent<StreetParkingState>(
                     removeStateEntities.AsArray());
+            }
+
+            if (removeCleanupRequestEntities.Length > 0)
+            {
+                EntityManager.RemoveComponent<ParkingRelocationCleanupRequest>(
+                    removeCleanupRequestEntities.AsArray());
             }
 
             if (pathfindUpdateEntities.Length > 0)
@@ -374,7 +426,9 @@ namespace ParkingControl
 
             addStateEntities.Dispose();
             relocationRequestEntities.Dispose();
+            cleanupRequestEntities.Dispose();
             removeStateEntities.Dispose();
+            removeCleanupRequestEntities.Dispose();
             pathfindUpdateEntities.Dispose();
         }
 
