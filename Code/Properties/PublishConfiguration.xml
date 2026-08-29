@@ -12,6 +12,7 @@
 ## 🅿️ Parking Control (PC)
 
 Want clean curbs without changing your road design?
+
 **New:** You can now ban parking on individual roads, 1-way alleys, with the **No Parking** road button! 🚫
 
 - 🚗 Easy to use; prevents cars and motorcycles from choosing public street parking.
@@ -19,8 +20,8 @@ Want clean curbs without changing your road design?
 
 ## Choose where
 
-- ✅**by District** - enable **Roadside Parking Ban** in the District Policies panel. Manual no-parking button also works even if you have "by Districts" selected.
-- ✅**Manual Only** - use the "No Parking" roads button whereever you want.
+- ✅**by District** - enable **Roadside Parking Ban** in the district policies panel. Manual no-parking button also works even if you have "by Districts" selected.
+- ✅**Manual Only** - use the "No Parking" roads button wherever you want.
 - ✅**Whole City** - prevent street parking city-wide. Make sure the city has enough parking storage off street.
 
 
@@ -28,9 +29,7 @@ Want clean curbs without changing your road design?
 
 Use the **No Parking** button next to the crosswalk tool.
 
-- **Left-click** a road to add No Parking.
-- **Hold Left Mouse + drag** to apply it across multiple lanes.
-- **Right-click** to remove it.
+- **Left-click** a road to add No Parking. **Right-click** to remove it.
 
 🚙 Parking lots and building parking stay working normally.
 
@@ -41,7 +40,6 @@ Use the **No Parking** button next to the crosswalk tool.
 - Some vanilla roads already don't allow parking, e.g. 3-lane small roads, highways, 2-way alley.
 - New or rebuilt roads may briefly accept a few cars while CS2 updates their parking lanes.
 - Safe to remove anytime and designed to not impact performance.
-- Optional: **Mochi's Hover Colors** by River-mochi is supported. The "No Parking" manual road tool follows MHC's **Bulldozer + Roads** colors, just like normal road tools.
 
 ## Support and Feedback
 - Support by clicking Like 👍 (top right); helps people know about the mod.
@@ -63,6 +61,7 @@ Use the **No Parking** button next to the crosswalk tool.
 - It does not narrow the road, widen the sidewalk, or add a driving lane (road looks the same).
 - Existing parked cars gradually relocate after parking is banned.
 - New or rebuilt roads may briefly accept a few cars while CS2 updates the parking lanes (timing).
+- Optional:  works with [Mochi's Hover Colors](https://mods.paradoxplaza.com/mods/146044/Windows)  - manual road tool follows MHC's Bulldozer + Roads colors, just like normal road tools.
 
 
 tags: Disable road parking, clear road side, no cars
