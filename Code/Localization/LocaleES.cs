@@ -51,22 +51,19 @@ namespace ParkingControl
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
                     "Elige:\n" +
                     "<1. Por distrito>\n" +
-                    "<2. Toda la ciudad>\n" +
-                    "<3. DESACTIVADO>\n" +
+                    "<2. Solo manual>\n" +
+                    "<3. Toda la ciudad>\n" +
                     "- Los carriles aptos se bloquean para impedir nuevos aparcamientos en la calle.\n" +
                     "- Los coches ya aparcados se van desplazando tras la prohibición; las zonas grandes tardan más.\n" +
                     "- Los aparcamientos de pago y el aparcamiento normal de edificios siguen disponibles.\n" +
                     "**Algunas carreteras ya excluyen el aparcamiento en calle, como autopistas y callejones pequeños de doble sentido.**"
                 },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Toda la ciudad" },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "Por distrito" },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "DESACTIVADO" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. Por distrito" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. Solo manual" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. Toda la ciudad" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Mostrar instrucciones" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
-                    "Muestra cómo usar <Por distrito>.\n" +
-                    "1.a. DESACTIVADO = se desactivan las restricciones de toda la ciudad y distritos; vuelve en gran parte al juego normal.\n" +
-                    "1.b. El botón <Prohibido aparcar> para una carretera en Servicios de carretera sigue funcionando como un paso de peatones.\n" +
-                    "2. Toda la ciudad = bloquea todo el aparcamiento público en calle apto."
+                    "Muestra cómo usar el modo <Por distrito>."
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "Mostrar estado" },
@@ -104,7 +101,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Aparc. en calle" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "Muestra solo el ámbito seleccionado <Toda la ciudad> o <Por distrito>. Las prohibiciones manuales se muestran aparte.\n" +
-                    "<DESACT.> = se desactivan las prohibiciones de ciudad/distritos; las carreteras con <Prohibido aparcar> manual siguen activas.\n" +
+                    "<Solo manual> = se desactivan las prohibiciones de ciudad/distritos; las carreteras con <Prohibido aparcar> manual siguen activas.\n" +
                     "<Aparc.> = coches aún aparcados en calles del ámbito seleccionado.\n" +
                     "<Desact.> = tramos de carril junto al bordillo desactivados / objetivo.\n" +
                     "<Distritos> = distritos con prohibición / distritos totales.\n" +
@@ -127,7 +124,7 @@ namespace ParkingControl
                     "Muestra el uso de aparcamiento de <toda la ciudad>. No sigue el ámbito de prohibición Ciudad completa / por distrito.\n" +
                     "<Público> = plazas ocupadas / totales en aparcamientos públicos.\n" +
                     "Usa los mismos datos de aparcamiento que el panel de Carreteras de CS2.\n" +
-                    "<Edif.> = vehículos aparcados en edificios o garajes.\n" +
+                    "<Edif.> = coches aparcados en edificios o garajes.\n" +
                     "<Calle> = coches aparcados en calles.\n" +
                     "<Total> = coches aparcados conocidos en la ciudad (calle + público + edificio).\n" +
                     "**Se excluyen las conexiones exteriores y la espera de ubicación desconocida.**"
@@ -193,7 +190,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, público libre {2}" },
                 { ParkingStatusLocale.kShareFormat, "{0} público | {1} edif. | {2} calle | {3} total" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
-                { ParkingStatusLocale.kStatusOff, "DESACT. = sin prohibiciones de ciudad/distrito | manual sigue activo" },
+                { ParkingStatusLocale.kStatusOff, "Solo manual = sin prohibiciones de ciudad/distrito | vías manuales activas" },
                 { ParkingStatusLocale.kManualNone, "Ninguna" },
                 { ParkingStatusLocale.kStatusCheck, "REVISAR" },
                 { ParkingStatusLocale.kRatingPoor, "MALO" },

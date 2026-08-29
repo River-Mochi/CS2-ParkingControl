@@ -51,22 +51,19 @@ namespace ParkingControl
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
                     "Scegli:\n" +
                     "<1. Per distretto>\n" +
-                    "<2. Intera città>\n" +
-                    "<3. DISATTIVATO>\n" +
+                    "<2. Solo manuale>\n" +
+                    "<3. Intera città>\n" +
                     "- Le corsie idonee vengono bloccate per impedire nuovi parcheggi su strada.\n" +
                     "- Le auto già parcheggiate si spostano gradualmente dopo il divieto; le aree grandi richiedono più tempo.\n" +
                     "- I parcheggi a pagamento e quelli normali degli edifici restano utilizzabili.\n" +
                     "**Alcune strade escludono già il parcheggio su strada, come autostrade e piccoli vicoli a doppio senso.**"
                 },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Intera città" },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "Per distretto" },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "DISATTIVATO" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. Per distretto" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. Solo manuale" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. Intera città" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Mostra istruzioni" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
-                    "Mostra come usare <Per distretto>.\n" +
-                    "1.a. DISATTIVATO = le restrizioni cittadine e dei distretti sono disattivate; si torna in gran parte alle regole normali.\n" +
-                    "1.b. Il pulsante <Divieto di sosta> per una strada nel pannello Servizi stradali continua a funzionare come un attraversamento pedonale.\n" +
-                    "2. Intera città = blocca tutto il parcheggio pubblico su strada idoneo."
+                    "Mostra come usare la modalità <Per distretto>."
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "Mostra stato" },
@@ -104,7 +101,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Sosta su strada" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "Mostra solo l’ambito selezionato <Intera città> o <Per distretto>. I divieti manuali sono elencati a parte.\n" +
-                    "<DISATT.> = divieti città/distretto disattivati; le strade con <Divieto di sosta> manuale restano attive.\n" +
+                    "<Solo manuale> = divieti città/distretto disattivati; le strade con <Divieto di sosta> manuale restano attive.\n" +
                     "<In sosta> = auto ancora parcheggiate nelle strade dell’ambito selezionato.\n" +
                     "<Chiuse> = sezioni di corsia a bordo strada disattivate / sezioni obiettivo.\n" +
                     "<Distretti> = distretti con divieto / distretti totali.\n" +
@@ -127,7 +124,7 @@ namespace ParkingControl
                     "Mostra l’uso dei parcheggi in <tutta la città>. Non segue l’ambito del divieto Città intera / per distretto.\n" +
                     "<Pubblico> = posti occupati / totali nelle strutture pubbliche.\n" +
                     "Usa gli stessi dati del pannello parcheggi di Strade in CS2.\n" +
-                    "<Edif.> = veicoli parcheggiati in edifici o garage.\n" +
+                    "<Edif.> = auto parcheggiate in edifici o garage.\n" +
                     "<Strada> = auto parcheggiate in strada.\n" +
                     "<Totale> = auto parcheggiate note in città (strada + pubblico + edificio).\n" +
                     "**Connessioni esterne e aree di attesa sconosciute sono escluse.**"
@@ -193,7 +190,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, pubblico libero {2}" },
                 { ParkingStatusLocale.kShareFormat, "{0} pubblico | {1} edif. | {2} strada | {3} totale" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
-                { ParkingStatusLocale.kStatusOff, "DISATT. = divieti città/distretto off | strade manuali attive" },
+                { ParkingStatusLocale.kStatusOff, "Solo manuale = divieti città/distretto off | strade manuali attive" },
                 { ParkingStatusLocale.kManualNone, "Nessuno" },
                 { ParkingStatusLocale.kStatusCheck, "VERIF." },
                 { ParkingStatusLocale.kRatingPoor, "SCARSO" },

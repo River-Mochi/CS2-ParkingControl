@@ -51,22 +51,19 @@ namespace ParkingControl
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
                     "Choisissez :\n" +
                     "<1. Par quartier>\n" +
-                    "<2. Ville entière>\n" +
-                    "<3. DÉSACTIVÉ>\n" +
+                    "<2. Manuel uniquement>\n" +
+                    "<3. Ville entière>\n" +
                     "- Les voies admissibles sont bloquées pour empêcher tout nouveau stationnement sur rue.\n" +
                     "- Les voitures déjà garées se déplacent progressivement après l’interdiction ; les grandes zones prennent plus de temps.\n" +
                     "- Les parkings payants et le stationnement normal des bâtiments restent disponibles.\n" +
                     "**Certaines routes excluent déjà le stationnement sur rue, comme les autoroutes et les petites ruelles à double sens.**"
                 },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Ville entière" },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "Par quartier" },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "DÉSACTIVÉ" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. Par quartier" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. Manuel uniquement" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. Ville entière" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Afficher les instructions" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
-                    "Explique le mode <Par quartier>.\n" +
-                    "1.a. DÉSACTIVÉ = les restrictions de ville et de quartiers sont coupées ; retour en grande partie aux règles normales.\n" +
-                    "1.b. Le bouton <Interdiction de stationner> pour une route dans Services routiers fonctionne toujours comme un passage piéton.\n" +
-                    "2. Ville entière = bloque tout le stationnement public sur rue admissible."
+                    "Explique comment utiliser le mode <Par quartier>."
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "Afficher l’état" },
@@ -104,7 +101,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Parking sur rue" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "Affiche uniquement la portée choisie <Ville entière> ou <Par quartier>. Les interdictions manuelles sont séparées.\n" +
-                    "<DÉSACT.> = interdictions ville/quartiers coupées ; les routes <Interdiction de stationner> manuelles restent actives.\n" +
+                    "<Manuel uniquement> = interdictions ville/quartiers coupées ; les routes <Interdiction de stationner> manuelles restent actives.\n" +
                     "<Garées> = voitures encore garées dans la portée choisie.\n" +
                     "<Fermées> = sections de voie en bordure fermées / sections ciblées.\n" +
                     "<Quartiers> = quartiers avec interdiction / total des quartiers.\n" +
@@ -127,7 +124,7 @@ namespace ParkingControl
                     "Affiche l’utilisation du stationnement dans <toute la ville>. Ne suit pas la portée de l’interdiction Toute la ville / par quartier.\n" +
                     "<Public> = places occupées / totales dans les parkings publics.\n" +
                     "Utilise les mêmes données que le panneau Stationnement des Routes de CS2.\n" +
-                    "<Bât.> = véhicules garés dans les bâtiments ou garages.\n" +
+                    "<Bât.> = voitures garées dans les bâtiments ou garages.\n" +
                     "<Rue> = voitures garées sur rue.\n" +
                     "<Total> = voitures garées connues en ville (rue + public + bâtiment).\n" +
                     "**Les connexions extérieures et les zones d’attente inconnues sont exclues.**"
@@ -193,7 +190,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, public libre {2}" },
                 { ParkingStatusLocale.kShareFormat, "{0} public | {1} bât. | {2} rue | {3} total" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
-                { ParkingStatusLocale.kStatusOff, "DÉSACT. = interdictions ville/quartiers coupées | routes manuelles actives" },
+                { ParkingStatusLocale.kStatusOff, "Manuel uniquement = interdictions ville/quartiers coupées | routes manuelles actives" },
                 { ParkingStatusLocale.kManualNone, "Aucune" },
                 { ParkingStatusLocale.kStatusCheck, "VÉRIF." },
                 { ParkingStatusLocale.kRatingPoor, "MAUVAIS" },

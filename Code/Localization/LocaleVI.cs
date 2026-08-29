@@ -51,22 +51,19 @@ namespace ParkingControl
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
                     "Chọn:\n" +
                     "<1. Theo khu vực>\n" +
-                    "<2. Toàn thành phố>\n" +
-                    "<3. TẮT>\n" +
+                    "<2. Chỉ thủ công>\n" +
+                    "<3. Toàn thành phố>\n" +
                     "- Các làn đủ điều kiện bị khóa để ngăn xe mới đỗ ven đường.\n" +
                     "- Xe đang đỗ sẽ dần chuyển đi sau khi cấm; khu vực lớn cần lâu hơn.\n" +
                     "- Bãi đỗ có thu phí và chỗ đỗ thông thường của công trình vẫn dùng được.\n" +
                     "**Một số đường vốn đã không cho đỗ ven đường, như đường cao tốc và hẻm nhỏ hai chiều.**"
                 },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Toàn thành phố" },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "Theo khu vực" },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "TẮT" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. Theo khu vực" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. Chỉ thủ công" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. Toàn thành phố" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Hiện hướng dẫn" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
-                    "Hiện cách dùng chế độ <Theo khu vực>.\n" +
-                    "1.a. TẮT = tắt lệnh cấm toàn thành phố và khu vực; phần lớn trở về mặc định của game.\n" +
-                    "1.b. Nút <Cấm đỗ xe> cho từng đường trong Dịch vụ đường bộ vẫn hoạt động như thêm vạch qua đường.\n" +
-                    "2. Toàn thành phố = chặn toàn bộ chỗ đỗ công cộng ven đường đủ điều kiện."
+                    "Hiện cách dùng chế độ <Theo khu vực>."
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "Hiện trạng thái" },
@@ -104,7 +101,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Đỗ xe ven đường" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "Chỉ hiển thị phạm vi <Toàn thành phố> hoặc <Theo khu vực> đã chọn. Lệnh cấm thủ công hiển thị riêng.\n" +
-                    "<TẮT> = tắt lệnh cấm thành phố/khu vực; các đường <Cấm đỗ xe> thủ công vẫn hoạt động.\n" +
+                    "<Chỉ thủ công> = tắt lệnh cấm thành phố/khu vực; các đường <Cấm đỗ xe> thủ công vẫn hoạt động.\n" +
                     "<Đang đỗ> = xe vẫn đỗ trên đường trong phạm vi đã chọn.\n" +
                     "<Đã khóa> = đoạn làn sát lề bị khóa / đoạn mục tiêu.\n" +
                     "<Khu vực> = khu vực có lệnh cấm / tổng khu vực.\n" +
@@ -127,7 +124,7 @@ namespace ParkingControl
                     "Hiển thị mức sử dụng chỗ đỗ của <toàn thành phố>. Không theo phạm vi cấm Toàn thành phố / theo quận.\n" +
                     "<Công cộng> = chỗ đã dùng / tổng chỗ trong bãi đỗ công cộng.\n" +
                     "Dùng cùng dữ liệu cơ sở đỗ xe như bảng Đường của CS2.\n" +
-                    "<Công trình> = xe đỗ trong công trình hoặc nhà để xe.\n" +
+                    "<Công trình> = ô tô đỗ trong công trình hoặc nhà để xe.\n" +
                     "<Đường> = xe đỗ trên đường.\n" +
                     "<Tổng> = tổng xe đỗ đã biết trong thành phố (đường + công cộng + công trình).\n" +
                     "**Không tính kết nối ngoài thành phố và khu chờ không rõ vị trí.**"
@@ -193,7 +190,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, công cộng trống {2}" },
                 { ParkingStatusLocale.kShareFormat, "{0} công cộng | {1} công trình | {2} đường | {3} tổng" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
-                { ParkingStatusLocale.kStatusOff, "TẮT = không cấm thành phố/khu vực | đường thủ công vẫn hoạt động" },
+                { ParkingStatusLocale.kStatusOff, "Chỉ thủ công = không cấm thành phố/khu vực | đường thủ công vẫn hoạt động" },
                 { ParkingStatusLocale.kManualNone, "Chưa đặt" },
                 { ParkingStatusLocale.kStatusCheck, "KIỂM TRA" },
                 { ParkingStatusLocale.kRatingPoor, "KÉM" },

@@ -51,22 +51,19 @@ namespace ParkingControl
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
                     "Wähle:\n" +
                     "<1. Nach Bezirk>\n" +
-                    "<2. Ganze Stadt>\n" +
-                    "<3. AUS>\n" +
+                    "<2. Nur manuell>\n" +
+                    "<3. Ganze Stadt>\n" +
                     "- Geeignete Spuren werden gesperrt, damit dort niemand neu parkt.\n" +
                     "- Bereits geparkte Autos ziehen nach dem Verbot nach und nach um; große Verbotsbereiche brauchen länger.\n" +
                     "- Kostenpflichtige Parkplätze und normale Gebäudeparkplätze bleiben nutzbar.\n" +
                     "**Einige Straßen erlauben ohnehin kein Straßenparken, z. B. Autobahnen und kleine zweispurige Gassen.**"
                 },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Ganze Stadt" },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "Nach Bezirk" },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "AUS" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. Nach Bezirk" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. Nur manuell" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. Ganze Stadt" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Anweisungen anzeigen" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
-                    "Zeigt die Nutzung von <Nach Bezirk>.\n" +
-                    "1.a. AUS = Stadt- und Bezirksverbote sind deaktiviert; weitgehend zurück zum Spielstandard.\n" +
-                    "1.b. Der <Parkverbot>-Button für einzelne Straßen im Straßenservices-Panel funktioniert weiterhin wie ein Zebrastreifen.\n" +
-                    "2. Ganze Stadt = sperrt alle geeigneten öffentlichen Straßenparkplätze der Stadt."
+                    "Zeigt, wie der Modus <Nach Bezirk> verwendet wird."
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "Status anzeigen" },
@@ -104,7 +101,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Straßenparken" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "Zeigt nur das gewählte Verbot <Ganze Stadt> oder <Nach Bezirk>. Manuelle Parkverbote stehen separat.\n" +
-                    "<AUS> = Stadt-/Bezirksverbote sind aus; manuelle <Parkverbot>-Straßen bleiben aktiv.\n" +
+                    "<Nur manuell> = Stadt-/Bezirksverbote sind aus; manuelle <Parkverbot>-Straßen bleiben aktiv.\n" +
                     "<Geparkt> = Autos, die noch auf Straßen im gewählten Bereich parken.\n" +
                     "<Gesperrt> = gesperrte Bordsteinabschnitte / Zielabschnitte.\n" +
                     "<Bezirke> = Bezirke mit Parkverbot / alle Bezirke.\n" +
@@ -127,7 +124,7 @@ namespace ParkingControl
                     "Zeigt die Parknutzung der <gesamten Stadt>. Sie folgt nicht dem Parkverbotsbereich Ganze Stadt / nach Bezirk.\n" +
                     "<Öffentlich> = belegte / gesamte Plätze in öffentlichen Parkeinrichtungen.\n" +
                     "Nutzt dieselben Parkeinrichtungsdaten wie CS2s Straßen-Parkinfo.\n" +
-                    "<Gebäude> = Fahrzeuge in Gebäuden oder Garagen.\n" +
+                    "<Gebäude> = Autos in Gebäuden oder Garagen.\n" +
                     "<Straße> = Autos auf Straßen.\n" +
                     "<Gesamt> = bekannte geparkte Autos in der Stadt (Straße + öffentlich + Gebäude).\n" +
                     "**Außenverbindungen und unbekannte Bereitstellung sind nicht enthalten.**"
@@ -193,7 +190,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, öffentl. frei {2}" },
                 { ParkingStatusLocale.kShareFormat, "{0} öff. | {1} Gebäude | {2} Straße | {3} gesamt" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
-                { ParkingStatusLocale.kStatusOff, "AUS = Stadt-/Bezirksverbote aus | manuelle Straßen bleiben aktiv" },
+                { ParkingStatusLocale.kStatusOff, "Nur manuell = Stadt-/Bezirksverbote aus | manuelle Straßen bleiben aktiv" },
                 { ParkingStatusLocale.kManualNone, "Keine gesetzt" },
                 { ParkingStatusLocale.kStatusCheck, "PRÜFEN" },
                 { ParkingStatusLocale.kRatingPoor, "SCHLECHT" },

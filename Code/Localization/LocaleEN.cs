@@ -1,4 +1,4 @@
-// <copyright file="LocaleEN.cs" company="River-Mochi">
+﻿// <copyright file="LocaleEN.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -51,23 +51,23 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "No street parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
                     "Choose:\n" +
-                    "<1. by District>\n" +
-                    "<2. Whole City>\n" +
-                    "<3. OFF>\n" +
+                    "<1. by District> - use the Roadside Parking Ban district policy.\n" +
+                    "<2. Manual Only> - city/District bans are OFF; manual No Parking road button still works.\n" +
+                    "<3. Whole City Ban> - ban parking on all eligible city streets.\n" +
+
                     "- Eligible lanes are flagged to prevent new street parking.\n" +
                     "- Existing parked cars move gradually after parking is banned; large banned areas take longer.\n" +
                     "- Fee-based parking lots and normal building parking remain usable.\n" +
                     "**Some roads already exclude street parking, like Highways and small 2-way alley roads.**"
                 },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Whole City" },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "by District" },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "OFF" },
+
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. by District" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. Manual only" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. Whole City ban" },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Show instructions" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
-                    "Shows how to use <by District> mode.\n" +
-                    "1.a. OFF = citywide and district restrictions are disabled; mostly back to game defaults.\n" +
-                    "1.b. Single-road <No Parking> button in the Road Services panel still applies just like applying a crosswalk.\n" +
-                    "2. Whole City = blocks all city eligible street public parking."
+                    "Shows how to use <by District> mode."
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "Show status" },
@@ -81,7 +81,7 @@ namespace ParkingControl
                     "1. Choose <by District> above.\n" +
                     "2. Create/select a district in the city.\n" +
                     "3. Open the <Policies> panel and enable **Roadside Parking Ban [✓]**.\n" +
-                    "4. It's okay to have both the Ban and the Parking fee enabled. Fee is charged to any cars still remaining or sneaking in.\n" +
+                    "4. It's okay to have both the Parking Ban and the Parking fee enabled. Fee is charged to any cars still remaining or sneaking in.\n" +
                     "Roads outside banned parking districts keep normal street parking."
                 },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
@@ -105,7 +105,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Street Parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "Shows only the selected <Whole City> or <by District> Parking Ban scope. Manual No Parking roads are listed separately.\n" +
-                    "<OFF> = Whole City/District bans are disabled; manual <No Parking> road settings still apply.\n" +
+                    "<Manual Only> = Whole City/District bans are disabled; manual <No Parking> road button works.\n" +
                     "<Parked> = cars still parked on streets covered by the selected scope.\n" +
                     "<Disabled> = disabled curb-lane sections / target curb-lane sections.\n" +
                     "<Districts> = districts with the Parking Ban / total districts.\n" +
@@ -128,7 +128,7 @@ namespace ParkingControl
                     "Shows the <total city> parking use. This does not follow the Whole City / by District Parking Ban scope.\n" +
                     "<Public> = occupied / total spaces in public parking facilities.\n" +
                     "Uses the same parking facility data as CS2's Roads parking InfoView.\n" +
-                    "<Bldg> = vehicles parked at buildings or garages.\n" +
+                    "<Bldg> = cars parked at buildings or garages.\n" +
                     "<Street> = cars parked on streets.\n" +
                     "<Total> = total known in-city parked cars (street + public + building).\n" +
                     "**Outside connections and unknown staging are excluded from the total.**"
@@ -192,11 +192,11 @@ namespace ParkingControl
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} parked | {1}/{2} disabled | {3}/{4} districts{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} street | {1} visible | {2} inside | {3} OC" },
 
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, public available {2}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, {2} public open" },
 
                 { ParkingStatusLocale.kShareFormat, "{0} public | {1} bldg | {2} street | {3} total" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
-                { ParkingStatusLocale.kStatusOff, "OFF = Whole City/District bans disabled | manual roads still work" },
+                { ParkingStatusLocale.kStatusOff, "Manual Only = all city/District bans disabled | manual roads still work" },
                 { ParkingStatusLocale.kManualNone, "None set" },
                 { ParkingStatusLocale.kStatusCheck, "CHECK" },
                 { ParkingStatusLocale.kRatingPoor, "POOR" },

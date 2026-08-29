@@ -1,10 +1,10 @@
-<Publish>
+﻿<Publish>
 <!--Id must be set in order to update existed mod. it is not required for publishing mod for the first time-->
 <ModId Value="155806" />
 <!--Name of the mod to display to players-->
 <DisplayName Value="Parking Control" />
 <!--Short description of the mod-->
-<ShortDescription Value="Ban public street parking without tedious work. Pick per District or CityWide, or use the single road button even for 1-way alleys." />
+<ShortDescription Value="Ban public street parking without tedious work. Pick per District, or use the single road button even for 1-way alleys." />
 <!--Long description of the mod. Single line or multi line. Supports minimal markdown subset-->
 <!--LongDescription Value="No Street Parking" /-->
 <LongDescription>
@@ -12,32 +12,40 @@
 ## 🅿️ Parking Control (PC)
 
 Want clean curbs without changing your road design?
-
-New - you can now ban parking on single 1-way alleys using the "no parking" button!
-
+**New:** You can now ban parking on individual roads, 1-way alleys, with the **No Parking** road button! 🚫
 
 - 🚗 Easy to use; prevents cars and motorcycles from choosing public street parking.
-- No need to add grass, or wide sidewalks as workarounds.
+- No need to add grass or wide sidewalks as workarounds.
 
 ## Choose where
 
-- ✅**by District** - enable **Roadside Parking Ban** in the District Policies panel.
-- ✅**Whole City** - prevent street parking citywide.
-- ✅**OFF** - turn off citywide and District bans. Manually set "No Parking" roads stay active.
-- NEW ✅**Manual individual roads** - use new No Parking button 🚫 (near crosswalks). Left-click to add the ban, or hold Left Mouse and drag across multiple roads. Right-click to remove it.
+- ✅**by District** - enable **Roadside Parking Ban** in the District Policies panel. Manual no-parking button also works even if you have "by Districts" selected.
+- ✅**Manual Only** - use the "No Parking" roads button whereever you want.
+- ✅**Whole City** - prevent street parking city-wide. Make sure the city has enough parking storage off street.
 
-- 🚙 Parking lots and building parking stay working normally.
-- 🗒️ Optional Status rows show how much parking is being used; better details than the game's info view.
+
+### Manual roads 🚫
+
+Use the **No Parking** button next to the crosswalk tool.
+
+- **Left-click** a road to add No Parking.
+- **Hold Left Mouse + drag** to apply it across multiple lanes.
+- **Right-click** to remove it.
+
+🚙 Parking lots and building parking stay working normally.
+
+🗒️ Optional Status rows shows parking usage; better details than the game's info view.
 
 ## Good to know
-- Make sure your city has enough off-street parking. When parking is unavailable, the game may use outside-connection storage/staging as it does in vanilla now.
-- Some vanilla roads already don't allow parking, e.g. 3-lane small roads, or 2-way alley.
+- Make sure your city has enough off-street parking. When parking is unavailable, the game may use outside-connection storage/staging as it does in vanilla.
+- Some vanilla roads already don't allow parking, e.g. 3-lane small roads, highways, 2-way alley.
+- New or rebuilt roads may briefly accept a few cars while CS2 updates their parking lanes.
 - Safe to remove anytime and designed to not impact performance.
 - Optional: **Mochi's Hover Colors** by River-mochi is supported. The "No Parking" manual road tool follows MHC's **Bulldozer + Roads** colors, just like normal road tools.
 
 ## Support and Feedback
-- Support by clicking Like 👍 (top right). It helps people know about the mod.
-- Feedback and pull requests are welcome through the GitHub and Discord links (right side icons).
+- Support by clicking Like 👍 (top right); helps people know about the mod.
+- Feedback and PR's are welcome through the GitHub and Discord links (right side icons).
 
 **Planned:** centralized parking-fee controls.
 
@@ -48,12 +56,14 @@ New - you can now ban parking on single 1-way alleys using the "no parking" butt
 - Dataknase, Maintyper, DragonFire - testing
 - StarQ - no parking icon
 
-- 12+ Languages: Hello, Hallo, Hola, Bonjour, Ciao, こんにちは, 안녕하세요, Cześć, Olá, สวัสดี, Merhaba, Xin chào, 你好, 你好, Привіт
+12+ Languages: Hello, Hallo, Hola, Bonjour, Ciao, こんにちは, 안녕하세요, Cześć, Olá, สวัสดี, Merhaba, Xin chào, 你好, 你好, Привіт
 
 ## How does it work
-- The mod uses the game’s own ParkingDisabled flag on eligible roads. It does not narrow the road, widen the sidewalk, or add a driving lane (road looks the same).
-- New or rebuilt roads may briefly accept a few cars while CS2 updates the parking lanes (timing).
+- The mod uses the game’s own ParkingDisabled flag on eligible roads.
+- It does not narrow the road, widen the sidewalk, or add a driving lane (road looks the same).
 - Existing parked cars gradually relocate after parking is banned.
+- New or rebuilt roads may briefly accept a few cars while CS2 updates the parking lanes (timing).
+
 
 tags: Disable road parking, clear road side, no cars
 
@@ -71,7 +81,7 @@ tags: Disable road parking, clear road side, no cars
 <!--Link to the forum post where the mod can be discussed-->
 <ForumLink Value="https://forum.paradoxplaza.com/forum/threads/parking-control.1938802/" />
 <!--Version of the mod-->
-<ModVersion Value="0.6.0" />
+<ModVersion Value="0.6.1" />
 <!--Recommended version of the base game to use the mod-->
 <GameVersion Value="1.6.*" />
 <!--Dependency for the mod, can be set multiple times-->

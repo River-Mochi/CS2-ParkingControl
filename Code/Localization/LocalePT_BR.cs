@@ -51,22 +51,19 @@ namespace ParkingControl
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
                     "Escolha:\n" +
                     "<1. Por distrito>\n" +
-                    "<2. Cidade inteira>\n" +
-                    "<3. DESLIGADO>\n" +
+                    "<2. Só manual>\n" +
+                    "<3. Cidade inteira>\n" +
                     "- As faixas elegíveis são bloqueadas para impedir novos estacionamentos na rua.\n" +
                     "- Carros já estacionados se mudam aos poucos após a proibição; áreas grandes levam mais tempo.\n" +
                     "- Estacionamentos pagos e vagas normais de edifícios continuam disponíveis.\n" +
                     "**Algumas vias já não permitem estacionamento na rua, como rodovias e pequenas vielas de mão dupla.**"
                 },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Cidade inteira" },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "Por distrito" },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "DESLIGADO" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. Por distrito" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. Só manual" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. Cidade inteira" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Mostrar instruções" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
-                    "Mostra como usar <Por distrito>.\n" +
-                    "1.a. DESLIGADO = proibições da cidade e distritos ficam desativadas; volta em grande parte ao padrão do jogo.\n" +
-                    "1.b. O botão <Proibido estacionar> para uma via em Serviços de estrada continua funcionando como uma faixa de pedestres.\n" +
-                    "2. Cidade inteira = bloqueia todo o estacionamento público elegível na rua."
+                    "Mostra como usar o modo <Por distrito>."
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "Mostrar status" },
@@ -104,7 +101,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Estac. na rua" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "Mostra só o escopo <Cidade inteira> ou <Por distrito> selecionado. Proibições manuais ficam separadas.\n" +
-                    "<DESLIGADO> = proibições da cidade/distritos desligadas; vias com <Proibido estacionar> manual continuam ativas.\n" +
+                    "<Só manual> = proibições da cidade/distritos desligadas; vias com <Proibido estacionar> manual continuam ativas.\n" +
                     "<Estac.> = carros ainda estacionados nas ruas do escopo selecionado.\n" +
                     "<Desat.> = trechos de faixa junto ao meio-fio desativados / trechos alvo.\n" +
                     "<Distritos> = distritos com proibição / total de distritos.\n" +
@@ -127,7 +124,7 @@ namespace ParkingControl
                     "Mostra o uso de estacionamento na <cidade toda>. Não segue o escopo da proibição Cidade inteira / por distrito.\n" +
                     "<Público> = vagas ocupadas / totais em estacionamentos públicos.\n" +
                     "Usa os mesmos dados de estacionamento do painel Estradas do CS2.\n" +
-                    "<Edif.> = veículos estacionados em edifícios ou garagens.\n" +
+                    "<Edif.> = carros estacionados em edifícios ou garagens.\n" +
                     "<Rua> = carros estacionados nas ruas.\n" +
                     "<Total> = carros estacionados conhecidos na cidade (rua + público + edifício).\n" +
                     "**Conexões externas e áreas de espera desconhecidas ficam fora do total.**"
@@ -193,7 +190,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, público livre {2}" },
                 { ParkingStatusLocale.kShareFormat, "{0} público | {1} edif. | {2} rua | {3} total" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
-                { ParkingStatusLocale.kStatusOff, "DESLIGADO = sem proibição cidade/distritos | vias manuais ativas" },
+                { ParkingStatusLocale.kStatusOff, "Só manual = sem proibição cidade/distritos | vias manuais ativas" },
                 { ParkingStatusLocale.kManualNone, "Nenhuma" },
                 { ParkingStatusLocale.kStatusCheck, "VERIF." },
                 { ParkingStatusLocale.kRatingPoor, "RUIM" },

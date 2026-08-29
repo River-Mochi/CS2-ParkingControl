@@ -62,7 +62,10 @@ namespace ParkingControl
                 GetComponentLookup<Game.Routes.CarParking>(true);
             ComponentLookup<Game.Prefabs.PrefabRef> prefabRefLookup =
                 GetComponentLookup<Game.Prefabs.PrefabRef>(true);
+
             ComponentLookup<Game.Net.Road> roadLookup = GetComponentLookup<Game.Net.Road>(true);
+            ComponentLookup<Game.Net.SlaveLane> slaveLaneLookup =
+                GetComponentLookup<Game.Net.SlaveLane>(true);
             ComponentLookup<StreetParkingState> stateLookup =
                 GetComponentLookup<StreetParkingState>(true);
             ComponentLookup<Game.Objects.TripSource> tripSourceLookup =
@@ -94,6 +97,14 @@ namespace ParkingControl
             int occupiedLaneCapacity = Math.Max(1, m_CurbLaneQuery.CalculateEntityCount());
             using NativeHashSet<Entity> occupiedCurbLanes =
                 new(occupiedLaneCapacity, Allocator.Temp);
+
+            // Cheap b/c used only during this on-demand snapshot button. lets existing personal-vehicle
+            // pass classify occupants of exact-capacity bldg garages w/out another scan.
+            int buildingGarageSetCapacity =
+                Math.Max(1, m_GarageLaneQuery.CalculateEntityCount());
+
+            using NativeHashSet<Entity> buildingCarGarageLanes =
+                new(buildingGarageSetCapacity, Allocator.Temp);
 
             using (NativeArray<Entity> districts = m_DistrictQuery.ToEntityArray(Allocator.Temp))
             {
@@ -163,6 +174,7 @@ namespace ParkingControl
                                         parkingLane,
                                         buildingLaneData));
                                 snapshot.BuildingParkingOccupied += occupied;
+                                snapshot.BuildingParkingUsedSlots += occupied;  // visible painted parking spots attached to bldgs.
                             }
                             else
                             {
@@ -318,27 +330,72 @@ namespace ParkingControl
                     }
 
                     Game.Net.GarageLane garageLane = garageLaneLookup[lane];
+
+                    // Keep old broad totals for debug to see why the
+                    // previous raw GarageLane total was larger than its reported capacity.
                     snapshot.GarageLanes++;
                     snapshot.GarageCapacity += garageLane.m_VehicleCapacity;
                     snapshot.GarageOccupied += garageLane.m_VehicleCount;
 
-                    // GarageLane is shared by cars and bicycles; this status is motor vehicles only.
-                    if (connectionLaneLookup.TryGetComponent(
+                    // Slave lanes are not independent physical garage capacity.
+                    if (slaveLaneLookup.HasComponent(lane))
+                    {
+                        snapshot.GarageSlaveLanes++;
+                        snapshot.GarageSlaveCapacity += garageLane.m_VehicleCapacity;
+                        snapshot.GarageSlaveOccupied += garageLane.m_VehicleCount;
+                        continue;
+                    }
+
+                    // RealisticParking mod mirrors vanilla garage processing with
+                    // ConnectionLane + GarageLane and excludes SlaveLane.
+                    if (!connectionLaneLookup.TryGetComponent(
                             lane,
-                            out Game.Net.ConnectionLane connectionLane) &&
-                        (connectionLane.m_RoadTypes & Game.Net.RoadTypes.Car) != 0 &&
-                        GetParkingKind(
+                            out Game.Net.ConnectionLane connectionLane))
+                    {
+                        snapshot.GarageWithoutConnectionLanes++;
+                        snapshot.GarageWithoutConnectionCapacity += garageLane.m_VehicleCapacity;
+                        snapshot.GarageWithoutConnectionOccupied += garageLane.m_VehicleCount;
+                        continue;
+                    }
+
+                    snapshot.GaragePrimaryLanes++;
+                    snapshot.GaragePrimaryCapacity += garageLane.m_VehicleCapacity;
+                    snapshot.GaragePrimaryOccupied += garageLane.m_VehicleCount;
+
+                    // Bicycle-only and other non-car garage connections are not car parking.
+                    if ((connectionLane.m_RoadTypes & Game.Net.RoadTypes.Car) == 0)
+                    {
+                        snapshot.GarageNonCarPrimaryLanes++;
+                        continue;
+                    }
+
+                    // Exclude public parking facilities and other garage-like entities.
+                    // only want parking belonging to ordinary/specialized buildings here.
+                    if (GetParkingKind(
                             lane,
                             carParkingFacilityLookup,
                             carParkingLookup,
                             buildingLookup,
-                            ownerLookup) == VisibleParkingKind.Building)
+                            ownerLookup) != VisibleParkingKind.Building)
                     {
-                        snapshot.BuildingParkingLanes++;
-                        snapshot.BuildingGarageLanes++;
-                        snapshot.BuildingParkingCapacity += garageLane.m_VehicleCapacity;
-                        snapshot.BuildingParkingOccupied += garageLane.m_VehicleCount;
+                        snapshot.GarageCarNonBuildingLanes++;
+                        continue;
                     }
+
+                    snapshot.BuildingParkingLanes++;
+                    snapshot.BuildingGarageLanes++;
+                    snapshot.BuildingGarageCapacity += garageLane.m_VehicleCapacity;
+                    snapshot.BuildingGarageRawOccupied += garageLane.m_VehicleCount;
+
+                    // Capacity is the current live game value. If another mod such as
+                    // RealisticParking changes m_VehicleCapacity, this automatically sees it.
+                    snapshot.BuildingParkingCapacity += garageLane.m_VehicleCapacity;
+
+                    // Raw GarageLane occupancy represents slots actually consumed. It may
+                    // include bicycles, which legitimately reduce this shared garage's free capacity.
+                    snapshot.BuildingParkingUsedSlots += garageLane.m_VehicleCount;
+
+                    buildingCarGarageLanes.Add(lane);
                 }
             }
 
@@ -360,12 +417,40 @@ namespace ParkingControl
                 foreach (Entity vehicle in vehicles)
                 {
                     Entity prefab = prefabRefLookup[vehicle].m_Prefab;
-                    if (prefab == Entity.Null || bicycleDataLookup.HasComponent(prefab))
+                    bool isBicycle =
+                        prefab != Entity.Null &&
+                        bicycleDataLookup.HasComponent(prefab);
+
+                    // Classify occupants of valid hidden building garages before bicycles are
+                    // excluded from the normal personal-motor-vehicle statistics.
+                    if (parkedCarLookup.TryGetComponent(
+                            vehicle,
+                            out Game.Vehicles.ParkedCar parkedVehicle) &&
+                        buildingCarGarageLanes.Contains(parkedVehicle.m_Lane))
+                    {
+                        if (prefab == Entity.Null)
+                        {
+                            snapshot.BuildingGarageUnknownVehicleOccupied++;
+                        }
+                        else if (isBicycle)
+                        {
+                            snapshot.BuildingGarageBicycleOccupied++;
+                        }
+                        else
+                        {
+                            snapshot.BuildingGarageCarOccupied++;
+                        }
+                    }
+
+                    // Everything below this point remains motor vehicles only.
+                    if (prefab == Entity.Null || isBicycle)
                     {
                         continue;
                     }
 
-                    snapshot.TotalVehicles++;
+                    snapshot.TotalVehicles++; 
+
+
                     Game.Vehicles.PersonalCar personalCar = personalCarLookup[vehicle];
                     Entity vehicleOwner = Entity.Null;
                     if (ownerLookup.TryGetComponent(vehicle, out Game.Common.Owner owner))
@@ -662,7 +747,11 @@ namespace ParkingControl
                 }
             }
 
-            // found a real mismatch, so request one full reconcile when sim resumes (low cost hardening).
+            // Visible fixed-slot bldg parking was counted directly from its lane objects.
+            // Hidden garage cars were classified in personal-vehicle pass above.
+            snapshot.BuildingParkingOccupied += snapshot.BuildingGarageCarOccupied;
+
+            // found a real mismatch, so request 1 full reconcile when sim resumes (low cost harden).
             if (snapshot.TargetCurbLanes > snapshot.DisabledTargetCurbLanes ||
                 snapshot.TrackedCurbLanes > snapshot.DisabledCurbLanes)
             {
