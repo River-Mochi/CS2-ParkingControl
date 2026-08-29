@@ -1,4 +1,4 @@
-// <copyright file="PCSettings.cs" company="River-Mochi">
+﻿// <copyright file="PCSettings.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -7,9 +7,6 @@
 // ================= </copyright> ======================
 
 // Purpose: Defines immediately persisted Parking Control Options UI settings.
-
-namespace ParkingControl
-{
     using System;
     using Colossal.IO.AssetDatabase;
     using Colossal.Json;
@@ -18,6 +15,10 @@ namespace ParkingControl
     using Game.Settings;
     using Unity.Entities;
     using UnityEngine;
+
+namespace ParkingControl
+{
+
 
     /// <summary>
     /// Stores Parking Control options.

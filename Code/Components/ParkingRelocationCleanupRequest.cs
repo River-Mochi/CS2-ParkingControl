@@ -1,4 +1,4 @@
-// <copyright file="ParkingRelocationCleanupRequest.cs" company="River-Mochi">
+﻿// <copyright file="ParkingRelocationCleanupRequest.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -7,10 +7,11 @@
 // ================= </copyright> ======================
 
 // Purpose: Retains a newly banned curb lane for one delayed, targeted relocation retry.
+    using Unity.Entities;
 
 namespace ParkingControl
 {
-    using Unity.Entities;
+
 
     /// <summary>
     /// One-shot marker consumed by the delayed cleanup in

@@ -1,4 +1,4 @@
-// <copyright file="LocaleIT.cs" company="River-Mochi">
+﻿// <copyright file="LocaleIT.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -7,11 +7,12 @@
 // ================= </copyright> ======================
 
 // Purpose: Italian text for Parking Control's Options UI.
+    using System.Collections.Generic;
+    using Colossal;
 
 namespace ParkingControl
 {
-    using System.Collections.Generic;
-    using Colossal;
+
 
     /// <summary>
     /// Italian localization entries for <see cref="PCSettings"/>.

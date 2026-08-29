@@ -1,4 +1,4 @@
-// <copyright file="ManualNoParkingToolBuilder.cs" company="River-Mochi">
+﻿// <copyright file="ManualNoParkingToolBuilder.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -8,13 +8,14 @@
 
 // Purpose: Creates Parking Control's No Parking tile in the vanilla Roads Services palette.
 
-namespace ParkingControl
-{
     using System;
     using CS2Shared.RiverMochi;
     using Game.Prefabs;
     using Unity.Entities;
     using UnityEngine;
+
+namespace ParkingControl
+{
 
     internal static class ManualNoParkingToolBuilder
     {

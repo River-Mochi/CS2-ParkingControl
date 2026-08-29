@@ -1,4 +1,4 @@
-// <copyright file="ManualNoParkingBootstrapSystem.cs" company="River-Mochi">
+﻿// <copyright file="ManualNoParkingBootstrapSystem.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -7,13 +7,12 @@
 // ================= </copyright> ======================
 
 // Purpose: Waits for vanilla Roads Services prefabs, then creates the No Parking tile.
-
-namespace ParkingControl
-{
     using Colossal.Serialization.Entities;
     using CS2Shared.RiverMochi;
     using Game;
 
+namespace ParkingControl
+{
     public sealed partial class ManualNoParkingBootstrapSystem : GameSystemBase
     {
         private const int kMaxTries = 1800;

@@ -1,4 +1,4 @@
-// <copyright file="NoStreetParkingSystem.cs" company="River-Mochi">
+﻿// <copyright file="NoStreetParkingSystem.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -9,8 +9,6 @@
 // Purpose: Disables normal street-parking lanes citywide, by district,
 // or on player-selected individual road sides.
 
-namespace ParkingControl
-{
     using System.Collections.Generic;
     using Game;
     using Game.Common;
@@ -18,6 +16,8 @@ namespace ParkingControl
     using Unity.Collections;
     using Unity.Entities;
 
+namespace ParkingControl
+{
     /// <summary>
     /// Keeps ordinary street-parking lanes synchronized with all Parking Control restrictions.
     /// </summary>

@@ -1,4 +1,4 @@
-// <copyright file="DistrictPolicySaveSystem.cs" company="River-Mochi">
+﻿// <copyright file="DistrictPolicySaveSystem.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -7,9 +7,6 @@
 // ================= </copyright> ======================
 
 // Purpose: Saves district selections as custom markers without retaining the runtime policy prefab.
-
-namespace ParkingControl
-{
     using CS2Shared.RiverMochi;
     using Game;
     using Game.Common;
@@ -17,6 +14,9 @@ namespace ParkingControl
     using Unity.Collections;
     using Unity.Entities;
 
+namespace ParkingControl
+{
+  
     /// <summary>
     /// Migrates native policy selections to serializable district markers before prefab collection.
     /// </summary>

@@ -1,4 +1,4 @@
-// <copyright file="ManualNoParkingTooltipSystem.cs" company="River-Mochi">
+﻿// <copyright file="ManualNoParkingTooltipSystem.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -9,12 +9,12 @@
 // Purpose: Renames the game's native mouse Apply / Secondary Apply hints while
 // Manual No Parking is active. Vanilla draws the mouse/controller icons.
 
-namespace ParkingControl
-{
     using Game.Input;
     using Game.Tools;
     using Game.UI.Tooltip;
 
+namespace ParkingControl
+{
     public sealed partial class ManualNoParkingTooltipSystem : TooltipSystemBase
     {
         internal const string kUpgradeHintId = "ParkingControl.Upgrade";

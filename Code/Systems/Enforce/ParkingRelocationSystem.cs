@@ -1,4 +1,4 @@
-// <copyright file="ParkingRelocationSystem.cs" company="River-Mochi">
+﻿// <copyright file="ParkingRelocationSystem.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -7,13 +7,12 @@
 // ================= </copyright> ======================
 
 // Purpose: Gradually hands cars from newly banned curb lanes to vanilla parking relocation.
-
-namespace ParkingControl
-{
     using CS2Shared.RiverMochi;
     using Game;
     using Unity.Entities;
 
+namespace ParkingControl
+{
     internal struct AutomaticRelocationReport
     {
         public bool HasRun;

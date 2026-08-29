@@ -1,4 +1,4 @@
-// <copyright file="Mod.cs" company="River-Mochi">
+﻿// <copyright file="Mod.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -7,9 +7,6 @@
 // ================= </copyright> ======================
 
 // Purpose: Registers Parking Control settings, localization, logging, and ECS systems.
-
-namespace ParkingControl
-{
     using System;
     using System.Reflection;
     using Colossal.IO.AssetDatabase;
@@ -22,6 +19,10 @@ namespace ParkingControl
     using Game.SceneFlow;
     using Game.Serialization;
     using Game.Vehicles;
+
+namespace ParkingControl
+{
+
 
     public sealed class Mod : IMod
     {

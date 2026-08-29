@@ -1,4 +1,4 @@
-// <copyright file="ParkingStatusModels.cs" company="River-Mochi">
+﻿// <copyright file="ParkingStatusModels.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -8,11 +8,12 @@
 
 // Purpose: Holds the short-lived models shared by parking probes, status text, and log reports.
 
-namespace ParkingControl
-{
     using System;
     using System.Collections.Generic;
     using Unity.Entities;
+
+namespace ParkingControl
+{
 
     /// <summary>
     /// A read-only snapshot of curb enforcement, parking supply, and personal vehicles.

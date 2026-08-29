@@ -1,4 +1,4 @@
-// <copyright file="ManualNoParkingOverlaySystem.cs" company="River-Mochi">
+﻿// <copyright file="ManualNoParkingOverlaySystem.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -7,9 +7,6 @@
 // ================= </copyright> ======================
 
 // Purpose: Draws Manual No Parking side previews and add/remove road perimeters.
-
-namespace ParkingControl
-{
     using System.Collections.Generic;
     using Colossal.Mathematics;
     using Game;
@@ -21,6 +18,8 @@ namespace ParkingControl
     using Unity.Mathematics;
     using UnityEngine;
 
+namespace ParkingControl
+{
     public sealed partial class ManualNoParkingOverlaySystem : GameSystemBase
     {
         private const float kSidePreviewWidth = 3.8f;

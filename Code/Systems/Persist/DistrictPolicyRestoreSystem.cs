@@ -1,4 +1,4 @@
-// <copyright file="DistrictPolicyRestoreSystem.cs" company="River-Mochi">
+﻿// <copyright file="DistrictPolicyRestoreSystem.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -8,13 +8,15 @@
 
 // Purpose: Recreates native district-policy checkboxes from uninstall-safe saved markers.
 
-namespace ParkingControl
-{
     using Game;
     using Game.Common;
     using Game.Tools;
     using Unity.Collections;
     using Unity.Entities;
+
+namespace ParkingControl
+{
+
 
     /// <summary>
     /// Restores runtime policy-buffer entries after loading and after save serialization.

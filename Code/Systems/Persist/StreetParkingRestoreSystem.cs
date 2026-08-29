@@ -1,4 +1,4 @@
-// <copyright file="StreetParkingRestoreSystem.cs" company="River-Mochi">
+﻿// <copyright file="StreetParkingRestoreSystem.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -7,15 +7,14 @@
 // ================= </copyright> ======================
 
 // Purpose: Restores live no-parking flags immediately after save serialization finishes.
-
-namespace ParkingControl
-{
     using Game;
     using Game.Common;
     using Game.Net;
     using Unity.Collections;
     using Unity.Entities;
 
+namespace ParkingControl
+{
     /// <summary>
     /// Restores the live vanilla lane flags from the runtime-only ownership markers.
     /// </summary>

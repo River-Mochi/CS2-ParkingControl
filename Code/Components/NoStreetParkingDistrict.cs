@@ -1,4 +1,4 @@
-// <copyright file="NoStreetParkingDistrict.cs" company="River-Mochi">
+﻿// <copyright file="NoStreetParkingDistrict.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -7,11 +7,12 @@
 // ================= </copyright> ======================
 
 // Purpose: Persists a district's Roadside Parking Ban without saving the runtime policy prefab.
+    using Colossal.Serialization.Entities;
+    using Unity.Entities;
 
 namespace ParkingControl
 {
-    using Colossal.Serialization.Entities;
-    using Unity.Entities;
+
 
     /// <summary>
     /// Serializable marker stored on districts that have Roadside Parking Ban enabled.

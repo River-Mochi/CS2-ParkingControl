@@ -1,4 +1,4 @@
-// <copyright file="ParkingStatusSystem.ScopeManualReport.cs" company="River-Mochi">
+﻿// <copyright file="ParkingStatusSystem.ScopeManualReport.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -8,9 +8,10 @@
 
 // Purpose: Adds a compact scope/manual target split beside the detailed parking report.
 
+    using CS2Shared.RiverMochi;
+
 namespace ParkingControl
 {
-    using CS2Shared.RiverMochi;
 
     public sealed partial class ParkingStatusSystem
     {

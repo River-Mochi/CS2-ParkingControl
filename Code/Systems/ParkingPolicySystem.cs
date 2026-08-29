@@ -1,4 +1,4 @@
-// <copyright file="ParkingPolicySystem.cs" company="River-Mochi">
+﻿// <copyright file="ParkingPolicySystem.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -7,15 +7,15 @@
 // ================= </copyright> ======================
 
 // Purpose: Registers the runtime-only zero-mask policy shown in the vanilla district panel.
-
-namespace ParkingControl
-{
     using System;
     using CS2Shared.RiverMochi;
     using Game;
     using Game.Prefabs;
     using Game.UI.InGame;
     using Unity.Entities;
+
+namespace ParkingControl
+{
 
     /// <summary>
     /// Adds Parking Control's toggle to the vanilla district policy panel.

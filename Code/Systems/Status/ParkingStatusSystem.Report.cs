@@ -1,4 +1,4 @@
-// <copyright file="ParkingStatusSystem.Report.cs" company="River-Mochi">
+﻿// <copyright file="ParkingStatusSystem.Report.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -8,14 +8,14 @@
 
 // Purpose: Writes parking report summaries, enforcement details, and district totals.
 
-namespace ParkingControl
-{
     using System;
     using System.Collections.Generic;
     using System.Text;
     using CS2Shared.RiverMochi;
     using Unity.Entities;
 
+namespace ParkingControl
+{
     public sealed partial class ParkingStatusSystem
     {
         /// <summary>

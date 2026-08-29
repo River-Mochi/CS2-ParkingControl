@@ -1,4 +1,4 @@
-// <copyright file="ParkingStatusSystem.cs" company="River-Mochi">
+﻿// <copyright file="ParkingStatusSystem.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -8,14 +8,15 @@
 
 // Purpose: Schedules on-demand parking probes for Options status and detailed log reports.
 
-namespace ParkingControl
-{
     using System;
     using System.Collections.Generic;
     using CS2Shared.RiverMochi;
     using Game;
     using Unity.Entities;
 
+
+namespace ParkingControl
+{
     /// <summary>
     /// Owns parking queries and runs only when status or a manual report is requested.
     /// </summary>

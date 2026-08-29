@@ -1,4 +1,4 @@
-// <copyright file="NoStreetParkingSystem.Reconcile.cs" company="River-Mochi">
+﻿// <copyright file="NoStreetParkingSystem.Reconcile.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -8,9 +8,10 @@
 
 // Purpose: Applies Parking Control restrictions to parking lanes and path data.
 
+    using Unity.Entities;
+
 namespace ParkingControl
 {
-    using Unity.Entities;
 
     public sealed partial class NoStreetParkingSystem
     {

@@ -1,4 +1,4 @@
-// <copyright file="ManualNoParkingToolSystem.cs" company="River-Mochi">
+﻿// <copyright file="ManualNoParkingToolSystem.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -8,8 +8,6 @@
 
 // Purpose: Lets the player add/remove No Parking on one side of existing roads.
 
-namespace ParkingControl
-{
     using System.Collections.Generic;
     using Colossal.Mathematics;
     using Game.Common;
@@ -19,6 +17,8 @@ namespace ParkingControl
     using Unity.Mathematics;
     using UnityEngine.InputSystem;
 
+namespace ParkingControl
+{
     public sealed partial class ManualNoParkingToolSystem : ToolBaseSystem
     {
         internal const string kToolId = "ParkingControl.NoParking";
