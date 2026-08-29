@@ -1,4 +1,4 @@
-﻿<Publish>
+<Publish>
 <!--Id must be set in order to update existed mod. it is not required for publishing mod for the first time-->
 <ModId Value="155806" />
 <!--Name of the mod to display to players-->
@@ -27,7 +27,7 @@ New - you can now ban parking on single 1-way alleys using the "no parking" butt
 - NEW ✅**Manual individual roads** - use new No Parking button 🚫 (near crosswalks). Left-click to add the ban, or hold Left Mouse and drag across multiple roads. Right-click to remove it.
 
 - 🚙 Parking lots and building parking stay working normally.
-- 🗒️ Optional Status rows shows how much parking is being used; better details than the game's info view.
+- 🗒️ Optional Status rows show how much parking is being used; better details than the game's info view.
 
 ## Good to know
 - Make sure your city has enough off-street parking. When parking is unavailable, the game may use outside-connection storage/staging as it does in vanilla now.
@@ -54,7 +54,6 @@ New - you can now ban parking on single 1-way alleys using the "no parking" butt
 - The mod uses the game’s own ParkingDisabled flag on eligible roads. It does not narrow the road, widen the sidewalk, or add a driving lane (road looks the same).
 - New or rebuilt roads may briefly accept a few cars while CS2 updates the parking lanes (timing).
 - Existing parked cars gradually relocate after parking is banned.
-- For faster clearing, temporarily add then remove a vanilla feature such as bike lanes.
 
 tags: Disable road parking, clear road side, no cars
 
@@ -82,7 +81,7 @@ tags: Disable road parking, clear road side, no cars
 <!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
 <ChangeLog Value="" />
 <ChangeLog>
-- fixed compatibility with Realistic Parking so No Parking restrictions stay applied.
+- Fixed compatibility with Realistic Parking so No Parking restrictions stay applied.
 - Added clearer parking Status rows.
 - Added gradual automatic relocation for cars parked on newly banned curb lanes.
 - Improved the manual No Parking road tool color preview overlay.
