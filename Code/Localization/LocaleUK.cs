@@ -51,22 +51,19 @@ namespace ParkingControl
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
                     "Виберіть:\n" +
                     "<1. за районами>\n" +
-                    "<2. Усе місто>\n" +
-                    "<3. ВИМК.>\n" +
+                    "<2. Лише вручну>\n" +
+                    "<3. Усе місто>\n" +
                     "- Доступні смуги блокуються для нового вуличного паркування.\n" +
                     "- Уже припарковані авто поступово переміщуються після заборони; великі зони потребують більше часу.\n" +
                     "- Платні паркінги та звичайні місця біля будівель залишаються доступними.\n" +
                     "**Деякі дороги вже не дозволяють вуличне паркування, наприклад автомагістралі та невеликі двосторонні провулки.**"
                 },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Усе місто" },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "за районами" },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "ВИМК." },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. за районами" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. Лише вручну" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. Усе місто" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Показати інструкції" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
-                    "Показує режим <за районами>.\n" +
-                    "1.a. ВИМК. = заборони для всього міста й районів вимкнено; переважно повернення до стандартної гри.\n" +
-                    "1.b. Кнопка <Стоянку заборонено> для окремої дороги в дорожніх службах усе одно працює як пішохідний перехід.\n" +
-                    "2. Усе місто = блокує все доступне громадське вуличне паркування."
+                    "Показує, як користуватися режимом <за районами>."
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "Показати стан" },
@@ -104,7 +101,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Вуличне паркування" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "Показує лише вибрану область <Усе місто> або <за районами>. Ручні заборони показуються окремо.\n" +
-                    "<ВИМК.> = заборони міста/районів вимкнено; дороги з ручним <Стоянку заборонено> залишаються активними.\n" +
+                    "<Лише вручну> = заборони міста/районів вимкнено; дороги з ручним <Стоянку заборонено> залишаються активними.\n" +
                     "<Припарковано> = авто, які ще стоять на вулицях вибраної області.\n" +
                     "<Вимкнено> = вимкнені ділянки смуги біля бордюру / цільові ділянки.\n" +
                     "<Райони> = райони із забороною / усі райони.\n" +
@@ -193,7 +190,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, гром. вільно {2}" },
                 { ParkingStatusLocale.kShareFormat, "{0} гром. | {1} буд. | {2} вулиця | {3} усього" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
-                { ParkingStatusLocale.kStatusOff, "ВИМК. = заборони міста/районів вимк. | ручні дороги активні" },
+                { ParkingStatusLocale.kStatusOff, "Лише вручну = заборони міста/районів вимк. | ручні дороги активні" },
                 { ParkingStatusLocale.kManualNone, "Немає" },
                 { ParkingStatusLocale.kStatusCheck, "ПЕРЕВІРИТИ" },
                 { ParkingStatusLocale.kRatingPoor, "ПОГАНО" },

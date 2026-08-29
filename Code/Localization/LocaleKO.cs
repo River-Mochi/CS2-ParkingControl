@@ -51,22 +51,19 @@ namespace ParkingControl
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
                     "선택:\n" +
                     "<1. 구역별>\n" +
-                    "<2. 도시 전체>\n" +
-                    "<3. 꺼짐>\n" +
+                    "<2. 수동만>\n" +
+                    "<3. 도시 전체>\n" +
                     "- 대상 차선을 비활성화해 새 노상 주차를 막습니다.\n" +
                     "- 금지 후 기존 주차 차량은 점차 이동합니다. 넓은 금지 구역은 더 오래 걸립니다.\n" +
                     "- 유료 주차장과 일반 건물 주차는 계속 이용할 수 있습니다.\n" +
                     "**고속도로와 작은 양방향 골목처럼 일부 도로는 원래 노상 주차가 불가합니다.**"
                 },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "도시 전체" },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "구역별" },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "꺼짐" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. 구역별" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. 수동만" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. 도시 전체" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "사용법 표시" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
-                    "<구역별> 모드 사용법을 표시합니다.\n" +
-                    "1.a. 꺼짐 = 도시 전체 및 구역 제한을 끄고 대부분 게임 기본 상태로 돌아갑니다.\n" +
-                    "1.b. 도로 서비스의 개별 도로 <주차 금지> 버튼은 횡단보도처럼 계속 사용할 수 있습니다.\n" +
-                    "2. 도시 전체 = 도시의 모든 대상 공공 노상 주차를 차단합니다."
+                    "<구역별> 모드 사용법을 표시합니다."
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "상태 표시" },
@@ -104,7 +101,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "노상 주차" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "선택한 <도시 전체> 또는 <구역별> 금지 범위만 표시합니다. 수동 주차 금지는 별도 표시됩니다.\n" +
-                    "<꺼짐> = 도시 전체/구역 금지는 꺼짐. 수동 <주차 금지> 도로는 계속 적용됩니다.\n" +
+                    "<수동만> = 도시 전체/구역 금지는 꺼짐. 수동 <주차 금지> 도로는 계속 적용됩니다.\n" +
                     "<주차됨> = 선택 범위의 도로에 아직 주차된 차량.\n" +
                     "<비활성> = 비활성 도로변 차선 구간 / 대상 구간.\n" +
                     "<구역> = 주차 금지 구역 / 전체 구역.\n" +
@@ -127,7 +124,7 @@ namespace ParkingControl
                     "<도시 전체> 주차 이용을 표시합니다. 전체 도시 / 구역별 주차 금지 범위를 따르지 않습니다.\n" +
                     "<공공> = 공공 주차 시설의 사용 / 전체 공간.\n" +
                     "CS2 도로 주차 정보 보기와 같은 주차 시설 데이터를 사용합니다.\n" +
-                    "<건물> = 건물이나 차고에 주차된 차량.\n" +
+                    "<건물> = 건물이나 차고에 주차된 자동차.\n" +
                     "<도로> = 도로에 주차된 차량.\n" +
                     "<합계> = 도시 안에서 확인된 주차 차량 합계(도로 + 공공 + 건물).\n" +
                     "**외부 연결과 위치 불명 대기 차량은 합계에서 제외됩니다.**"
@@ -193,7 +190,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, 공공 여유 {2}" },
                 { ParkingStatusLocale.kShareFormat, "{0} 공공 | {1} 건물 | {2} 도로 | {3} 합계" },
                 { ParkingStatusLocale.kStatusOk, "정상" },
-                { ParkingStatusLocale.kStatusOff, "꺼짐 = 도시/구역 금지 해제 | 수동 도로는 유지" },
+                { ParkingStatusLocale.kStatusOff, "수동만 = 도시/구역 금지 해제 | 수동 도로는 유지" },
                 { ParkingStatusLocale.kManualNone, "설정 없음" },
                 { ParkingStatusLocale.kStatusCheck, "확인" },
                 { ParkingStatusLocale.kRatingPoor, "부족" },

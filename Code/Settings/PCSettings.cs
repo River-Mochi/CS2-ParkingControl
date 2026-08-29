@@ -1,4 +1,4 @@
-﻿// <copyright file="PCSettings.cs" company="River-Mochi">
+// <copyright file="PCSettings.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -327,8 +327,8 @@ namespace ParkingControl
         /// </summary>
         public enum ParkingScope
         {
-            // Do not change these numbers - needed for player existing settings files.
-            // AdvancedEnumDropdown, display order controlled by GetScopeDropdownItems().
+            // Do not change these numbers; existing player settings files depend on them.
+            // AdvancedEnumDropdown, display order is controlled by GetScopeDropdownItems().
             ByDistrict = 1,
             Off = 2,        // Visually shows as Manual Only
             WholeCity = 0,

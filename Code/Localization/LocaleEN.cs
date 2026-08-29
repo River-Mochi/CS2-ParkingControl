@@ -80,7 +80,7 @@ namespace ParkingControl
                     "1. Choose <by District> above.\n" +
                     "2. Create/select a district in the city.\n" +
                     "3. Open the <Policies> panel and enable **Roadside Parking Ban [✓]**.\n" +
-                    "4. It's okay to have both the Ban and the Parking fee enabled. Fee is charged to any cars still remaining or sneaking in.\n" +
+                    "4. It's okay to have both the Parking Ban and the Parking fee enabled. Fee is charged to any cars still remaining or sneaking in.\n" +
                     "Roads outside banned parking districts keep normal street parking."
                 },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
@@ -104,7 +104,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Street Parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "Shows only the selected <Whole City> or <by District> Parking Ban scope. Manual No Parking roads are listed separately.\n" +
-                    "<Manual Only> = Whole City/District bans are disabled; manual <No Parking> road settings still apply.\n" +
+                    "<Manual Only> = Whole City/District bans are DISABLED; manual <No Parking> road button still useable.\n" +
                     "<Parked> = cars still parked on streets covered by the selected scope.\n" +
                     "<Disabled> = disabled curb-lane sections / target curb-lane sections.\n" +
                     "<Districts> = districts with the Parking Ban / total districts.\n" +

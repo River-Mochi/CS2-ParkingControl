@@ -51,22 +51,19 @@ namespace ParkingControl
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
                     "เลือก:\n" +
                     "<1. ตามเขต>\n" +
-                    "<2. ทั้งเมือง>\n" +
-                    "<3. ปิด>\n" +
+                    "<2. ตั้งเองเท่านั้น>\n" +
+                    "<3. ทั้งเมือง>\n" +
                     "- ช่องจอดริมถนนที่เข้าเกณฑ์จะถูกปิดเพื่อไม่ให้รถใหม่เข้าจอด\n" +
                     "- รถที่จอดอยู่จะทยอยย้ายหลังเปิดการห้าม พื้นที่ใหญ่ใช้เวลานานกว่า\n" +
                     "- ลานจอดแบบเก็บค่าธรรมเนียมและที่จอดรถของอาคารยังใช้งานได้\n" +
                     "**ถนนบางประเภทไม่อนุญาตให้จอดริมถนนอยู่แล้ว เช่น ทางหลวงและตรอกเล็กแบบสองทาง**"
                 },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "ทั้งเมือง" },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "ตามเขต" },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "ปิด" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. ตามเขต" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. ตั้งเองเท่านั้น" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. ทั้งเมือง" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "แสดงคำแนะนำ" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
-                    "แสดงวิธีใช้โหมด <ตามเขต>\n" +
-                    "1.a. ปิด = ปิดข้อจำกัดทั้งเมืองและตามเขต โดยส่วนใหญ่กลับสู่ค่าปกติของเกม\n" +
-                    "1.b. ปุ่ม <ห้ามจอดรถ> สำหรับถนนแต่ละเส้นในบริการถนนยังใช้ได้เหมือนการเพิ่มทางม้าลาย\n" +
-                    "2. ทั้งเมือง = ปิดการจอดรถสาธารณะริมถนนที่เข้าเกณฑ์ทั่วเมือง"
+                    "แสดงวิธีใช้โหมด <ตามเขต>"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "แสดงสถานะ" },
@@ -104,7 +101,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "การจอดรถริมถนน" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "แสดงเฉพาะขอบเขต <ทั้งเมือง> หรือ <ตามเขต> ที่เลือก การห้ามแบบกำหนดเองแสดงแยกกัน\n" +
-                    "<ปิด> = ปิดการห้ามทั้งเมือง/ตามเขต แต่ถนนที่ตั้ง <ห้ามจอดรถ> เองยังทำงาน\n" +
+                    "<ตั้งเองเท่านั้น> = ปิดการห้ามทั้งเมือง/ตามเขต แต่ถนนที่ตั้ง <ห้ามจอดรถ> เองยังทำงาน\n" +
                     "<จอดอยู่> = รถที่ยังจอดบนถนนในขอบเขตที่เลือก\n" +
                     "<ปิดใช้งาน> = ส่วนช่องริมขอบทางที่ปิด / ส่วนเป้าหมาย\n" +
                     "<เขต> = เขตที่เปิดการห้าม / เขตทั้งหมด\n" +
@@ -127,7 +124,7 @@ namespace ParkingControl
                     "แสดงการใช้ที่จอดรถของ<ทั้งเมือง> ไม่อิงขอบเขตห้ามจอด ทั้งเมือง / ตามเขต\n" +
                     "<สาธารณะ> = ช่องที่ใช้ / ช่องทั้งหมดในลานจอดสาธารณะ\n" +
                     "ใช้ข้อมูลสถานที่จอดเดียวกับแผงข้อมูลที่จอดรถของถนนใน CS2\n" +
-                    "<อาคาร> = รถที่จอดในอาคารหรือโรงจอด\n" +
+                    "<อาคาร> = รถยนต์ที่จอดในอาคารหรือโรงจอด\n" +
                     "<ถนน> = รถที่จอดบนถนน\n" +
                     "<รวม> = รถที่ทราบว่าจอดอยู่ในเมือง (ถนน + สาธารณะ + อาคาร)\n" +
                     "**ไม่รวมจุดเชื่อมต่อนอกเมืองและพื้นที่พักรถที่ไม่ทราบตำแหน่ง**"
@@ -193,7 +190,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, สาธารณะว่าง {2}" },
                 { ParkingStatusLocale.kShareFormat, "{0} สาธารณะ | {1} อาคาร | {2} ถนน | {3} รวม" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
-                { ParkingStatusLocale.kStatusOff, "ปิด = ไม่ห้ามทั้งเมือง/เขต | ถนนที่ตั้งเองยังทำงาน" },
+                { ParkingStatusLocale.kStatusOff, "ตั้งเองเท่านั้น = ไม่ห้ามทั้งเมือง/เขต | ถนนที่ตั้งเองยังทำงาน" },
                 { ParkingStatusLocale.kManualNone, "ยังไม่ได้ตั้ง" },
                 { ParkingStatusLocale.kStatusCheck, "ตรวจสอบ" },
                 { ParkingStatusLocale.kRatingPoor, "แย่" },

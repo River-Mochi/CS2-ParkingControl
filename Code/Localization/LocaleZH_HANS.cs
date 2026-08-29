@@ -51,22 +51,19 @@ namespace ParkingControl
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
                     "选择：\n" +
                     "<1. 按行政区>\n" +
-                    "<2. 全城>\n" +
-                    "<3. 关闭>\n" +
+                    "<2. 仅手动>\n" +
+                    "<3. 全城>\n" +
                     "- 符合条件的车道会被禁用，以阻止新的路边停车。\n" +
                     "- 禁停后，已停放车辆会逐步移走；禁停范围越大，所需时间越长。\n" +
                     "- 收费停车场和普通建筑停车位仍可使用。\n" +
                     "**有些道路本来就不允许路边停车，例如高速公路和小型双向巷道。**"
                 },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "全城" },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "按行政区" },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "关闭" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. 按行政区" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. 仅手动" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. 全城" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "显示说明" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
-                    "显示<按行政区>模式的使用方法。\n" +
-                    "1.a. 关闭 = 关闭全城和行政区禁停，基本恢复游戏默认状态。\n" +
-                    "1.b. 道路服务中的单条道路<禁止停车>按钮仍可像添加人行横道一样使用。\n" +
-                    "2. 全城 = 禁止全城所有符合条件的公共路边停车。"
+                    "显示<按行政区>模式的使用方法。"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "显示状态" },
@@ -104,7 +101,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "路边停车" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "仅显示所选<全城>或<按行政区>禁停范围。手动禁停道路单独显示。\n" +
-                    "<关闭> = 全城/行政区禁停已关闭；手动<禁止停车>道路仍生效。\n" +
+                    "<仅手动> = 全城/行政区禁停已关闭；手动<禁止停车>道路仍生效。\n" +
                     "<已停放> = 仍停在所选范围道路上的车辆。\n" +
                     "<已禁用> = 已禁用的路缘车道段 / 目标车道段。\n" +
                     "<行政区> = 启用禁停的行政区 / 行政区总数。\n" +
@@ -127,7 +124,7 @@ namespace ParkingControl
                     "显示<全城>停车使用情况，不随“全城 / 按行政区”禁停范围变化。\n" +
                     "<公共> = 公共停车设施已占用 / 总车位。\n" +
                     "使用与 CS2 道路停车信息面板相同的停车设施数据。\n" +
-                    "<建筑> = 停在建筑或车库内的车辆。\n" +
+                    "<建筑> = 停在建筑或车库内的汽车。\n" +
                     "<道路> = 停在道路上的车辆。\n" +
                     "<总计> = 城内已知停放车辆总数（道路 + 公共 + 建筑）。\n" +
                     "**外部连接和未知暂存车辆不计入总数。**"
@@ -193,7 +190,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kSupplyFormat, "{0} = {1}，公共空闲 {2}" },
                 { ParkingStatusLocale.kShareFormat, "{0} 公共 | {1} 建筑 | {2} 道路 | {3} 总计" },
                 { ParkingStatusLocale.kStatusOk, "正常" },
-                { ParkingStatusLocale.kStatusOff, "关闭 = 全城/行政区禁停关闭 | 手动道路仍生效" },
+                { ParkingStatusLocale.kStatusOff, "仅手动 = 全城/行政区禁停关闭 | 手动道路仍生效" },
                 { ParkingStatusLocale.kManualNone, "未设置" },
                 { ParkingStatusLocale.kStatusCheck, "检查" },
                 { ParkingStatusLocale.kRatingPoor, "差" },
