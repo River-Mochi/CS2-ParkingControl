@@ -6,8 +6,9 @@
 // This notice MUST be kept with copies or substantial portions of this code.
 // ================= </copyright> ======================
 
-// Purpose: Read-only debug output for the vanilla district Roadside Parking Fee slider.
+// Purpose: DEBUG-only read-only output for the vanilla district Roadside Parking Fee slider.
 
+#if DEBUG
 using CS2Shared.RiverMochi;
 using Unity.Entities;
 
@@ -230,3 +231,4 @@ namespace ParkingControl
         }
     }
 }
+#endif

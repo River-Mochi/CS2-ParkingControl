@@ -20,7 +20,7 @@ namespace ParkingControl
     public sealed partial class ParkingStatusSystem
     {
         /// <summary>
-        /// Writes the current snapshot, identity transitions, and entity samples to the mod log.
+        /// Writes a support report in Release and additional research diagnostics in Debug.
         /// </summary>
         private void WriteReport(ParkingSnapshot snapshot, ParkingReportDetails details)
         {
@@ -28,6 +28,7 @@ namespace ParkingControl
                 0,
                 snapshot.DisabledCurbLanes - snapshot.TrackedCurbLanes);
 
+#if DEBUG
             int buildingParkingAvailable = Math.Max(
                 0,
                 snapshot.BuildingParkingCapacity - snapshot.BuildingParkingUsedSlots);
@@ -40,7 +41,7 @@ namespace ParkingControl
             int buildingGarageRawMinusClassified =
                 snapshot.BuildingGarageRawOccupied -
                 classifiedBuildingGarageVehicles;
-
+#endif
 
             bool districtScope =
                 snapshot.Scope == PCSettings.ParkingScope.ByDistrict;
@@ -85,6 +86,11 @@ namespace ParkingControl
             text.AppendLine($"==================== {Mod.ModTag} PARKING REPORT ====================");
             text.AppendLine("-------------------- SUMMARY --------------------");
             text.AppendLine($"Mod={Mod.ModName} v{Mod.ModVersion}");
+#if DEBUG
+            text.AppendLine("Build=DEBUG");
+#else
+            text.AppendLine("Build=RELEASE");
+#endif
             text.AppendLine(
                 $"SimulationFrame={snapshot.SimulationFrame} (simulation tick when data was collected)");
             text.AppendLine($"ParkingScope={snapshot.Scope}");
@@ -124,6 +130,7 @@ namespace ParkingControl
             text.AppendLine(
                 $"PersonalMotorVehicles={snapshot.TotalVehicles} " +
                 $"(Parked={snapshot.ParkedVehicles}, Active={snapshot.ActiveVehicles}, Neither={snapshot.UnlocatedVehicles})");
+#if DEBUG
             text.AppendLine(
                 $"PersonalVehicleOwnership=Household={snapshot.HouseholdOwnerVehicles} " +
                 $"(Live={snapshot.LiveHouseholdOwnerVehicles}, Deleted={snapshot.DeletedHouseholdOwnerVehicles}, " +
@@ -136,6 +143,7 @@ namespace ParkingControl
                 $"TouristHousehold={snapshot.TouristHouseholdVehicles}, " +
                 $"CommuterHousehold={snapshot.CommuterHouseholdVehicles}, " +
                 $"DummyTraffic={snapshot.DummyTrafficVehicles}, OtherOrUnowned={snapshot.OtherOrUnownedVehicles}");
+#endif
             text.AppendLine();
             text.AppendLine("-------------------- PARKING LOCATIONS --------------------");
             text.AppendLine($"ParkedOnStreets={snapshot.StreetParked}");
@@ -144,6 +152,7 @@ namespace ParkingControl
                 $"(VisibleOffStreet={snapshot.VisibleOffStreet}, HiddenInBuildings={snapshot.HiddenInBuildings}, " +
                 $"OutsideConnection={snapshot.OutsideConnection}, UnassignedOrUnknown={snapshot.UnassignedOrUnknownParked})");
 
+#if DEBUG
             text.AppendLine(
                 $"UnknownParkedDetails={snapshot.UnassignedOrUnknownParked} total " +
                 $"(NullLane={snapshot.UnknownNullLane}, MissingLaneEntity={snapshot.UnknownMissingLane}, " +
@@ -188,6 +197,7 @@ namespace ParkingControl
                 $"TouristHousehold={snapshot.OutsideTouristHousehold}, " +
                 $"CommuterHousehold={snapshot.OutsideCommuterHousehold}, " +
                 $"DummyTraffic={snapshot.OutsideDummyTraffic}");
+#endif
             text.AppendLine();
             text.AppendLine("-------------------- PARKING SUPPLY --------------------");
             text.AppendLine(
@@ -195,11 +205,11 @@ namespace ParkingControl
                 $"across {snapshot.OfficialParkingFacilities} facility entities");
            
             text.AppendLine(
-                $"BuildingParkingCars={snapshot.BuildingParkingOccupied} cars across " +
-                $"{snapshot.BuildingParkingLanes} exact-capacity lane entities " +
-                $"(VisibleFixedSlot={snapshot.BuildingFixedSlotLanes}, " +
-                $"HiddenGarage={snapshot.BuildingGarageLanes})");
+                $"BuildingParkingCars={snapshot.BuildingParkingOccupied} " +
+                $"(VisibleFixedSlotLanes={snapshot.BuildingFixedSlotLanes}, " +
+                $"HiddenGarageLanes={snapshot.BuildingGarageLanes})");
 
+#if DEBUG
             text.AppendLine(
                 $"BuildingParkingSlots={snapshot.BuildingParkingUsedSlots}/" +
                 $"{snapshot.BuildingParkingCapacity} used/capacity " +
@@ -231,6 +241,7 @@ namespace ParkingControl
             text.AppendLine(
                 $"BuildingContinuousParking={snapshot.BuildingContinuousOccupied} parked cars across " +
                 $"{snapshot.BuildingContinuousLanes} unslotted lane entities excluded from capacity percentage");
+#endif
             text.AppendLine(
                 $"KnownInCityParking={snapshot.KnownInCityParking} " +
                 $"(Street={snapshot.StreetParked}, Public={snapshot.OfficialParkingOccupied}, " +
@@ -270,55 +281,41 @@ namespace ParkingControl
             text.AppendLine();
             text.AppendLine("-------------------- NOTES --------------------");
             text.AppendLine(
-                "Note: existing curb-parked cars leave when a keeper next uses them.");
+                "Note: roadside lane counts are lane sections, not individual parking spaces.");
+            text.AppendLine(
+                "Note: HiddenInBuildings is hidden garage/building storage; VisibleOffStreet is rendered off-street parking.");
+            text.AppendLine(
+                "Note: OutsideConnection is vanilla border storage/staging and is not automatically an error.");
+            text.AppendLine(
+                "Note: Unknown parked vehicles have no usable parking lane identified at snapshot time.");
+            text.AppendLine(
+                "Note: Entity IDs use Index:Version for Scene Explorer; sample transitions are samples, not every vehicle.");
+
+#if DEBUG
+            text.AppendLine();
+            text.AppendLine("-------------------- DEBUG NOTES --------------------");
             text.AppendLine(
                 "Note: PersonalCar.m_Keeper is the current reserver/user, not the persistent vehicle owner.");
             text.AppendLine(
-                "Note: OutsideConnection describes the parking lane/root location, not the vehicle Owner. " +
-                "Valid household-owned cars at that location are legit and should probably not all be deleted.");
-            text.AppendLine(
-                "Note: Unknown parked cars have no usable concrete lane. Vanilla can leave an unspawned car " +
-                "at its trip source when initial parking assignment fails; TripSource may later be removed.");
-            text.AppendLine(
                 "Note: UnknownLikelyIncomingStaging is inferred from household state because the original " +
-                "TripSource is no longer retained; it is not proof of the car's exact location.");
-            text.AppendLine(
-                "Note: HiddenInBuildings means a non-border GarageLane, or an unspawned vehicle on a lane owned by a building.");
-            text.AppendLine(
-                "Note: VisibleOffStreet means a rendered parked car that is not on an eligible public street, " +
-                "inside hidden storage, or at an outside connection; VisibleParkingKinds provides the narrower split.");
+                "TripSource may no longer be retained; it is not proof of the car's exact location.");
             text.AppendLine(
                 "Note: VanillaRoadsInfoviewParking excludes ordinary street curbs and most implicit residential storage; " +
-                "continuous unslotted lanes have no exact capacity.");
+                "continuous unslotted lanes have no exact slot capacity.");
             text.AppendLine(
-                "Note: BuildingParking excludes vanilla public parking and includes car spaces owned by residential, " +
-                "mixed, commercial, office, industrial, and specialized-industry buildings.");
+                "Note: BuildingParkingCars is the motor-vehicle count used by the Options Status row and excludes bicycles.");
             text.AppendLine(
-                "Note: StreetUsage compares street cars only with known street, public, and building parking; " +
-                "outside-connection and unknown staging are excluded.");
+                "Note: BuildingParkingCapacity, BuildingParkingSlots, BuildingHiddenGarage, and GarageLaneDiagnostics " +
+                "are research diagnostics only. GarageLane.m_VehicleCapacity does not currently match observed vanilla " +
+                "garage occupancy reliably enough to expose as player-facing building capacity.");
             text.AppendLine(
-                "Note: Entity IDs use Index:Version for Scene Explorer mod use.");
+                "Note: BuildingHiddenGarage RawUsed is GarageLane.m_VehicleCount; Cars and Bicycles are independently " +
+                "classified from parked personal vehicles and may not match RawUsed exactly.");
             text.AppendLine(
-                $"Note: SampleTransitions trace up to {kVehicleSampleLimit} IDs from each previous " +
-                "Street, OutsideConnection, and Unknown group; they do not represent every vehicle.");
-            text.AppendLine(
-                "Note: NoLongerTracked means the entity still exists but no longer matches this " +
-                "report's current personal-vehicle query.");
-
-            text.AppendLine(
-                "Note: BuildingParkingCapacity uses current live GarageLane capacity plus exact " +
-                "fixed-slot parking owned by buildings. Runtime capacity changes made by other mods " +
-                "are therefore reflected automatically.");
-
-            text.AppendLine(
-                "Note: BuildingHiddenGarage RawUsed is the game's GarageLane vehicle count and can " +
-                "include bicycles. Cars and Bicycles are independently classified from parked " +
-                "personal vehicles for diagnostics.");
-
-            text.AppendLine(
-                "Note: BuildingParkingSlots uses raw hidden-garage occupancy because bicycles using " +
-                "the same GarageLane consume shared garage capacity; BuildingParkingCars remains " +
-                "motor vehicles only.");
+                $"Note: SampleTransitions trace up to {kVehicleSampleLimit} IDs from each previous Street, " +
+                "OutsideConnection, and Unknown group; NoLongerTracked means the entity still exists but no longer " +
+                "matches the report's personal-vehicle query.");
+#endif
 
             text.Append($"==================== {Mod.ModTag} END OF PARKING REPORT ====================");
             LogUtils.Info(text.ToString());
