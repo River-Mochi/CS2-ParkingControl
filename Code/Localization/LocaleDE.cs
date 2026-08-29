@@ -8,11 +8,10 @@
 
 // Purpose: German text for Parking Control's Options UI.
 
-using System.Collections.Generic;
-using Colossal;
-
 namespace ParkingControl
 {
+    using System.Collections.Generic;
+    using Colossal;
 
     /// <summary>
     /// German localization entries for <see cref="PCSettings"/>.
@@ -125,8 +124,9 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Parknutzung" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "<Öffentlich> = belegte Plätze in Parkeinrichtungen.\n" +
-                    "Entspricht ungefähr CS2s Straßen-Parkinfo.\n" +
+                    "Zeigt die Parknutzung der <gesamten Stadt>. Sie folgt nicht dem Parkverbotsbereich Ganze Stadt / nach Bezirk.\n" +
+                    "<Öffentlich> = belegte / gesamte Plätze in öffentlichen Parkeinrichtungen.\n" +
+                    "Nutzt dieselben Parkeinrichtungsdaten wie CS2s Straßen-Parkinfo.\n" +
                     "<Gebäude> = Fahrzeuge in Gebäuden oder Garagen.\n" +
                     "<Straße> = Autos auf Straßen.\n" +
                     "<Gesamt> = bekannte geparkte Autos in der Stadt (Straße + öffentlich + Gebäude).\n" +
@@ -135,12 +135,12 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Parkbewertung" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "Bewertet, wie viel exakt erfassbares Parken noch <frei> ist.\n" +
+                    "Zeigt die öffentliche Parkverfügbarkeit der <gesamten Stadt>.\n" +
                     "<SCHLECHT> = unter 15 % frei.\n" +
                     "<OK> = 15 % bis unter 30 % frei.\n" +
                     "<GUT> = 30 % oder mehr frei.\n" +
-                    "<Öffentlich> nutzt Parkeinrichtungen aus CS2s Straßen-Parkinfo.\n" +
-                    "<Gebäude> nutzt Parkplätze mit exakter Kapazität in Gebäuden und Garagen."
+                    "<Öffentlich frei> = derzeit ungenutzte öffentliche Parkplätze.\n" +
+                    "Zählt dieselben Parkeinrichtungen wie CS2s Straßen-Parkinfo."
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Auto-Standorte" },
@@ -190,7 +190,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} geparkt | {1}/{2} Spuren gesperrt{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} geparkt | {1}/{2} gesperrt | {3}/{4} Bezirke{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} Straße | {1} sichtbar | {2} innen | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1} öff. frei | {2} = {3} Gebäude frei" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, öffentl. frei {2}" },
                 { ParkingStatusLocale.kShareFormat, "{0} öff. | {1} Gebäude | {2} Straße | {3} gesamt" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "AUS = Stadt-/Bezirksverbote aus | manuelle Straßen bleiben aktiv" },

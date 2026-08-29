@@ -8,11 +8,10 @@
 
 // Purpose: Brazilian Portuguese text for Parking Control's Options UI.
 
-using System.Collections.Generic;
-using Colossal;
-
 namespace ParkingControl
 {
+    using System.Collections.Generic;
+    using Colossal;
 
     /// <summary>
     /// Brazilian Portuguese localization entries for <see cref="PCSettings"/>.
@@ -125,8 +124,9 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Uso do estacionamento" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "<Público> = vagas ocupadas em estacionamentos públicos.\n" +
-                    "Aproxima o painel de estacionamento das Estradas do CS2.\n" +
+                    "Mostra o uso de estacionamento na <cidade toda>. Não segue o escopo da proibição Cidade inteira / por distrito.\n" +
+                    "<Público> = vagas ocupadas / totais em estacionamentos públicos.\n" +
+                    "Usa os mesmos dados de estacionamento do painel Estradas do CS2.\n" +
                     "<Edif.> = veículos estacionados em edifícios ou garagens.\n" +
                     "<Rua> = carros estacionados nas ruas.\n" +
                     "<Total> = carros estacionados conhecidos na cidade (rua + público + edifício).\n" +
@@ -135,12 +135,12 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Avaliação do estacionamento" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "Avalia quanto estacionamento com capacidade exata ainda está <livre>.\n" +
+                    "Mostra a disponibilidade de estacionamento público na <cidade toda>.\n" +
                     "<RUIM> = menos de 15% livre.\n" +
                     "<OK> = 15% a menos de 30% livre.\n" +
                     "<BOM> = 30% ou mais livre.\n" +
-                    "<Público> usa estacionamentos contados pelo painel de estacionamento das Estradas do CS2.\n" +
-                    "<Edif.> usa estacionamento com capacidade exata em edifícios e garagens."
+                    "<Público livre> = vagas públicas atualmente vazias.\n" +
+                    "Conta os mesmos estacionamentos do painel Estradas do jogo."
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Onde estacionam" },
@@ -190,7 +190,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} estac. | {1}/{2} faixas desat.{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} estac. | {1}/{2} desat. | {3}/{4} distr.{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} rua | {1} visíveis | {2} dentro | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1} público livre | {2} = {3} edif. livre" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, público livre {2}" },
                 { ParkingStatusLocale.kShareFormat, "{0} público | {1} edif. | {2} rua | {3} total" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "DESLIGADO = sem proibição cidade/distritos | vias manuais ativas" },

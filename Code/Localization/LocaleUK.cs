@@ -8,11 +8,10 @@
 
 // Purpose: Ukrainian text for Parking Control's Options UI.
 
-using System.Collections.Generic;
-using Colossal;
-
 namespace ParkingControl
 {
+    using System.Collections.Generic;
+    using Colossal;
 
     /// <summary>
     /// Ukrainian localization entries for <see cref="PCSettings"/>.
@@ -125,8 +124,9 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Використання паркінгу" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "<Громадські> = зайняті місця в паркувальних об’єктах.\n" +
-                    "Приблизно відповідає панелі паркування Доріг у CS2.\n" +
+                    "Показує використання паркування в <усьому місті>. Не залежить від області заборони Все місто / за районами.\n" +
+                    "<Громадські> = зайняті / усі місця на громадських паркінгах.\n" +
+                    "Використовує ті самі дані паркінгів, що й панель паркування Доріг у CS2.\n" +
                     "<Будинки> = авто, припарковані в будівлях або гаражах.\n" +
                     "<Вулиця> = авто, припарковані на вулицях.\n" +
                     "<Усього> = відомі припарковані авто в місті (вулиця + громадські + будинки).\n" +
@@ -135,12 +135,12 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Оцінка паркування" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "Оцінює, скільки паркування з точною місткістю ще <вільно>.\n" +
+                    "Показує доступність громадського паркування в <усьому місті>.\n" +
                     "<ПОГАНО> = вільно менше 15%.\n" +
                     "<OK> = вільно від 15% до менше 30%.\n" +
                     "<ДОБРЕ> = вільно 30% або більше.\n" +
-                    "<Громадські> використовує об’єкти, які рахує панель паркування Доріг у CS2.\n" +
-                    "<Будинки> використовує місця з точною місткістю в будівлях і гаражах."
+                    "<Громадські вільні> = наразі невикористані громадські паркомісця.\n" +
+                    "Рахує ті самі паркінги, що й панель паркування Доріг у грі."
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Розташування авто" },
@@ -190,7 +190,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} припарк. | {1}/{2} смуг вимкн.{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} припарк. | {1}/{2} вимкн. | {3}/{4} районів{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} вулиця | {1} видимі | {2} всередині | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1} гром. вільно | {2} = {3} буд. вільно" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, гром. вільно {2}" },
                 { ParkingStatusLocale.kShareFormat, "{0} гром. | {1} буд. | {2} вулиця | {3} усього" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "ВИМК. = заборони міста/районів вимк. | ручні дороги активні" },

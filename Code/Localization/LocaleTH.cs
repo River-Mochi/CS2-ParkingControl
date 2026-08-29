@@ -8,11 +8,10 @@
 
 // Purpose: Thai text for Parking Control's Options UI.
 
-using System.Collections.Generic;
-using Colossal;
-
 namespace ParkingControl
 {
+    using System.Collections.Generic;
+    using Colossal;
 
     /// <summary>
     /// Thai localization entries for <see cref="PCSettings"/>.
@@ -125,8 +124,9 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "การใช้ที่จอดรถ" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "<สาธารณะ> = ช่องจอดที่มีรถในลานจอดสาธารณะ\n" +
-                    "ใกล้เคียงกับแผงข้อมูลที่จอดรถของถนนใน CS2\n" +
+                    "แสดงการใช้ที่จอดรถของ<ทั้งเมือง> ไม่อิงขอบเขตห้ามจอด ทั้งเมือง / ตามเขต\n" +
+                    "<สาธารณะ> = ช่องที่ใช้ / ช่องทั้งหมดในลานจอดสาธารณะ\n" +
+                    "ใช้ข้อมูลสถานที่จอดเดียวกับแผงข้อมูลที่จอดรถของถนนใน CS2\n" +
                     "<อาคาร> = รถที่จอดในอาคารหรือโรงจอด\n" +
                     "<ถนน> = รถที่จอดบนถนน\n" +
                     "<รวม> = รถที่ทราบว่าจอดอยู่ในเมือง (ถนน + สาธารณะ + อาคาร)\n" +
@@ -135,12 +135,12 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "ระดับที่จอดรถ" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "ประเมินที่จอดรถที่มีความจุแน่นอนว่ายัง <ว่าง> เท่าใด\n" +
+                    "แสดงที่จอดสาธารณะที่ว่างของ<ทั้งเมือง>\n" +
                     "<แย่> = ว่างน้อยกว่า 15%\n" +
                     "<OK> = ว่าง 15% ถึงน้อยกว่า 30%\n" +
                     "<ดี> = ว่าง 30% ขึ้นไป\n" +
-                    "<สาธารณะ> ใช้ลานจอดที่แผงข้อมูลที่จอดรถของถนนใน CS2 นับ\n" +
-                    "<อาคาร> ใช้ที่จอดความจุแน่นอนในอาคารและโรงจอด"
+                    "<สาธารณะว่าง> = ช่องจอดสาธารณะที่ยังไม่ได้ใช้\n" +
+                    "นับลานจอดเดียวกับแผงข้อมูลที่จอดรถของถนนในเกม"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "ตำแหน่งรถ" },
@@ -190,7 +190,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} จอดอยู่ | ปิด {1}/{2} ช่อง{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} จอดอยู่ | ปิด {1}/{2} | {3}/{4} เขต{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} ถนน | {1} มองเห็น | {2} ภายใน | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = สาธารณะว่าง {1} | {2} = อาคารว่าง {3}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, สาธารณะว่าง {2}" },
                 { ParkingStatusLocale.kShareFormat, "{0} สาธารณะ | {1} อาคาร | {2} ถนน | {3} รวม" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "ปิด = ไม่ห้ามทั้งเมือง/เขต | ถนนที่ตั้งเองยังทำงาน" },

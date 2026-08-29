@@ -8,11 +8,10 @@
 
 // Purpose: Italian text for Parking Control's Options UI.
 
-using System.Collections.Generic;
-using Colossal;
-
 namespace ParkingControl
 {
+    using System.Collections.Generic;
+    using Colossal;
 
     /// <summary>
     /// Italian localization entries for <see cref="PCSettings"/>.
@@ -125,8 +124,9 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Uso parcheggi" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "<Pubblico> = posti occupati nelle strutture di parcheggio.\n" +
-                    "Corrisponde circa al pannello parcheggi di Strade in CS2.\n" +
+                    "Mostra l’uso dei parcheggi in <tutta la città>. Non segue l’ambito del divieto Città intera / per distretto.\n" +
+                    "<Pubblico> = posti occupati / totali nelle strutture pubbliche.\n" +
+                    "Usa gli stessi dati del pannello parcheggi di Strade in CS2.\n" +
                     "<Edif.> = veicoli parcheggiati in edifici o garage.\n" +
                     "<Strada> = auto parcheggiate in strada.\n" +
                     "<Totale> = auto parcheggiate note in città (strada + pubblico + edificio).\n" +
@@ -135,12 +135,12 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Valutazione parcheggi" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "Valuta quanto parcheggio a capacità esatta è ancora <libero>.\n" +
+                    "Mostra la disponibilità dei parcheggi pubblici in <tutta la città>.\n" +
                     "<SCARSO> = meno del 15% libero.\n" +
                     "<OK> = dal 15% a meno del 30% libero.\n" +
                     "<BUONO> = 30% o più libero.\n" +
-                    "<Pubblico> usa le strutture conteggiate dal pannello parcheggi di Strade in CS2.\n" +
-                    "<Edif.> usa parcheggi a capacità esatta in edifici e garage."
+                    "<Pubblico libero> = posti pubblici attualmente inutilizzati.\n" +
+                    "Conta gli stessi parcheggi del pannello parcheggi di Strade del gioco."
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Posizione auto" },
@@ -190,7 +190,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} in sosta | {1}/{2} corsie chiuse{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} in sosta | {1}/{2} chiuse | {3}/{4} distretti{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} strada | {1} visibili | {2} interno | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1} pubblico libero | {2} = {3} edif. libero" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, pubblico libero {2}" },
                 { ParkingStatusLocale.kShareFormat, "{0} pubblico | {1} edif. | {2} strada | {3} totale" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "DISATT. = divieti città/distretto off | strade manuali attive" },

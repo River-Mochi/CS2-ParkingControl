@@ -8,11 +8,10 @@
 
 // Purpose: Korean text for Parking Control's Options UI.
 
-using System.Collections.Generic;
-using Colossal;
-
 namespace ParkingControl
 {
+    using System.Collections.Generic;
+    using Colossal;
 
     /// <summary>
     /// Korean localization entries for <see cref="PCSettings"/>.
@@ -125,8 +124,9 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "주차 이용" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "<공공> = 주차 시설의 사용 중인 주차 공간.\n" +
-                    "CS2 도로 주차 정보 보기와 대략 일치합니다.\n" +
+                    "<도시 전체> 주차 이용을 표시합니다. 전체 도시 / 구역별 주차 금지 범위를 따르지 않습니다.\n" +
+                    "<공공> = 공공 주차 시설의 사용 / 전체 공간.\n" +
+                    "CS2 도로 주차 정보 보기와 같은 주차 시설 데이터를 사용합니다.\n" +
                     "<건물> = 건물이나 차고에 주차된 차량.\n" +
                     "<도로> = 도로에 주차된 차량.\n" +
                     "<합계> = 도시 안에서 확인된 주차 차량 합계(도로 + 공공 + 건물).\n" +
@@ -135,12 +135,12 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "주차 평가" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "정확한 수용량이 있는 주차 공간의 <여유>를 평가합니다.\n" +
+                    "<도시 전체> 공공 주차 여유를 표시합니다.\n" +
                     "<부족> = 15% 미만 여유.\n" +
                     "<OK> = 15% 이상 30% 미만 여유.\n" +
                     "<좋음> = 30% 이상 여유.\n" +
-                    "<공공>은 CS2 도로 주차 정보 보기에서 집계하는 시설을 사용합니다.\n" +
-                    "<건물>은 건물과 차고의 정확한 수용량 주차를 사용합니다."
+                    "<공공 여유> = 현재 비어 있는 공공 주차 공간.\n" +
+                    "게임의 도로 주차 정보 보기와 같은 주차 시설을 집계합니다."
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "차량 위치" },
@@ -190,7 +190,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} 주차 | {1}/{2} 차선 비활성{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} 주차 | {1}/{2} 비활성 | {3}/{4} 구역{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} 도로 | {1} 표시 | {2} 실내 | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = 공공 {1} 여유 | {2} = 건물 {3} 여유" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, 공공 여유 {2}" },
                 { ParkingStatusLocale.kShareFormat, "{0} 공공 | {1} 건물 | {2} 도로 | {3} 합계" },
                 { ParkingStatusLocale.kStatusOk, "정상" },
                 { ParkingStatusLocale.kStatusOff, "꺼짐 = 도시/구역 금지 해제 | 수동 도로는 유지" },

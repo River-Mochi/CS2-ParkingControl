@@ -8,11 +8,10 @@
 
 // Purpose: Spanish text for Parking Control's Options UI.
 
-using System.Collections.Generic;
-using Colossal;
-
 namespace ParkingControl
 {
+    using System.Collections.Generic;
+    using Colossal;
 
     /// <summary>
     /// Spanish localization entries for <see cref="PCSettings"/>.
@@ -125,8 +124,9 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Uso de aparcamiento" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "<Público> = plazas ocupadas en instalaciones de aparcamiento.\n" +
-                    "Coincide aproximadamente con el panel de aparcamiento de Carreteras de CS2.\n" +
+                    "Muestra el uso de aparcamiento de <toda la ciudad>. No sigue el ámbito de prohibición Ciudad completa / por distrito.\n" +
+                    "<Público> = plazas ocupadas / totales en aparcamientos públicos.\n" +
+                    "Usa los mismos datos de aparcamiento que el panel de Carreteras de CS2.\n" +
                     "<Edif.> = vehículos aparcados en edificios o garajes.\n" +
                     "<Calle> = coches aparcados en calles.\n" +
                     "<Total> = coches aparcados conocidos en la ciudad (calle + público + edificio).\n" +
@@ -135,12 +135,12 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Valoración de parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "Valora cuánto aparcamiento con capacidad exacta queda <libre>.\n" +
+                    "Muestra la disponibilidad de aparcamiento público de <toda la ciudad>.\n" +
                     "<MALO> = menos del 15 % libre.\n" +
                     "<OK> = del 15 % a menos del 30 % libre.\n" +
                     "<BUENO> = 30 % o más libre.\n" +
-                    "<Público> usa instalaciones contadas por el panel de aparcamiento de Carreteras de CS2.\n" +
-                    "<Edif.> usa aparcamiento de capacidad exacta en edificios y garajes."
+                    "<Público libre> = plazas públicas sin usar actualmente.\n" +
+                    "Cuenta los mismos aparcamientos que el panel de Carreteras del juego."
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Dónde aparcan" },
@@ -190,7 +190,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} aparc. | {1}/{2} carriles desact.{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} aparc. | {1}/{2} desact. | {3}/{4} distritos{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} calle | {1} visibles | {2} dentro | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1} público libre | {2} = {3} edif. libre" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, público libre {2}" },
                 { ParkingStatusLocale.kShareFormat, "{0} público | {1} edif. | {2} calle | {3} total" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "DESACT. = sin prohibiciones de ciudad/distrito | manual sigue activo" },

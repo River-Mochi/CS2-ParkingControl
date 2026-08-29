@@ -8,11 +8,10 @@
 
 // Purpose: French text for Parking Control's Options UI.
 
-using System.Collections.Generic;
-using Colossal;
-
 namespace ParkingControl
 {
+    using System.Collections.Generic;
+    using Colossal;
 
     /// <summary>
     /// French localization entries for <see cref="PCSettings"/>.
@@ -125,8 +124,9 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Usage du parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "<Public> = places occupées dans les installations de stationnement.\n" +
-                    "Correspond approximativement au panneau Stationnement des Routes de CS2.\n" +
+                    "Affiche l’utilisation du stationnement dans <toute la ville>. Ne suit pas la portée de l’interdiction Toute la ville / par quartier.\n" +
+                    "<Public> = places occupées / totales dans les parkings publics.\n" +
+                    "Utilise les mêmes données que le panneau Stationnement des Routes de CS2.\n" +
                     "<Bât.> = véhicules garés dans les bâtiments ou garages.\n" +
                     "<Rue> = voitures garées sur rue.\n" +
                     "<Total> = voitures garées connues en ville (rue + public + bâtiment).\n" +
@@ -135,12 +135,12 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Évaluation du parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "Évalue la part de stationnement à capacité exacte encore <libre>.\n" +
+                    "Affiche la disponibilité du stationnement public dans <toute la ville>.\n" +
                     "<MAUVAIS> = moins de 15 % libre.\n" +
                     "<OK> = de 15 % à moins de 30 % libre.\n" +
                     "<BON> = 30 % ou plus libre.\n" +
-                    "<Public> utilise les installations comptées par le panneau Stationnement des Routes de CS2.\n" +
-                    "<Bât.> utilise les places à capacité exacte des bâtiments et garages."
+                    "<Public libre> = places publiques actuellement libres.\n" +
+                    "Compte les mêmes parkings que le panneau Stationnement des Routes du jeu."
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Position autos" },
@@ -190,7 +190,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} garées | {1}/{2} voies fermées{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} garées | {1}/{2} fermées | {3}/{4} quartiers{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} rue | {1} visibles | {2} intérieur | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1} public libre | {2} = {3} bât. libre" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, public libre {2}" },
                 { ParkingStatusLocale.kShareFormat, "{0} public | {1} bât. | {2} rue | {3} total" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "DÉSACT. = interdictions ville/quartiers coupées | routes manuelles actives" },

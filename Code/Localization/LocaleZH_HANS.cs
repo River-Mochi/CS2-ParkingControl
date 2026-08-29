@@ -8,11 +8,10 @@
 
 // Purpose: Simplified Chinese text for Parking Control's Options UI.
 
-using System.Collections.Generic;
-using Colossal;
-
 namespace ParkingControl
 {
+    using System.Collections.Generic;
+    using Colossal;
 
     /// <summary>
     /// Simplified Chinese localization entries for <see cref="PCSettings"/>.
@@ -125,8 +124,9 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "停车使用" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "<公共> = 停车设施中的已占用车位。\n" +
-                    "大致对应 CS2 道路停车信息面板。\n" +
+                    "显示<全城>停车使用情况，不随“全城 / 按行政区”禁停范围变化。\n" +
+                    "<公共> = 公共停车设施已占用 / 总车位。\n" +
+                    "使用与 CS2 道路停车信息面板相同的停车设施数据。\n" +
                     "<建筑> = 停在建筑或车库内的车辆。\n" +
                     "<道路> = 停在道路上的车辆。\n" +
                     "<总计> = 城内已知停放车辆总数（道路 + 公共 + 建筑）。\n" +
@@ -135,12 +135,12 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "停车评级" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "评估有精确容量的停车位还剩多少<空闲>。\n" +
+                    "显示<全城>公共停车空闲情况。\n" +
                     "<差> = 空闲少于 15%。\n" +
                     "<正常> = 空闲 15% 至不足 30%。\n" +
                     "<良好> = 空闲 30% 或以上。\n" +
-                    "<公共>使用 CS2 道路停车信息面板统计的设施。\n" +
-                    "<建筑>使用建筑和车库中有精确容量的停车位。"
+                    "<公共空闲> = 当前未使用的公共停车位。\n" +
+                    "统计与游戏道路停车信息面板相同的停车设施。"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "车辆位置" },
@@ -190,7 +190,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} 已停放 | {1}/{2} 车道已禁用{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} 已停放 | {1}/{2} 已禁用 | {3}/{4} 行政区{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} 道路 | {1} 可见 | {2} 室内 | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = 公共空闲 {1} | {2} = 建筑空闲 {3}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}，公共空闲 {2}" },
                 { ParkingStatusLocale.kShareFormat, "{0} 公共 | {1} 建筑 | {2} 道路 | {3} 总计" },
                 { ParkingStatusLocale.kStatusOk, "正常" },
                 { ParkingStatusLocale.kStatusOff, "关闭 = 全城/行政区禁停关闭 | 手动道路仍生效" },

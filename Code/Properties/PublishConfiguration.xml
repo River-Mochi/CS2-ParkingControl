@@ -32,6 +32,7 @@ New - you can now ban parking on single 1-way alleys using the "no parking" butt
 ## Good to know
 - Make sure your city has enough off-street parking. When parking is unavailable, the game may use outside-connection storage/staging as it does in vanilla now.
 - Some vanilla roads already don't allow parking, e.g. 3-lane small roads, or 2-way alley.
+- Safe to remove anytime and designed to not impact performance.
 - Optional: **Mochi's Hover Colors** by River-mochi is supported. The "No Parking" manual road tool follows MHC's **Bulldozer + Roads** colors, just like normal road tools.
 
 ## Support and Feedback
@@ -50,13 +51,12 @@ New - you can now ban parking on single 1-way alleys using the "no parking" butt
 - 12+ Languages: Hello, Hallo, Hola, Bonjour, Ciao, こんにちは, 안녕하세요, Cześć, Olá, สวัสดี, Merhaba, Xin chào, 你好, 你好, Привіт
 
 ## How does it work
-- The mod uses the game’s own ParkingDisabled flag on eligible roads. It does not narrow the road, widen the sidewalk, or add a driving lane.
-- Safe to remove anytime and designed to not impact performance.
+- The mod uses the game’s own ParkingDisabled flag on eligible roads. It does not narrow the road, widen the sidewalk, or add a driving lane (road looks the same).
 - New or rebuilt roads may briefly accept a few cars while CS2 updates the parking lanes (timing).
 - Existing parked cars gradually relocate after parking is banned.
 - For faster clearing, temporarily add then remove a vanilla feature such as bike lanes.
 
-tags: Disable road parking, clear roadside, no cars
+tags: Disable road parking, clear road side, no cars
 
 </LongDescription>
 <!--Thumbnail-->

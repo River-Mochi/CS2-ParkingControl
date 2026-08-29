@@ -8,11 +8,10 @@
 
 // Purpose: Vietnamese text for Parking Control's Options UI.
 
-using System.Collections.Generic;
-using Colossal;
-
 namespace ParkingControl
 {
+    using System.Collections.Generic;
+    using Colossal;
 
     /// <summary>
     /// Vietnamese localization entries for <see cref="PCSettings"/>.
@@ -125,8 +124,9 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Sử dụng chỗ đỗ" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "<Công cộng> = chỗ đã dùng trong các cơ sở đỗ xe.\n" +
-                    "Gần khớp với bảng đỗ xe của Đường trong CS2.\n" +
+                    "Hiển thị mức sử dụng chỗ đỗ của <toàn thành phố>. Không theo phạm vi cấm Toàn thành phố / theo quận.\n" +
+                    "<Công cộng> = chỗ đã dùng / tổng chỗ trong bãi đỗ công cộng.\n" +
+                    "Dùng cùng dữ liệu cơ sở đỗ xe như bảng Đường của CS2.\n" +
                     "<Công trình> = xe đỗ trong công trình hoặc nhà để xe.\n" +
                     "<Đường> = xe đỗ trên đường.\n" +
                     "<Tổng> = tổng xe đỗ đã biết trong thành phố (đường + công cộng + công trình).\n" +
@@ -135,12 +135,12 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Đánh giá chỗ đỗ" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "Đánh giá lượng chỗ đỗ có sức chứa chính xác còn <trống>.\n" +
+                    "Hiển thị chỗ đỗ công cộng còn trống của <toàn thành phố>.\n" +
                     "<KÉM> = trống dưới 15%.\n" +
                     "<OK> = trống từ 15% đến dưới 30%.\n" +
                     "<TỐT> = trống từ 30% trở lên.\n" +
-                    "<Công cộng> dùng các cơ sở được bảng đỗ xe của Đường trong CS2 tính.\n" +
-                    "<Công trình> dùng chỗ đỗ có sức chứa chính xác trong công trình và nhà để xe."
+                    "<Công cộng trống> = chỗ công cộng hiện chưa dùng.\n" +
+                    "Đếm cùng các cơ sở như bảng đỗ xe Đường của trò chơi."
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Vị trí xe" },
@@ -190,7 +190,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} đang đỗ | khóa {1}/{2} làn{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} đang đỗ | khóa {1}/{2} | {3}/{4} khu vực{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} đường | {1} hiển thị | {2} bên trong | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = công cộng trống {1} | {2} = công trình trống {3}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, công cộng trống {2}" },
                 { ParkingStatusLocale.kShareFormat, "{0} công cộng | {1} công trình | {2} đường | {3} tổng" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "TẮT = không cấm thành phố/khu vực | đường thủ công vẫn hoạt động" },

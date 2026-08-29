@@ -1,4 +1,4 @@
-﻿// <copyright file="LocaleEN.cs" company="River-Mochi">
+// <copyright file="LocaleEN.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -192,8 +192,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} parked | {1}/{2} disabled | {3}/{4} districts{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} street | {1} visible | {2} inside | {3} OC" },
 
-           //     { ParkingStatusLocale.kSupplyFormat, "{0} = {1} public free | {2} = {3} bldg free" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, public free {2}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, public available {2}" },
 
                 { ParkingStatusLocale.kShareFormat, "{0} public | {1} bldg | {2} street | {3} total" },
                 { ParkingStatusLocale.kStatusOk, "OK" },

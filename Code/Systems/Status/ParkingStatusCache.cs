@@ -1,4 +1,4 @@
-﻿// <copyright file="ParkingStatusCache.cs" company="River-Mochi">
+// <copyright file="ParkingStatusCache.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -39,10 +39,6 @@ namespace ParkingControl
             "{0} parked | {1}/{2} disabled | {3}/{4} districts{5}";
         private const string kVehicleFormatFallback =
             "{0} street | {1} visible | {2} inside | {3} OC";
-
-       // private const string kSupplyFormatFallback =
-        //    "{0} = {1} public free | {2} = {3} bldg free";
-
         private const string kSupplyFormatFallback =
             "{0} = {1}, public free {2}";
         private const string kShareFormatFallback =

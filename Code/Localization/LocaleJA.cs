@@ -8,11 +8,10 @@
 
 // Purpose: Japanese text for Parking Control's Options UI.
 
-using System.Collections.Generic;
-using Colossal;
-
 namespace ParkingControl
 {
+    using System.Collections.Generic;
+    using Colossal;
 
     /// <summary>
     /// Japanese localization entries for <see cref="PCSettings"/>.
@@ -125,8 +124,9 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "駐車利用" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "<公共> = 駐車施設の使用中スペース。\n" +
-                    "CS2の道路・駐車情報ビューとおおむね一致します。\n" +
+                    "<市全体>の駐車利用状況を表示します。全市 / 地区別の駐車禁止範囲には従いません。\n" +
+                    "<公共> = 公共駐車施設の使用中 / 総スペース数。\n" +
+                    "CS2の道路・駐車情報ビューと同じ駐車施設データを使用します。\n" +
                     "<建物> = 建物やガレージに駐車している車。\n" +
                     "<路上> = 道路に駐車している車。\n" +
                     "<合計> = 市内で把握できる駐車車両の合計（路上 + 公共 + 建物）。\n" +
@@ -135,12 +135,12 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "駐車評価" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "正確な容量を持つ駐車場の<空き>を評価します。\n" +
+                    "<市全体>の公共駐車場の空き状況を表示します。\n" +
                     "<不足> = 空き15%未満。\n" +
                     "<OK> = 空き15%以上30%未満。\n" +
                     "<良好> = 空き30%以上。\n" +
-                    "<公共>はCS2の道路・駐車情報ビューで数える施設を使用します。\n" +
-                    "<建物>は建物やガレージの正確な容量を持つ駐車場を使用します。"
+                    "<公共空き> = 現在未使用の公共駐車スペース。\n" +
+                    "ゲームの道路・駐車情報ビューと同じ駐車施設を数えます。"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "車の場所" },
@@ -190,7 +190,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} 駐車中 | {1}/{2} 車線無効{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} 駐車中 | {1}/{2} 無効 | {3}/{4} 地区{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} 路上 | {1} 表示 | {2} 屋内 | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = 公共空き{1} | {2} = 建物空き{3}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}、公共空き {2}" },
                 { ParkingStatusLocale.kShareFormat, "{0} 公共 | {1} 建物 | {2} 路上 | {3} 合計" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "オフ = 市全体/地区の禁止なし | 手動道路は有効" },

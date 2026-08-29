@@ -8,11 +8,10 @@
 
 // Purpose: Polish text for Parking Control's Options UI.
 
-using System.Collections.Generic;
-using Colossal;
-
 namespace ParkingControl
 {
+    using System.Collections.Generic;
+    using Colossal;
 
     /// <summary>
     /// Polish localization entries for <see cref="PCSettings"/>.
@@ -125,8 +124,9 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Użycie parkingów" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "<Publiczne> = zajęte miejsca w obiektach parkingowych.\n" +
-                    "W przybliżeniu odpowiada panelowi parkowania Dróg w CS2.\n" +
+                    "Pokazuje użycie parkingów w <całym mieście>. Nie zależy od zakresu zakazu Całe miasto / według dzielnicy.\n" +
+                    "<Publiczne> = zajęte / wszystkie miejsca w parkingach publicznych.\n" +
+                    "Używa tych samych danych co panel parkowania Dróg w CS2.\n" +
                     "<Budynki> = pojazdy zaparkowane w budynkach lub garażach.\n" +
                     "<Ulica> = auta zaparkowane na ulicach.\n" +
                     "<Suma> = znane zaparkowane auta w mieście (ulica + publiczne + budynki).\n" +
@@ -135,12 +135,12 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Ocena parkingów" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "Ocenia, ile parkingu o dokładnej pojemności jest nadal <wolne>.\n" +
+                    "Pokazuje dostępność parkingów publicznych w <całym mieście>.\n" +
                     "<SŁABO> = mniej niż 15% wolne.\n" +
                     "<OK> = od 15% do mniej niż 30% wolne.\n" +
                     "<DOBRZE> = 30% lub więcej wolne.\n" +
-                    "<Publiczne> używa obiektów liczonych przez panel parkowania Dróg w CS2.\n" +
-                    "<Budynki> używa parkingów o dokładnej pojemności w budynkach i garażach."
+                    "<Publiczne wolne> = obecnie nieużywane publiczne miejsca parkingowe.\n" +
+                    "Liczy te same parkingi co panel parkowania Dróg w grze."
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Położenie aut" },
@@ -190,7 +190,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} zapark. | {1}/{2} pasów wył.{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} zapark. | {1}/{2} wył. | {3}/{4} dzielnic{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} ulica | {1} widoczne | {2} wewnątrz | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1} publ. wolne | {2} = {3} budynki wolne" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, publ. wolne {2}" },
                 { ParkingStatusLocale.kShareFormat, "{0} publ. | {1} budynki | {2} ulica | {3} suma" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "WYŁ. = zakazy miasta/dzielnic wył. | ręczne drogi działają" },
