@@ -327,11 +327,11 @@ namespace ParkingControl
         /// </summary>
         public enum ParkingScope
         {
-            // Numeric values are persisted. Do not renumber.
+            // Do not change these numbers - needed for player existing settings files.
             // AdvancedEnumDropdown, display order controlled by GetScopeDropdownItems().
-            WholeCity = 0,
             ByDistrict = 1,
-            Off = 2,
+            Off = 2,        // Visually shows as Manual Only
+            WholeCity = 0,
         }
     }
 }
