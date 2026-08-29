@@ -1,4 +1,4 @@
-// <copyright file="ParkingStatusCache.cs" company="River-Mochi">
+﻿// <copyright file="ParkingStatusCache.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -28,8 +28,10 @@ namespace ParkingControl
         private const string kUnavailableFallback = "Parking status is unavailable.";
         private const string kCollectionFailedFallback =
             "Parking status could not be collected; see ParkingControl.log.";
+
         private const string kScopeOffFallback =
-            "OFF = Whole City/District bans disabled | manual roads still work";
+            "Manual Only = city/district bans disabled | manual roads still work";
+
         private const string kManualNoneFallback = "None set";
         private const string kEnforcementFormatFallback =
             "{0} parked | {1}/{2} disabled{3}";

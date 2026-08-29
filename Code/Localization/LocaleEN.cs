@@ -52,8 +52,8 @@ namespace ParkingControl
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
                     "Choose:\n" +
                     "<1. by District>\n" +
-                    "<2. Manual only>\n" +
-                    "<3. Whole City> be careful\n" +
+                    "<2. Manual Only>\n" +
+                    "<3. Whole City Ban>\n" +
 
                     "- Eligible lanes are flagged to prevent new street parking.\n" +
                     "- Existing parked cars move gradually after parking is banned; large banned areas take longer.\n" +
@@ -62,14 +62,11 @@ namespace ParkingControl
                 },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. by District" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. Manual only" },
-                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. Whole City - be careful" },
+                { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. Whole City ban" },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Show instructions" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
-                    "Shows how to use <by District> mode.\n" +
-                    "1.a. Manual only = citywide and district restrictions are disabled; the manual road button still works per road.\n" +
-                    "1.b. Single-road <No Parking> button in the Road Services panel still applies just like applying a crosswalk.\n" +
-                    "2. Whole City = blocks all city eligible street public parking."
+                    "Shows how to use <by District> mode."
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "Show status" },
@@ -107,7 +104,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Street Parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "Shows only the selected <Whole City> or <by District> Parking Ban scope. Manual No Parking roads are listed separately.\n" +
-                    "<Manual> = Whole City/District bans are disabled; manual <No Parking> road settings still apply.\n" +
+                    "<Manual Only> = Whole City/District bans are disabled; manual <No Parking> road settings still apply.\n" +
                     "<Parked> = cars still parked on streets covered by the selected scope.\n" +
                     "<Disabled> = disabled curb-lane sections / target curb-lane sections.\n" +
                     "<Districts> = districts with the Parking Ban / total districts.\n" +
@@ -130,7 +127,7 @@ namespace ParkingControl
                     "Shows the <total city> parking use. This does not follow the Whole City / by District Parking Ban scope.\n" +
                     "<Public> = occupied / total spaces in public parking facilities.\n" +
                     "Uses the same parking facility data as CS2's Roads parking InfoView.\n" +
-                    "<Bldg> = vehicles parked at buildings or garages.\n" +
+                    "<Bldg> = cars parked at buildings or garages.\n" +
                     "<Street> = cars parked on streets.\n" +
                     "<Total> = total known in-city parked cars (street + public + building).\n" +
                     "**Outside connections and unknown staging are excluded from the total.**"
@@ -198,7 +195,7 @@ namespace ParkingControl
 
                 { ParkingStatusLocale.kShareFormat, "{0} public | {1} bldg | {2} street | {3} total" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
-                { ParkingStatusLocale.kStatusOff, "Manual = Whole City/District bans disabled | manual roads still work" },
+                { ParkingStatusLocale.kStatusOff, "Manual Only = all city/District bans disabled | manual roads still work" },
                 { ParkingStatusLocale.kManualNone, "None set" },
                 { ParkingStatusLocale.kStatusCheck, "CHECK" },
                 { ParkingStatusLocale.kRatingPoor, "POOR" },

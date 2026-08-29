@@ -1,4 +1,4 @@
-// <copyright file="ParkingStatusSystem.Report.cs" company="River-Mochi">
+﻿// <copyright file="ParkingStatusSystem.Report.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -27,6 +27,20 @@ namespace ParkingControl
             int otherDisabledCurbLanes = Math.Max(
                 0,
                 snapshot.DisabledCurbLanes - snapshot.TrackedCurbLanes);
+
+            int buildingParkingAvailable = Math.Max(
+                0,
+                snapshot.BuildingParkingCapacity - snapshot.BuildingParkingUsedSlots);
+
+            int classifiedBuildingGarageVehicles =
+                snapshot.BuildingGarageCarOccupied +
+                snapshot.BuildingGarageBicycleOccupied +
+                snapshot.BuildingGarageUnknownVehicleOccupied;
+
+            int buildingGarageRawMinusClassified =
+                snapshot.BuildingGarageRawOccupied -
+                classifiedBuildingGarageVehicles;
+
 
             bool districtScope =
                 snapshot.Scope == PCSettings.ParkingScope.ByDistrict;
@@ -179,10 +193,41 @@ namespace ParkingControl
             text.AppendLine(
                 $"VanillaRoadsInfoviewParking={snapshot.OfficialParkingOccupied}/{snapshot.OfficialParkingCapacity} " +
                 $"across {snapshot.OfficialParkingFacilities} facility entities");
+           
             text.AppendLine(
-                $"BuildingParking={snapshot.BuildingParkingOccupied}/{snapshot.BuildingParkingCapacity} " +
-                $"occupied/capacity across {snapshot.BuildingParkingLanes} exact-capacity lane entities " +
-                $"(VisibleFixedSlot={snapshot.BuildingFixedSlotLanes}, HiddenGarage={snapshot.BuildingGarageLanes})");
+                $"BuildingParkingCars={snapshot.BuildingParkingOccupied} cars across " +
+                $"{snapshot.BuildingParkingLanes} exact-capacity lane entities " +
+                $"(VisibleFixedSlot={snapshot.BuildingFixedSlotLanes}, " +
+                $"HiddenGarage={snapshot.BuildingGarageLanes})");
+
+            text.AppendLine(
+                $"BuildingParkingSlots={snapshot.BuildingParkingUsedSlots}/" +
+                $"{snapshot.BuildingParkingCapacity} used/capacity " +
+                $"(Available={buildingParkingAvailable}, " +
+                $"{FormatPercent(buildingParkingAvailable, snapshot.BuildingParkingCapacity)} free)");
+
+            text.AppendLine(
+                $"BuildingHiddenGarage=Capacity={snapshot.BuildingGarageCapacity}, " +
+                $"RawUsed={snapshot.BuildingGarageRawOccupied}, " +
+                $"Cars={snapshot.BuildingGarageCarOccupied}, " +
+                $"Bicycles={snapshot.BuildingGarageBicycleOccupied}, " +
+                $"UnknownPrefab={snapshot.BuildingGarageUnknownVehicleOccupied}, " +
+                $"RawMinusClassified={buildingGarageRawMinusClassified}");
+
+            text.AppendLine(
+                $"GarageLaneDiagnostics=" +
+                $"AllNonBorder={snapshot.GarageOccupied}/{snapshot.GarageCapacity} " +
+                $"across {snapshot.GarageLanes} lanes; " +
+                $"Primary={snapshot.GaragePrimaryOccupied}/{snapshot.GaragePrimaryCapacity} " +
+                $"across {snapshot.GaragePrimaryLanes}; " +
+                $"Slave={snapshot.GarageSlaveOccupied}/{snapshot.GarageSlaveCapacity} " +
+                $"across {snapshot.GarageSlaveLanes}; " +
+                $"NoConnection={snapshot.GarageWithoutConnectionOccupied}/" +
+                $"{snapshot.GarageWithoutConnectionCapacity} " +
+                $"across {snapshot.GarageWithoutConnectionLanes}; " +
+                $"PrimaryNonCar={snapshot.GarageNonCarPrimaryLanes}; " +
+                $"CarNonBuilding={snapshot.GarageCarNonBuildingLanes}");
+
             text.AppendLine(
                 $"BuildingContinuousParking={snapshot.BuildingContinuousOccupied} parked cars across " +
                 $"{snapshot.BuildingContinuousLanes} unslotted lane entities excluded from capacity percentage");
@@ -191,9 +236,7 @@ namespace ParkingControl
                 $"(Street={snapshot.StreetParked}, Public={snapshot.OfficialParkingOccupied}, " +
                 $"Building={snapshot.BuildingParkingOccupied}); " +
                 $"StreetUsage={FormatPercent(snapshot.StreetParked, snapshot.KnownInCityParking)}");
-            text.AppendLine(
-                $"NonBorderGarageLanes={snapshot.GarageOccupied}/{snapshot.GarageCapacity} occupied/capacity " +
-                $"across {snapshot.GarageLanes} garage lane entities");
+
             text.AppendLine();
             text.AppendLine("-------------------- CHANGES SINCE PREVIOUS REPORT --------------------");
             text.AppendLine("ChangeSincePrevious:");
@@ -261,6 +304,22 @@ namespace ParkingControl
             text.AppendLine(
                 "Note: NoLongerTracked means the entity still exists but no longer matches this " +
                 "report's current personal-vehicle query.");
+
+            text.AppendLine(
+                "Note: BuildingParkingCapacity uses current live GarageLane capacity plus exact " +
+                "fixed-slot parking owned by buildings. Runtime capacity changes made by other mods " +
+                "are therefore reflected automatically.");
+
+            text.AppendLine(
+                "Note: BuildingHiddenGarage RawUsed is the game's GarageLane vehicle count and can " +
+                "include bicycles. Cars and Bicycles are independently classified from parked " +
+                "personal vehicles for diagnostics.");
+
+            text.AppendLine(
+                "Note: BuildingParkingSlots uses raw hidden-garage occupancy because bicycles using " +
+                "the same GarageLane consume shared garage capacity; BuildingParkingCars remains " +
+                "motor vehicles only.");
+
             text.Append($"==================== {Mod.ModTag} END OF PARKING REPORT ====================");
             LogUtils.Info(text.ToString());
 

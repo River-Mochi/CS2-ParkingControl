@@ -1,4 +1,4 @@
-// <copyright file="ParkingStatusModels.cs" company="River-Mochi">
+﻿// <copyright file="ParkingStatusModels.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -6,7 +6,7 @@
 // This notice MUST be kept with copies or substantial portions of this code.
 // ================= </copyright> ======================
 
-// Purpose: Holds the short-lived models shared by parking probes, status text, and log reports.
+// Purpose: Holds short-lived models shared by parking probes, status text, and log reports.
 
 using System;
 using System.Collections.Generic;
@@ -109,16 +109,46 @@ namespace ParkingControl
         public int OfficialParkingFacilities;
         public int OfficialParkingCapacity;
         public int OfficialParkingOccupied;
+
+        
         public int BuildingParkingLanes;
         public int BuildingParkingCapacity;
+
+        // Cars only. Used by the normal Options "bldg" parking-use row.
         public int BuildingParkingOccupied;
+
+        // Actual exact-capacity slots currently consumed. Hidden GarageLane occupancy
+        // can include bicycles bc the game uses the same GarageLane capacity pool.
+        public int BuildingParkingUsedSlots;
+
         public int BuildingFixedSlotLanes;
         public int BuildingGarageLanes;
+        public int BuildingGarageCapacity;
+        public int BuildingGarageRawOccupied;
+        public int BuildingGarageCarOccupied;
+        public int BuildingGarageBicycleOccupied;
+        public int BuildingGarageUnknownVehicleOccupied;
         public int BuildingContinuousLanes;
         public int BuildingContinuousOccupied;
+
+        // All non-border GarageLane entities. report-only counters help verify
+        // that duplicate/slave lanes are not being treated as independent capacity.
         public int GarageLanes;
         public int GarageCapacity;
         public int GarageOccupied;
+        public int GaragePrimaryLanes;
+        public int GaragePrimaryCapacity;
+        public int GaragePrimaryOccupied;
+        public int GarageSlaveLanes;
+        public int GarageSlaveCapacity;
+        public int GarageSlaveOccupied;
+        public int GarageWithoutConnectionLanes;
+        public int GarageWithoutConnectionCapacity;
+        public int GarageWithoutConnectionOccupied;
+        public int GarageNonCarPrimaryLanes;
+        public int GarageCarNonBuildingLanes;
+
+
         public int Districts;
         public int DistrictsWithPolicy;
 
