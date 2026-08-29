@@ -8,13 +8,14 @@
 
 // Purpose: Writes parking report summaries, enforcement details, and district totals.
 
+using System;
+using System.Collections.Generic;
+using System.Text;
+using CS2Shared.RiverMochi;
+using Unity.Entities;
+
 namespace ParkingControl
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-    using CS2Shared.RiverMochi;
-    using Unity.Entities;
 
     public sealed partial class ParkingStatusSystem
     {
@@ -76,6 +77,9 @@ namespace ParkingControl
             text.AppendLine(
                 $"DistrictPolicy=Active in {snapshot.DistrictsWithPolicy}/{snapshot.Districts} districts " +
                 $"(PolicyEntity={FormatEntity(ParkingPolicySystem.PolicyEntity)})");
+            ParkingRelocationSystem? relocationSystem =
+                World.GetExistingSystemManaged<ParkingRelocationSystem>();
+            AppendAutomaticRelocationReport(text, relocationSystem?.GetReport());
             text.AppendLine();
             text.AppendLine("-------------------- STREET PARKING CONTROL --------------------");
             text.AppendLine($"EligibleStreetParkingLanes={snapshot.CurbLanes}");
@@ -90,6 +94,8 @@ namespace ParkingControl
                 $"(ParkingControlTracked={snapshot.TrackedCurbLanes}, VanillaOrOther={otherDisabledCurbLanes})");
             text.AppendLine($"EnforcementStatus={enforcementStatus}");
             text.AppendLine($"EnforcementDetails={enforcementDetails}");
+
+            AppendUnresolvedTargetLanes(text, snapshot, details);
             text.AppendLine(
                 $"OccupiedStreetParkingLanes={snapshot.OccupiedCurbLanes}/{snapshot.CurbLanes} " +
                 $"({FormatPercent(snapshot.OccupiedCurbLanes, snapshot.CurbLanes)} of lane entities; not a parking-space percentage)");
@@ -123,10 +129,17 @@ namespace ParkingControl
                 $"ParkedElsewhere={snapshot.ParkedElsewhere} " +
                 $"(VisibleOffStreet={snapshot.VisibleOffStreet}, HiddenInBuildings={snapshot.HiddenInBuildings}, " +
                 $"OutsideConnection={snapshot.OutsideConnection}, UnassignedOrUnknown={snapshot.UnassignedOrUnknownParked})");
+
             text.AppendLine(
                 $"UnknownParkedDetails={snapshot.UnassignedOrUnknownParked} total " +
                 $"(NullLane={snapshot.UnknownNullLane}, MissingLaneEntity={snapshot.UnknownMissingLane}, " +
-                $"Unspawned={snapshot.UnknownUnspawned})");
+                $"Unspawned={snapshot.UnknownUnspawned}, " +
+                $"NullLaneUnspawned={snapshot.UnknownNullLaneUnspawned})");
+
+            text.AppendLine(
+                $"LocationFallbacks=OutsideConnection={snapshot.OutsideConnection}, " +
+                $"NullLaneUnspawned={snapshot.UnknownNullLaneUnspawned}");
+
             text.AppendLine(
                 $"UnknownOwnership=ValidLiveHousehold={snapshot.UnknownValidHouseholdOwned}, " +
                 $"HouseholdInvalid={snapshot.UnknownHouseholdOwnershipInvalid}, " +
@@ -194,8 +207,11 @@ namespace ParkingControl
                     $"    ParkedElsewhere={FormatDelta(snapshot.ParkedElsewhere - m_PreviousReport.ParkedElsewhere)}");
                 text.AppendLine(
                     $"    OutsideConnection={FormatDelta(snapshot.OutsideConnection - m_PreviousReport.OutsideConnection)}");
+
                 text.AppendLine(
                     $"    OutsideHidden={FormatDelta(snapshot.OutsideConnectionHidden - m_PreviousReport.OutsideConnectionHidden)}");
+                text.AppendLine(
+                    $"    NullLaneUnspawned={FormatDelta(snapshot.UnknownNullLaneUnspawned - m_PreviousReport.UnknownNullLaneUnspawned)}");
             }
             else
             {
@@ -261,6 +277,82 @@ namespace ParkingControl
             m_HasPreviousReport = true;
         }
 
+        private static void AppendAutomaticRelocationReport(
+            StringBuilder text,
+            AutomaticRelocationReport? report)
+        {
+            text.AppendLine();
+            text.AppendLine("-------------------- AUTOMATIC RELOCATION --------------------");
+
+            if (!report.HasValue)
+            {
+                text.AppendLine("State=Unavailable (ParkingRelocationSystem was not loaded)");
+                return;
+            }
+
+            AutomaticRelocationReport automatic = report.Value;
+            text.AppendLine(
+                $"Tuning={automatic.FrameInterval} frames, " +
+                $"{automatic.LaneRequestsPerPass} lanes/pass, " +
+                $"{automatic.CarsPerPass} cars/pass");
+            text.AppendLine($"State={(automatic.IsActive ? "Active" : "Idle")}");
+            text.AppendLine($"DelayedCleanup={automatic.CleanupState}");
+            text.AppendLine(
+                $"CleanupLaneRequestsPending=" +
+                $"{automatic.CleanupLaneRequestsPending}");
+            text.AppendLine(
+                $"ParkingControlFixParkingPending=" +
+                $"{automatic.ParkingControlFixParkingPending} " +
+                "(Parking Control handoffs only)");
+
+            if (automatic.CleanupDueFrame != 0u)
+            {
+                text.AppendLine($"CleanupDueFrame={automatic.CleanupDueFrame}");
+            }
+
+            text.AppendLine($"CyclesStarted={automatic.CyclesStarted}");
+
+            if (!automatic.HasRun)
+            {
+                text.AppendLine("No automatic relocation has run since this city was loaded.");
+                text.AppendLine($"LaneRequestsPending={automatic.LaneRequestsPending}");
+                text.AppendLine($"CarsPending={automatic.CarsPending}");
+                text.AppendLine(
+                    $"VanillaFixParkingPendingAllSources=" +
+                    $"{automatic.VanillaFixParkingPendingAllSources} " +
+                    "(global count; includes vanilla and other mods)");
+                return;
+            }
+
+            text.AppendLine($"Passes={automatic.Passes}");
+            text.AppendLine($"LaneRequestsProcessed={automatic.LaneRequestsProcessed}");
+            text.AppendLine($"LaneRequestsPending={automatic.LaneRequestsPending}");
+            text.AppendLine($"CarsQueued={automatic.CarsQueued}");
+            text.AppendLine($"CarsSentToVanilla={automatic.CarsSentToVanilla}");
+            text.AppendLine($"CarsSkipped={automatic.CarsSkipped}");
+            text.AppendLine($"CarsPending={automatic.CarsPending}");
+            text.AppendLine($"StartFrame={automatic.StartFrame}");
+            text.AppendLine(
+                $"EndFrame={automatic.EndFrame}" +
+                (automatic.IsActive ? " (current)" : string.Empty));
+            text.AppendLine(
+                $"ElapsedSimulationFrames={automatic.ElapsedSimulationFrames}");
+            text.AppendLine(
+                $"ElapsedWallSeconds=" +
+                automatic.ElapsedWallSeconds.ToString(
+                    "0.000",
+                    System.Globalization.CultureInfo.InvariantCulture));
+            text.AppendLine(
+                $"MaxPCPassMilliseconds=" +
+                automatic.MaxPCPassMilliseconds.ToString(
+                    "0.000",
+                    System.Globalization.CultureInfo.InvariantCulture) +
+                " (PC collection, validation, and ECB playback only)");
+            text.AppendLine(
+                $"VanillaFixParkingPendingAllSources=" +
+                $"{automatic.VanillaFixParkingPendingAllSources} " +
+                "(global count; includes vanilla and other mods)");
+        }
         private static void ReplaceSamples(List<Entity> destination, List<Entity> source)
         {
             destination.Clear();
@@ -313,6 +405,58 @@ namespace ParkingControl
                     $"{district.StreetCars} parked ({district.OccupiedLanes} lanes) | " +
                     $"{district.DisabledLanes}/{district.EligibleLanes} disabled | " +
                     $"{status} | Change={change}");
+            }
+        }
+
+        private void AppendUnresolvedTargetLanes(
+            StringBuilder text,
+            ParkingSnapshot snapshot,
+            ParkingReportDetails details)
+        {
+            text.AppendLine();
+            text.AppendLine(
+                "-------------------- UNRESOLVED TARGET LANES --------------------");
+
+            text.AppendLine(
+                $"UnresolvedTargetLanes={details.UnresolvedTargetLaneCount} " +
+                $"(showing {details.UnresolvedTargetLanes.Count})");
+
+            if (details.UnresolvedTargetLanes.Count == 0)
+            {
+                text.AppendLine("  <none>");
+                return;
+            }
+
+            foreach (UnresolvedTargetLane item in
+                details.UnresolvedTargetLanes)
+            {
+                string source;
+
+                if (item.ManualTarget && item.ScopeTarget)
+                {
+                    source = "Both";
+                }
+                else if (item.ManualTarget)
+                {
+                    source = "Manual";
+                }
+                else
+                {
+                    source =
+                        snapshot.Scope == PCSettings.ParkingScope.ByDistrict
+                            ? "District"
+                            : "WholeCity";
+                }
+
+                text.AppendLine(
+                    $"  Lane={FormatEntity(item.Lane)} | " +
+                    $"Road={FormatEntity(item.Road)} | " +
+                    $"Side={(item.RightSide ? "Right" : "Left")} | " +
+                    $"District={GetDistrictName(item.District)} " +
+                    $"[{FormatEntity(item.District)}] | " +
+                    $"Source={source} | " +
+                    $"ParkingDisabled={item.ParkingDisabled} | " +
+                    $"StreetParkingState={item.StreetParkingState}");
             }
         }
 

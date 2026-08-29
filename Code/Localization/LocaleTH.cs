@@ -44,47 +44,58 @@ namespace ParkingControl
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStatusGroup), "สถานะรถส่วนบุคคล" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "ข้อมูลม็อด" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "ลิงก์" },
-                { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutDiagnosticsGroup), "การวินิจฉัย" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutDebugGroup), "การวินิจฉัย" },
 
                 // Street-parking controls.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "ห้ามจอดรถริมถนน" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
                     "เลือก:\n" +
-                    "**ตามเขต**\n" +
-                    "**ทั้งเมือง**\n" +
-                    "หรือ **ปิด**\n" +
-                    "- ช่องจอดริมถนนที่เข้าเกณฑ์จะถูกปิดเพื่อไม่ให้รถเข้าจอดใหม่\n" +
-                    "- รถที่จอดอยู่แล้วจะออกไปตามปกติเมื่อเจ้าของนำรถไปใช้ครั้งถัดไป\n" +
-                    "- ลานจอดรถแบบเก็บค่าธรรมเนียมและที่จอดรถของอาคารยังใช้งานได้ตามปกติ\n" +
-                    "**ถนนบางประเภทไม่อนุญาตให้จอดริมถนนอยู่แล้ว เช่น ทางหลวงและตรอกขนาดเล็กแบบสองทาง**" },
+                    "<1. ตามเขต>\n" +
+                    "<2. ทั้งเมือง>\n" +
+                    "<3. ปิด>\n" +
+                    "- ช่องจอดริมถนนที่เข้าเกณฑ์จะถูกปิดเพื่อไม่ให้รถใหม่เข้าจอด\n" +
+                    "- รถที่จอดอยู่จะทยอยย้ายหลังเปิดการห้าม พื้นที่ใหญ่ใช้เวลานานกว่า\n" +
+                    "- ลานจอดแบบเก็บค่าธรรมเนียมและที่จอดรถของอาคารยังใช้งานได้\n" +
+                    "**ถนนบางประเภทไม่อนุญาตให้จอดริมถนนอยู่แล้ว เช่น ทางหลวงและตรอกเล็กแบบสองทาง**"
+                },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "ทั้งเมือง" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "ตามเขต" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "ปิด" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "แสดงคำแนะนำ" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
                     "แสดงวิธีใช้โหมด <ตามเขต>\n" +
-                    "1.a. ปิด = ปิดข้อจำกัดทั้งเมืองและตามเขต โดยส่วนใหญ่จะกลับสู่ค่าปกติของเกม\n" +
-                    "1.b. ปุ่ม <ห้ามจอดรถ> สำหรับถนนแต่ละช่วงในแผงบริการถนนยังใช้ได้เหมือนเดิม คล้ายกับการเพิ่มทางม้าลาย\n" +
-                    "2. ทั้งเมือง = ปิดการจอดรถสาธารณะริมถนนที่เข้าเกณฑ์ทั่วทั้งเมือง" },
+                    "1.a. ปิด = ปิดข้อจำกัดทั้งเมืองและตามเขต โดยส่วนใหญ่กลับสู่ค่าปกติของเกม\n" +
+                    "1.b. ปุ่ม <ห้ามจอดรถ> สำหรับถนนแต่ละเส้นในบริการถนนยังใช้ได้เหมือนการเพิ่มทางม้าลาย\n" +
+                    "2. ทั้งเมือง = ปิดการจอดรถสาธารณะริมถนนที่เข้าเกณฑ์ทั่วเมือง"
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "แสดงสถานะ" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowStatus)),
                     "<แสดงยอดรวมการจอดรถปัจจุบันด้านล่าง>\n" +
-                    "สถานะจะถูกรวบรวมเฉพาะขณะที่เปิดเมนูตัวเลือกเท่านั้น ไม่มีการสแกนสถานะเบื้องหลังระหว่างเล่นเมือง" },
+                    "สถานะจะถูกรวบรวมเฉพาะขณะที่เปิดเมนูตัวเลือก\n" +
+                    "ไม่มีการสแกนเบื้องหลังระหว่างเล่นเมือง"
+                },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.DistrictInstructions)),
                     "<โหมดตามเขต>\n" +
                     "1. เลือก <ตามเขต> ด้านบน\n" +
                     "2. สร้าง/เลือกเขตในเมือง\n" +
-                    "3. เปิดแผง <นโยบาย> แล้วเปิด **ห้ามจอดรถริมถนน [✓]**\n" +
-                    "4. สามารถเปิดทั้งการห้ามจอดและค่าจอดรถพร้อมกันได้ ค่าจอดรถจะคิดกับรถที่ยังคงอยู่หรือเล็ดลอดเข้ามา\n" +
-                    "ถนนนอกเขตที่ห้ามจอดยังคงมีการจอดริมถนนตามปกติ" },
+                    "3. เปิด <นโยบาย> แล้วเปิด **ห้ามจอดรถริมถนน [✓]**\n" +
+                    "4. เปิดทั้งการห้ามจอดและค่าจอดพร้อมกันได้ ค่าจอดจะคิดกับรถที่ยังอยู่หรือยังเข้ามาจอดได้\n" +
+                    "ถนนนอกเขตที่ห้ามจอดยังจอดริมถนนได้ตามปกติ"
+                },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
 
                 // In-city Roads Services tool.
                 { $"Assets.NAME[{ManualNoParkingToolSystem.kToolId}]", "ห้ามจอดรถ" },
-                { $"Assets.DESCRIPTION[{ManualNoParkingToolSystem.kToolId}]", "เปิดหรือปิดการจอดรถริมถนนบนด้านหนึ่งของถนน หากต้องการหลายด้าน ให้ลากผ่านด้านเหล่านั้นก่อนปล่อยปุ่มเมาส์ซ้าย" },
+                { $"Assets.DESCRIPTION[{ManualNoParkingToolSystem.kToolId}]", "เปิดหรือปิดการจอดริมถนนด้านหนึ่ง หากต้องการหลายด้าน ให้ลากผ่านก่อนปล่อยปุ่มเมาส์ซ้าย" },
+
                 // In-city district policy.
                 { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "ห้ามจอดรถริมถนน" },
-                { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]", "ป้องกันรถยนต์และรถจักรยานยนต์ไม่ให้จอดริมถนนในเขตนี้ รถที่จอดอยู่แล้วจะออกไปเมื่อเจ้าของนำรถไปใช้ครั้งถัดไป" },
+                { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]",
+                    "ห้ามรถยนต์และรถจักรยานยนต์จอดริมถนนในเขตนี้\n" +
+                    "- รถที่จอดอยู่จะทยอยย้าย พื้นที่ใหญ่ใช้เวลานานกว่า"
+                },
+
                 // Native mouse action hints for the No Parking road tool.
                 { $"Common.ACTION[{ManualNoParkingTooltipSystem.kUpgradeHintId}]", "เพิ่ม" },
                 { $"Common.ACTION[{ManualNoParkingTooltipSystem.kDowngradeHintId}]", "นำออก" },
@@ -92,69 +103,102 @@ namespace ParkingControl
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "การจอดรถริมถนน" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<จอดอยู่> = รถที่ยังจอดบนด้านถนนที่ Parking Control ตั้งเป็นห้ามจอด\n" +
-                    "<ช่อง> = ส่วนของที่จอดริมถนนที่มีรถเหล่านั้นอยู่ หนึ่งส่วนอาจรองรับรถได้หลายคัน\n" +
-                    "<ปิดใช้งาน> = ส่วนของช่องจอดที่ปิดไม่ให้รถใหม่เข้าจอด ถนนหนึ่งเส้นอาจมีหลายส่วน\n" +
-                    "<ปิด + ห้ามจอดแบบกำหนดเอง> = ปิดจะยกเลิกการห้ามทั้งเมืองและตามเขต แต่ด้านถนนที่ตั้งห้ามจอดด้วยตนเองยังคงทำงาน แถวนี้จะแสดงเฉพาะการห้ามแบบกำหนดเองเหล่านั้น\n" +
+                    "แสดงเฉพาะขอบเขต <ทั้งเมือง> หรือ <ตามเขต> ที่เลือก การห้ามแบบกำหนดเองแสดงแยกกัน\n" +
+                    "<ปิด> = ปิดการห้ามทั้งเมือง/ตามเขต แต่ถนนที่ตั้ง <ห้ามจอดรถ> เองยังทำงาน\n" +
+                    "<จอดอยู่> = รถที่ยังจอดบนถนนในขอบเขตที่เลือก\n" +
+                    "<ปิดใช้งาน> = ส่วนช่องริมขอบทางที่ปิด / ส่วนเป้าหมาย\n" +
+                    "<เขต> = เขตที่เปิดการห้าม / เขตทั้งหมด\n" +
+                    "<ตรวจสอบ> = บางส่วนเป้าหมายยังไม่ตรงกับการห้ามที่เลือก\n" +
                     "<---------------------->\n" +
-                    "หากเลือก <ตามเขต> จะแสดง:\n" +
-                    "- ช่องที่มีรถจอดในเขตห้ามจอด / ช่องที่มีรถจอดทั่วเมือง\n" +
-                    "- ช่องที่ปิดใช้งาน / ช่องที่เข้าเกณฑ์ทั่วเมือง\n" +
-                    "- เขตที่เปิดใช้งาน / เขตทั้งหมด\n" +
-                    "<---------------------->\n" +
-                    "หมายเหตุ: หลังจากเปลี่ยนหรือสร้างถนนใหม่ จำนวนส่วนที่ปิดใช้งานอาจต้องใช้เวลาสักเล็กน้อยระหว่างที่ CS2 สร้างช่องจอดใหม่ ให้รันเมืองสักครู่แล้วเปิดตัวเลือกอีกครั้ง" },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "การใช้ถนน" },
+                    "**หาก [ตรวจสอบ] แสดงหลังเปลี่ยนหรือสร้างถนนใหม่ ให้รันเมืองสักพักแล้วเปิด ตัวเลือก > สถานะ ใหม่ หากยังอยู่ ให้ใช้ เกี่ยวกับ > การวินิจฉัย > เขียนรายงาน**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ManualStatus)), "ห้ามจอดแบบกำหนดเอง" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ManualStatus)),
+                    "แสดงเฉพาะถนนที่ตั้งด้วยเครื่องมือ <ห้ามจอดรถ> แบบกำหนดเอง\n" +
+                    "<จอดอยู่> = รถที่ยังจอดบนถนนที่ห้ามเอง\n" +
+                    "<ปิดใช้งาน> = ส่วนช่องริมขอบทางที่ปิด / ส่วนที่เลือกเอง\n" +
+                    "การห้ามแบบกำหนดเองอาจซ้อนกับทั้งเมืองหรือเขต อย่านำแถวนี้ไปรวมกับ <การจอดรถริมถนน>\n" +
+                    "**หาก [ตรวจสอบ] ยังแสดงหลังรันเมืองสักพัก ให้ใช้ เกี่ยวกับ > การวินิจฉัย > เขียนรายงาน และส่งเมื่อขอความช่วยเหลือ**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "การใช้ที่จอดรถ" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "แถวนี้รวมข้อมูลของ <ทั้งเมือง> ไม่ใช่เฉพาะเขต\n" +
-                    "<จอดบนถนน> = เปอร์เซ็นต์ของรถที่จอดบนถนนแทนลานจอดสาธารณะหรือที่จอดของอาคาร\n" +
-                    "<กำลังใช้งาน> = รถส่วนบุคคลที่กำลังขับหรือรอในการจราจร\n" +
-                    "<สูตร> = ถนน ÷ (ถนน + สาธารณะที่ใช้อยู่ + อาคารที่ใช้อยู่)\n" +
-                    "**ไม่รวมที่เก็บรถที่จุดเชื่อมต่อนอกเมือง (OC) และรถที่ยังไม่มีช่องจอดที่กำหนด**" },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "ที่จอดรถ" },
+                    "แสดงการใช้ที่จอดรถของ<ทั้งเมือง> ไม่อิงขอบเขตห้ามจอด ทั้งเมือง / ตามเขต\n" +
+                    "<สาธารณะ> = ช่องที่ใช้ / ช่องทั้งหมดในลานจอดสาธารณะ\n" +
+                    "ใช้ข้อมูลสถานที่จอดเดียวกับแผงข้อมูลที่จอดรถของถนนใน CS2\n" +
+                    "<อาคาร> = รถที่จอดในอาคารหรือโรงจอด\n" +
+                    "<ถนน> = รถที่จอดบนถนน\n" +
+                    "<รวม> = รถที่ทราบว่าจอดอยู่ในเมือง (ถนน + สาธารณะ + อาคาร)\n" +
+                    "**ไม่รวมจุดเชื่อมต่อนอกเมืองและพื้นที่พักรถที่ไม่ทราบตำแหน่ง**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "ระดับที่จอดรถ" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "แสดงการใช้ที่จอดรถทั่วเมือง\n" +
-                    "<สาธารณะ> ใช้แล้ว = สถานที่ที่นับโดย Parking InfoView ของเกม\n" +
-                    "<อาคาร> ใช้แล้ว = ที่จอดรถที่รวมอยู่กับบ้าน ที่ทำงาน และร้านค้า\n" +
-                    "**เปอร์เซ็นต์การใช้งานที่สูงขึ้น = อาจต้องมีที่จอดรถเพิ่ม**" },
+                    "แสดงที่จอดสาธารณะที่ว่างของ<ทั้งเมือง>\n" +
+                    "<แย่> = ว่างน้อยกว่า 15%\n" +
+                    "<OK> = ว่าง 15% ถึงน้อยกว่า 30%\n" +
+                    "<ดี> = ว่าง 30% ขึ้นไป\n" +
+                    "<สาธารณะว่าง> = ช่องจอดสาธารณะที่ยังไม่ได้ใช้\n" +
+                    "นับลานจอดเดียวกับแผงข้อมูลที่จอดรถของถนนในเกม"
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "ตำแหน่งรถ" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VehicleStatus)),
-                    "แถวนี้แสดงข้อมูลทั่วเมือง ไม่ใช่เฉพาะเขตที่มีการห้ามจอด\n" +
+                    "แถวนี้แสดงข้อมูลทั่วเมือง ไม่ใช่เฉพาะเขตที่ห้ามจอด\n" +
                     "<ถนน> = จอดบนถนนสาธารณะ\n" +
-                    "<มองเห็น> = รถที่มองเห็นและคลิกได้ในลานกลางแจ้งหรือที่จอดกลางแจ้งที่รวมกับอาคาร\n" +
+                    "<มองเห็น> = รถที่มองเห็นและคลิกได้ในลานกลางแจ้งหรือที่จอดกลางแจ้งของอาคาร\n" +
                     "<ภายใน> = อยู่ในอาคารหรือโรงจอดรถ\n" +
-                    "<OC> = ที่เก็บรถตรงจุดเชื่อมต่อนอกเมืองบริเวณขอบเมือง รถของครัวเรือนที่เข้ามาบางคันเริ่มต้นที่นั่น (พื้นที่พักรถ)\n" +
-                    "รถที่ยังไม่มีช่องจอดที่กำหนดจะไม่แสดงที่นี่ และจะแสดงเฉพาะในรายงานล็อก (แท็บเกี่ยวกับ)" },
+                    "<OC> = ที่เก็บรถตรงจุดเชื่อมต่อนอกเมืองบริเวณขอบเมือง รถของครัวเรือนที่เข้ามาบางคันเริ่มที่นั่น (พื้นที่พักรถ)\n" +
+                    "รถที่ไม่มีช่องจอดที่กำหนดจะไม่แสดงที่นี่ และมีเฉพาะในรายงาน log (แท็บเกี่ยวกับ)"
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.UpdatedStatus)), "อัปเดต" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.UpdatedStatus)), "เวลาที่ค่ารวมสถานะทั่วเมืองเหล่านี้ถูกรีเฟรชล่าสุด" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.UpdatedStatus)), "เวลาที่ค่าทั่วเมืองเหล่านี้ถูกรีเฟรชล่าสุด" },
 
                 // About tab.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NameText)), "ชื่อม็อด" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VersionText)), "เวอร์ชัน" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenParadox)), "ลิงก์ Paradox Mods" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenParadox)), "เปิดหน้าของผู้สร้างบน Paradox Mods" },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ReportToLog)), "เขียนรายงานการจอดรถ" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenParadox)), "เปิดหน้าผู้สร้างบน Paradox Mods" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ReportToLog)), "เขียนรายงาน" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ReportToLog)),
-                    "เขียนรายละเอียดการจอดริมถนนและข้อมูลที่เกี่ยวข้องไปยัง\n" +
+                    "เขียนรายละเอียดการจอดริมถนนและข้อมูลที่เกี่ยวข้องไปที่ \n" +
                     "<Logs/ParkingControl.log>\n" +
-                    "หากต้องการตรวจสอบเพิ่มเติม ให้เขียนรายงานครั้งที่ 2 ภายหลังในเมืองเดิมที่โหลดอยู่\n" +
-                    "- เปรียบเทียบตัวอย่าง Entity ID สูงสุด 20 รายการจากหมวดต่าง ๆ\n" +
+                    "หากต้องการ ให้เขียนรายงานครั้งที่ 2 ภายหลังในเมืองเดิมที่โหลดอยู่\n" +
+                    "- เปรียบเทียบ Entity ID ตัวอย่างสูงสุด 20 รายการจากหลายกลุ่ม\n" +
                     "- แสดงว่าแต่ละตัวอย่างยังอยู่ เริ่มขับ ไปจอดที่อื่น หรือหายไป\n" +
-                    "- ต้องใช้ม็อด Scene Explorer เพื่อติดตามหมายเลข Entity ID ในเมือง" },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenLog)), "เปิดล็อก" },
+                    "- ต้องใช้ Scene Explorer เพื่อติดตาม Entity ID ในเมือง"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenLog)), "เปิด log" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)), "เปิด <Logs/ParkingControl.log> หรือโฟลเดอร์ Logs หากยังไม่มีไฟล์" },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VerboseLog)), "Log แบบละเอียด" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VerboseLog)),
+                    "รายละเอียด DEBUG อัตโนมัติ\n" +
+                    "ไม่เหมาะกับการเล่นปกติ ให้ปิดถ้าไม่ได้ดีบัก\n" +
+                    "เขียนรายงานยังใช้ได้เมื่อปิด"
+                },
+
                 // Dynamic values used by the live status rows.
                 { ParkingStatusLocale.kLoadCity, "ยังไม่ได้โหลดเมือง" },
                 { ParkingStatusLocale.kCollecting, "กำลังรวบรวมสถานะการจอดรถ..." },
-                { ParkingStatusLocale.kUnavailable, "ไม่สามารถดูสถานะการจอดรถได้" },
-                { ParkingStatusLocale.kCollectionFailed, "ไม่สามารถรวบรวมสถานะการจอดรถได้ โปรดดู ParkingControl.log" },
-                { ParkingStatusLocale.kCompactEnforcementFormat, "{0} คันจอดอยู่ ({1} ช่อง) | ปิด {2}/{3}{4}" },
-                { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} คันจอดอยู่ ({1}/{2} ช่อง) | ปิด {3}/{4} | {5}/{6} เขต{7}" },
+                { ParkingStatusLocale.kUnavailable, "ไม่มีสถานะการจอดรถ" },
+                { ParkingStatusLocale.kCollectionFailed, "รวบรวมสถานะการจอดรถไม่ได้ โปรดดู ParkingControl.log" },
+                { ParkingStatusLocale.kCompactEnforcementFormat, "{0} จอดอยู่ | ปิด {1}/{2}{3}" },
+                { ParkingStatusLocale.kManualEnforcementFormat, "{0} จอดอยู่ | ปิด {1}/{2} ช่อง{3}" },
+                { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} จอดอยู่ | ปิด {1}/{2} | {3}/{4} เขต{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} ถนน | {1} มองเห็น | {2} ภายใน | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} สาธารณะ {1}/{2} | {3} อาคาร {4}/{5}" },
-                { ParkingStatusLocale.kShareFormat, "{0} จอดบนถนน {1} | {2} ใช้งาน" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, สาธารณะว่าง {2}" },
+                { ParkingStatusLocale.kShareFormat, "{0} สาธารณะ | {1} อาคาร | {2} ถนน | {3} รวม" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
-                { ParkingStatusLocale.kStatusOff, "ปิด" },
+                { ParkingStatusLocale.kStatusOff, "ปิด = ไม่ห้ามทั้งเมือง/เขต | ถนนที่ตั้งเองยังทำงาน" },
+                { ParkingStatusLocale.kManualNone, "ยังไม่ได้ตั้ง" },
                 { ParkingStatusLocale.kStatusCheck, "ตรวจสอบ" },
+                { ParkingStatusLocale.kRatingPoor, "แย่" },
+                { ParkingStatusLocale.kRatingGood, "ดี" },
+                { ParkingStatusLocale.kRatingNA, "N/A" },
             };
         }
 

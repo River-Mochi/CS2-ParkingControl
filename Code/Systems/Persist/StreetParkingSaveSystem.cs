@@ -8,13 +8,14 @@
 
 // Purpose: Keeps mod-owned vanilla parking flags out of save data without changing the live path graph.
 
+using Game;
+using Game.Common;
+using Game.Net;
+using Unity.Collections;
+using Unity.Entities;
+
 namespace ParkingControl
 {
-    using Game;
-    using Game.Common;
-    using Game.Net;
-    using Unity.Collections;
-    using Unity.Entities;
 
     /// <summary>
     /// Clears only the mod-owned vanilla lane flag immediately before serialization.

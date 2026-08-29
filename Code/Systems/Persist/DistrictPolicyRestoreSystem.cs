@@ -8,13 +8,14 @@
 
 // Purpose: Recreates native district-policy checkboxes from uninstall-safe saved markers.
 
+using Game;
+using Game.Common;
+using Game.Tools;
+using Unity.Collections;
+using Unity.Entities;
+
 namespace ParkingControl
 {
-    using Game;
-    using Game.Common;
-    using Game.Tools;
-    using Unity.Collections;
-    using Unity.Entities;
 
     /// <summary>
     /// Restores runtime policy-buffer entries after loading and after save serialization.

@@ -8,24 +8,25 @@
 
 // Purpose: Defines immediately persisted Parking Control Options UI settings.
 
+using System;
+using Colossal.IO.AssetDatabase;
+using Colossal.Json;
+using CS2Shared.RiverMochi;
+using Game.Modding;
+using Game.Settings;
+using Unity.Entities;
+using UnityEngine;
+
 namespace ParkingControl
 {
-    using System;
-    using Colossal.IO.AssetDatabase;
-    using Colossal.Json;
-    using CS2Shared.RiverMochi;
-    using Game.Modding;
-    using Game.Settings;
-    using Unity.Entities;
-    using UnityEngine;
 
     /// <summary>
     /// Stores Parking Control options.
     /// </summary>
     [FileLocation("ModsSettings/" + Mod.ModId + "/" + Mod.ModId)]
     [SettingsUITabOrder(kActionsTab, kAboutTab)]
-    [SettingsUIGroupOrder(kStreetParkingGroup, kStatusGroup, kAboutInfoGroup, kAboutLinksGroup, kAboutDiagnosticsGroup)]
-    [SettingsUIShowGroupName(kStreetParkingGroup, kStatusGroup, kAboutLinksGroup, kAboutDiagnosticsGroup)]
+    [SettingsUIGroupOrder(kStreetParkingGroup, kStatusGroup, kAboutInfoGroup, kAboutLinksGroup, kAboutDebugGroup)]
+    [SettingsUIShowGroupName(kStreetParkingGroup, kStatusGroup, kAboutLinksGroup, kAboutDebugGroup)]
     public class PCSettings : ModSetting
     {
         internal const string kActionsTab = "Actions";
@@ -34,10 +35,10 @@ namespace ParkingControl
         internal const string kStatusGroup = "Status";
         internal const string kAboutInfoGroup = "AboutInfo";
         internal const string kAboutLinksGroup = "AboutLinks";
-        internal const string kAboutDiagnosticsGroup = "AboutDiagnostics";
+        internal const string kAboutDebugGroup = "AboutDebug";
 
         private const string kAboutLinksRow = nameof(kAboutLinksRow);
-        private const string kAboutDiagnosticsRow = nameof(kAboutDiagnosticsRow);
+        private const string kAboutDebugRow = nameof(kAboutDebugRow);
         private const string kUrlParadox =
             "https://mods.paradoxplaza.com/authors/River-mochi/cities_skylines_2?games=cities_skylines_2&orderBy=desc&sortBy=best&time=alltime";
 
@@ -95,7 +96,16 @@ namespace ParkingControl
         public string EnforcementStatus => ParkingStatusCache.EnforcementRow;
 
         /// <summary>
-        /// Gets the cached citywide street-parking share.
+        /// Gets the cached manual No Parking status.
+        /// </summary>
+        [Exclude]
+        [SettingsUIHideByCondition(typeof(PCSettings), nameof(HideStatus))]
+        [SettingsUIValueVersion(typeof(ParkingStatusCache), nameof(ParkingStatusCache.GetUiVersion))]
+        [SettingsUISection(kActionsTab, kStatusGroup)]
+        public string ManualStatus => ParkingStatusCache.ManualRow;
+
+        /// <summary>
+        /// Gets the cached citywide parking-use summary.
         /// </summary>
         [Exclude]
         [SettingsUIHideByCondition(typeof(PCSettings), nameof(HideStatus))]
@@ -104,7 +114,7 @@ namespace ParkingControl
         public string ShareStatus => ParkingStatusCache.ShareRow;
 
         /// <summary>
-        /// Gets the cached parking-supply status.
+        /// Gets the cached parking-capacity rating.
         /// </summary>
         [Exclude]
         [SettingsUIHideByCondition(typeof(PCSettings), nameof(HideStatus))]
@@ -167,9 +177,9 @@ namespace ParkingControl
         /// <summary>
         /// Writes an on-demand parking report to the mod log.
         /// </summary>
-        [SettingsUIButtonGroup(kAboutDiagnosticsRow)]
+        [SettingsUIButtonGroup(kAboutDebugRow)]
         [SettingsUIButton]
-        [SettingsUISection(kAboutTab, kAboutDiagnosticsGroup)]
+        [SettingsUISection(kAboutTab, kAboutDebugGroup)]
         public bool ReportToLog
         {
             set
@@ -184,9 +194,9 @@ namespace ParkingControl
         /// <summary>
         /// Opens the mod log, or its containing folder if the log does not exist yet.
         /// </summary>
-        [SettingsUIButtonGroup(kAboutDiagnosticsRow)]
+        [SettingsUIButtonGroup(kAboutDebugRow)]
         [SettingsUIButton]
-        [SettingsUISection(kAboutTab, kAboutDiagnosticsGroup)]
+        [SettingsUISection(kAboutTab, kAboutDebugGroup)]
         public bool OpenLog
         {
             set
@@ -197,6 +207,13 @@ namespace ParkingControl
                 }
             }
         }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether extra automatic DEBUG details are logged.
+        /// </summary>
+        [SettingsUIHideByCondition(typeof(PCSettings), nameof(HideVerboseLog))]
+        [SettingsUISection(kAboutTab, kAboutDebugGroup)]
+        public bool VerboseLog { get; set; }
 
         /// <inheritdoc/>
         public override void Apply()
@@ -221,6 +238,7 @@ namespace ParkingControl
             m_ParkingScope = ParkingScope.ByDistrict;
             ShowInstructions = false;
             ShowStatus = false;
+            VerboseLog = false;
         }
 
         private bool HideInstructions()
@@ -231,6 +249,15 @@ namespace ParkingControl
         private bool HideStatus()
         {
             return !ShowStatus;
+        }
+
+        private static bool HideVerboseLog()
+        {
+#if DEBUG
+            return false;
+#else
+            return true;
+#endif
         }
 
         private static void ReportToLogAction()

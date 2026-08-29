@@ -8,10 +8,11 @@
 
 // Purpose: Persists a district's Roadside Parking Ban without saving the runtime policy prefab.
 
+using Colossal.Serialization.Entities;
+using Unity.Entities;
+
 namespace ParkingControl
 {
-    using Colossal.Serialization.Entities;
-    using Unity.Entities;
 
     /// <summary>
     /// Serializable marker stored on districts that have Roadside Parking Ban enabled.

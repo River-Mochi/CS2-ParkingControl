@@ -8,11 +8,11 @@
 
 // Purpose: Persists player-selected left/right roadside parking bans on individual roads.
 
+using System;
+using Colossal.Serialization.Entities;
+using Unity.Entities;
 namespace ParkingControl
 {
-    using System;
-    using Colossal.Serialization.Entities;
-    using Unity.Entities;
 
     /// <summary>
     /// Identifies road sides with a manual No Parking override.

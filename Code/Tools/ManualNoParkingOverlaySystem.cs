@@ -8,26 +8,26 @@
 
 // Purpose: Draws Manual No Parking side previews and add/remove road perimeters.
 
+using System.Collections.Generic;
+using Colossal.Mathematics;
+using Game;
+using Game.Rendering;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Jobs;
+using Unity.Mathematics;
+using UnityEngine;
+
 namespace ParkingControl
 {
-    using System.Collections.Generic;
-    using Colossal.Mathematics;
-    using Game;
-    using Game.Rendering;
-    using Unity.Burst;
-    using Unity.Collections;
-    using Unity.Entities;
-    using Unity.Jobs;
-    using Unity.Mathematics;
-    using UnityEngine;
 
     public sealed partial class ManualNoParkingOverlaySystem : GameSystemBase
     {
         private const float kSidePreviewWidth = 3.8f;
         private const float kSideOutlineWidth = 0.12f;
 
-        private const float kRoadPerimeterWidthClose = 0.30f;   // green outline
-        private const float kRoadPerimeterWidthFar = 0.55f;     // green lines far
+        private const float kRoadPerimeterWidthClose = 0.30f;
+        private const float kRoadPerimeterWidthFar = 0.55f;
 
         private const float kSideFillAlpha = 0.40f;
         private const float kSideOutlineAlpha = 0.78f;
@@ -39,9 +39,6 @@ namespace ParkingControl
         private ManualNoParkingToolSystem m_ToolSystem = null!;
         private EntityQuery m_RenderSettingsQuery;
 
-        private CameraUpdateSystem m_CameraUpdateSystem = null!;    // for green outline
-
-        [BurstCompile]
         private struct DrawPreviewJob : IJob
         {
             [ReadOnly]
@@ -65,19 +62,19 @@ namespace ParkingControl
 
             public OverlayRenderSystem.Buffer OverlayBuffer;
 
-            public float RoadPerimeterWidth;    // for green outline
+            public float RoadPerimeterWidth;
 
             public void Execute()
             {
                 for (int index = 0; index < AvailableSideCurves.Length; index++)
                 {
-                    // blue: allows parking, manual no parking not applied yet.
+                    // Blue shows manual No Parking available here.
+                    // District/Whole City bans purposely do not change this color.
                     OverlayBuffer.DrawCurve(
                         AvailableOutlineColor,
                         AvailableFillColor,
                         kSideOutlineWidth,
-
-                       OverlayRenderSystem.StyleFlags.Projected,
+                        OverlayRenderSystem.StyleFlags.Projected,
                         AvailableSideCurves[index],
                         kSidePreviewWidth,
                         new float2(0.25f, 0.25f));
@@ -85,7 +82,7 @@ namespace ParkingControl
 
                 for (int index = 0; index < AppliedSideCurves.Length; index++)
                 {
-                    // red: no parking already applied.
+                    // Red means a manual ban is set; RMB removes only that manual ban. If District ban is on, it still applies
                     OverlayBuffer.DrawCurve(
                         AppliedOutlineColor,
                         AppliedFillColor,
@@ -124,9 +121,6 @@ namespace ParkingControl
 
             m_RenderingSystem =
                 World.GetOrCreateSystemManaged<RenderingSystem>();
-
-            m_CameraUpdateSystem =
-                World.GetOrCreateSystemManaged<CameraUpdateSystem>();
 
             m_ToolSystem =
                 World.GetOrCreateSystemManaged<ManualNoParkingToolSystem>();
@@ -229,13 +223,13 @@ namespace ParkingControl
                     m_OverlayRenderSystem.GetBuffer(
                         out JobHandle dependencies);
 
-                float zoomLevel =
-                    m_CameraUpdateSystem != null
-                        ? m_CameraUpdateSystem.zoom
-                        : 5000f;
+                // Only while this tool is open: gently thicken the Owner-green perimeter
+                // as the camera zooms out so it stays readable.
+                CameraUpdateSystem cameraUpdateSystem =
+                    World.GetOrCreateSystemManaged<CameraUpdateSystem>();
 
                 float rawZoom =
-                    Mathf.Clamp01((zoomLevel - 1000f) / 13000f);
+                    Mathf.Clamp01((cameraUpdateSystem.zoom - 1000f) / 13000f);
 
                 float normalizedZoom =
                     Mathf.Pow(rawZoom, 0.6f);
@@ -260,6 +254,7 @@ namespace ParkingControl
                         AvailablePerimeterColor = availablePerimeterColor,
                         AppliedPerimeterColor = appliedPerimeterColor,
                         OverlayBuffer = buffer,
+                        RoadPerimeterWidth = roadPerimeterWidth,
                     }
                     .Schedule(
                         JobHandle.CombineDependencies(
@@ -280,12 +275,12 @@ namespace ParkingControl
                 JobHandle disposeAppliedPerimeter =
                     appliedPerimeterCurves.Dispose(drawHandle);
 
-               JobHandle disposeSideCurves =
+                JobHandle disposeSideCurves =
                     JobHandle.CombineDependencies(
                         disposeAvailable,
                         disposeApplied);
 
-               JobHandle disposePerimeterCurves =
+                JobHandle disposePerimeterCurves =
                     JobHandle.CombineDependencies(
                         disposeAvailablePerimeter,
                         disposeAppliedPerimeter);
@@ -460,7 +455,6 @@ namespace ParkingControl
                 availablePerimeterColor.a > 0f ||
                 appliedPerimeterColor.a > 0f;
         }
-
 
         private static Bezier4x3 MakeLineCurve(
             float3 start,

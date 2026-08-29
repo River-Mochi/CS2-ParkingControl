@@ -8,11 +8,12 @@
 
 // Purpose: Collects bounded report samples and writes Scene Explorer transition details.
 
+using System.Collections.Generic;
+using System.Text;
+using Unity.Entities;
+
 namespace ParkingControl
 {
-    using System.Collections.Generic;
-    using System.Text;
-    using Unity.Entities;
 
     public sealed partial class ParkingStatusSystem
     {

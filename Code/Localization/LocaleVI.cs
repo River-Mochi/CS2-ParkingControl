@@ -44,47 +44,58 @@ namespace ParkingControl
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStatusGroup), "Trạng thái xe cá nhân" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "Thông tin mod" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "Liên kết" },
-                { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutDiagnosticsGroup), "Chẩn đoán" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutDebugGroup), "Chẩn đoán" },
 
                 // Street-parking controls.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "Cấm đỗ xe ven đường" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
                     "Chọn:\n" +
-                    "**Theo khu vực**\n" +
-                    "**Toàn thành phố**\n" +
-                    "hoặc **TẮT**.\n" +
-                    "- Các làn đỗ xe ven đường đủ điều kiện sẽ bị khóa để ngăn xe mới đỗ vào.\n" +
-                    "- Xe đang đỗ sẽ rời đi tự nhiên khi chủ xe sử dụng xe lần tiếp theo.\n" +
-                    "- Bãi đỗ xe có thu phí và chỗ đỗ xe thông thường của công trình vẫn sử dụng được.\n" +
-                    "**Một số loại đường vốn đã không cho đỗ xe ven đường, như đường cao tốc và hẻm nhỏ hai chiều.**" },
+                    "<1. Theo khu vực>\n" +
+                    "<2. Toàn thành phố>\n" +
+                    "<3. TẮT>\n" +
+                    "- Các làn đủ điều kiện bị khóa để ngăn xe mới đỗ ven đường.\n" +
+                    "- Xe đang đỗ sẽ dần chuyển đi sau khi cấm; khu vực lớn cần lâu hơn.\n" +
+                    "- Bãi đỗ có thu phí và chỗ đỗ thông thường của công trình vẫn dùng được.\n" +
+                    "**Một số đường vốn đã không cho đỗ ven đường, như đường cao tốc và hẻm nhỏ hai chiều.**"
+                },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "Toàn thành phố" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "Theo khu vực" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "TẮT" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Hiện hướng dẫn" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
-                    "Hiện cách sử dụng chế độ <Theo khu vực>.\n" +
-                    "1.a. TẮT = tắt các hạn chế toàn thành phố và theo khu vực, phần lớn trở về hành vi mặc định của game.\n" +
-                    "1.b. Nút <Cấm đỗ xe> cho từng đoạn đường trong bảng Dịch vụ đường bộ vẫn hoạt động, giống như thêm vạch qua đường.\n" +
-                    "2. Toàn thành phố = chặn toàn bộ chỗ đỗ xe công cộng ven đường đủ điều kiện trong thành phố." },
+                    "Hiện cách dùng chế độ <Theo khu vực>.\n" +
+                    "1.a. TẮT = tắt lệnh cấm toàn thành phố và khu vực; phần lớn trở về mặc định của game.\n" +
+                    "1.b. Nút <Cấm đỗ xe> cho từng đường trong Dịch vụ đường bộ vẫn hoạt động như thêm vạch qua đường.\n" +
+                    "2. Toàn thành phố = chặn toàn bộ chỗ đỗ công cộng ven đường đủ điều kiện."
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowStatus)), "Hiện trạng thái" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowStatus)),
                     "<Hiện tổng số đỗ xe hiện tại bên dưới.>\n" +
-                    "Trạng thái chỉ được thu thập khi menu Tùy chọn đang mở; không có quét trạng thái nền trong lúc chơi thành phố." },
+                    "Trạng thái chỉ được thu thập khi menu Tùy chọn đang mở;\n" +
+                    "không quét nền trong lúc chơi."
+                },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.DistrictInstructions)),
                     "<Chế độ theo khu vực>\n" +
                     "1. Chọn <Theo khu vực> ở trên.\n" +
-                    "2. Tạo/chọn một khu vực trong thành phố.\n" +
-                    "3. Mở bảng <Chính sách> và bật **Cấm đỗ xe ven đường [✓]**.\n" +
-                    "4. Có thể bật đồng thời lệnh cấm và phí đỗ xe. Phí vẫn được tính cho những xe còn lại hoặc lọt vào.\n" +
-                    "Các đường ngoài khu vực bị cấm vẫn giữ đỗ xe ven đường bình thường." },
+                    "2. Tạo/chọn một khu vực.\n" +
+                    "3. Mở <Chính sách> và bật **Cấm đỗ xe ven đường [✓]**.\n" +
+                    "4. Có thể bật cùng lúc lệnh cấm và phí đỗ xe. Phí vẫn tính cho xe còn lại hoặc vẫn lọt vào đỗ.\n" +
+                    "Các đường ngoài khu vực bị cấm vẫn giữ đỗ xe ven đường bình thường."
+                },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.DistrictInstructions)), string.Empty },
 
                 // In-city Roads Services tool.
                 { $"Assets.NAME[{ManualNoParkingToolSystem.kToolId}]", "Cấm đỗ xe" },
-                { $"Assets.DESCRIPTION[{ManualNoParkingToolSystem.kToolId}]", "Bật hoặc tắt đỗ xe ven đường ở một bên đường. Với nhiều bên, hãy kéo qua chúng trước khi thả nút chuột trái." },
+                { $"Assets.DESCRIPTION[{ManualNoParkingToolSystem.kToolId}]", "Bật hoặc tắt đỗ xe ở một bên đường. Với nhiều bên, kéo qua chúng trước khi thả nút chuột trái." },
+
                 // In-city district policy.
                 { $"Policy.TITLE[{ParkingPolicySystem.kPrefabName}]", "Cấm đỗ xe ven đường" },
-                { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]", "Ngăn ô tô và xe máy đỗ ven đường trong khu vực này. Các xe đang đỗ sẽ rời đi khi chủ xe sử dụng xe lần tiếp theo." },
+                { $"Policy.DESCRIPTION[{ParkingPolicySystem.kPrefabName}]",
+                    "Ngăn ô tô và xe máy đỗ ven đường trong khu vực này.\n" +
+                    "- Xe đang đỗ sẽ dần chuyển đi; khu vực lớn cần lâu hơn."
+                },
+
                 // Native mouse action hints for the No Parking road tool.
                 { $"Common.ACTION[{ManualNoParkingTooltipSystem.kUpgradeHintId}]", "Thêm" },
                 { $"Common.ACTION[{ManualNoParkingTooltipSystem.kDowngradeHintId}]", "Gỡ" },
@@ -92,69 +103,102 @@ namespace ParkingControl
                 // Live Options status rows, in display order.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Đỗ xe ven đường" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
-                    "<Đang đỗ> = xe vẫn đang đỗ ở các bên đường được Parking Control đặt thành Cấm đỗ xe.\n" +
-                    "<Làn> = các đoạn đỗ xe ven đường đang chứa những xe đó. Một đoạn có thể chứa nhiều xe.\n" +
-                    "<Đã khóa> = các đoạn làn đỗ xe đã đóng với xe mới. Một con đường có thể có nhiều đoạn.\n" +
-                    "<TẮT + Cấm đỗ xe thủ công> = TẮT vô hiệu hóa lệnh cấm toàn thành phố và theo khu vực, nhưng các bên đường được đặt Cấm đỗ xe thủ công vẫn hoạt động. Dòng này khi đó chỉ hiển thị các lệnh cấm thủ công đó.\n" +
+                    "Chỉ hiển thị phạm vi <Toàn thành phố> hoặc <Theo khu vực> đã chọn. Lệnh cấm thủ công hiển thị riêng.\n" +
+                    "<TẮT> = tắt lệnh cấm thành phố/khu vực; các đường <Cấm đỗ xe> thủ công vẫn hoạt động.\n" +
+                    "<Đang đỗ> = xe vẫn đỗ trên đường trong phạm vi đã chọn.\n" +
+                    "<Đã khóa> = đoạn làn sát lề bị khóa / đoạn mục tiêu.\n" +
+                    "<Khu vực> = khu vực có lệnh cấm / tổng khu vực.\n" +
+                    "<KIỂM TRA> = một số đoạn mục tiêu chưa khớp với lệnh cấm đã chọn.\n" +
                     "<---------------------->\n" +
-                    "Nếu chọn <Theo khu vực>, dòng này hiển thị:\n" +
-                    "- Làn có xe đỗ trong khu vực bị cấm / làn có xe đỗ toàn thành phố.\n" +
-                    "- Làn đã khóa / làn đủ điều kiện toàn thành phố.\n" +
-                    "- Khu vực đã bật / tổng số khu vực.\n" +
-                    "<---------------------->\n" +
-                    "Lưu ý: sau khi thay đổi hoặc xây lại đường, số đoạn đã khóa có thể cần một chút thời gian trong khi CS2 xây lại các làn đỗ xe. Hãy chạy thành phố một lúc rồi mở lại Tùy chọn." },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Sử dụng đường" },
+                    "**Nếu [KIỂM TRA] xuất hiện sau khi đổi hoặc xây lại đường, hãy chạy thành phố một lúc rồi mở lại Tùy chọn > Trạng thái. Nếu vẫn còn, dùng Giới thiệu > Chẩn đoán > Ghi báo cáo.**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ManualStatus)), "Cấm đỗ thủ công" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ManualStatus)),
+                    "Chỉ hiển thị các đường được đặt bằng công cụ <Cấm đỗ xe> thủ công.\n" +
+                    "<Đang đỗ> = xe vẫn đỗ trên các đường bị cấm thủ công đó.\n" +
+                    "<Đã khóa> = đoạn làn sát lề bị khóa / đoạn mục tiêu thủ công.\n" +
+                    "Lệnh cấm thủ công có thể trùng với Toàn thành phố hoặc khu vực; không cộng dòng này vào tổng <Đỗ xe ven đường>.\n" +
+                    "**Nếu [KIỂM TRA] xuất hiện sau khi chạy thành phố một lúc, dùng Giới thiệu > Chẩn đoán > Ghi báo cáo và gửi khi cần trợ giúp.**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Sử dụng chỗ đỗ" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "Dòng này gồm dữ liệu của <toàn thành phố>, không chỉ các khu vực.\n" +
-                    "<Đỗ trên đường> = tỷ lệ xe đỗ trên đường thay vì bãi đỗ công cộng hoặc chỗ đỗ của công trình.\n" +
-                    "<Đang hoạt động> = xe cá nhân đang chạy hoặc chờ trong giao thông.\n" +
-                    "<Công thức> = đường ÷ (đường + công cộng đang dùng + công trình đang dùng).\n" +
-                    "**Không tính kho xe ở kết nối ngoài thành phố (OC) và xe chưa được gán làn đỗ.**" },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Chỗ đỗ xe" },
+                    "Hiển thị mức sử dụng chỗ đỗ của <toàn thành phố>. Không theo phạm vi cấm Toàn thành phố / theo quận.\n" +
+                    "<Công cộng> = chỗ đã dùng / tổng chỗ trong bãi đỗ công cộng.\n" +
+                    "Dùng cùng dữ liệu cơ sở đỗ xe như bảng Đường của CS2.\n" +
+                    "<Công trình> = xe đỗ trong công trình hoặc nhà để xe.\n" +
+                    "<Đường> = xe đỗ trên đường.\n" +
+                    "<Tổng> = tổng xe đỗ đã biết trong thành phố (đường + công cộng + công trình).\n" +
+                    "**Không tính kết nối ngoài thành phố và khu chờ không rõ vị trí.**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Đánh giá chỗ đỗ" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "Hiển thị mức sử dụng chỗ đỗ xe toàn thành phố.\n" +
-                    "<Công cộng> đã dùng = các cơ sở được Parking InfoView mặc định của game tính.\n" +
-                    "<Công trình> đã dùng = chỗ đỗ đi kèm nhà ở, nơi làm việc và cửa hàng.\n" +
-                    "**Tỷ lệ sử dụng càng cao = có thể cần thêm chỗ đỗ xe.**" },
+                    "Hiển thị chỗ đỗ công cộng còn trống của <toàn thành phố>.\n" +
+                    "<KÉM> = trống dưới 15%.\n" +
+                    "<OK> = trống từ 15% đến dưới 30%.\n" +
+                    "<TỐT> = trống từ 30% trở lên.\n" +
+                    "<Công cộng trống> = chỗ công cộng hiện chưa dùng.\n" +
+                    "Đếm cùng các cơ sở như bảng đỗ xe Đường của trò chơi."
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Vị trí xe" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VehicleStatus)),
-                    "Dòng này hiển thị dữ liệu toàn thành phố, không chỉ các khu vực có lệnh cấm.\n" +
+                    "Dòng này hiển thị dữ liệu toàn thành phố, không chỉ khu vực có lệnh cấm.\n" +
                     "<Đường> = đỗ trên đường công cộng.\n" +
-                    "<Hiển thị> = xe bạn có thể nhìn thấy và nhấp vào trong bãi ngoài trời hoặc chỗ đỗ ngoài trời đi kèm công trình.\n" +
+                    "<Hiển thị> = xe có thể nhìn thấy và nhấp vào trong bãi ngoài trời hoặc chỗ đỗ ngoài trời của công trình.\n" +
                     "<Bên trong> = trong công trình hoặc nhà để xe.\n" +
                     "<OC> = kho xe tại kết nối ngoài thành phố ở rìa bản đồ; một số xe hộ gia đình đi vào bắt đầu tại đó (khu chờ).\n" +
-                    "Xe chưa được gán làn đỗ không hiển thị ở đây và chỉ xuất hiện trong báo cáo nhật ký (tab Giới thiệu)." },
+                    "Xe chưa được gán làn đỗ không hiển thị ở đây và chỉ xuất hiện trong báo cáo nhật ký (tab Giới thiệu)."
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.UpdatedStatus)), "Cập nhật" },
-                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.UpdatedStatus)), "Thời điểm các giá trị trạng thái toàn thành phố này được làm mới gần nhất." },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.UpdatedStatus)), "Thời điểm các giá trị toàn thành phố này được làm mới gần nhất." },
 
                 // About tab.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.NameText)), "Tên mod" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VersionText)), "Phiên bản" },
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenParadox)), "Liên kết Paradox Mods" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenParadox)), "Mở trang của tác giả trên Paradox Mods." },
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ReportToLog)), "Ghi báo cáo đỗ xe" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ReportToLog)), "Ghi báo cáo" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ReportToLog)),
-                    "Ghi chi tiết đỗ xe ven đường và dữ liệu liên quan vào\n" +
+                    "Ghi chi tiết đỗ xe ven đường và dữ liệu liên quan vào \n" +
                     "<Logs/ParkingControl.log>.\n" +
-                    "Nếu muốn theo dõi, hãy ghi báo cáo lần thứ 2 sau đó trong cùng thành phố đang tải.\n" +
+                    "Nếu cần, hãy ghi báo cáo lần 2 sau đó trong cùng thành phố đang tải.\n" +
                     "- So sánh tối đa 20 Entity ID mẫu từ các nhóm khác nhau.\n" +
                     "- Cho biết mỗi mẫu vẫn ở đó, bắt đầu chạy, đỗ nơi khác hay biến mất.\n" +
-                    "- Cần mod Scene Explorer để theo dõi các số Entity ID trong thành phố." },
+                    "- Cần Scene Explorer để theo dõi Entity ID trong thành phố."
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.OpenLog)), "Mở nhật ký" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.OpenLog)), "Mở <Logs/ParkingControl.log>, hoặc thư mục Logs nếu tệp chưa tồn tại." },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VerboseLog)), "Nhật ký chi tiết" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.VerboseLog)),
+                    "Chi tiết DEBUG tự động.\n" +
+                    "Không dành cho chơi bình thường; hãy TẮT nếu không gỡ lỗi.\n" +
+                    "Ghi báo cáo vẫn hoạt động khi TẮT."
+                },
+
                 // Dynamic values used by the live status rows.
                 { ParkingStatusLocale.kLoadCity, "Chưa tải thành phố." },
                 { ParkingStatusLocale.kCollecting, "Đang thu thập trạng thái đỗ xe..." },
                 { ParkingStatusLocale.kUnavailable, "Không có trạng thái đỗ xe." },
                 { ParkingStatusLocale.kCollectionFailed, "Không thể thu thập trạng thái đỗ xe; xem ParkingControl.log." },
-                { ParkingStatusLocale.kCompactEnforcementFormat, "{0} xe đang đỗ ({1} làn) | khóa {2}/{3}{4}" },
-                { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} xe đang đỗ ({1}/{2} làn) | khóa {3}/{4} | {5}/{6} khu vực{7}" },
+                { ParkingStatusLocale.kCompactEnforcementFormat, "{0} đang đỗ | khóa {1}/{2}{3}" },
+                { ParkingStatusLocale.kManualEnforcementFormat, "{0} đang đỗ | khóa {1}/{2} làn{3}" },
+                { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} đang đỗ | khóa {1}/{2} | {3}/{4} khu vực{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} đường | {1} hiển thị | {2} bên trong | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} công cộng {1}/{2} | {3} công trình {4}/{5}" },
-                { ParkingStatusLocale.kShareFormat, "{0} đỗ trên đường {1} | {2} hoạt động" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, công cộng trống {2}" },
+                { ParkingStatusLocale.kShareFormat, "{0} công cộng | {1} công trình | {2} đường | {3} tổng" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
-                { ParkingStatusLocale.kStatusOff, "TẮT" },
+                { ParkingStatusLocale.kStatusOff, "TẮT = không cấm thành phố/khu vực | đường thủ công vẫn hoạt động" },
+                { ParkingStatusLocale.kManualNone, "Chưa đặt" },
                 { ParkingStatusLocale.kStatusCheck, "KIỂM TRA" },
+                { ParkingStatusLocale.kRatingPoor, "KÉM" },
+                { ParkingStatusLocale.kRatingGood, "TỐT" },
+                { ParkingStatusLocale.kRatingNA, "N/A" },
             };
         }
 

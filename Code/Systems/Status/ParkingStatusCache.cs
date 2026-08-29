@@ -8,14 +8,15 @@
 
 // Purpose: Caches on-demand parking status text for the Options UI.
 
+using System;
+using System.Globalization;
+using Game;
+using Game.SceneFlow;
+using Unity.Entities;
+using UnityEngine;
+
 namespace ParkingControl
 {
-    using System;
-    using System.Globalization;
-    using Game;
-    using Game.SceneFlow;
-    using Unity.Entities;
-    using UnityEngine;
 
     /// <summary>
     /// Supplies cached status strings without reading ECS data from setting property getters.
@@ -27,16 +28,21 @@ namespace ParkingControl
         private const string kUnavailableFallback = "Parking status is unavailable.";
         private const string kCollectionFailedFallback =
             "Parking status could not be collected; see ParkingControl.log.";
+        private const string kScopeOffFallback =
+            "OFF = Whole City/District bans disabled | manual roads still work";
+        private const string kManualNoneFallback = "None set";
         private const string kEnforcementFormatFallback =
-            "{0} parked ({1} lanes) | {2}/{3} disabled{4}";
+            "{0} parked | {1}/{2} disabled{3}";
+        private const string kManualEnforcementFormatFallback =
+            "{0} parked | {1}/{2} disabled lanes{3}";
         private const string kDistrictEnforcementFormatFallback =
-            "{0} parked ({1}/{2} lanes) | {3}/{4} disabled | {5}/{6} districts{7}";
+            "{0} parked | {1}/{2} disabled | {3}/{4} districts{5}";
         private const string kVehicleFormatFallback =
             "{0} street | {1} visible | {2} inside | {3} OC";
         private const string kSupplyFormatFallback =
-            "{0} public {1}/{2} | {3} building {4}/{5}";
+            "{0} = {1}, public free {2}";
         private const string kShareFormatFallback =
-            "{0} street parked {1} | {2} active";
+            "{0} public | {1} bldg | {2} street | {3} total";
 
         private static bool s_ForceRefresh = true;
         private static bool s_HasRequestedSimulationFrame;
@@ -55,6 +61,11 @@ namespace ParkingControl
         /// Gets the cached enforcement summary.
         /// </summary>
         internal static string EnforcementRow { get; private set; } = kLoadCityFallback;
+
+        /// <summary>
+        /// Gets the cached manual No Parking summary.
+        /// </summary>
+        internal static string ManualRow { get; private set; } = string.Empty;
 
         /// <summary>
         /// Gets the cached personal-vehicle location summary.
@@ -232,64 +243,86 @@ namespace ParkingControl
 
         private static void PublishSnapshotRows(ParkingSnapshot snapshot)
         {
-           
             bool districtScope =
                 snapshot.Scope == PCSettings.ParkingScope.ByDistrict;
 
-            bool offScope =
-                snapshot.Scope == PCSettings.ParkingScope.Off;
+            bool wholeCityScope =
+                snapshot.Scope == PCSettings.ParkingScope.WholeCity;
 
-            bool manualOnlyScope =
-                offScope && snapshot.TargetCurbLanes > 0;
+            bool scopeEnabled =
+                districtScope || wholeCityScope;
 
-            int parked =
-                districtScope || manualOnlyScope
-                    ? snapshot.TargetStreetParked
-                    : offScope
-                        ? 0
-                        : snapshot.StreetParked;
+            string scopeStatus =
+                scopeEnabled
+                    ? ParkingStatusSystem.GetOwnershipStatus(
+                        true,
+                        snapshot.ScopeTargetCurbLanes,
+                        snapshot.DisabledScopeTargetCurbLanes,
+                        snapshot.TrackedScopeTargetCurbLanes)
+                    : "OFF";
 
-            int occupiedLanes =
-                districtScope || manualOnlyScope
-                    ? snapshot.OccupiedTargetCurbLanes
-                    : offScope
-                        ? 0
-                        : snapshot.OccupiedCurbLanes;
+            string scopeSuffix =
+                string.Equals(scopeStatus, "CHECK", StringComparison.Ordinal)
+                    ? " | " +
+                        ParkingStatusLocale.Get(ParkingStatusLocale.kStatusCheck, "CHECK")
+                    : string.Empty;
 
-            int disabledLanes =
-                districtScope || manualOnlyScope
-                    ? snapshot.DisabledTargetCurbLanes
-                    : snapshot.DisabledCurbLanes;
-
-            int targetLanes =
-                districtScope || manualOnlyScope
-                    ? snapshot.TargetCurbLanes
-                    : snapshot.CurbLanes;
-
-            // Counts stay factual; normal road rebuilds should not look like a mod failure.
-            string statusSuffix = string.Empty;
-
-            string enforcement = districtScope
-                ? ParkingStatusLocale.Format(
+            string enforcement;
+            if (districtScope)
+            {
+                enforcement = ParkingStatusLocale.Format(
                     ParkingStatusLocale.kDistrictEnforcementFormat,
                     kDistrictEnforcementFormatFallback,
-                    // District mode compares the targeted subset with citywide totals.
-                    Format(parked),
-                    Format(occupiedLanes),
-                    Format(snapshot.OccupiedCurbLanes),
-                    Format(disabledLanes),
-                    Format(snapshot.CurbLanes),
+                    Format(snapshot.ScopeTargetStreetParked),
+                    Format(snapshot.DisabledScopeTargetCurbLanes),
+                    Format(snapshot.ScopeTargetCurbLanes),
                     Format(snapshot.DistrictsWithPolicy),
                     Format(snapshot.Districts),
-                    statusSuffix)
-                : ParkingStatusLocale.Format(
+                    scopeSuffix);
+            }
+            else if (wholeCityScope)
+            {
+                enforcement = ParkingStatusLocale.Format(
                     ParkingStatusLocale.kCompactEnforcementFormat,
                     kEnforcementFormatFallback,
-                    Format(parked),
-                    Format(occupiedLanes),
-                    Format(disabledLanes),
-                    Format(targetLanes),
-                    statusSuffix);
+                    Format(snapshot.ScopeTargetStreetParked),
+                    Format(snapshot.DisabledScopeTargetCurbLanes),
+                    Format(snapshot.ScopeTargetCurbLanes),
+                    scopeSuffix);
+            }
+            else
+            {
+                enforcement = ParkingStatusLocale.Get(ParkingStatusLocale.kStatusOff, kScopeOffFallback);
+            }
+
+            bool manualEnabled =
+                snapshot.ManualTargetCurbLanes > 0;
+
+            string manualStatus =
+                manualEnabled
+                    ? ParkingStatusSystem.GetOwnershipStatus(
+                        true,
+                        snapshot.ManualTargetCurbLanes,
+                        snapshot.DisabledManualTargetCurbLanes,
+                        snapshot.TrackedManualTargetCurbLanes)
+                    : "OFF";
+
+            string manualSuffix =
+                string.Equals(manualStatus, "CHECK", StringComparison.Ordinal)
+                    ? " | " +
+                        ParkingStatusLocale.Get(ParkingStatusLocale.kStatusCheck, "CHECK")
+                    : string.Empty;
+
+            string manual = manualEnabled
+                ? ParkingStatusLocale.Format(
+                    ParkingStatusLocale.kManualEnforcementFormat,
+                    kManualEnforcementFormatFallback,
+                    Format(snapshot.ManualTargetStreetParked),
+                    Format(snapshot.DisabledManualTargetCurbLanes),
+                    Format(snapshot.ManualTargetCurbLanes),
+                    manualSuffix)
+                : ParkingStatusLocale.Get(ParkingStatusLocale.kManualNone, kManualNoneFallback);
+
             string vehicles = ParkingStatusLocale.Format(
                 ParkingStatusLocale.kVehicleFormat,
                 kVehicleFormatFallback,
@@ -297,26 +330,44 @@ namespace ParkingControl
                 Format(snapshot.VisibleOffStreet),
                 Format(snapshot.HiddenInBuildings),
                 Format(snapshot.OutsideConnection));
-            string supply = ParkingStatusLocale.Format(
-                ParkingStatusLocale.kSupplyFormat,
-                kSupplyFormatFallback,
-                FormatPercent(snapshot.OfficialParkingOccupied, snapshot.OfficialParkingCapacity),
-                FormatSupply(snapshot.OfficialParkingOccupied),
-                FormatSupply(snapshot.OfficialParkingCapacity),
-                FormatPercent(snapshot.BuildingParkingOccupied, snapshot.BuildingParkingCapacity),
-                FormatSupply(snapshot.BuildingParkingOccupied),
-                FormatSupply(snapshot.BuildingParkingCapacity));
-            string share = ParkingStatusLocale.Format(
+
+            string publicParkingUse =
+                Format(snapshot.OfficialParkingOccupied) + "/" + Format(snapshot.OfficialParkingCapacity);
+
+            string parkingUse = ParkingStatusLocale.Format(
                 ParkingStatusLocale.kShareFormat,
                 kShareFormatFallback,
-                FormatPercent(snapshot.StreetParked, snapshot.KnownInCityParking),
+                publicParkingUse,
+                Format(snapshot.BuildingParkingOccupied),
                 Format(snapshot.StreetParked),
-                Format(snapshot.ActiveVehicles));
+                Format(snapshot.KnownInCityParking));
+
+            string publicFree = snapshot.OfficialParkingCapacity > 0
+                ? Format(Math.Max(0, snapshot.OfficialParkingCapacity - snapshot.OfficialParkingOccupied))
+                : "--";
+
+            string parkingRating = ParkingStatusLocale.Format(
+                ParkingStatusLocale.kSupplyFormat,
+                kSupplyFormatFallback,
+                GetParkingRating(
+                    snapshot.OfficialParkingOccupied,
+                    snapshot.OfficialParkingCapacity),
+                FormatFreePercent(
+                    snapshot.OfficialParkingOccupied,
+                    snapshot.OfficialParkingCapacity),
+                publicFree);
+
             string updated = snapshot.CapturedAtLocal.ToString(
                 "HH:mm:ss",
                 CultureInfo.CurrentCulture);
 
-            PublishRows(enforcement, share, supply, vehicles, updated);
+            PublishRows(
+                enforcement,
+                manual,
+                parkingUse,
+                parkingRating,
+                vehicles,
+                updated);
         }
 
         private static string Format(int value)
@@ -341,38 +392,42 @@ namespace ParkingControl
             return (value / (double)divisor).ToString("0.#", CultureInfo.CurrentCulture) + suffix;
         }
 
-        private static string FormatSupply(int value)
+        private static string GetParkingRating(int occupied, int capacity)
         {
-            long magnitude = Math.Abs((long)value);
-            if (magnitude >= 1_000_000)
+            if (capacity <= 0)
             {
-                return FormatTruncated(value, 1_000_000, "m");
+                return ParkingStatusLocale.Get(ParkingStatusLocale.kRatingNA, "N/A");
             }
 
-            if (magnitude >= 1_000)
+            double freePercent =
+                Math.Max(0, capacity - occupied) * 100d / capacity;
+
+            if (freePercent < 15d)
             {
-                // The Options row is deliberately approximate; the manual log keeps exact totals.
-                return FormatTruncated(value, 1_000, "k");
+                return ParkingStatusLocale.Get(ParkingStatusLocale.kRatingPoor, "POOR");
             }
 
-            return value.ToString("N0", CultureInfo.CurrentCulture);
+            if (freePercent < 30d)
+            {
+                return ParkingStatusLocale.Get(ParkingStatusLocale.kStatusOk, "OK");
+            }
+
+            return ParkingStatusLocale.Get(ParkingStatusLocale.kRatingGood, "GOOD");
         }
 
-        private static string FormatTruncated(int value, int divisor, string suffix)
+        private static string FormatFreePercent(int occupied, int capacity)
         {
-            double scaled = Math.Truncate(value * 10d / divisor) / 10d;
-            return scaled.ToString("0.0", CultureInfo.CurrentCulture) + suffix;
-        }
-
-        private static string FormatPercent(int numerator, int denominator)
-        {
-            if (denominator <= 0)
+            if (capacity <= 0)
             {
-                return "0.0%";
+                return "--";
             }
 
-            double value = numerator * 100d / denominator;
-            return value.ToString("0.0", CultureInfo.CurrentCulture) + "%";
+            double freePercent =
+                Math.Max(0, capacity - occupied) * 100d / capacity;
+
+            return freePercent.ToString(
+                "0",
+                CultureInfo.CurrentCulture) + "%";
         }
 
         private static void PublishLocalizedMessage(string localeId, string fallback)
@@ -384,14 +439,16 @@ namespace ParkingControl
 
         private static void PublishRows(
             string enforcement,
-            string share,
-            string supply,
+            string manual,
+            string parkingUse,
+            string parkingRating,
             string vehicles,
             string updated)
         {
             if (EnforcementRow == enforcement &&
-                ShareRow == share &&
-                SupplyRow == supply &&
+                ManualRow == manual &&
+                ShareRow == parkingUse &&
+                SupplyRow == parkingRating &&
                 VehicleRow == vehicles &&
                 UpdatedRow == updated)
             {
@@ -399,8 +456,9 @@ namespace ParkingControl
             }
 
             EnforcementRow = enforcement;
-            ShareRow = share;
-            SupplyRow = supply;
+            ManualRow = manual;
+            ShareRow = parkingUse;
+            SupplyRow = parkingRating;
             VehicleRow = vehicles;
             UpdatedRow = updated;
             s_Version++;
@@ -409,7 +467,13 @@ namespace ParkingControl
         private static void PublishMessage(string message)
         {
             // One temporary message is enough; repeating it in every row clutters Options.
-            PublishRows(message, string.Empty, string.Empty, string.Empty, string.Empty);
+            PublishRows(
+                message,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty);
         }
     }
 }

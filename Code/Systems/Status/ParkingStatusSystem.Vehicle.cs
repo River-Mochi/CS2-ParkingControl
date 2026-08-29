@@ -8,9 +8,10 @@
 
 // Purpose: Classifies personal-vehicle locations and validates their ownership relationships.
 
+using Unity.Entities;
+
 namespace ParkingControl
 {
-    using Unity.Entities;
 
     public sealed partial class ParkingStatusSystem
     {

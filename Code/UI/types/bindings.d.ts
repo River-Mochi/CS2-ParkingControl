@@ -1,6 +1,6 @@
 declare module "cs2/bindings" {
   import { ChartDataset } from 'chart.js';
-  
+
   export interface ServiceBudget {
   	id: string;
   	value: number;
@@ -3489,7 +3489,7 @@ declare module "cs2/bindings" {
   	reverse(): void;
   	playFromTo(playTime: number, pauseTime: number, callback?: () => void): void;
   }
-  
+
   export namespace upgrade {
   	export { clearUpgradeSelection, selectUpgrade, selectedUpgrade$, upgradeDetails$, upgrades$, upgrading$ };
   }
@@ -3601,7 +3601,7 @@ declare module "cs2/bindings" {
   export namespace tutorial {
   	export { AdvisorCategory, AdvisorItem, AdvisorItemType, BalloonUITarget, Tutorial, TutorialCategory, TutorialControlScheme, TutorialList, TutorialPhase, TutorialPhaseType, TutorialTrigger, UIHighlightTarget, activateTutorial, activateTutorialPhase, activateTutorialTag, activeTutorial$, activeTutorialList$, activeTutorialPhase$, advisorPanelVisible$, completeActiveTutorial, completeActiveTutorialPhase, completeIntro, completeListIntro, completeListOutro, forceTutorial, listIntroActive$, listOutroActive$, nextTutorial$, setTutorialAutoplay, setTutorialListFocused, toggleAdvisorPanel, toggleTutorialListFocus, triggerTutorialTag, tutorialAutoplay$, tutorialCategories$, tutorialGroups$, tutorialIntroActive$, tutorialListFocused$, tutorialPending$, tutorials$, tutorialsEnabled$, untriggerTutorialTag, useTutorialTag, useTutorialTagActivation, useTutorialTagTrigger };
   }
-  
+
   export {
   	budget,
   	camera,
@@ -3641,7 +3641,7 @@ declare module "cs2/bindings" {
   	tutorial,
   	upgrade,
   };
-  
+
   export {};
-  
+
 }

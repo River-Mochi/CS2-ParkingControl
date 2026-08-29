@@ -8,12 +8,13 @@
 
 // Purpose: Defines localization IDs and safe lookups for Parking Control status text.
 
+using System;
+using System.Globalization;
+using Colossal.Localization;
+using Game.SceneFlow;
+
 namespace ParkingControl
 {
-    using System;
-    using System.Globalization;
-    using Colossal.Localization;
-    using Game.SceneFlow;
 
     /// <summary>
     /// Supplies localized strings used by the live parking status rows.
@@ -24,14 +25,20 @@ namespace ParkingControl
         internal const string kCollecting = Mod.ModId + ".Status.Collecting";
         internal const string kUnavailable = Mod.ModId + ".Status.Unavailable";
         internal const string kCollectionFailed = Mod.ModId + ".Status.CollectionFailed";
+
         internal const string kCompactEnforcementFormat = Mod.ModId + ".Status.CompactEnforcementFormat";
+        internal const string kManualEnforcementFormat = Mod.ModId + ".Status.ManualEnforcementFormat";
         internal const string kDistrictEnforcementFormat = Mod.ModId + ".Status.DistrictEnforcementFormat";
         internal const string kVehicleFormat = Mod.ModId + ".Status.VehicleFormat";
         internal const string kSupplyFormat = Mod.ModId + ".Status.SupplyFormat";
         internal const string kShareFormat = Mod.ModId + ".Status.ShareFormat";
         internal const string kStatusOk = Mod.ModId + ".Status.OK";
         internal const string kStatusOff = Mod.ModId + ".Status.OFF";
+        internal const string kManualNone = Mod.ModId + ".Status.ManualNone";
         internal const string kStatusCheck = Mod.ModId + ".Status.CHECK";
+        internal const string kRatingPoor = Mod.ModId + ".Status.RatingPoor";
+        internal const string kRatingGood = Mod.ModId + ".Status.RatingGood";
+        internal const string kRatingNA = Mod.ModId + ".Status.RatingNA";
 
         /// <summary>
         /// Gets the currently active game locale ID.

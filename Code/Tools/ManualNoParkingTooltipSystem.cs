@@ -9,11 +9,12 @@
 // Purpose: Renames the game's native mouse Apply / Secondary Apply hints while
 // Manual No Parking is active. Vanilla draws the mouse/controller icons.
 
+using Game.Input;
+using Game.Tools;
+using Game.UI.Tooltip;
+
 namespace ParkingControl
 {
-    using Game.Input;
-    using Game.Tools;
-    using Game.UI.Tooltip;
 
     public sealed partial class ManualNoParkingTooltipSystem : TooltipSystemBase
     {

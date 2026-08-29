@@ -8,19 +8,21 @@
 
 // Purpose: Registers Parking Control settings, localization, logging, and ECS systems.
 
+using System;
+using System.Reflection;
+using Colossal.IO.AssetDatabase;
+using Colossal.Localization;
+using Colossal.Logging;
+using CS2Shared.RiverMochi;
+using Game;
+using Game.Modding;
+using Game.Pathfind;
+using Game.SceneFlow;
+using Game.Serialization;
+using Game.Vehicles;
+
 namespace ParkingControl
 {
-    using System;
-    using System.Reflection;
-    using Colossal.IO.AssetDatabase;
-    using Colossal.Localization;
-    using Colossal.Logging;
-    using CS2Shared.RiverMochi;
-    using Game;
-    using Game.Modding;
-    using Game.Pathfind;
-    using Game.SceneFlow;
-    using Game.Serialization;
 
     public sealed class Mod : IMod
     {
@@ -108,8 +110,17 @@ namespace ParkingControl
             updateSystem.UpdateAt<ManualNoParkingOverlaySystem>(
                 SystemUpdatePhase.Rendering);
 
-            updateSystem.UpdateAfter<NoStreetParkingSystem, ParkingLaneDataSystem>(
+            // Feed small automatic batches to vanilla parking relocation (game handles it for us).
+            updateSystem.UpdateBefore<
+                ParkingRelocationSystem,
+                FixParkingLocationSystem>(
+                SystemUpdatePhase.Modification5);
+
+            // Run after vanilla/replacement parking-lane calculations but before
+            // CS2 rebuilds parking path data from those lanes.
+            updateSystem.UpdateBefore<NoStreetParkingSystem, LanesModifiedSystem>(
                 SystemUpdatePhase.ModificationEnd);
+
             updateSystem.UpdateAfter<ParkingStatusSystem, NoStreetParkingSystem>(
                 SystemUpdatePhase.ModificationEnd);
             updateSystem.UpdateBefore<DistrictPolicySaveSystem, BeginPrefabSerializationSystem>(
@@ -132,7 +143,6 @@ namespace ParkingControl
 
             LogUtils.Info(
                 $"{ModTag} Parking Ban dropdown selection: {scopeText}.");
-
         }
 
         public void OnDispose()

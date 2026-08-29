@@ -7,17 +7,18 @@
 // ================= </copyright> ======================
 
 // File: Utils/ShellOpen.cs
-// Version: 0.3.3
+// Version: 0.3.4
 // Purpose: File/folder opening helpers for CS2 Options UI buttons.
 // Based on River-Mochi shared CS2 utilities.
 
+using System;
+using System.Diagnostics;
+using System.IO;
+using Colossal.Logging;
+using UnityEngine;
+
 namespace CS2Shared.RiverMochi
 {
-    using System;
-    using System.Diagnostics;
-    using System.IO;
-    using Colossal.Logging;
-    using UnityEngine;
 
     public static class ShellOpen
     {

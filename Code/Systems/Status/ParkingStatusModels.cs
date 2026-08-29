@@ -8,11 +8,12 @@
 
 // Purpose: Holds the short-lived models shared by parking probes, status text, and log reports.
 
+using System;
+using System.Collections.Generic;
+using Unity.Entities;
+
 namespace ParkingControl
 {
-    using System;
-    using System.Collections.Generic;
-    using Unity.Entities;
 
     /// <summary>
     /// A read-only snapshot of curb enforcement, parking supply, and personal vehicles.
@@ -22,6 +23,7 @@ namespace ParkingControl
         public DateTime CapturedAtLocal;
         public uint SimulationFrame;
         public PCSettings.ParkingScope Scope;
+
         public int CurbLanes;
         public int TargetCurbLanes;
         public int DisabledCurbLanes;
@@ -29,6 +31,21 @@ namespace ParkingControl
         public int TrackedCurbLanes;
         public int OccupiedCurbLanes;
         public int OccupiedTargetCurbLanes;
+
+        // Scope-only counters keep District/Whole City separate from manual road bans.
+        public int ScopeTargetCurbLanes;
+        public int DisabledScopeTargetCurbLanes;
+        public int TrackedScopeTargetCurbLanes;
+        public int OccupiedScopeTargetCurbLanes;
+        public int ScopeTargetStreetParked;
+
+        // Manual counters can overlap scope counters; combined Target* counters stay unique.
+        public int ManualTargetCurbLanes;
+        public int DisabledManualTargetCurbLanes;
+        public int TrackedManualTargetCurbLanes;
+        public int OccupiedManualTargetCurbLanes;
+        public int ManualTargetStreetParked;
+
         public int FixedSlotCurbLanes;
         public int FixedSlotCurbCapacity;
         public int FixedSlotCurbParked;
@@ -57,10 +74,13 @@ namespace ParkingControl
         public int OutsideCommuterHousehold;
         public int OutsideResidentNotMovedIn;
         public int UnassignedOrUnknownParked;
+
         public int UnknownNullLane;
         public int UnknownMissingLane;
         public int UnknownUnspawned;
+        public int UnknownNullLaneUnspawned;
         public int UnknownWithTripSource;
+
         public int UnknownWithoutTripSource;
         public int UnknownTripSourceOutside;
         public int UnknownTripSourceBuilding;
@@ -133,6 +153,7 @@ namespace ParkingControl
             UnknownMissingSourceSamples = new List<Entity>(sampleLimit);
             UnknownNoSourceSamples = new List<Entity>(sampleLimit);
             SampleTransitions = new List<VehicleSampleTransition>(sampleLimit * 3);
+            UnresolvedTargetLanes = new List<UnresolvedTargetLane>(sampleLimit);
         }
 
         public Dictionary<Entity, DistrictParkingStats> DistrictParking { get; } =
@@ -159,6 +180,10 @@ namespace ParkingControl
         public List<Entity> UnknownNoSourceSamples { get; }
 
         public List<VehicleSampleTransition> SampleTransitions { get; }
+
+        public int UnresolvedTargetLaneCount { get; set; }
+
+        public List<UnresolvedTargetLane> UnresolvedTargetLanes { get; }
     }
 
     /// <summary>
@@ -185,6 +210,48 @@ namespace ParkingControl
         public int StreetCars { get; set; }
 
         public int OccupiedLanes { get; set; }
+    }
+
+    /// <summary>
+    /// Log-only details for one target curb lane that was not disabled at snapshot time.
+    /// </summary>
+    internal readonly struct UnresolvedTargetLane
+    {
+        public UnresolvedTargetLane(
+            Entity lane,
+            Entity road,
+            Entity district,
+            bool rightSide,
+            bool manualTarget,
+            bool scopeTarget,
+            bool parkingDisabled,
+            bool streetParkingState)
+        {
+            Lane = lane;
+            Road = road;
+            District = district;
+            RightSide = rightSide;
+            ManualTarget = manualTarget;
+            ScopeTarget = scopeTarget;
+            ParkingDisabled = parkingDisabled;
+            StreetParkingState = streetParkingState;
+        }
+
+        public Entity Lane { get; }
+
+        public Entity Road { get; }
+
+        public Entity District { get; }
+
+        public bool RightSide { get; }
+
+        public bool ManualTarget { get; }
+
+        public bool ScopeTarget { get; }
+
+        public bool ParkingDisabled { get; }
+
+        public bool StreetParkingState { get; }
     }
 
     /// <summary>

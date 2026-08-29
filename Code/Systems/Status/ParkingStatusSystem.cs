@@ -8,14 +8,15 @@
 
 // Purpose: Schedules on-demand parking probes for Options status and detailed log reports.
 
+using System;
+using System.Collections.Generic;
+using CS2Shared.RiverMochi;
+using Game;
+using Unity.Entities;
+
+
 namespace ParkingControl
 {
-    using System;
-    using System.Collections.Generic;
-    using CS2Shared.RiverMochi;
-    using Game;
-    using Game.Simulation;
-    using Unity.Entities;
 
     /// <summary>
     /// Owns parking queries and runs only when status or a manual report is requested.
@@ -23,17 +24,21 @@ namespace ParkingControl
     public sealed partial class ParkingStatusSystem : GameSystemBase
     {
         private const int kVehicleSampleLimit = 20;
+        private const int kUnresolvedLaneSampleLimit = 100;
+        private const double kReportCooldownSeconds = 10.0;
 
         private EntityQuery m_CurbLaneQuery;
+        private EntityQuery m_DistrictPolicyPrefabQuery;
         private EntityQuery m_DistrictQuery;
         private EntityQuery m_GarageLaneQuery;
         private EntityQuery m_ParkingFacilityQuery;
         private EntityQuery m_PersonalVehicleQuery;
         private Game.UI.NameSystem m_NameSystem = null!;
-        private SimulationSystem m_SimulationSystem = null!;
+        private Game.Simulation.SimulationSystem m_SimulationSystem = null!;
         private bool m_HasPreviousReport;
         private bool m_ReportRequested;
         private bool m_StatusRequested;
+        private long m_LastReportRequestTimestamp;
         private readonly Dictionary<Entity, int> m_PreviousDistrictStreetCars = new();
         private readonly List<Entity> m_PreviousOutsideSamples = new(kVehicleSampleLimit);
         private readonly List<Entity> m_PreviousStreetSamples = new(kVehicleSampleLimit);
@@ -45,6 +50,20 @@ namespace ParkingControl
         /// </summary>
         public void ScheduleReport()
         {
+            long now = System.Diagnostics.Stopwatch.GetTimestamp();
+            if (m_LastReportRequestTimestamp != 0)
+            {
+                double elapsedSeconds =
+                    (double)(now - m_LastReportRequestTimestamp) /
+                    System.Diagnostics.Stopwatch.Frequency;
+
+                if (elapsedSeconds < kReportCooldownSeconds)
+                {
+                    return;
+                }
+            }
+
+            m_LastReportRequestTimestamp = now;
             m_ReportRequested = true;
             Enabled = true;
         }
@@ -63,7 +82,8 @@ namespace ParkingControl
         {
             base.OnCreate();
             m_NameSystem = World.GetOrCreateSystemManaged<Game.UI.NameSystem>();
-            m_SimulationSystem = World.GetOrCreateSystemManaged<SimulationSystem>();
+            m_SimulationSystem =
+                World.GetOrCreateSystemManaged<Game.Simulation.SimulationSystem>();
 
             // Fully qualified query types prevent similarly named Game components from
             // becoming ambiguous when another namespace is added to a partial file.
@@ -75,6 +95,13 @@ namespace ParkingControl
                 .WithAll<Game.Areas.District, Game.Policies.Policy>()
                 .WithNone<Game.Common.Deleted, Game.Tools.Temp>()
                 .Build();
+
+            // Report-only: find district policies that can modify ParkingFee even if
+            // another mod damages or removes their PolicySliderData component.
+            m_DistrictPolicyPrefabQuery = SystemAPI.QueryBuilder()
+                .WithAll<Game.Prefabs.PolicyData, Game.Prefabs.DistrictModifierData>()
+                .Build();
+
             m_GarageLaneQuery = SystemAPI.QueryBuilder()
                 .WithAll<Game.Net.GarageLane>()
                 .WithNone<Game.Common.Deleted, Game.Tools.Temp>()
@@ -138,6 +165,7 @@ namespace ParkingControl
                     purpose == Colossal.Serialization.Entities.Purpose.LoadGame))
             {
                 // Entity Index:Version values are valid only within this loaded-city session.
+                m_LastReportRequestTimestamp = 0;
                 ResetReportHistory();
                 ParkingStatusCache.InvalidateCache();
             }
@@ -172,10 +200,16 @@ namespace ParkingControl
                     ? new ParkingReportDetails(kVehicleSampleLimit)
                     : null;
                 ParkingSnapshot snapshot = BuildSnapshot(details);
+
+                // These counters are UI/report-only and keep scope bans separate from manual bans.
+                AddScopeManualCounters(ref snapshot);
+
                 ParkingStatusCache.Publish(snapshot);
 
                 if (reportRequested && details != null)
                 {
+                    WriteScopeManualReportSummary(snapshot);
+                    WriteParkingFeeDebug();
                     WriteReport(snapshot, details);
                 }
             }

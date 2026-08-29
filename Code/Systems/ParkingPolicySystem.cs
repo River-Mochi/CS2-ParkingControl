@@ -8,14 +8,15 @@
 
 // Purpose: Registers the runtime-only zero-mask policy shown in the vanilla district panel.
 
+using System;
+using CS2Shared.RiverMochi;
+using Game;
+using Game.Prefabs;
+using Game.UI.InGame;
+using Unity.Entities;
+
 namespace ParkingControl
 {
-    using System;
-    using CS2Shared.RiverMochi;
-    using Game;
-    using Game.Prefabs;
-    using Game.UI.InGame;
-    using Unity.Entities;
 
     /// <summary>
     /// Adds Parking Control's toggle to the vanilla district policy panel.
