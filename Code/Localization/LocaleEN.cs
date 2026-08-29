@@ -51,15 +51,16 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "No street parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
                     "Choose:\n" +
-                    "<1. by District>\n" +
-                    "<2. Manual Only>\n" +
-                    "<3. Whole City Ban>\n" +
+                    "<1. by District> - use the Roadside Parking Ban district policy.\n" +
+                    "<2. Manual Only> - city/District bans are OFF; manual No Parking road button still works.\n" +
+                    "<3. Whole City Ban> - ban parking on all eligible city streets.\n" +
 
                     "- Eligible lanes are flagged to prevent new street parking.\n" +
                     "- Existing parked cars move gradually after parking is banned; large banned areas take longer.\n" +
                     "- Fee-based parking lots and normal building parking remain usable.\n" +
                     "**Some roads already exclude street parking, like Highways and small 2-way alley roads.**"
                 },
+
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. by District" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. Manual only" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. Whole City ban" },
@@ -104,7 +105,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Street Parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "Shows only the selected <Whole City> or <by District> Parking Ban scope. Manual No Parking roads are listed separately.\n" +
-                    "<Manual Only> = Whole City/District bans are DISABLED; manual <No Parking> road button still useable.\n" +
+                    "<Manual Only> = Whole City/District bans are disabled; manual <No Parking> road button works.\n" +
                     "<Parked> = cars still parked on streets covered by the selected scope.\n" +
                     "<Disabled> = disabled curb-lane sections / target curb-lane sections.\n" +
                     "<Districts> = districts with the Parking Ban / total districts.\n" +
