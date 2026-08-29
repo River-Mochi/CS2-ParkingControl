@@ -1,4 +1,4 @@
-// <copyright file="LocaleEN.cs" company="River-Mochi">
+﻿// <copyright file="LocaleEN.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -125,8 +125,9 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Parking use" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "<Public> = occupied parking spaces in parking facilities.\n" +
-                    "Roughly matches CS2's Roads parking InfoView panel.\n" +
+                    "Shows the <total city> parking use. This does not follow the Whole City / by District Parking Ban scope.\n" +
+                    "<Public> = occupied / total spaces in public parking facilities.\n" +
+                    "Uses the same parking facility data as CS2's Roads parking InfoView.\n" +
                     "<Bldg> = vehicles parked at buildings or garages.\n" +
                     "<Street> = cars parked on streets.\n" +
                     "<Total> = total known in-city parked cars (street + public + building).\n" +
@@ -135,12 +136,12 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Parking rating" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "Rates how much exact-capacity parking is still <free>.\n" +
+                    "Shows the <total city> public parking availability.\n" +
                     "<POOR> = less than 15% free.\n" +
                     "<OK> = 15% to less than 30% free.\n" +
                     "<GOOD> = 30% or more free.\n" +
-                    "<Public> uses parking facilities counted by CS2's Roads parking InfoView.\n" +
-                    "<Bldg> uses exact-capacity parking at buildings and garages."
+                    "<Public free> = currently unused public parking spaces.\n" +
+                    "This counts the same parking facilities as the game's own Roads parking InfoView."
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Car Locations" },
@@ -190,7 +191,10 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} parked | {1}/{2} disabled lanes{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} parked | {1}/{2} disabled | {3}/{4} districts{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} street | {1} visible | {2} inside | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1} public free | {2} = {3} bldg free" },
+
+           //     { ParkingStatusLocale.kSupplyFormat, "{0} = {1} public free | {2} = {3} bldg free" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, public free {2}" },
+
                 { ParkingStatusLocale.kShareFormat, "{0} public | {1} bldg | {2} street | {3} total" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "OFF = Whole City/District bans disabled | manual roads still work" },

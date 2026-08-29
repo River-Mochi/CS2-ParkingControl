@@ -1,4 +1,4 @@
-// <copyright file="ParkingStatusCache.cs" company="River-Mochi">
+﻿// <copyright file="ParkingStatusCache.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -39,8 +39,12 @@ namespace ParkingControl
             "{0} parked | {1}/{2} disabled | {3}/{4} districts{5}";
         private const string kVehicleFormatFallback =
             "{0} street | {1} visible | {2} inside | {3} OC";
+
+       // private const string kSupplyFormatFallback =
+        //    "{0} = {1} public free | {2} = {3} bldg free";
+
         private const string kSupplyFormatFallback =
-            "{0} = {1} public free | {2} = {3} bldg free";
+            "{0} = {1}, public free {2}";
         private const string kShareFormatFallback =
             "{0} public | {1} bldg | {2} street | {3} total";
 
@@ -331,13 +335,20 @@ namespace ParkingControl
                 Format(snapshot.HiddenInBuildings),
                 Format(snapshot.OutsideConnection));
 
+            string publicParkingUse =
+                Format(snapshot.OfficialParkingOccupied) + "/" + Format(snapshot.OfficialParkingCapacity);
+
             string parkingUse = ParkingStatusLocale.Format(
                 ParkingStatusLocale.kShareFormat,
                 kShareFormatFallback,
-                Format(snapshot.OfficialParkingOccupied),
+                publicParkingUse,
                 Format(snapshot.BuildingParkingOccupied),
                 Format(snapshot.StreetParked),
                 Format(snapshot.KnownInCityParking));
+
+            string publicFree = snapshot.OfficialParkingCapacity > 0
+                ? Format(Math.Max(0, snapshot.OfficialParkingCapacity - snapshot.OfficialParkingOccupied))
+                : "--";
 
             string parkingRating = ParkingStatusLocale.Format(
                 ParkingStatusLocale.kSupplyFormat,
@@ -348,12 +359,7 @@ namespace ParkingControl
                 FormatFreePercent(
                     snapshot.OfficialParkingOccupied,
                     snapshot.OfficialParkingCapacity),
-                GetParkingRating(
-                    snapshot.BuildingParkingOccupied,
-                    snapshot.BuildingParkingCapacity),
-                FormatFreePercent(
-                    snapshot.BuildingParkingOccupied,
-                    snapshot.BuildingParkingCapacity));
+                publicFree);
 
             string updated = snapshot.CapturedAtLocal.ToString(
                 "HH:mm:ss",
