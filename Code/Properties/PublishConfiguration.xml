@@ -91,11 +91,9 @@ tags: Disable road parking, clear road side, no cars
 <!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
 <ChangeLog Value="" />
 <ChangeLog>
+- simplify status report and update translation files.
 - Fixed compatibility with Realistic Parking so No Parking restrictions stay applied.
-- Added clearer parking Status rows.
 - Added gradual automatic relocation for cars parked on newly banned curb lanes.
-- Improved the manual No Parking road tool color preview overlay.
-- Improved handling of new and rebuilt roads so Parking Control reapplies restrictions after CS2 rebuilds their parking lanes.
 </ChangeLog>
 <!--External link, can be set multiple times. supported types are "discord", "github", "youtube", "twitch", "paypal", "patreon", "buymeacoffee", "kofi", "crowdin", "gitlab", "gofundme"-->
 <ExternalLink Type="discord" Url="https://discord.gg/gwXgvtyhjc" />
