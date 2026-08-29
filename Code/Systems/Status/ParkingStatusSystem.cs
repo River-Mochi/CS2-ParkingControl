@@ -8,15 +8,16 @@
 
 // Purpose: Schedules on-demand parking probes for Options status and detailed log reports.
 
-    using System;
-    using System.Collections.Generic;
-    using CS2Shared.RiverMochi;
-    using Game;
-    using Unity.Entities;
+using System;
+using System.Collections.Generic;
+using CS2Shared.RiverMochi;
+using Game;
+using Unity.Entities;
 
 
 namespace ParkingControl
 {
+
     /// <summary>
     /// Owns parking queries and runs only when status or a manual report is requested.
     /// </summary>

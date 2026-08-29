@@ -7,12 +7,12 @@
 // ================= </copyright> ======================
 
 // Purpose: Vietnamese text for Parking Control's Options UI.
-    using System.Collections.Generic;
-    using Colossal;
+
+using System.Collections.Generic;
+using Colossal;
 
 namespace ParkingControl
 {
-
 
     /// <summary>
     /// Vietnamese localization entries for <see cref="PCSettings"/>.

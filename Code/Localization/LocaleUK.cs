@@ -7,12 +7,12 @@
 // ================= </copyright> ======================
 
 // Purpose: Ukrainian text for Parking Control's Options UI.
-    using System.Collections.Generic;
-    using Colossal;
+
+using System.Collections.Generic;
+using Colossal;
 
 namespace ParkingControl
 {
-
 
     /// <summary>
     /// Ukrainian localization entries for <see cref="PCSettings"/>.

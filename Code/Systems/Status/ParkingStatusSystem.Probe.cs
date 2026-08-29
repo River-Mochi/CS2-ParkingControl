@@ -8,12 +8,13 @@
 
 // Purpose: Collects on-demand curb, parking-supply, ownership, and personal-vehicle status snapshots.
 
-    using System;
-    using Unity.Collections;
-    using Unity.Entities;
+using System;
+using Unity.Collections;
+using Unity.Entities;
 
 namespace ParkingControl
 {
+
     public sealed partial class ParkingStatusSystem
     {
         /// <summary>

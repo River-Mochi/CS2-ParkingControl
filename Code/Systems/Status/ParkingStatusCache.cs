@@ -7,15 +7,17 @@
 // ================= </copyright> ======================
 
 // Purpose: Caches on-demand parking status text for the Options UI.
-    using System;
-    using System.Globalization;
-    using Game;
-    using Game.SceneFlow;
-    using Unity.Entities;
-    using UnityEngine;
+
+using System;
+using System.Globalization;
+using Game;
+using Game.SceneFlow;
+using Unity.Entities;
+using UnityEngine;
 
 namespace ParkingControl
 {
+
     /// <summary>
     /// Supplies cached status strings without reading ECS data from setting property getters.
     /// </summary>

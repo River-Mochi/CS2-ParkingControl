@@ -7,11 +7,11 @@
 // ================= </copyright> ======================
 
 // Purpose: Identifies FixParkingLocation requests issued by Parking Control.
-    using Unity.Entities;
+
+using Unity.Entities;
 
 namespace ParkingControl
 {
-
 
     /// <summary>
     /// Temporary marker removed once vanilla finishes this mod's relocation handoff.

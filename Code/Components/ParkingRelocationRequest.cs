@@ -7,11 +7,11 @@
 // ================= </copyright> ======================
 
 // Purpose: Marks a newly banned curb lane whose existing parked cars should be queued once.
-    using Unity.Entities;
+
+using Unity.Entities;
 
 namespace ParkingControl
 {
-
 
     /// <summary>
     /// One-shot marker consumed by <see cref="ParkingRelocationSystem"/>.

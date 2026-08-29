@@ -8,9 +8,9 @@
 
 // Purpose: Holds the short-lived models shared by parking probes, status text, and log reports.
 
-    using System;
-    using System.Collections.Generic;
-    using Unity.Entities;
+using System;
+using System.Collections.Generic;
+using Unity.Entities;
 
 namespace ParkingControl
 {

@@ -8,17 +8,18 @@
 
 // Purpose: Lets the player add/remove No Parking on one side of existing roads.
 
-    using System.Collections.Generic;
-    using Colossal.Mathematics;
-    using Game.Common;
-    using Game.Tools;
-    using Unity.Entities;
-    using Unity.Jobs;
-    using Unity.Mathematics;
-    using UnityEngine.InputSystem;
+using System.Collections.Generic;
+using Colossal.Mathematics;
+using Game.Common;
+using Game.Tools;
+using Unity.Entities;
+using Unity.Jobs;
+using Unity.Mathematics;
+using UnityEngine.InputSystem;
 
 namespace ParkingControl
 {
+
     public sealed partial class ManualNoParkingToolSystem : ToolBaseSystem
     {
         internal const string kToolId = "ParkingControl.NoParking";
@@ -232,7 +233,7 @@ namespace ParkingControl
             }
 
             return inputDeps;
-        }   
+        }
 
 
         public override Game.Prefabs.PrefabBase? GetPrefab()

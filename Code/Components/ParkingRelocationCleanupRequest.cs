@@ -7,11 +7,11 @@
 // ================= </copyright> ======================
 
 // Purpose: Retains a newly banned curb lane for one delayed, targeted relocation retry.
-    using Unity.Entities;
+
+using Unity.Entities;
 
 namespace ParkingControl
 {
-
 
     /// <summary>
     /// One-shot marker consumed by the delayed cleanup in

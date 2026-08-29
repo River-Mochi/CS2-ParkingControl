@@ -7,8 +7,9 @@
 // ================= </copyright> ======================
 
 // Purpose: Simplified Chinese text for Parking Control's Options UI.
-    using System.Collections.Generic;
-    using Colossal;
+
+using System.Collections.Generic;
+using Colossal;
 
 namespace ParkingControl
 {

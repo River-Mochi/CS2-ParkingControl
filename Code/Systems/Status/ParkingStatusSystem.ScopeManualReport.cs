@@ -8,7 +8,7 @@
 
 // Purpose: Adds a compact scope/manual target split beside the detailed parking report.
 
-    using CS2Shared.RiverMochi;
+using CS2Shared.RiverMochi;
 
 namespace ParkingControl
 {

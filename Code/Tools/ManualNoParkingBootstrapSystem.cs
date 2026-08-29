@@ -7,12 +7,14 @@
 // ================= </copyright> ======================
 
 // Purpose: Waits for vanilla Roads Services prefabs, then creates the No Parking tile.
-    using Colossal.Serialization.Entities;
-    using CS2Shared.RiverMochi;
-    using Game;
+
+using Colossal.Serialization.Entities;
+using CS2Shared.RiverMochi;
+using Game;
 
 namespace ParkingControl
 {
+
     public sealed partial class ManualNoParkingBootstrapSystem : GameSystemBase
     {
         private const int kMaxTries = 1800;

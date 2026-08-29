@@ -8,14 +8,15 @@
 
 // Purpose: Writes parking report summaries, enforcement details, and district totals.
 
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-    using CS2Shared.RiverMochi;
-    using Unity.Entities;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using CS2Shared.RiverMochi;
+using Unity.Entities;
 
 namespace ParkingControl
 {
+
     public sealed partial class ParkingStatusSystem
     {
         /// <summary>

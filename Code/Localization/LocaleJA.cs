@@ -7,12 +7,12 @@
 // ================= </copyright> ======================
 
 // Purpose: Japanese text for Parking Control's Options UI.
-    using System.Collections.Generic;
-    using Colossal;
+
+using System.Collections.Generic;
+using Colossal;
 
 namespace ParkingControl
 {
-
 
     /// <summary>
     /// Japanese localization entries for <see cref="PCSettings"/>.

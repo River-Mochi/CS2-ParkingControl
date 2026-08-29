@@ -7,12 +7,12 @@
 // ================= </copyright> ======================
 
 // Purpose: Italian text for Parking Control's Options UI.
-    using System.Collections.Generic;
-    using Colossal;
+
+using System.Collections.Generic;
+using Colossal;
 
 namespace ParkingControl
 {
-
 
     /// <summary>
     /// Italian localization entries for <see cref="PCSettings"/>.

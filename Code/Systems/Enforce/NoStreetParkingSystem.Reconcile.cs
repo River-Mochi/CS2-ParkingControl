@@ -8,7 +8,7 @@
 
 // Purpose: Applies Parking Control restrictions to parking lanes and path data.
 
-    using Unity.Entities;
+using Unity.Entities;
 
 namespace ParkingControl
 {

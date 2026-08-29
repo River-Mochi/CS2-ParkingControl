@@ -7,18 +7,18 @@
 // ================= </copyright> ======================
 
 // Purpose: Defines immediately persisted Parking Control Options UI settings.
-    using System;
-    using Colossal.IO.AssetDatabase;
-    using Colossal.Json;
-    using CS2Shared.RiverMochi;
-    using Game.Modding;
-    using Game.Settings;
-    using Unity.Entities;
-    using UnityEngine;
+
+using System;
+using Colossal.IO.AssetDatabase;
+using Colossal.Json;
+using CS2Shared.RiverMochi;
+using Game.Modding;
+using Game.Settings;
+using Unity.Entities;
+using UnityEngine;
 
 namespace ParkingControl
 {
-
 
     /// <summary>
     /// Stores Parking Control options.

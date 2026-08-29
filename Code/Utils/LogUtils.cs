@@ -34,14 +34,16 @@
 //   Warn once:                  LogUtils.WarnOnce("key", () => "message");
 //
 // Helpers: Info/Warn/Error/Debug/Trace. TryLog accepts any Colossal Level.
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;     // stable timestamp format
-    using System.IO;
-    using Colossal.Logging;
+
+using System;
+using System.Collections.Generic;
+using System.Globalization; // stable timestamp format
+using System.IO;
+using Colossal.Logging;
 
 namespace CS2Shared.RiverMochi
 {
+
     public static class LogUtils
     {
         private static readonly object s_WarnOnceLock = new();

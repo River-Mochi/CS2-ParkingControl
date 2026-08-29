@@ -8,14 +8,13 @@
 
 // Purpose: Decides which curb lanes are targeted and prunes stale manual bans.
 
-    using Game.Common;
-    using Game.Net;
-    using Unity.Collections;
-    using Unity.Entities;
+using Game.Common;
+using Game.Net;
+using Unity.Collections;
+using Unity.Entities;
 
 namespace ParkingControl
 {
-
 
     public sealed partial class NoStreetParkingSystem
     {

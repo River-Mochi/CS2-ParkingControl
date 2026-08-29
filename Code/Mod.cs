@@ -7,22 +7,22 @@
 // ================= </copyright> ======================
 
 // Purpose: Registers Parking Control settings, localization, logging, and ECS systems.
-    using System;
-    using System.Reflection;
-    using Colossal.IO.AssetDatabase;
-    using Colossal.Localization;
-    using Colossal.Logging;
-    using CS2Shared.RiverMochi;
-    using Game;
-    using Game.Modding;
-    using Game.Pathfind;
-    using Game.SceneFlow;
-    using Game.Serialization;
-    using Game.Vehicles;
+
+using System;
+using System.Reflection;
+using Colossal.IO.AssetDatabase;
+using Colossal.Localization;
+using Colossal.Logging;
+using CS2Shared.RiverMochi;
+using Game;
+using Game.Modding;
+using Game.Pathfind;
+using Game.SceneFlow;
+using Game.Serialization;
+using Game.Vehicles;
 
 namespace ParkingControl
 {
-
 
     public sealed class Mod : IMod
     {

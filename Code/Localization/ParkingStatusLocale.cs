@@ -7,14 +7,14 @@
 // ================= </copyright> ======================
 
 // Purpose: Defines localization IDs and safe lookups for Parking Control status text.
-    using System;
-    using System.Globalization;
-    using Colossal.Localization;
-    using Game.SceneFlow;
+
+using System;
+using System.Globalization;
+using Colossal.Localization;
+using Game.SceneFlow;
 
 namespace ParkingControl
 {
-
 
     /// <summary>
     /// Supplies localized strings used by the live parking status rows.

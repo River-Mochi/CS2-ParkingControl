@@ -7,19 +7,20 @@
 // ================= </copyright> ======================
 
 // Purpose: Draws Manual No Parking side previews and add/remove road perimeters.
-    using System.Collections.Generic;
-    using Colossal.Mathematics;
-    using Game;
-    using Game.Rendering;
 
-    using Unity.Collections;
-    using Unity.Entities;
-    using Unity.Jobs;
-    using Unity.Mathematics;
-    using UnityEngine;
+using System.Collections.Generic;
+using Colossal.Mathematics;
+using Game;
+using Game.Rendering;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Jobs;
+using Unity.Mathematics;
+using UnityEngine;
 
 namespace ParkingControl
 {
+
     public sealed partial class ManualNoParkingOverlaySystem : GameSystemBase
     {
         private const float kSidePreviewWidth = 3.8f;

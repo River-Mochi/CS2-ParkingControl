@@ -8,11 +8,12 @@
 
 // Purpose: Read-only debug output for the vanilla district Roadside Parking Fee slider.
 
-    using CS2Shared.RiverMochi;
-    using Unity.Entities;
+using CS2Shared.RiverMochi;
+using Unity.Entities;
 
 namespace ParkingControl
 {
+
     public sealed partial class ParkingStatusSystem
     {
         /// <summary>

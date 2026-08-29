@@ -7,12 +7,14 @@
 // ================= </copyright> ======================
 
 // Purpose: Gradually hands cars from newly banned curb lanes to vanilla parking relocation.
-    using CS2Shared.RiverMochi;
-    using Game;
-    using Unity.Entities;
+
+using CS2Shared.RiverMochi;
+using Game;
+using Unity.Entities;
 
 namespace ParkingControl
 {
+
     internal struct AutomaticRelocationReport
     {
         public bool HasRun;

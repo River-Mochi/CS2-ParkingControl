@@ -8,11 +8,11 @@
 
 // Purpose: Builds separate scope and manual No Parking counters for the Options status rows.
 
-    using Game.Common;
-    using Game.Net;
-    using Game.Vehicles;
-    using Unity.Collections;
-    using Unity.Entities;
+using Game.Common;
+using Game.Net;
+using Game.Vehicles;
+using Unity.Collections;
+using Unity.Entities;
 
 namespace ParkingControl
 {

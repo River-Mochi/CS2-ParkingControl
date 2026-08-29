@@ -7,10 +7,12 @@
 // ================= </copyright> ======================
 
 // Purpose: Marks parking lanes whose vanilla flag was changed by Parking Control.
-    using Unity.Entities;
+
+using Unity.Entities;
 
 namespace ParkingControl
 {
+
     /// <summary>
     /// Non-serialized marker added only when this mod changes an enabled curb lane.
     /// </summary>
