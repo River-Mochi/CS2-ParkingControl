@@ -14,6 +14,8 @@ using Colossal.Json;
 using CS2Shared.RiverMochi;
 using Game.Modding;
 using Game.Settings;
+using Game.UI.Localization;
+using Game.UI.Widgets;
 using Unity.Entities;
 using UnityEngine;
 
@@ -59,12 +61,14 @@ namespace ParkingControl
         /// <summary>
         /// Gets or sets where ordinary street parking is disabled.
         /// </summary>
+        [SettingsUIDropdown(typeof(PCSettings), nameof(GetScopeDropdownItems))]
         [SettingsUISection(kActionsTab, kStreetParkingGroup)]
         public ParkingScope Scope
         {
             get => m_ParkingScope;
             set => m_ParkingScope = value;
         }
+
 
         /// <summary>
         /// Gets or sets a value indicating whether district-mode instructions are shown.
@@ -298,16 +302,36 @@ namespace ParkingControl
             }
         }
 
+
+        private DropdownItem<int>[] GetScopeDropdownItems()
+        {
+            return new DropdownItem<int>[]
+            {
+                new() { value = (int)ParkingScope.ByDistrict,
+                    displayName = LocalizedString.Id(
+                        GetEnumValueLocaleID(ParkingScope.ByDistrict)),
+                },
+                new() { value = (int)ParkingScope.Off,
+                    displayName = LocalizedString.Id(
+                        GetEnumValueLocaleID(ParkingScope.Off)),
+                },
+                new() { value = (int)ParkingScope.WholeCity,
+                    displayName = LocalizedString.Id(
+                        GetEnumValueLocaleID(ParkingScope.WholeCity)),
+                },
+            };
+        }
+
         /// <summary>
         /// Selects the area covered by the no-street-parking rule.
         /// </summary>
         public enum ParkingScope
         {
-            // Order controls the Options dropdown view order.
-            // Explicit values preserve existing settings files.
+            // Numeric values are persisted. Do not renumber.
+            // AdvancedEnumDropdown, display order controlled by GetScopeDropdownItems().
+            WholeCity = 0,
             ByDistrict = 1,
             Off = 2,
-            WholeCity = 0,
         }
     }
 }

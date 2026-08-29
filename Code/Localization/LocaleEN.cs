@@ -191,7 +191,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} parked | {1}/{2} disabled | {3}/{4} districts{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} street | {1} visible | {2} inside | {3} OC" },
 
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, public available {2}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, {2} public open" },
 
                 { ParkingStatusLocale.kShareFormat, "{0} public | {1} bldg | {2} street | {3} total" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
