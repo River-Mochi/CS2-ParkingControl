@@ -6,7 +6,7 @@
 # This notice MUST be kept with copies or substantial portions of this code.
 # ================= </copyright> ======================
 
-# version 0.6.0
+# version 0.6.2
 """
 Add standard River-Mochi GPL file headers to source files.
 
@@ -38,6 +38,14 @@ Not supported on purpose:
   Those file types either cannot safely use this same header style or are
   bundled into COHTML/UI output where extra comments are not always helpful.
 
+
+Preserved separately these shared licensed MIT files are intentionally skipped
+when found inside any Utils folder:
+  LocaleUtils.cs
+  LogUtils.cs
+  ShellOpen.cs
+  DebugLocaleScan.cs
+
 Scan behavior:
   Uses git ls-files when available, so ignored folders such as bin, obj,
   node_modules, .git, and .vs are not scanned.
@@ -48,6 +56,7 @@ Repo-root behavior:
     /Scripts
     /Project/Scripts
     /Project/Project/Scripts
+
 
 Important:
   Python must still be given the real path to this script. Repo-root detection
@@ -74,6 +83,16 @@ SKIP_DIRS = {
     "generated",
     "node_modules",
     "packages",
+}
+
+# Shared library files keep their original MIT license.
+# Match by filename inside any Utils folder so this works with
+# both root-level and nested mod project layouts.
+PRESERVE_LICENSE_FILES = {
+    "localeutils.cs",
+    "logutils.cs",
+    "shellopen.cs",
+    "debuglocalescan.cs",
 }
 
 SUPPORTED_SUFFIXES = {
@@ -125,12 +144,17 @@ def find_repo_root(script_path: Path) -> Path:
 
     return Path.cwd().resolve()
 
-
 def should_skip(path: Path) -> bool:
-    """Return true for generated/build files that should not be edited."""
+    """Return true for files this GPL-header tool must not edit."""
     if path.name.endswith(".g.cs"):
         return True
 
+    if (
+        path.parent.name.lower() == "utils"
+        and path.name.lower() in PRESERVE_LICENSE_FILES
+    ):
+        return True
+    
     parts = {part.lower() for part in path.parts}
     return any(skip_dir in parts for skip_dir in SKIP_DIRS)
 

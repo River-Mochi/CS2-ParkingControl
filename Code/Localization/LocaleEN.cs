@@ -1,4 +1,4 @@
-﻿// <copyright file="LocaleEN.cs" company="River-Mochi">
+// <copyright file="LocaleEN.cs" company="River-Mochi">
 // Copyright (c) 2026 River-Mochi. All rights reserved.
 // Licensed under the GNU General Public License v3.0 or later,
 // with the Cities: Skylines II Linking Exception.
@@ -50,15 +50,15 @@ namespace ParkingControl
                 // Street-parking controls.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "No street parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
-                    "Choose:\n" +
-                    "<1. by District> - use the Roadside Parking Ban district policy.\n" +
-                    "<2. Manual Only> - city/District bans are OFF; manual No Parking road button still works.\n" +
+                    "Pick one:\n" +
+                    "Recommended: <1. by District> - shows the district policy **[Roadside Parking Ban]** in game.\n" +
+                    "<2. Manual Only> - city/district bans are all OFF. Manual [No Parking] road button still works no matter which dropdown you pick.\n" +
                     "<3. Whole City Ban> - ban parking on all eligible city streets.\n" +
 
-                    "- Eligible lanes are flagged to prevent new street parking.\n" +
-                    "- Existing parked cars move gradually after parking is banned; large banned areas take longer.\n" +
-                    "- Fee-based parking lots and normal building parking remain usable.\n" +
-                    "**Some roads already exclude street parking, like Highways and small 2-way alley roads.**"
+                    "- Lanes are flagged to prevent new street parking.\n" +
+                    "- Parked cars move gradually after parking is banned; large banned areas take longer to clear.\n" +
+                    "- Of Course, Fee-based parking lots and normal building parking remain usable.\n" +
+                    "**Some roads already exclude street parking, like Highways, small 2-way alley roads, 3-lane async roads.**"
                 },
 
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. by District" },

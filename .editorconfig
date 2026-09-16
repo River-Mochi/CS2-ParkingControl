@@ -1,4 +1,4 @@
-# File: .editorconfig version 0.6.7
+# File: .editorconfig version 0.6.9
 # Purpose:
 #   - Consistent whitespace + LF line endings across normal repo files.
 #   - CRLF for classic Visual Studio .sln files.
@@ -205,3 +205,10 @@ dotnet_naming_rule.public_const_fields_pascal.severity = suggestion
 dotnet_naming_rule.non_public_const_fields_k_prefix.symbols = non_public_const_fields
 dotnet_naming_rule.non_public_const_fields_k_prefix.style = k_prefix_pascal
 dotnet_naming_rule.non_public_const_fields_k_prefix.severity = suggestion
+
+# =========================
+# Shared MIT utilities
+# These files are reused by both MIT and GPL mods.
+# =========================
+[**/Utils/*.cs]
+file_header_template = <copyright file="{fileName}" company="River-Mochi">\nCopyright (c) 2026 River-Mochi. All rights reserved.\nLicensed under the MIT License.\nSee LICENSE-MIT in the project root for full license information.\nThis notice and the MIT License notice must be kept with\nall copies or substantial portions of this code.\n================= </copyright> ======================
