@@ -85,6 +85,9 @@ namespace ParkingControl
 
             PCSettings.ParkingScope scope =
                 Mod.Settings?.Scope ?? PCSettings.ParkingScope.Off;
+
+            using RoadSizeRule roadSizeRule = CreateRoadSizeRule();
+
             Entity policyEntity = ParkingPolicySystem.PolicyEntity;
             ParkingSnapshot snapshot = new()
             {
@@ -220,7 +223,11 @@ namespace ParkingControl
                             policyEntity,
                             ownerLookup,
                             borderDistrictLookup,
-                            policyLookup);
+                            policyLookup) ||
+                        NoStreetParkingSystem.IsRoadSizeRestrictionTarget(
+                            lane,
+                            ownerLookup,
+                            roadSizeRule);
 
                     bool isTarget = manualTarget || scopeTarget;
 
@@ -566,7 +573,8 @@ namespace ParkingControl
                             ownerLookup,
                             borderDistrictLookup,
                             manualRoadBanLookup,
-                            policyLookup);
+                            policyLookup,
+                            roadSizeRule);
 
                             bool firstParkedCarOnLane = occupiedCurbLanes.Add(parkedLane);
                             if (firstParkedCarOnLane)

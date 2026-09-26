@@ -41,6 +41,8 @@ namespace ParkingControl
         private bool m_IsGame;
         private bool m_Initialized;
         private PCSettings.ParkingScope m_LastScope;
+        private bool m_LastBanFourLaneRoads;
+        private bool m_LastBanSixLaneRoads;
 
         /// <summary>
         /// Requests a full reconciliation during the next modification pass.
@@ -147,6 +149,10 @@ namespace ParkingControl
             PCSettings.ParkingScope scope =
                 Mod.Settings?.Scope ?? PCSettings.ParkingScope.Off;
 
+            bool banFourLaneRoads = Mod.Settings?.BanFourLaneRoads ?? false;
+            bool banSixLaneRoads = Mod.Settings?.BanSixLaneRoads ?? false;
+            bool roadSizeActive = banFourLaneRoads || banSixLaneRoads;
+
             Entity policyEntity = ParkingPolicySystem.PolicyEntity;
 
             bool policyChanged =
@@ -158,6 +164,8 @@ namespace ParkingControl
                 s_SaveRecoveryRequested ||
                 !m_Initialized ||
                 scope != m_LastScope ||
+                banFourLaneRoads != m_LastBanFourLaneRoads ||
+                banSixLaneRoads != m_LastBanSixLaneRoads ||
                 policyChanged;
 
             bool changedParkingLanes =
@@ -177,7 +185,8 @@ namespace ParkingControl
                 !changedManualRoads &&
                 (!changedParkingLanes ||
                     (scope == PCSettings.ParkingScope.Off &&
-                        !hasManualRoadBans)))
+                        !hasManualRoadBans &&
+                        !roadSizeActive)))
             {
                 return;
             }
@@ -247,7 +256,8 @@ namespace ParkingControl
                 // Recheck only the lanes that CS2 already marked as changed.
                 if (changedParkingLanes &&
                     (scope != PCSettings.ParkingScope.Off ||
-                        hasManualRoadBans))
+                        hasManualRoadBans ||
+                        roadSizeActive))
                 {
                     ReconcileResult changedResult =
                         ReconcileStreetParking(
@@ -261,6 +271,8 @@ namespace ParkingControl
 
             m_Initialized = true;
             m_LastScope = scope;
+            m_LastBanFourLaneRoads = banFourLaneRoads;
+            m_LastBanSixLaneRoads = banSixLaneRoads;
 
             s_ReconcileRequested = false;
             s_SaveRecoveryRequested = false;
@@ -283,8 +295,14 @@ namespace ParkingControl
                 int ownedLanes =
                     m_ModifiedParkingLanesQuery.CalculateEntityCount();
 
+                string roadSizeText =
+                    roadSizeActive
+                        ? $" +RoadSize[{(banFourLaneRoads ? "4" : "-")}" +
+                            $"{(banSixLaneRoads ? "6" : "-")}]"
+                        : string.Empty;
+
                 CS2Shared.RiverMochi.LogUtils.Info(
-                    $"{Mod.ModTag} Street parking reconciled ({scope}): " +
+                    $"{Mod.ModTag} Street parking reconciled ({scope}{roadSizeText}): " +
                     $"{result.m_Changed} lane flags changed, " +
                     $"{ownedLanes} lanes owned by Parking Control.");
             }

@@ -41,6 +41,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kActionsTab), "Acciones" },
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kAboutTab), "Acerca de" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStreetParkingGroup), "Aparcamiento en calle" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kRoadSizeGroup), "Toda la ciudad por tamaño de vía" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStatusGroup), "Estado de vehículos personales" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "Información del mod" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "Enlaces" },
@@ -61,6 +62,25 @@ namespace ParkingControl
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. Por distrito" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. Solo manual" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. Toda la ciudad" },
+                // Citywide road-size bans.
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "Prohibir en todas las vías de 4 carriles" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanFourLaneRoads)),
+                    "Prohíbe el estacionamiento en todas las vías de 4 carriles de la ciudad, en cualquier distrito.\n" +
+                    "- Los carriles se cuentan en la propia vía, así que las vías de otros mods coinciden por su número real de carriles.\n" +
+                    "- Se suma al menú de arriba y a las vías con <Prohibido aparcar> manual; nunca cancela otra prohibición.\n" +
+                    "- Las vías con plazas de aparcamiento marcadas, como las de estacionamiento en ángulo o en batería, no se tocan.\n" +
+                    "**Las vías que nunca tuvieron estacionamiento, como las autopistas, no se ven afectadas.**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "Prohibir en todas las vías de 6 carriles" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanSixLaneRoads)),
+                    "Prohíbe el estacionamiento en todas las vías de 6 carriles de la ciudad, en cualquier distrito.\n" +
+                    "- Los carriles se cuentan en la propia vía, así que las vías de otros mods coinciden por su número real de carriles.\n" +
+                    "- Se suma al menú de arriba y a las vías con <Prohibido aparcar> manual; nunca cancela otra prohibición.\n" +
+                    "- Las vías con plazas de aparcamiento marcadas, como las de estacionamiento en ángulo o en batería, no se tocan.\n" +
+                    "**Las vías que nunca tuvieron estacionamiento, como las autopistas, no se ven afectadas.**"
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Mostrar instrucciones" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
                     "Muestra cómo usar el modo <Por distrito>."
@@ -101,6 +121,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Aparc. en calle" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "Muestra solo el ámbito seleccionado <Toda la ciudad> o <Por distrito>. Las prohibiciones manuales se muestran aparte.\n" +
+                    "Las prohibiciones de vías de 4 y 6 carriles también se cuentan aquí.\n" +
                     "<Solo manual> = se desactivan las prohibiciones de ciudad/distritos; las carreteras con <Prohibido aparcar> manual siguen activas.\n" +
                     "<Aparc.> = coches aún aparcados en calles del ámbito seleccionado.\n" +
                     "<Desact.> = tramos de carril junto al bordillo desactivados / objetivo.\n" +

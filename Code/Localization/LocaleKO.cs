@@ -41,6 +41,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kActionsTab), "작업" },
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kAboutTab), "정보" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStreetParkingGroup), "노상 주차" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kRoadSizeGroup), "도로 규모별 도시 전체 적용" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStatusGroup), "개인 차량 상태" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "모드 정보" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "링크" },
@@ -61,6 +62,25 @@ namespace ParkingControl
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. 구역별" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. 수동만" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. 도시 전체" },
+                // Citywide road-size bans.
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "4차선 도로 전체 금지" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanFourLaneRoads)),
+                    "모든 구역을 포함해 도시의 모든 4차선 도로에서 노상 주차를 금지합니다.\n" +
+                    "- 차선은 도로에서 직접 세므로 다른 모드로 추가된 도로도 실제 차선 수로 인식됩니다.\n" +
+                    "- 위 드롭다운 및 수동 <주차 금지> 도로에 더해집니다. 기존 금지를 해제하지 않습니다.\n" +
+                    "- 사선 주차·직각 주차 도로처럼 전용 주차 구획이 그려진 도로는 그대로 둡니다.\n" +
+                    "**고속도로처럼 원래 노상 주차가 없는 도로는 영향을 받지 않습니다.**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "6차선 도로 전체 금지" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanSixLaneRoads)),
+                    "모든 구역을 포함해 도시의 모든 6차선 도로에서 노상 주차를 금지합니다.\n" +
+                    "- 차선은 도로에서 직접 세므로 다른 모드로 추가된 도로도 실제 차선 수로 인식됩니다.\n" +
+                    "- 위 드롭다운 및 수동 <주차 금지> 도로에 더해집니다. 기존 금지를 해제하지 않습니다.\n" +
+                    "- 사선 주차·직각 주차 도로처럼 전용 주차 구획이 그려진 도로는 그대로 둡니다.\n" +
+                    "**고속도로처럼 원래 노상 주차가 없는 도로는 영향을 받지 않습니다.**"
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "사용법 표시" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
                     "<구역별> 모드 사용법을 표시합니다."
@@ -101,6 +121,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "노상 주차" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "선택한 <도시 전체> 또는 <구역별> 금지 범위만 표시합니다. 수동 주차 금지는 별도 표시됩니다.\n" +
+                    "도시 전체 4차선·6차선 도로 금지도 여기에 포함됩니다.\n" +
                     "<수동만> = 도시 전체/구역 금지는 꺼짐. 수동 <주차 금지> 도로는 계속 적용됩니다.\n" +
                     "<주차됨> = 선택 범위의 도로에 아직 주차된 차량.\n" +
                     "<비활성> = 비활성 도로변 차선 구간 / 대상 구간.\n" +

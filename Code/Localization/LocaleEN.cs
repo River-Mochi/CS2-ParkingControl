@@ -42,6 +42,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kActionsTab), "Actions" },
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kAboutTab), "About" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStreetParkingGroup), "Street parking" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kRoadSizeGroup), "Whole city by road size" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStatusGroup), "Personal vehicle status" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "Mod information" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "Links" },
@@ -64,6 +65,25 @@ namespace ParkingControl
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. by District" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. Manual only" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. Whole City ban" },
+
+                // Citywide road-size bans.
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "Ban all 4-lane roads" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanFourLaneRoads)),
+                    "Bans roadside parking on every four-lane road in the city, in every district.\n" +
+                    "- Driving lanes are counted from the road itself, so roads added by other mods match on their real lane count.\n" +
+                    "- Adds to the dropdown above and to manual <No Parking> roads; it never cancels a ban set elsewhere.\n" +
+                    "- Roads with built-in marked parking spaces, such as the angled and perpendicular parking roads, are left alone.\n" +
+                    "**Roads that never had street parking, such as highways, are unaffected.**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "Ban all 6-lane roads" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanSixLaneRoads)),
+                    "Bans roadside parking on every six-lane road in the city, in every district.\n" +
+                    "- Driving lanes are counted from the road itself, so roads added by other mods match on their real lane count.\n" +
+                    "- Adds to the dropdown above and to manual <No Parking> roads; it never cancels a ban set elsewhere.\n" +
+                    "- Roads with built-in marked parking spaces, such as the angled and perpendicular parking roads, are left alone.\n" +
+                    "**Roads that never had street parking, such as highways, are unaffected.**"
+                },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Show instructions" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
@@ -105,6 +125,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Street Parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "Shows only the selected <Whole City> or <by District> Parking Ban scope. Manual No Parking roads are listed separately.\n" +
+                    "Citywide 4-lane and 6-lane road bans are counted here as well.\n" +
                     "<Manual Only> = Whole City/District bans are disabled; manual <No Parking> road button works.\n" +
                     "<Parked> = cars still parked on streets covered by the selected scope.\n" +
                     "<Disabled> = disabled curb-lane sections / target curb-lane sections.\n" +

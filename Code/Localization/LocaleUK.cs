@@ -41,6 +41,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kActionsTab), "Дії" },
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kAboutTab), "Про мод" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStreetParkingGroup), "Вуличне паркування" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kRoadSizeGroup), "Усе місто за розміром дороги" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStatusGroup), "Стан особистих авто" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "Інформація про мод" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "Посилання" },
@@ -61,6 +62,25 @@ namespace ParkingControl
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. за районами" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. Лише вручну" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. Усе місто" },
+                // Citywide road-size bans.
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "Заборонити на всіх 4-смугових дорогах" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanFourLaneRoads)),
+                    "Забороняє паркування біля узбіччя на кожній 4-смуговій дорозі міста, у будь-якому районі.\n" +
+                    "- Смуги рахуються на самій дорозі, тож дороги з інших модів визначаються за реальною кількістю смуг.\n" +
+                    "- Додається до списку вище та до доріг із ручною <Забороною паркування>; ніколи не скасовує наявну заборону.\n" +
+                    "- Дороги з вбудованими розміченими місцями, як-от з косим або перпендикулярним паркуванням, не змінюються.\n" +
+                    "**Дороги без паркування біля узбіччя, як-от автомагістралі, не зачіпаються.**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "Заборонити на всіх 6-смугових дорогах" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanSixLaneRoads)),
+                    "Забороняє паркування біля узбіччя на кожній 6-смуговій дорозі міста, у будь-якому районі.\n" +
+                    "- Смуги рахуються на самій дорозі, тож дороги з інших модів визначаються за реальною кількістю смуг.\n" +
+                    "- Додається до списку вище та до доріг із ручною <Забороною паркування>; ніколи не скасовує наявну заборону.\n" +
+                    "- Дороги з вбудованими розміченими місцями, як-от з косим або перпендикулярним паркуванням, не змінюються.\n" +
+                    "**Дороги без паркування біля узбіччя, як-от автомагістралі, не зачіпаються.**"
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Показати інструкції" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
                     "Показує, як користуватися режимом <за районами>."
@@ -101,6 +121,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Вуличне паркування" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "Показує лише вибрану область <Усе місто> або <за районами>. Ручні заборони показуються окремо.\n" +
+                    "Заборони для 4- та 6-смугових доріг також враховано тут.\n" +
                     "<Лише вручну> = заборони міста/районів вимкнено; дороги з ручним <Стоянку заборонено> залишаються активними.\n" +
                     "<Припарковано> = авто, які ще стоять на вулицях вибраної області.\n" +
                     "<Вимкнено> = вимкнені ділянки смуги біля бордюру / цільові ділянки.\n" +

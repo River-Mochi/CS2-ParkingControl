@@ -41,6 +41,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kActionsTab), "Działania" },
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kAboutTab), "O modzie" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStreetParkingGroup), "Parkowanie przy ulicy" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kRoadSizeGroup), "Całe miasto według rozmiaru drogi" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStatusGroup), "Stan pojazdów prywatnych" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "Informacje o modzie" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "Linki" },
@@ -61,6 +62,25 @@ namespace ParkingControl
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. Według dzielnic" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. Tylko ręcznie" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. Całe miasto" },
+                // Citywide road-size bans.
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "Zakaz na wszystkich drogach 4-pasmowych" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanFourLaneRoads)),
+                    "Zakazuje parkowania przy krawężniku na każdej 4-pasmowej drodze w mieście, w każdej dzielnicy.\n" +
+                    "- Pasy liczone są na samej drodze, więc drogi z innych modów są dopasowywane po rzeczywistej liczbie pasów.\n" +
+                    "- Działa łącznie z listą powyżej i ręcznym <Zakazem parkowania>; nigdy nie znosi istniejącego zakazu.\n" +
+                    "- Drogi z wbudowanymi miejscami postojowymi, np. z parkowaniem skośnym lub prostopadłym, pozostają nietknięte.\n" +
+                    "**Drogi bez parkowania przy krawężniku, np. autostrady, pozostają bez zmian.**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "Zakaz na wszystkich drogach 6-pasmowych" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanSixLaneRoads)),
+                    "Zakazuje parkowania przy krawężniku na każdej 6-pasmowej drodze w mieście, w każdej dzielnicy.\n" +
+                    "- Pasy liczone są na samej drodze, więc drogi z innych modów są dopasowywane po rzeczywistej liczbie pasów.\n" +
+                    "- Działa łącznie z listą powyżej i ręcznym <Zakazem parkowania>; nigdy nie znosi istniejącego zakazu.\n" +
+                    "- Drogi z wbudowanymi miejscami postojowymi, np. z parkowaniem skośnym lub prostopadłym, pozostają nietknięte.\n" +
+                    "**Drogi bez parkowania przy krawężniku, np. autostrady, pozostają bez zmian.**"
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Pokaż instrukcje" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
                     "Pokazuje, jak używać trybu <Według dzielnic>."
@@ -101,6 +121,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Parking uliczny" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "Pokazuje tylko wybrany zakres <Całe miasto> lub <Według dzielnic>. Ręczne zakazy są osobno.\n" +
+                    "Zakazy dla dróg 4- i 6-pasmowych są tu również liczone.\n" +
                     "<Tylko ręcznie> = zakazy miasta/dzielnic są wyłączone; ręczne drogi <Zakaz parkowania> pozostają aktywne.\n" +
                     "<Zaparkowane> = auta nadal stojące na ulicach w wybranym zakresie.\n" +
                     "<Wyłączone> = wyłączone odcinki pasa przy krawężniku / odcinki docelowe.\n" +

@@ -41,6 +41,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kActionsTab), "操作" },
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kAboutTab), "关于" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStreetParkingGroup), "路边停车" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kRoadSizeGroup), "按道路规模应用于全城" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStatusGroup), "私人车辆状态" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "模组信息" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "链接" },
@@ -61,6 +62,25 @@ namespace ParkingControl
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. 按行政区" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. 仅手动" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. 全城" },
+                // Citywide road-size bans.
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "禁止所有四车道道路停车" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanFourLaneRoads)),
+                    "禁止全城所有四车道道路的路边停车，不分辖区。\n" +
+                    "- 车道数直接从道路本身统计，因此其他模组添加的道路也能按真实车道数匹配。\n" +
+                    "- 与上方下拉选项和手动<禁止停车>道路叠加，绝不会取消已设置的禁令。\n" +
+                    "- 自带划线停车位的道路（例如斜列式和垂直式停车道路）不受影响。\n" +
+                    "**本就没有路边停车的道路（例如高速公路）不受影响。**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "禁止所有六车道道路停车" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanSixLaneRoads)),
+                    "禁止全城所有六车道道路的路边停车，不分辖区。\n" +
+                    "- 车道数直接从道路本身统计，因此其他模组添加的道路也能按真实车道数匹配。\n" +
+                    "- 与上方下拉选项和手动<禁止停车>道路叠加，绝不会取消已设置的禁令。\n" +
+                    "- 自带划线停车位的道路（例如斜列式和垂直式停车道路）不受影响。\n" +
+                    "**本就没有路边停车的道路（例如高速公路）不受影响。**"
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "显示说明" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
                     "显示<按行政区>模式的使用方法。"
@@ -101,6 +121,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "路边停车" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "仅显示所选<全城>或<按行政区>禁停范围。手动禁停道路单独显示。\n" +
+                    "全城四车道和六车道道路的禁令也计入此处。\n" +
                     "<仅手动> = 全城/行政区禁停已关闭；手动<禁止停车>道路仍生效。\n" +
                     "<已停放> = 仍停在所选范围道路上的车辆。\n" +
                     "<已禁用> = 已禁用的路缘车道段 / 目标车道段。\n" +

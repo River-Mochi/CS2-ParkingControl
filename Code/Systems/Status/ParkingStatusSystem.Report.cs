@@ -115,6 +115,8 @@ namespace ParkingControl
             text.AppendLine($"EnforcementStatus={enforcementStatus}");
             text.AppendLine($"EnforcementDetails={enforcementDetails}");
 
+            AppendRoadSizeInventory(text);
+
             AppendUnresolvedTargetLanes(text, snapshot, details);
             text.AppendLine(
                 $"OccupiedStreetParkingLanes={snapshot.OccupiedCurbLanes}/{snapshot.CurbLanes} " +

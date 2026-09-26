@@ -41,6 +41,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kActionsTab), "การทำงาน" },
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kAboutTab), "เกี่ยวกับ" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStreetParkingGroup), "การจอดรถริมถนน" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kRoadSizeGroup), "ทั้งเมืองตามขนาดถนน" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStatusGroup), "สถานะรถส่วนบุคคล" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "ข้อมูลม็อด" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "ลิงก์" },
@@ -61,6 +62,25 @@ namespace ParkingControl
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. ตามเขต" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. ตั้งเองเท่านั้น" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. ทั้งเมือง" },
+                // Citywide road-size bans.
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "ห้ามจอดบนถนน 4 เลนทั้งหมด" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanFourLaneRoads)),
+                    "ห้ามจอดรถริมถนนบนถนน 4 เลนทุกสายในเมือง ในทุกเขต\n" +
+                    "- นับเลนจากตัวถนนโดยตรง ถนนจากม็อดอื่นจึงถูกจับคู่ตามจำนวนเลนจริง\n" +
+                    "- ทำงานร่วมกับเมนูด้านบนและถนนที่ตั้ง <ห้ามจอด> ด้วยมือ และจะไม่ยกเลิกการห้ามที่ตั้งไว้แล้ว\n" +
+                    "- ถนนที่มีช่องจอดรถตีเส้นมาในตัว เช่น ถนนจอดเฉียงและจอดตั้งฉาก จะไม่ถูกแตะต้อง\n" +
+                    "**ถนนที่ไม่มีที่จอดริมถนนอยู่แล้ว เช่น ทางหลวง จะไม่ได้รับผลกระทบ**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "ห้ามจอดบนถนน 6 เลนทั้งหมด" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanSixLaneRoads)),
+                    "ห้ามจอดรถริมถนนบนถนน 6 เลนทุกสายในเมือง ในทุกเขต\n" +
+                    "- นับเลนจากตัวถนนโดยตรง ถนนจากม็อดอื่นจึงถูกจับคู่ตามจำนวนเลนจริง\n" +
+                    "- ทำงานร่วมกับเมนูด้านบนและถนนที่ตั้ง <ห้ามจอด> ด้วยมือ และจะไม่ยกเลิกการห้ามที่ตั้งไว้แล้ว\n" +
+                    "- ถนนที่มีช่องจอดรถตีเส้นมาในตัว เช่น ถนนจอดเฉียงและจอดตั้งฉาก จะไม่ถูกแตะต้อง\n" +
+                    "**ถนนที่ไม่มีที่จอดริมถนนอยู่แล้ว เช่น ทางหลวง จะไม่ได้รับผลกระทบ**"
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "แสดงคำแนะนำ" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
                     "แสดงวิธีใช้โหมด <ตามเขต>"
@@ -101,6 +121,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "การจอดรถริมถนน" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "แสดงเฉพาะขอบเขต <ทั้งเมือง> หรือ <ตามเขต> ที่เลือก การห้ามแบบกำหนดเองแสดงแยกกัน\n" +
+                    "การห้ามจอดบนถนน 4 เลนและ 6 เลนทั่วเมืองถูกนับรวมที่นี่ด้วย\n" +
                     "<ตั้งเองเท่านั้น> = ปิดการห้ามทั้งเมือง/ตามเขต แต่ถนนที่ตั้ง <ห้ามจอดรถ> เองยังทำงาน\n" +
                     "<จอดอยู่> = รถที่ยังจอดบนถนนในขอบเขตที่เลือก\n" +
                     "<ปิดใช้งาน> = ส่วนช่องริมขอบทางที่ปิด / ส่วนเป้าหมาย\n" +

@@ -41,6 +41,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kActionsTab), "Azioni" },
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kAboutTab), "Informazioni" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStreetParkingGroup), "Parcheggio su strada" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kRoadSizeGroup), "Intera città per dimensione stradale" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStatusGroup), "Stato veicoli personali" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "Informazioni sulla mod" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "Collegamenti" },
@@ -61,6 +62,25 @@ namespace ParkingControl
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. Per distretto" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. Solo manuale" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. Intera città" },
+                // Citywide road-size bans.
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "Vieta tutte le strade a 4 corsie" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanFourLaneRoads)),
+                    "Vieta la sosta su ogni strada a 4 corsie della città, in tutti i quartieri.\n" +
+                    "- Le corsie sono contate sulla strada stessa, quindi anche le strade di altre mod vengono riconosciute.\n" +
+                    "- Si somma al menu sopra e alle strade con <Divieto di sosta> manuale; non annulla mai un divieto esistente.\n" +
+                    "- Le strade con posti auto integrati, come quelle con sosta angolata o a pettine, non vengono toccate.\n" +
+                    "**Le strade senza sosta su strada, come le autostrade, non sono interessate.**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "Vieta tutte le strade a 6 corsie" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanSixLaneRoads)),
+                    "Vieta la sosta su ogni strada a 6 corsie della città, in tutti i quartieri.\n" +
+                    "- Le corsie sono contate sulla strada stessa, quindi anche le strade di altre mod vengono riconosciute.\n" +
+                    "- Si somma al menu sopra e alle strade con <Divieto di sosta> manuale; non annulla mai un divieto esistente.\n" +
+                    "- Le strade con posti auto integrati, come quelle con sosta angolata o a pettine, non vengono toccate.\n" +
+                    "**Le strade senza sosta su strada, come le autostrade, non sono interessate.**"
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Mostra istruzioni" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
                     "Mostra come usare la modalità <Per distretto>."
@@ -101,6 +121,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Sosta su strada" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "Mostra solo l’ambito selezionato <Intera città> o <Per distretto>. I divieti manuali sono elencati a parte.\n" +
+                    "Anche i divieti per le strade a 4 e 6 corsie sono conteggiati qui.\n" +
                     "<Solo manuale> = divieti città/distretto disattivati; le strade con <Divieto di sosta> manuale restano attive.\n" +
                     "<In sosta> = auto ancora parcheggiate nelle strade dell’ambito selezionato.\n" +
                     "<Chiuse> = sezioni di corsia a bordo strada disattivate / sezioni obiettivo.\n" +

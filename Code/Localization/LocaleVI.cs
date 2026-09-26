@@ -41,6 +41,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kActionsTab), "Hành động" },
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kAboutTab), "Giới thiệu" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStreetParkingGroup), "Đỗ xe ven đường" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kRoadSizeGroup), "Toàn thành phố theo kích thước đường" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStatusGroup), "Trạng thái xe cá nhân" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "Thông tin mod" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "Liên kết" },
@@ -61,6 +62,25 @@ namespace ParkingControl
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. Theo khu vực" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. Chỉ thủ công" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. Toàn thành phố" },
+                // Citywide road-size bans.
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "Cấm trên mọi đường 4 làn" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanFourLaneRoads)),
+                    "Cấm đỗ xe ven đường trên mọi tuyến đường 4 làn trong thành phố, ở tất cả các quận.\n" +
+                    "- Số làn được đếm trên chính con đường, nên đường từ mod khác vẫn khớp theo số làn thực tế.\n" +
+                    "- Cộng thêm vào lựa chọn ở trên và các đường <Cấm đỗ xe> thủ công; không bao giờ hủy lệnh cấm đã đặt.\n" +
+                    "- Những đường có sẵn ô đỗ xe kẻ vạch, như đường đỗ xe chéo hoặc vuông góc, được giữ nguyên.\n" +
+                    "**Những đường vốn không có chỗ đỗ ven đường, như đường cao tốc, không bị ảnh hưởng.**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "Cấm trên mọi đường 6 làn" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanSixLaneRoads)),
+                    "Cấm đỗ xe ven đường trên mọi tuyến đường 6 làn trong thành phố, ở tất cả các quận.\n" +
+                    "- Số làn được đếm trên chính con đường, nên đường từ mod khác vẫn khớp theo số làn thực tế.\n" +
+                    "- Cộng thêm vào lựa chọn ở trên và các đường <Cấm đỗ xe> thủ công; không bao giờ hủy lệnh cấm đã đặt.\n" +
+                    "- Những đường có sẵn ô đỗ xe kẻ vạch, như đường đỗ xe chéo hoặc vuông góc, được giữ nguyên.\n" +
+                    "**Những đường vốn không có chỗ đỗ ven đường, như đường cao tốc, không bị ảnh hưởng.**"
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Hiện hướng dẫn" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
                     "Hiện cách dùng chế độ <Theo khu vực>."
@@ -101,6 +121,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Đỗ xe ven đường" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "Chỉ hiển thị phạm vi <Toàn thành phố> hoặc <Theo khu vực> đã chọn. Lệnh cấm thủ công hiển thị riêng.\n" +
+                    "Lệnh cấm trên đường 4 làn và 6 làn toàn thành phố cũng được tính ở đây.\n" +
                     "<Chỉ thủ công> = tắt lệnh cấm thành phố/khu vực; các đường <Cấm đỗ xe> thủ công vẫn hoạt động.\n" +
                     "<Đang đỗ> = xe vẫn đỗ trên đường trong phạm vi đã chọn.\n" +
                     "<Đã khóa> = đoạn làn sát lề bị khóa / đoạn mục tiêu.\n" +

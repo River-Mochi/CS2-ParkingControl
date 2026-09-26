@@ -41,6 +41,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kActionsTab), "Actions" },
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kAboutTab), "À propos" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStreetParkingGroup), "Stationnement sur rue" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kRoadSizeGroup), "Ville entière par taille de route" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStatusGroup), "État des véhicules personnels" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "Informations sur le mod" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "Liens" },
@@ -61,6 +62,25 @@ namespace ParkingControl
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. Par quartier" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. Manuel uniquement" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. Ville entière" },
+                // Citywide road-size bans.
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "Interdire toutes les routes à 4 voies" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanFourLaneRoads)),
+                    "Interdit le stationnement sur toutes les routes à 4 voies de la ville, dans chaque quartier.\n" +
+                    "- Les voies sont comptées sur la route elle-même : les routes d’autres mods sont reconnues par leur nombre réel de voies.\n" +
+                    "- S’ajoute au menu ci-dessus et aux routes <Stationnement interdit> manuelles ; n’annule jamais une interdiction existante.\n" +
+                    "- Les routes avec places de stationnement intégrées, comme celles à stationnement en épi ou en bataille, ne sont pas touchées.\n" +
+                    "**Les routes sans stationnement, comme les autoroutes, ne sont pas concernées.**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "Interdire toutes les routes à 6 voies" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanSixLaneRoads)),
+                    "Interdit le stationnement sur toutes les routes à 6 voies de la ville, dans chaque quartier.\n" +
+                    "- Les voies sont comptées sur la route elle-même : les routes d’autres mods sont reconnues par leur nombre réel de voies.\n" +
+                    "- S’ajoute au menu ci-dessus et aux routes <Stationnement interdit> manuelles ; n’annule jamais une interdiction existante.\n" +
+                    "- Les routes avec places de stationnement intégrées, comme celles à stationnement en épi ou en bataille, ne sont pas touchées.\n" +
+                    "**Les routes sans stationnement, comme les autoroutes, ne sont pas concernées.**"
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Afficher les instructions" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
                     "Explique comment utiliser le mode <Par quartier>."
@@ -101,6 +121,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Parking sur rue" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "Affiche uniquement la portée choisie <Ville entière> ou <Par quartier>. Les interdictions manuelles sont séparées.\n" +
+                    "Les interdictions des routes à 4 et 6 voies sont également comptées ici.\n" +
                     "<Manuel uniquement> = interdictions ville/quartiers coupées ; les routes <Interdiction de stationner> manuelles restent actives.\n" +
                     "<Garées> = voitures encore garées dans la portée choisie.\n" +
                     "<Fermées> = sections de voie en bordure fermées / sections ciblées.\n" +

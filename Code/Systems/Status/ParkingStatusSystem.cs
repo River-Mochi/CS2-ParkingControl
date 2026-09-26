@@ -36,6 +36,7 @@ namespace ParkingControl
         private EntityQuery m_ParkingFacilityQuery;
         private EntityQuery m_PersonalVehicleQuery;
         private Game.UI.NameSystem m_NameSystem = null!;
+        private Game.Prefabs.PrefabSystem m_PrefabSystem = null!;
         private Game.Simulation.SimulationSystem m_SimulationSystem = null!;
         private bool m_HasPreviousReport;
         private bool m_ReportRequested;
@@ -84,6 +85,7 @@ namespace ParkingControl
         {
             base.OnCreate();
             m_NameSystem = World.GetOrCreateSystemManaged<Game.UI.NameSystem>();
+            m_PrefabSystem = World.GetOrCreateSystemManaged<Game.Prefabs.PrefabSystem>();
             m_SimulationSystem =
                 World.GetOrCreateSystemManaged<Game.Simulation.SimulationSystem>();
 

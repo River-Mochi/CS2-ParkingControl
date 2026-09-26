@@ -41,6 +41,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kActionsTab), "操作" },
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kAboutTab), "情報" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStreetParkingGroup), "路上駐車" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kRoadSizeGroup), "道路の大きさで市全体に適用" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStatusGroup), "自家用車の状態" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "MOD情報" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "リンク" },
@@ -61,6 +62,25 @@ namespace ParkingControl
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. 地区ごと" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. 手動のみ" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. 市全体" },
+                // Citywide road-size bans.
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "4車線道路をすべて禁止" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanFourLaneRoads)),
+                    "市内すべての4車線道路で路上駐車を禁止します（地区を問いません）。\n" +
+                    "- 車線は道路そのものから数えるため、他のMODで追加された道路も実際の車線数で判定されます。\n" +
+                    "- 上のドロップダウンや手動の<駐車禁止>道路に追加されます。既存の禁止を解除することはありません。\n" +
+                    "- 斜め駐車や直角駐車の道路など、区画線付きの駐車スペースを備えた道路はそのままです。\n" +
+                    "**高速道路など、元から路上駐車がない道路には影響しません。**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "6車線道路をすべて禁止" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanSixLaneRoads)),
+                    "市内すべての6車線道路で路上駐車を禁止します（地区を問いません）。\n" +
+                    "- 車線は道路そのものから数えるため、他のMODで追加された道路も実際の車線数で判定されます。\n" +
+                    "- 上のドロップダウンや手動の<駐車禁止>道路に追加されます。既存の禁止を解除することはありません。\n" +
+                    "- 斜め駐車や直角駐車の道路など、区画線付きの駐車スペースを備えた道路はそのままです。\n" +
+                    "**高速道路など、元から路上駐車がない道路には影響しません。**"
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "手順を表示" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
                     "<地区ごと>モードの使い方を表示します。"
@@ -101,6 +121,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "路上駐車" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "選択中の<市全体>または<地区ごと>の禁止範囲だけを表示します。手動の駐車禁止は別表示です。\n" +
+                    "市全体の4車線・6車線道路の禁止もここに含まれます。\n" +
                     "<手動のみ> = 市全体/地区の禁止は無効。手動<駐車禁止>道路は有効のままです。\n" +
                     "<駐車中> = 選択範囲の道路にまだ駐車している車。\n" +
                     "<無効> = 無効な路肩車線区間 / 対象区間。\n" +

@@ -41,6 +41,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kActionsTab), "Aktionen" },
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kAboutTab), "Über" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStreetParkingGroup), "Straßenparken" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kRoadSizeGroup), "Ganze Stadt nach Straßengröße" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStatusGroup), "Status privater Fahrzeuge" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "Mod-Informationen" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "Links" },
@@ -61,6 +62,25 @@ namespace ParkingControl
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. Nach Bezirk" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. Nur manuell" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. Ganze Stadt" },
+                // Citywide road-size bans.
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "Alle 4-spurigen Straßen sperren" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanFourLaneRoads)),
+                    "Verbietet das Parken am Straßenrand auf allen 4-spurigen Straßen der Stadt, in jedem Bezirk.\n" +
+                    "- Die Fahrspuren werden an der Straße selbst gezählt, daher passen auch Straßen aus anderen Mods.\n" +
+                    "- Ergänzt die Auswahl oben und manuelle <Parkverbot>-Straßen; bestehende Verbote werden nie aufgehoben.\n" +
+                    "- Straßen mit fest eingebauten Parkflächen, etwa Schräg- und Querparkstraßen, bleiben unverändert.\n" +
+                    "**Straßen ohne Straßenrandparken, etwa Autobahnen, bleiben unberührt.**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "Alle 6-spurigen Straßen sperren" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanSixLaneRoads)),
+                    "Verbietet das Parken am Straßenrand auf allen 6-spurigen Straßen der Stadt, in jedem Bezirk.\n" +
+                    "- Die Fahrspuren werden an der Straße selbst gezählt, daher passen auch Straßen aus anderen Mods.\n" +
+                    "- Ergänzt die Auswahl oben und manuelle <Parkverbot>-Straßen; bestehende Verbote werden nie aufgehoben.\n" +
+                    "- Straßen mit fest eingebauten Parkflächen, etwa Schräg- und Querparkstraßen, bleiben unverändert.\n" +
+                    "**Straßen ohne Straßenrandparken, etwa Autobahnen, bleiben unberührt.**"
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Anweisungen anzeigen" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
                     "Zeigt, wie der Modus <Nach Bezirk> verwendet wird."
@@ -101,6 +121,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Straßenparken" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "Zeigt nur das gewählte Verbot <Ganze Stadt> oder <Nach Bezirk>. Manuelle Parkverbote stehen separat.\n" +
+                    "Stadtweite Verbote für 4- und 6-spurige Straßen werden hier mitgezählt.\n" +
                     "<Nur manuell> = Stadt-/Bezirksverbote sind aus; manuelle <Parkverbot>-Straßen bleiben aktiv.\n" +
                     "<Geparkt> = Autos, die noch auf Straßen im gewählten Bereich parken.\n" +
                     "<Gesperrt> = gesperrte Bordsteinabschnitte / Zielabschnitte.\n" +

@@ -141,8 +141,18 @@ namespace ParkingControl
                 _ => "OFF",
             };
 
+            string roadSizeText =
+                (settings.BanFourLaneRoads, settings.BanSixLaneRoads) switch
+                {
+                    (true, true) => "all 4-lane and 6-lane roads",
+                    (true, false) => "all 4-lane roads",
+                    (false, true) => "all 6-lane roads",
+                    _ => "OFF",
+                };
+
             LogUtils.Info(
-                $"{ModTag} Parking Ban dropdown selection: {scopeText}.");
+                $"{ModTag} Parking Ban dropdown selection: {scopeText}. " +
+                $"Citywide road-size ban: {roadSizeText}.");
         }
 
         public void OnDispose()

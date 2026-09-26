@@ -15,6 +15,26 @@ namespace ParkingControl
 
     public sealed partial class NoStreetParkingSystem
     {
+        /// <summary>
+        /// Builds the citywide road-size rule for one pass.
+        /// </summary>
+        /// <remarks>
+        /// Kept in its own method so the SystemAPI source generator never has to
+        /// relocate a method that carries nullable annotations, which would emit
+        /// CS8669 from generated code that has no #nullable directive.
+        /// </remarks>
+        /// <returns>A rule that must be disposed when the pass ends.</returns>
+        private RoadSizeRule CreateRoadSizeRule()
+        {
+            return RoadSizeRule.Create(
+                Mod.Settings,
+                SystemAPI.GetComponentLookup<Game.Net.Composition>(true),
+                SystemAPI.GetBufferLookup<Game.Prefabs.NetCompositionLane>(true),
+                SystemAPI.GetComponentLookup<Game.Prefabs.PrefabRef>(true),
+                SystemAPI.GetComponentLookup<Game.Prefabs.ParkingLaneData>(true),
+                Unity.Collections.Allocator.Temp);
+        }
+
         private ReconcileResult ReconcileStreetParking(
             PCSettings.ParkingScope scope,
             Unity.Entities.Entity policyEntity,
@@ -62,6 +82,8 @@ namespace ParkingControl
             Unity.Entities.BufferLookup<Game.Policies.Policy> policyLookup =
                 SystemAPI.GetBufferLookup<Game.Policies.Policy>(true);
 
+            using RoadSizeRule roadSizeRule = CreateRoadSizeRule();
+
             Unity.Collections.NativeList<Unity.Entities.Entity> addStateEntities =
                 new(Unity.Collections.Allocator.Temp);
             Unity.Collections.NativeList<Unity.Entities.Entity> relocationRequestEntities =
@@ -105,6 +127,7 @@ namespace ParkingControl
                         updatedLookup,
                         pathfindUpdatedLookup,
                         policyLookup,
+                        roadSizeRule,
                         ref addStateEntities,
                         ref relocationRequestEntities,
                         ref cleanupRequestEntities,
@@ -183,6 +206,8 @@ namespace ParkingControl
             Unity.Entities.BufferLookup<Game.Policies.Policy> policyLookup =
                 SystemAPI.GetBufferLookup<Game.Policies.Policy>(true);
 
+            using RoadSizeRule roadSizeRule = CreateRoadSizeRule();
+
             Unity.Collections.NativeList<Unity.Entities.Entity> addStateEntities =
                 new(Unity.Collections.Allocator.Temp);
             Unity.Collections.NativeList<Unity.Entities.Entity> relocationRequestEntities =
@@ -228,6 +253,7 @@ namespace ParkingControl
                     updatedLookup,
                     pathfindUpdatedLookup,
                     policyLookup,
+                    roadSizeRule,
                     ref addStateEntities,
                     ref relocationRequestEntities,
                     ref cleanupRequestEntities,
@@ -266,6 +292,7 @@ namespace ParkingControl
             Unity.Entities.ComponentLookup<Game.Common.Updated> updatedLookup,
             Unity.Entities.ComponentLookup<Game.Common.PathfindUpdated> pathfindUpdatedLookup,
             Unity.Entities.BufferLookup<Game.Policies.Policy> policyLookup,
+            RoadSizeRule roadSizeRule,
             ref Unity.Collections.NativeList<Unity.Entities.Entity> addStateEntities,
             ref Unity.Collections.NativeList<Unity.Entities.Entity> relocationRequestEntities,
             ref Unity.Collections.NativeList<Unity.Entities.Entity> cleanupRequestEntities,
@@ -303,7 +330,8 @@ namespace ParkingControl
                     ownerLookup,
                     borderDistrictLookup,
                     manualBanLookup,
-                    policyLookup);
+                    policyLookup,
+                    roadSizeRule);
 
             bool parkingDisabled =
                 (parkingLane.m_Flags &

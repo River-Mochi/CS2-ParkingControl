@@ -41,6 +41,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kActionsTab), "Ações" },
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kAboutTab), "Sobre" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStreetParkingGroup), "Estacionamento na rua" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kRoadSizeGroup), "Cidade inteira por tamanho da via" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStatusGroup), "Status dos veículos particulares" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "Informações do mod" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "Links" },
@@ -61,6 +62,25 @@ namespace ParkingControl
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. Por distrito" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. Só manual" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. Cidade inteira" },
+                // Citywide road-size bans.
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "Proibir em todas as vias de 4 faixas" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanFourLaneRoads)),
+                    "Proíbe o estacionamento em todas as vias de 4 faixas da cidade, em qualquer distrito.\n" +
+                    "- As faixas são contadas na própria via, então vias de outros mods são reconhecidas pelo número real de faixas.\n" +
+                    "- Soma-se ao menu acima e às vias com <Proibido estacionar> manual; nunca cancela uma proibição existente.\n" +
+                    "- Vias com vagas de estacionamento demarcadas, como as de estacionamento angular ou perpendicular, não são alteradas.\n" +
+                    "**Vias que nunca tiveram estacionamento, como rodovias, não são afetadas.**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "Proibir em todas as vias de 6 faixas" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanSixLaneRoads)),
+                    "Proíbe o estacionamento em todas as vias de 6 faixas da cidade, em qualquer distrito.\n" +
+                    "- As faixas são contadas na própria via, então vias de outros mods são reconhecidas pelo número real de faixas.\n" +
+                    "- Soma-se ao menu acima e às vias com <Proibido estacionar> manual; nunca cancela uma proibição existente.\n" +
+                    "- Vias com vagas de estacionamento demarcadas, como as de estacionamento angular ou perpendicular, não são alteradas.\n" +
+                    "**Vias que nunca tiveram estacionamento, como rodovias, não são afetadas.**"
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Mostrar instruções" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
                     "Mostra como usar o modo <Por distrito>."
@@ -101,6 +121,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Estac. na rua" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "Mostra só o escopo <Cidade inteira> ou <Por distrito> selecionado. Proibições manuais ficam separadas.\n" +
+                    "As proibições de vias de 4 e 6 faixas também são contadas aqui.\n" +
                     "<Só manual> = proibições da cidade/distritos desligadas; vias com <Proibido estacionar> manual continuam ativas.\n" +
                     "<Estac.> = carros ainda estacionados nas ruas do escopo selecionado.\n" +
                     "<Desat.> = trechos de faixa junto ao meio-fio desativados / trechos alvo.\n" +

@@ -27,13 +27,14 @@ namespace ParkingControl
     /// </summary>
     [FileLocation("ModsSettings/" + Mod.ModId + "/" + Mod.ModId)]
     [SettingsUITabOrder(kActionsTab, kAboutTab)]
-    [SettingsUIGroupOrder(kStreetParkingGroup, kStatusGroup, kAboutInfoGroup, kAboutLinksGroup, kAboutDebugGroup)]
-    [SettingsUIShowGroupName(kStreetParkingGroup, kStatusGroup, kAboutLinksGroup, kAboutDebugGroup)]
+    [SettingsUIGroupOrder(kStreetParkingGroup, kRoadSizeGroup, kStatusGroup, kAboutInfoGroup, kAboutLinksGroup, kAboutDebugGroup)]
+    [SettingsUIShowGroupName(kStreetParkingGroup, kRoadSizeGroup, kStatusGroup, kAboutLinksGroup, kAboutDebugGroup)]
     public class PCSettings : ModSetting
     {
         internal const string kActionsTab = "Actions";
         internal const string kAboutTab = "About";
         internal const string kStreetParkingGroup = "StreetParking";
+        internal const string kRoadSizeGroup = "RoadSize";
         internal const string kStatusGroup = "Status";
         internal const string kAboutInfoGroup = "AboutInfo";
         internal const string kAboutLinksGroup = "AboutLinks";
@@ -47,6 +48,10 @@ namespace ParkingControl
         // Null until the first Options Apply because LoadSettings does not call Apply.
         private ParkingScope? m_AppliedScope;
         private ParkingScope m_ParkingScope;
+
+        // Null until the first Options Apply, matching m_AppliedScope above.
+        private bool? m_AppliedBanFourLaneRoads;
+        private bool? m_AppliedBanSixLaneRoads;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PCSettings"/> class.
@@ -69,6 +74,18 @@ namespace ParkingControl
             set => m_ParkingScope = value;
         }
 
+
+        /// <summary>
+        /// Gets or sets a value indicating whether every four-lane road loses street parking.
+        /// </summary>
+        [SettingsUISection(kActionsTab, kRoadSizeGroup)]
+        public bool BanFourLaneRoads { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether every six-lane road loses street parking.
+        /// </summary>
+        [SettingsUISection(kActionsTab, kRoadSizeGroup)]
+        public bool BanSixLaneRoads { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether district-mode instructions are shown.
@@ -223,13 +240,17 @@ namespace ParkingControl
         public override void Apply()
         {
             base.Apply();
-            if (m_AppliedScope == m_ParkingScope)
+            if (m_AppliedScope == m_ParkingScope &&
+                m_AppliedBanFourLaneRoads == BanFourLaneRoads &&
+                m_AppliedBanSixLaneRoads == BanSixLaneRoads)
             {
                 return;
             }
 
             // Visibility-only setting changes must not rescan lanes.
             m_AppliedScope = m_ParkingScope;
+            m_AppliedBanFourLaneRoads = BanFourLaneRoads;
+            m_AppliedBanSixLaneRoads = BanSixLaneRoads;
 
             ParkingPolicySystem.RefreshVisibility();
             NoStreetParkingSystem.RequestReconcile();
@@ -240,6 +261,8 @@ namespace ParkingControl
         public override void SetDefaults()
         {
             m_ParkingScope = ParkingScope.ByDistrict;
+            BanFourLaneRoads = false;
+            BanSixLaneRoads = false;
             ShowInstructions = false;
             ShowStatus = false;
             VerboseLog = false;

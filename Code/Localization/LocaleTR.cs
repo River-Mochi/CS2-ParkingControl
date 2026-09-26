@@ -41,6 +41,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kActionsTab), "Eylemler" },
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kAboutTab), "Hakkında" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStreetParkingGroup), "Yol kenarı parkı" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kRoadSizeGroup), "Yol boyutuna göre tüm şehir" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStatusGroup), "Kişisel araç durumu" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "Mod bilgileri" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "Bağlantılar" },
@@ -61,6 +62,25 @@ namespace ParkingControl
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. Bölgeye göre" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. Sadece Elle" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. Tüm Şehir" },
+                // Citywide road-size bans.
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "Tüm 4 şeritli yollarda yasakla" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanFourLaneRoads)),
+                    "Şehirdeki her 4 şeritli yolda, her mahallede yol kenarı park etmeyi yasaklar.\n" +
+                    "- Şeritler yolun kendisinden sayılır, bu yüzden diğer modların yolları da gerçek şerit sayısıyla eşleşir.\n" +
+                    "- Yukarıdaki menüye ve elle ayarlanan <Park Yasağı> yollarına eklenir; mevcut bir yasağı asla kaldırmaz.\n" +
+                    "- Eğik ve dik park yolları gibi yerleşik işaretli park yerleri bulunan yollara dokunulmaz.\n" +
+                    "**Otoyollar gibi zaten yol kenarı parkı olmayan yollar etkilenmez.**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "Tüm 6 şeritli yollarda yasakla" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanSixLaneRoads)),
+                    "Şehirdeki her 6 şeritli yolda, her mahallede yol kenarı park etmeyi yasaklar.\n" +
+                    "- Şeritler yolun kendisinden sayılır, bu yüzden diğer modların yolları da gerçek şerit sayısıyla eşleşir.\n" +
+                    "- Yukarıdaki menüye ve elle ayarlanan <Park Yasağı> yollarına eklenir; mevcut bir yasağı asla kaldırmaz.\n" +
+                    "- Eğik ve dik park yolları gibi yerleşik işaretli park yerleri bulunan yollara dokunulmaz.\n" +
+                    "**Otoyollar gibi zaten yol kenarı parkı olmayan yollar etkilenmez.**"
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Talimatları göster" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
                     "<Bölgeye göre> modunun nasıl kullanılacağını gösterir."
@@ -101,6 +121,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Yol Kenarı Parkı" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "Yalnızca seçilen <Tüm Şehir> veya <Bölgeye göre> yasak kapsamını gösterir. Elle yasaklar ayrı listelenir.\n" +
+                    "Şehir genelindeki 4 ve 6 şeritli yol yasakları da burada sayılır.\n" +
                     "<Sadece Elle> = şehir/bölge yasakları kapalı; elle <Park Yasak> yapılan yollar etkin kalır.\n" +
                     "<Park etmiş> = seçilen kapsamdaki yollarda hâlâ park etmiş araçlar.\n" +
                     "<Devre dışı> = kapalı kaldırım kenarı şerit bölümleri / hedef bölümler.\n" +
