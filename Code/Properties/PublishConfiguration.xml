@@ -62,7 +62,7 @@ Use the **No Parking** button next to the crosswalk tool.
 - Existing parked cars gradually relocate after parking is banned.
 - New or rebuilt roads may briefly accept a few cars while CS2 updates the parking lanes (timing).
 - Optional:  works with [Mochi's Hover Colors](https://mods.paradoxplaza.com/mods/146044/Windows)  - manual road tool follows MHC's Bulldozer + Roads colors, just like normal road tools.
-
+- Note: manual No Parking ban is set per each road segment. If you draw a road or track perpendicular across a no-parking road, the game splits it into two new segments — re-apply No Parking to the new halves. District and whole-city road-size bans are not affected by splitting.
 
 tags: Disable road parking, clear road side, no cars
 
