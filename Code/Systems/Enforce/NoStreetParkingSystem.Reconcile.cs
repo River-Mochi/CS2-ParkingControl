@@ -30,6 +30,7 @@ namespace ParkingControl
                 Mod.Settings,
                 SystemAPI.GetComponentLookup<Game.Net.Composition>(true),
                 SystemAPI.GetBufferLookup<Game.Prefabs.NetCompositionLane>(true),
+                SystemAPI.GetBufferLookup<Game.Prefabs.NetGeometryComposition>(true),
                 SystemAPI.GetComponentLookup<Game.Prefabs.PrefabRef>(true),
                 SystemAPI.GetComponentLookup<Game.Prefabs.ParkingLaneData>(true),
                 Unity.Collections.Allocator.Temp);

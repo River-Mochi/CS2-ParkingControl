@@ -90,17 +90,16 @@ namespace ParkingControl
                         byPrefab[roadPrefabRef.m_Prefab] = stats;
                     }
 
-                    // Cached per composition, so this stays cheap across many roads.
-                    stats.AddDrivingLaneCount(
-                        roadSizeRule.GetDrivingLaneCount(road));
+                    // Cached, so this stays cheap across many roads.
+                    stats.RoadTypeLanes =
+                        roadSizeRule.GetRoadTypeDrivingLaneCount(road);
+
+                    stats.AddEdgeLaneCount(
+                        roadSizeRule.GetEdgeDrivingLaneCount(road),
+                        road);
 
                     stats.HasBuiltInParkingSpaces |=
                         roadSizeRule.HasBuiltInParkingSpaces(lane);
-
-                    if (stats.SampleRoad == Entity.Null)
-                    {
-                        stats.SampleRoad = road;
-                    }
 
                     stats.Roads.Add(road);
                     stats.CurbLanes++;
@@ -124,8 +123,8 @@ namespace ParkingControl
 
             ordered.Sort(static (left, right) =>
             {
-                int byLanes = right.Value.MaxDrivingLanes.CompareTo(
-                    left.Value.MaxDrivingLanes);
+                int byLanes = right.Value.RoadTypeLanes.CompareTo(
+                    left.Value.RoadTypeLanes);
 
                 return byLanes != 0
                     ? byLanes
@@ -136,14 +135,9 @@ namespace ParkingControl
             {
                 RoadPrefabParkingStats stats = item.Value;
 
-                // Normally one value. More than one means some segments of this
-                // prefab really do carry a different number of driving lanes.
-                string lanesText = string.Join(
-                    "/",
-                    stats.DrivingLanes.ConvertAll(static lanes =>
-                        lanes == RoadSizeRule.kUnknownLaneCount
-                            ? "?"
-                            : lanes.ToString()));
+                // AsBuilt differing from Lanes means upgrades such as tram tracks
+                // changed that segment. The ban follows Lanes, the road type.
+                string asBuiltText = FormatLaneCounts(stats.EdgeLanes);
 
                 string banText;
 
@@ -151,11 +145,11 @@ namespace ParkingControl
                 {
                     banText = " (built-in parking bays, never banned by road size)";
                 }
-                else if (stats.DrivingLanes.Contains(RoadSizeRule.kFourLaneRoad))
+                else if (stats.RoadTypeLanes == RoadSizeRule.kFourLaneRoad)
                 {
                     banText = " <- four-lane ban";
                 }
-                else if (stats.DrivingLanes.Contains(RoadSizeRule.kSixLaneRoad))
+                else if (stats.RoadTypeLanes == RoadSizeRule.kSixLaneRoad)
                 {
                     banText = " <- six-lane ban";
                 }
@@ -165,7 +159,8 @@ namespace ParkingControl
                 }
 
                 text.AppendLine(
-                    $"  Lanes={lanesText,2} | " +
+                    $"  Lanes={FormatLaneCount(stats.RoadTypeLanes),2} | " +
+                    $"AsBuilt={asBuiltText,-8} | " +
                     $"Roads={stats.Roads.Count,5} | " +
                     $"CurbLanes={stats.CurbLanes,5} | " +
                     $"Disabled={stats.DisabledCurbLanes,5} | " +
@@ -182,7 +177,8 @@ namespace ParkingControl
         /// Dumps raw composition lane flags so lane-count mismatches can be diagnosed.
         /// </summary>
         /// <remarks>
-        /// Research only. Remove once the divided-road and turn-lane counts are settled.
+        /// One sample per distinct as-built lane count, so an upgraded variant such as
+        /// a tram-equipped segment is shown next to the plain one. Research only.
         /// </remarks>
         /// <param name="text">Report builder.</param>
         /// <param name="ordered">Road prefabs found in the city.</param>
@@ -193,6 +189,9 @@ namespace ParkingControl
             ComponentLookup<Game.Net.Composition> compositions =
                 GetComponentLookup<Game.Net.Composition>(true);
 
+            ComponentLookup<Game.Prefabs.NetCompositionData> compositionData =
+                GetComponentLookup<Game.Prefabs.NetCompositionData>(true);
+
             BufferLookup<Game.Prefabs.NetCompositionLane> compositionLanes =
                 GetBufferLookup<Game.Prefabs.NetCompositionLane>(true);
 
@@ -202,32 +201,48 @@ namespace ParkingControl
 
             foreach (KeyValuePair<Entity, RoadPrefabParkingStats> item in ordered)
             {
-                Entity road = item.Value.SampleRoad;
-
-                if (!compositions.TryGetComponent(
-                        road,
-                        out Game.Net.Composition composition) ||
-                    !compositionLanes.TryGetBuffer(
-                        composition.m_Edge,
-                        out DynamicBuffer<Game.Prefabs.NetCompositionLane> lanes))
+                foreach (KeyValuePair<int, Entity> sample in
+                    item.Value.SamplesByEdgeLanes)
                 {
-                    continue;
-                }
+                    Entity road = sample.Value;
 
-                text.AppendLine(
-                    $"  {GetRoadPrefabName(item.Key)} " +
-                    $"(sample road {FormatEntity(road)}, " +
-                    $"edge composition {FormatEntity(composition.m_Edge)}, " +
-                    $"{lanes.Length} lane entries)");
+                    if (!compositions.TryGetComponent(
+                            road,
+                            out Game.Net.Composition composition) ||
+                        !compositionLanes.TryGetBuffer(
+                            composition.m_Edge,
+                            out DynamicBuffer<Game.Prefabs.NetCompositionLane> lanes))
+                    {
+                        continue;
+                    }
 
-                foreach (Game.Prefabs.NetCompositionLane lane in lanes)
-                {
+                    string mask = compositionData.TryGetComponent(
+                            composition.m_Edge,
+                            out Game.Prefabs.NetCompositionData data)
+                        ? $"general={data.m_Flags.m_General} | " +
+                            $"left={data.m_Flags.m_Left} | " +
+                            $"right={data.m_Flags.m_Right}"
+                        : "<no composition data>";
+
                     text.AppendLine(
-                        $"      idx={lane.m_Index,3} " +
-                        $"cw={lane.m_Carriageway,3} " +
-                        $"grp={lane.m_Group,3} " +
-                        $"x={lane.m_Position.x,7:0.00} " +
-                        $"flags={lane.m_Flags}");
+                        $"  {GetRoadPrefabName(item.Key)} " +
+                        $"[roadType={FormatLaneCount(item.Value.RoadTypeLanes)} " +
+                        $"asBuilt={FormatLaneCount(sample.Key)}] " +
+                        $"sample road {FormatEntity(road)}, " +
+                        $"edge composition {FormatEntity(composition.m_Edge)}, " +
+                        $"{lanes.Length} lane entries");
+
+                    text.AppendLine($"      mask: {mask}");
+
+                    foreach (Game.Prefabs.NetCompositionLane lane in lanes)
+                    {
+                        text.AppendLine(
+                            $"      idx={lane.m_Index,3} " +
+                            $"cw={lane.m_Carriageway,3} " +
+                            $"grp={lane.m_Group,3} " +
+                            $"x={lane.m_Position.x,7:0.00} " +
+                            $"flags={lane.m_Flags}");
+                    }
                 }
             }
         }
@@ -248,6 +263,7 @@ namespace ParkingControl
                 Mod.Settings,
                 SystemAPI.GetComponentLookup<Game.Net.Composition>(true),
                 SystemAPI.GetBufferLookup<Game.Prefabs.NetCompositionLane>(true),
+                SystemAPI.GetBufferLookup<Game.Prefabs.NetGeometryComposition>(true),
                 SystemAPI.GetComponentLookup<Game.Prefabs.PrefabRef>(true),
                 SystemAPI.GetComponentLookup<Game.Prefabs.ParkingLaneData>(true),
                 Unity.Collections.Allocator.Temp);
@@ -314,15 +330,19 @@ namespace ParkingControl
                     }
 
                     support.Edges++;
-                    support.AddDrivingLaneCount(
-                        roadSizeRule.GetDrivingLaneCount(road));
+                    support.RoadTypeLanes =
+                        roadSizeRule.GetRoadTypeDrivingLaneCount(road);
+
+                    support.AddEdgeLaneCount(
+                        roadSizeRule.GetEdgeDrivingLaneCount(road));
 
                     int parkingLanes = 0;
                     bool markedBays = false;
 
                     foreach (Game.Prefabs.NetCompositionLane lane in lanes)
                     {
-                        if ((lane.m_Flags & Game.Prefabs.LaneFlags.Parking) == 0)
+                        if ((lane.m_Flags & Game.Prefabs.LaneFlags.Parking) == 0 ||
+                            (lane.m_Flags & Game.Prefabs.LaneFlags.Virtual) != 0)
                         {
                             continue;
                         }
@@ -358,15 +378,9 @@ namespace ParkingControl
             {
                 RoadParkingSupport support = item.Value;
 
-                string lanesText = string.Join(
-                    "/",
-                    support.DrivingLanes.ConvertAll(static lanes =>
-                        lanes == RoadSizeRule.kUnknownLaneCount
-                            ? "?"
-                            : lanes.ToString()));
-
                 text.AppendLine(
-                    $"  Lanes={lanesText,4} | " +
+                    $"  Lanes={FormatLaneCount(support.RoadTypeLanes),2} | " +
+                    $"AsBuilt={FormatLaneCounts(support.EdgeLanes),-8} | " +
                     $"Edges={support.Edges,5} | " +
                     $"ParkingLanes={support.MaxParkingLanes,2} | " +
                     $"MarkedBays={(support.HasMarkedBays ? "YES" : "no "),3} | " +
@@ -376,7 +390,9 @@ namespace ParkingControl
 
         private sealed class RoadParkingSupport
         {
-            internal List<int> DrivingLanes { get; } = new(1);
+            internal int RoadTypeLanes { get; set; } = RoadSizeRule.kUnknownLaneCount;
+
+            internal List<int> EdgeLanes { get; } = new(1);
 
             internal int Edges { get; set; }
 
@@ -384,15 +400,29 @@ namespace ParkingControl
 
             internal bool HasMarkedBays { get; set; }
 
-            internal void AddDrivingLaneCount(int lanes)
+            internal void AddEdgeLaneCount(int lanes)
             {
-                int index = DrivingLanes.BinarySearch(lanes);
+                int index = EdgeLanes.BinarySearch(lanes);
 
                 if (index < 0)
                 {
-                    DrivingLanes.Insert(~index, lanes);
+                    EdgeLanes.Insert(~index, lanes);
                 }
             }
+        }
+
+        private static string FormatLaneCount(int lanes)
+        {
+            return lanes == RoadSizeRule.kUnknownLaneCount
+                ? "?"
+                : lanes.ToString();
+        }
+
+        private static string FormatLaneCounts(List<int> lanes)
+        {
+            return lanes.Count == 0
+                ? "?"
+                : string.Join("/", lanes.ConvertAll(FormatLaneCount));
         }
 
         private string GetRoadPrefabName(Entity prefab)
@@ -410,8 +440,11 @@ namespace ParkingControl
 
         private sealed class RoadPrefabParkingStats
         {
-            /// <summary>Gets the distinct lane counts seen, in ascending order.</summary>
-            internal List<int> DrivingLanes { get; } = new(1);
+            /// <summary>Gets the road type's own lane count, which drives the bans.</summary>
+            internal int RoadTypeLanes { get; set; } = RoadSizeRule.kUnknownLaneCount;
+
+            /// <summary>Gets the distinct as-built counts seen, ascending.</summary>
+            internal List<int> EdgeLanes { get; } = new(1);
 
             internal HashSet<Entity> Roads { get; } = new();
 
@@ -421,24 +454,28 @@ namespace ParkingControl
 
             internal bool HasBuiltInParkingSpaces { get; set; }
 
-            internal Entity SampleRoad { get; set; }
-
-            internal int MaxDrivingLanes =>
-                DrivingLanes.Count == 0
-                    ? RoadSizeRule.kUnknownLaneCount
-                    : DrivingLanes[DrivingLanes.Count - 1];
+            /// <summary>Gets one sample road per distinct as-built lane count.</summary>
+            internal Dictionary<int, Entity> SamplesByEdgeLanes { get; } = new(1);
 
             /// <summary>
-            /// Records a lane count once. A prefab normally yields a single value.
+            /// Records an as-built count once, keeping a sample road for each.
             /// </summary>
             /// <param name="lanes">Driving lanes measured on one road segment.</param>
-            internal void AddDrivingLaneCount(int lanes)
+            /// <param name="road">The segment that produced that count.</param>
+            internal void AddEdgeLaneCount(int lanes, Entity road)
             {
-                int index = DrivingLanes.BinarySearch(lanes);
+                if (SamplesByEdgeLanes.ContainsKey(lanes))
+                {
+                    return;
+                }
+
+                SamplesByEdgeLanes[lanes] = road;
+
+                int index = EdgeLanes.BinarySearch(lanes);
 
                 if (index < 0)
                 {
-                    DrivingLanes.Insert(~index, lanes);
+                    EdgeLanes.Insert(~index, lanes);
                 }
             }
         }
