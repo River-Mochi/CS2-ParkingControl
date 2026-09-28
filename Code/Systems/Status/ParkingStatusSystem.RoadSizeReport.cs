@@ -334,6 +334,9 @@ namespace ParkingControl
             ComponentLookup<Game.Prefabs.ParkingLaneData> parkingLaneDataLookup =
                 GetComponentLookup<Game.Prefabs.ParkingLaneData>(true);
 
+            ComponentLookup<Game.Prefabs.UtilityLaneData> utilityLaneDataLookup =
+                GetComponentLookup<Game.Prefabs.UtilityLaneData>(true);
+
             BufferLookup<Game.Prefabs.NetCompositionLane> compositionLanes =
                 GetBufferLookup<Game.Prefabs.NetCompositionLane>(true);
 
@@ -344,7 +347,8 @@ namespace ParkingControl
                 "-------------------- ROAD PARKING SUPPORT --------------------");
             text.AppendLine(
                 "Every road type in the city, including ones that allow no street " +
-                "parking. ParkingLanes counts Parking entries in the edge composition.");
+                "parking. ParkingLanes counts Parking entries in the edge composition, " +
+                "and Utils is what the road actually carries underground as built.");
 
             Dictionary<Entity, RoadParkingSupport> byPrefab = new(64);
 
@@ -386,6 +390,15 @@ namespace ParkingControl
 
                     foreach (Game.Prefabs.NetCompositionLane lane in lanes)
                     {
+                        // UtilityTypes is how the game identifies water, sewage and
+                        // power lanes, with no dependence on any prefab name.
+                        if (utilityLaneDataLookup.TryGetComponent(
+                                lane.m_Lane,
+                                out Game.Prefabs.UtilityLaneData utilityLaneData))
+                        {
+                            support.Utilities |= utilityLaneData.m_UtilityTypes;
+                        }
+
                         if ((lane.m_Flags & Game.Prefabs.LaneFlags.Parking) == 0 ||
                             (lane.m_Flags & Game.Prefabs.LaneFlags.Virtual) != 0)
                         {
@@ -429,6 +442,7 @@ namespace ParkingControl
                     $"Edges={support.Edges,5} | " +
                     $"ParkingLanes={support.MaxParkingLanes,2} | " +
                     $"MarkedBays={(support.HasMarkedBays ? "YES" : "no "),3} | " +
+                    $"Utils={support.Utilities,-40} | " +
                     $"Prefab={GetRoadPrefabName(item.Key)}");
             }
         }
@@ -444,6 +458,8 @@ namespace ParkingControl
             internal int MaxParkingLanes { get; set; }
 
             internal bool HasMarkedBays { get; set; }
+
+            internal Game.Prefabs.UtilityTypes Utilities { get; set; }
 
             internal void AddEdgeLaneCount(int lanes)
             {
