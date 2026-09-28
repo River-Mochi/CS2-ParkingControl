@@ -153,12 +153,13 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Valoración de parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "Muestra la disponibilidad de aparcamiento público de <toda la ciudad>.\n" +
-                    "<MALO> = menos del 15 % libre.\n" +
-                    "<OK> = del 15 % a menos del 30 % libre.\n" +
-                    "<BUENO> = 30 % o más libre.\n" +
-                    "<Público libre> = plazas públicas sin usar actualmente.\n" +
-                    "Cuenta los mismos aparcamientos que el panel de Carreteras del juego."
+                    "Muestra cuán llenos están los <aparcamientos de la ciudad>.\n" +
+                    "<Aparcados> = plazas ocupadas / totales, las mismas cifras que la InfoView de aparcamiento del juego.\n" +
+                    "El porcentaje indica cuántas de esas plazas siguen libres.\n" +
+                    "<POOR> = menos del 15% libre.\n" +
+                    "<OK> = del 15% a menos del 30% libre.\n" +
+                    "<GOOD> = 30% o más libre.\n" +
+                    "**Son coches en aparcamientos, no en la calle.**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Dónde aparcan" },
@@ -208,7 +209,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} aparc. | {1}/{2} carriles desact.{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} aparc. | {1}/{2} desact. | {3}/{4} distritos{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} calle | {1} visibles | {2} dentro | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, público libre {2}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1} | Aparcados {2}/{3}" },
                 { ParkingStatusLocale.kShareFormat, "{0} público | {1} edif. | {2} calle | {3} total" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "Solo manual = sin prohibiciones de ciudad/distrito | vías manuales activas" },

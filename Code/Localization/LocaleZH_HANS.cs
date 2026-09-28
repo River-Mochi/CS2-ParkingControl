@@ -153,12 +153,13 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "停车评级" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "显示<全城>公共停车空闲情况。\n" +
-                    "<差> = 空闲少于 15%。\n" +
-                    "<正常> = 空闲 15% 至不足 30%。\n" +
-                    "<良好> = 空闲 30% 或以上。\n" +
-                    "<公共空闲> = 当前未使用的公共停车位。\n" +
-                    "统计与游戏道路停车信息面板相同的停车设施。"
+                    "显示<全城停车场>的拥挤程度。\n" +
+                    "<已停> = 已用车位 / 总车位，与游戏自带的停车信息视图数字一致。\n" +
+                    "百分比为其中仍空置的比例。\n" +
+                    "<POOR> = 空余低于 15%。\n" +
+                    "<OK> = 空余 15% 至低于 30%。\n" +
+                    "<GOOD> = 空余 30% 或以上。\n" +
+                    "**这些是停在停车场的车辆，不包括路边停车。**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "车辆位置" },
@@ -208,7 +209,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} 已停放 | {1}/{2} 车道已禁用{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} 已停放 | {1}/{2} 已禁用 | {3}/{4} 行政区{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} 道路 | {1} 可见 | {2} 室内 | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}，公共空闲 {2}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1} | 已停 {2}/{3}" },
                 { ParkingStatusLocale.kShareFormat, "{0} 公共 | {1} 建筑 | {2} 道路 | {3} 总计" },
                 { ParkingStatusLocale.kStatusOk, "正常" },
                 { ParkingStatusLocale.kStatusOff, "仅手动 = 全城/行政区禁停关闭 | 手动道路仍生效" },

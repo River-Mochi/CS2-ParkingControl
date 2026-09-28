@@ -78,7 +78,7 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "Ban 6-lane road parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanSixLaneRoads)),
-                    "Bans roadside parking on most all <six-lane road> in the city, in every district.\n" +
+                    "Bans roadside parking on most all <six-lane roads> in the city, in every district.\n" +
                     "- Driving lanes are counted from the road itself, so roads added by other mods match on their real lane count.\n" +
                     "- Exception: roads with painted parking spaces, e.g., angled and perpendicular parking roads, are left alone.\n" +
                     "- This is additive: it's in addition to the dropdown above and to <manual No Parking> roads; it never cancels a ban set elsewhere.\n" +
@@ -157,12 +157,13 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Parking rating" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "Shows the <total city> public parking availability.\n" +
-                    "<POOR> = less than 15% free.\n" +
-                    "<OK> = 15% to less than 30% free.\n" +
-                    "<GOOD> = 30% or more free.\n" +
-                    "<Public free> = currently unused public parking spaces.\n" +
-                    "This counts the same parking facilities as the game's own Roads parking InfoView."
+                    "Shows how full the <city parking facilities and lots> are.\n" +
+                    "<Parked> = spaces in use / total spaces, the same numbers as the game's own Roads parking InfoView.\n" +
+                    "The percentage is how many of those spaces are still open.\n" +
+                    "<POOR> = less than 15% open.\n" +
+                    "<OK> = 15% to less than 30% open.\n" +
+                    "<GOOD> = 30% or more open.\n" +
+                    "**These are cars parked in parking facilities and lots, not on the street.**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Car Locations" },
@@ -213,7 +214,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} parked | {1}/{2} disabled | {3}/{4} districts{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} street | {1} visible | {2} inside | {3} OC" },
 
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, {2} public open" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1} | Parked {2}/{3}" },
 
                 { ParkingStatusLocale.kShareFormat, "{0} public | {1} bldg | {2} street | {3} total" },
                 { ParkingStatusLocale.kStatusOk, "OK" },

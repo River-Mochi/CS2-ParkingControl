@@ -153,12 +153,13 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "駐車評価" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "<市全体>の公共駐車場の空き状況を表示します。\n" +
-                    "<不足> = 空き15%未満。\n" +
-                    "<OK> = 空き15%以上30%未満。\n" +
-                    "<良好> = 空き30%以上。\n" +
-                    "<公共空き> = 現在未使用の公共駐車スペース。\n" +
-                    "ゲームの道路・駐車情報ビューと同じ駐車施設を数えます。"
+                    "<市内の駐車場>の混雑度を示します。\n" +
+                    "<駐車> = 使用中 / 総スペース。ゲームの駐車インフォビューと同じ数値です。\n" +
+                    "パーセントは、そのうち空いている割合です。\n" +
+                    "<POOR> = 空き 15% 未満。\n" +
+                    "<OK> = 空き 15% 以上 30% 未満。\n" +
+                    "<GOOD> = 空き 30% 以上。\n" +
+                    "**これは駐車場に止められた車であり、路上駐車ではありません。**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "車の場所" },
@@ -208,7 +209,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} 駐車中 | {1}/{2} 車線無効{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} 駐車中 | {1}/{2} 無効 | {3}/{4} 地区{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} 路上 | {1} 表示 | {2} 屋内 | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}、公共空き {2}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1} | 駐車 {2}/{3}" },
                 { ParkingStatusLocale.kShareFormat, "{0} 公共 | {1} 建物 | {2} 路上 | {3} 合計" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "手動のみ = 市全体/地区の禁止なし | 手動道路は有効" },

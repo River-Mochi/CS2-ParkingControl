@@ -97,6 +97,11 @@ namespace ParkingControl
                     stats.HasBuiltInParkingSpaces |=
                         roadSizeRule.HasBuiltInParkingSpaces(lane);
 
+                    if (stats.SampleRoad == Entity.Null)
+                    {
+                        stats.SampleRoad = road;
+                    }
+
                     stats.Roads.Add(road);
                     stats.CurbLanes++;
 
@@ -166,7 +171,67 @@ namespace ParkingControl
                     $"Disabled={stats.DisabledCurbLanes,5} | " +
                     $"Prefab={GetRoadPrefabName(item.Key)}{banText}");
             }
+
+#if DEBUG
+            AppendCompositionLaneDump(text, ordered);
+#endif
         }
+
+#if DEBUG
+        /// <summary>
+        /// Dumps raw composition lane flags so lane-count mismatches can be diagnosed.
+        /// </summary>
+        /// <remarks>
+        /// Research only. Remove once the divided-road and turn-lane counts are settled.
+        /// </remarks>
+        /// <param name="text">Report builder.</param>
+        /// <param name="ordered">Road prefabs found in the city.</param>
+        private void AppendCompositionLaneDump(
+            StringBuilder text,
+            List<KeyValuePair<Entity, RoadPrefabParkingStats>> ordered)
+        {
+            ComponentLookup<Game.Net.Composition> compositions =
+                GetComponentLookup<Game.Net.Composition>(true);
+
+            BufferLookup<Game.Prefabs.NetCompositionLane> compositionLanes =
+                GetBufferLookup<Game.Prefabs.NetCompositionLane>(true);
+
+            text.AppendLine();
+            text.AppendLine(
+                "-------------------- COMPOSITION LANE DUMP (DEBUG) --------------------");
+
+            foreach (KeyValuePair<Entity, RoadPrefabParkingStats> item in ordered)
+            {
+                Entity road = item.Value.SampleRoad;
+
+                if (!compositions.TryGetComponent(
+                        road,
+                        out Game.Net.Composition composition) ||
+                    !compositionLanes.TryGetBuffer(
+                        composition.m_Edge,
+                        out DynamicBuffer<Game.Prefabs.NetCompositionLane> lanes))
+                {
+                    continue;
+                }
+
+                text.AppendLine(
+                    $"  {GetRoadPrefabName(item.Key)} " +
+                    $"(sample road {FormatEntity(road)}, " +
+                    $"edge composition {FormatEntity(composition.m_Edge)}, " +
+                    $"{lanes.Length} lane entries)");
+
+                foreach (Game.Prefabs.NetCompositionLane lane in lanes)
+                {
+                    text.AppendLine(
+                        $"      idx={lane.m_Index,3} " +
+                        $"cw={lane.m_Carriageway,3} " +
+                        $"grp={lane.m_Group,3} " +
+                        $"x={lane.m_Position.x,7:0.00} " +
+                        $"flags={lane.m_Flags}");
+                }
+            }
+        }
+#endif
 
         /// <summary>
         /// Builds the citywide road-size rule for one pass.
@@ -213,6 +278,8 @@ namespace ParkingControl
             internal int DisabledCurbLanes { get; set; }
 
             internal bool HasBuiltInParkingSpaces { get; set; }
+
+            internal Entity SampleRoad { get; set; }
 
             internal int MaxDrivingLanes =>
                 DrivingLanes.Count == 0

@@ -153,12 +153,13 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Park değerlendirmesi" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "<Tüm şehir> halka açık park boşluğunu gösterir.\n" +
-                    "<KÖTÜ> = %15’ten az boş.\n" +
-                    "<OK> = %15 ile %30’dan az boş.\n" +
-                    "<İYİ> = %30 veya daha fazla boş.\n" +
-                    "<Halka açık boş> = şu anda kullanılmayan halka açık park yerleri.\n" +
-                    "Oyunun Yol park bilgi paneliyle aynı tesisleri sayar."
+                    "<Şehirdeki otoparkların> ne kadar dolu olduğunu gösterir.\n" +
+                    "<Park etmiş> = kullanılan / toplam yer; oyunun kendi otopark InfoView'ıyla aynı sayılar.\n" +
+                    "Yüzde, bu yerlerin ne kadarının hâlâ boş olduğunu gösterir.\n" +
+                    "<POOR> = %15'ten az boş.\n" +
+                    "<OK> = %15 ile %30 arası boş.\n" +
+                    "<GOOD> = %30 veya daha fazla boş.\n" +
+                    "**Bunlar otoparklardaki araçlardır, yol kenarındakiler değil.**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Araç Konumları" },
@@ -208,7 +209,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} park | {1}/{2} şerit devre dışı{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} park | {1}/{2} devre dışı | {3}/{4} bölge{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} yol | {1} görünür | {2} içeride | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, halka açık boş {2}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1} | Park etmiş {2}/{3}" },
                 { ParkingStatusLocale.kShareFormat, "{0} halka açık | {1} bina | {2} yol | {3} toplam" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "Sadece Elle = şehir/bölge yasağı yok | elle yollar etkin" },

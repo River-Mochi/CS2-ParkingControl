@@ -108,6 +108,15 @@ namespace ParkingControl
         public string DistrictInstructions => string.Empty;
 
         /// <summary>
+        /// Gets the cached parking-capacity rating.
+        /// </summary>
+        [Exclude]
+        [SettingsUIHideByCondition(typeof(PCSettings), nameof(HideStatus))]
+        [SettingsUIValueVersion(typeof(ParkingStatusCache), nameof(ParkingStatusCache.GetUiVersion))]
+        [SettingsUISection(kActionsTab, kStatusGroup)]
+        public string SupplyStatus => ParkingStatusCache.SupplyRow;
+
+        /// <summary>
         /// Gets the cached lane-enforcement status.
         /// </summary>
         [Exclude]
@@ -133,15 +142,6 @@ namespace ParkingControl
         [SettingsUIValueVersion(typeof(ParkingStatusCache), nameof(ParkingStatusCache.GetUiVersion))]
         [SettingsUISection(kActionsTab, kStatusGroup)]
         public string ShareStatus => ParkingStatusCache.ShareRow;
-
-        /// <summary>
-        /// Gets the cached parking-capacity rating.
-        /// </summary>
-        [Exclude]
-        [SettingsUIHideByCondition(typeof(PCSettings), nameof(HideStatus))]
-        [SettingsUIValueVersion(typeof(ParkingStatusCache), nameof(ParkingStatusCache.GetUiVersion))]
-        [SettingsUISection(kActionsTab, kStatusGroup)]
-        public string SupplyStatus => ParkingStatusCache.SupplyRow;
 
         /// <summary>
         /// Gets the cached personal-vehicle location status.
@@ -264,7 +264,7 @@ namespace ParkingControl
             BanFourLaneRoads = false;
             BanSixLaneRoads = false;
             ShowInstructions = false;
-            ShowStatus = false;
+            ShowStatus = true;
             VerboseLog = false;
         }
 

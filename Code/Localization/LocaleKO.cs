@@ -153,12 +153,13 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "주차 평가" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "<도시 전체> 공공 주차 여유를 표시합니다.\n" +
-                    "<부족> = 15% 미만 여유.\n" +
-                    "<OK> = 15% 이상 30% 미만 여유.\n" +
-                    "<좋음> = 30% 이상 여유.\n" +
-                    "<공공 여유> = 현재 비어 있는 공공 주차 공간.\n" +
-                    "게임의 도로 주차 정보 보기와 같은 주차 시설을 집계합니다."
+                    "<도시 주차장>이 얼마나 찼는지 보여줍니다.\n" +
+                    "<주차> = 사용 중 / 전체 공간으로, 게임의 주차 정보뷰와 같은 수치입니다.\n" +
+                    "백분율은 그중 비어 있는 비율입니다.\n" +
+                    "<POOR> = 여유 15% 미만.\n" +
+                    "<OK> = 여유 15% 이상 30% 미만.\n" +
+                    "<GOOD> = 여유 30% 이상.\n" +
+                    "**주차장에 주차된 차량이며 노상 주차가 아닙니다.**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "차량 위치" },
@@ -208,7 +209,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} 주차 | {1}/{2} 차선 비활성{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} 주차 | {1}/{2} 비활성 | {3}/{4} 구역{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} 도로 | {1} 표시 | {2} 실내 | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, 공공 여유 {2}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1} | 주차 {2}/{3}" },
                 { ParkingStatusLocale.kShareFormat, "{0} 공공 | {1} 건물 | {2} 도로 | {3} 합계" },
                 { ParkingStatusLocale.kStatusOk, "정상" },
                 { ParkingStatusLocale.kStatusOff, "수동만 = 도시/구역 금지 해제 | 수동 도로는 유지" },

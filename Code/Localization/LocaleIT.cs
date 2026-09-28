@@ -153,12 +153,13 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Valutazione parcheggi" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "Mostra la disponibilità dei parcheggi pubblici in <tutta la città>.\n" +
-                    "<SCARSO> = meno del 15% libero.\n" +
+                    "Mostra quanto sono pieni i <parcheggi della città>.\n" +
+                    "<Parcheggiate> = posti occupati / totali, gli stessi numeri della InfoView parcheggi del gioco.\n" +
+                    "La percentuale indica quanti di quei posti sono ancora liberi.\n" +
+                    "<POOR> = meno del 15% libero.\n" +
                     "<OK> = dal 15% a meno del 30% libero.\n" +
-                    "<BUONO> = 30% o più libero.\n" +
-                    "<Pubblico libero> = posti pubblici attualmente inutilizzati.\n" +
-                    "Conta gli stessi parcheggi del pannello parcheggi di Strade del gioco."
+                    "<GOOD> = 30% o più libero.\n" +
+                    "**Sono auto nei parcheggi, non lungo la strada.**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Posizione auto" },
@@ -208,7 +209,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} in sosta | {1}/{2} corsie chiuse{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} in sosta | {1}/{2} chiuse | {3}/{4} distretti{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} strada | {1} visibili | {2} interno | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, pubblico libero {2}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1} | Parcheggiate {2}/{3}" },
                 { ParkingStatusLocale.kShareFormat, "{0} pubblico | {1} edif. | {2} strada | {3} totale" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "Solo manuale = divieti città/distretto off | strade manuali attive" },

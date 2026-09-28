@@ -153,12 +153,13 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Ocena parkingów" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "Pokazuje dostępność parkingów publicznych w <całym mieście>.\n" +
-                    "<SŁABO> = mniej niż 15% wolne.\n" +
-                    "<OK> = od 15% do mniej niż 30% wolne.\n" +
-                    "<DOBRZE> = 30% lub więcej wolne.\n" +
-                    "<Publiczne wolne> = obecnie nieużywane publiczne miejsca parkingowe.\n" +
-                    "Liczy te same parkingi co panel parkowania Dróg w grze."
+                    "Pokazuje, jak zapełnione są <miejskie parkingi>.\n" +
+                    "<Zaparkowane> = zajęte / wszystkie miejsca, te same liczby co widok parkingowy w grze.\n" +
+                    "Procent oznacza, ile z tych miejsc jest nadal wolnych.\n" +
+                    "<POOR> = mniej niż 15% wolnych.\n" +
+                    "<OK> = od 15% do mniej niż 30% wolnych.\n" +
+                    "<GOOD> = 30% lub więcej wolnych.\n" +
+                    "**To samochody na parkingach, nie przy krawężniku.**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Położenie aut" },
@@ -208,7 +209,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} zapark. | {1}/{2} pasów wył.{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} zapark. | {1}/{2} wył. | {3}/{4} dzielnic{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} ulica | {1} widoczne | {2} wewnątrz | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, publ. wolne {2}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1} | Zaparkowane {2}/{3}" },
                 { ParkingStatusLocale.kShareFormat, "{0} publ. | {1} budynki | {2} ulica | {3} suma" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "Tylko ręcznie = zakazy miasta/dzielnic wył. | ręczne drogi działają" },

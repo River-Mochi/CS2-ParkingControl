@@ -153,12 +153,13 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Parkbewertung" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "Zeigt die öffentliche Parkverfügbarkeit der <gesamten Stadt>.\n" +
-                    "<SCHLECHT> = unter 15 % frei.\n" +
-                    "<OK> = 15 % bis unter 30 % frei.\n" +
-                    "<GUT> = 30 % oder mehr frei.\n" +
-                    "<Öffentlich frei> = derzeit ungenutzte öffentliche Parkplätze.\n" +
-                    "Zählt dieselben Parkeinrichtungen wie CS2s Straßen-Parkinfo."
+                    "Zeigt, wie voll die <Parkanlagen und Parkplätze der Stadt> sind.\n" +
+                    "<Geparkt> = belegte / gesamte Plätze, dieselben Zahlen wie die Parken-Infoansicht des Spiels.\n" +
+                    "Der Prozentwert gibt an, wie viele dieser Plätze noch frei sind.\n" +
+                    "<POOR> = weniger als 15% frei.\n" +
+                    "<OK> = 15% bis unter 30% frei.\n" +
+                    "<GOOD> = 30% oder mehr frei.\n" +
+                    "**Dies sind Autos in Parkanlagen und auf Parkplätzen, nicht am Straßenrand.**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Auto-Standorte" },
@@ -208,7 +209,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} geparkt | {1}/{2} Spuren gesperrt{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} geparkt | {1}/{2} gesperrt | {3}/{4} Bezirke{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} Straße | {1} sichtbar | {2} innen | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, öffentl. frei {2}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1} | Geparkt {2}/{3}" },
                 { ParkingStatusLocale.kShareFormat, "{0} öff. | {1} Gebäude | {2} Straße | {3} gesamt" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "Nur manuell = Stadt-/Bezirksverbote aus | manuelle Straßen bleiben aktiv" },

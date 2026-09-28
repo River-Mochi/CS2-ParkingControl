@@ -153,12 +153,13 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "ระดับที่จอดรถ" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "แสดงที่จอดสาธารณะที่ว่างของ<ทั้งเมือง>\n" +
-                    "<แย่> = ว่างน้อยกว่า 15%\n" +
+                    "แสดงว่า <ลานจอดรถในเมือง> เต็มแค่ไหน\n" +
+                    "<จอดแล้ว> = ช่องที่ใช้ / ช่องทั้งหมด ตัวเลขเดียวกับ InfoView ที่จอดรถของเกม\n" +
+                    "เปอร์เซ็นต์คือสัดส่วนช่องที่ยังว่าง\n" +
+                    "<POOR> = ว่างน้อยกว่า 15%\n" +
                     "<OK> = ว่าง 15% ถึงน้อยกว่า 30%\n" +
-                    "<ดี> = ว่าง 30% ขึ้นไป\n" +
-                    "<สาธารณะว่าง> = ช่องจอดสาธารณะที่ยังไม่ได้ใช้\n" +
-                    "นับลานจอดเดียวกับแผงข้อมูลที่จอดรถของถนนในเกม"
+                    "<GOOD> = ว่าง 30% ขึ้นไป\n" +
+                    "**นี่คือรถที่จอดในลานจอดรถ ไม่ใช่ที่จอดริมถนน**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "ตำแหน่งรถ" },
@@ -208,7 +209,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} จอดอยู่ | ปิด {1}/{2} ช่อง{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} จอดอยู่ | ปิด {1}/{2} | {3}/{4} เขต{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} ถนน | {1} มองเห็น | {2} ภายใน | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, สาธารณะว่าง {2}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1} | จอดแล้ว {2}/{3}" },
                 { ParkingStatusLocale.kShareFormat, "{0} สาธารณะ | {1} อาคาร | {2} ถนน | {3} รวม" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "ตั้งเองเท่านั้น = ไม่ห้ามทั้งเมือง/เขต | ถนนที่ตั้งเองยังทำงาน" },

@@ -153,12 +153,13 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Đánh giá chỗ đỗ" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "Hiển thị chỗ đỗ công cộng còn trống của <toàn thành phố>.\n" +
-                    "<KÉM> = trống dưới 15%.\n" +
-                    "<OK> = trống từ 15% đến dưới 30%.\n" +
-                    "<TỐT> = trống từ 30% trở lên.\n" +
-                    "<Công cộng trống> = chỗ công cộng hiện chưa dùng.\n" +
-                    "Đếm cùng các cơ sở như bảng đỗ xe Đường của trò chơi."
+                    "Cho biết <các bãi đỗ xe của thành phố> đầy đến mức nào.\n" +
+                    "<Đã đỗ> = chỗ đang dùng / tổng chỗ, cùng con số với InfoView đỗ xe của game.\n" +
+                    "Phần trăm là số chỗ vẫn còn trống.\n" +
+                    "<POOR> = dưới 15% trống.\n" +
+                    "<OK> = từ 15% đến dưới 30% trống.\n" +
+                    "<GOOD> = 30% trở lên trống.\n" +
+                    "**Đây là xe trong bãi đỗ, không phải đỗ ven đường.**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Vị trí xe" },
@@ -208,7 +209,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} đang đỗ | khóa {1}/{2} làn{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} đang đỗ | khóa {1}/{2} | {3}/{4} khu vực{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} đường | {1} hiển thị | {2} bên trong | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, công cộng trống {2}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1} | Đã đỗ {2}/{3}" },
                 { ParkingStatusLocale.kShareFormat, "{0} công cộng | {1} công trình | {2} đường | {3} tổng" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "Chỉ thủ công = không cấm thành phố/khu vực | đường thủ công vẫn hoạt động" },

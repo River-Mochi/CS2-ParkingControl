@@ -153,12 +153,13 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Оцінка паркування" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "Показує доступність громадського паркування в <усьому місті>.\n" +
-                    "<ПОГАНО> = вільно менше 15%.\n" +
-                    "<OK> = вільно від 15% до менше 30%.\n" +
-                    "<ДОБРЕ> = вільно 30% або більше.\n" +
-                    "<Громадські вільні> = наразі невикористані громадські паркомісця.\n" +
-                    "Рахує ті самі паркінги, що й панель паркування Доріг у грі."
+                    "Показує, наскільки заповнені <міські паркінги>.\n" +
+                    "<Припарковано> = зайняті / усі місця, ті самі числа, що й у гровому режимі паркування.\n" +
+                    "Відсоток — скільки із них ще вільні.\n" +
+                    "<POOR> = менше 15% вільно.\n" +
+                    "<OK> = від 15% до 30% вільно.\n" +
+                    "<GOOD> = 30% або більше вільно.\n" +
+                    "**Це авто на паркінгах, а не біля узбіччя.**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Розташування авто" },
@@ -208,7 +209,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} припарк. | {1}/{2} смуг вимкн.{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} припарк. | {1}/{2} вимкн. | {3}/{4} районів{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} вулиця | {1} видимі | {2} всередині | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, гром. вільно {2}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1} | Припарковано {2}/{3}" },
                 { ParkingStatusLocale.kShareFormat, "{0} гром. | {1} буд. | {2} вулиця | {3} усього" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "Лише вручну = заборони міста/районів вимк. | ручні дороги активні" },

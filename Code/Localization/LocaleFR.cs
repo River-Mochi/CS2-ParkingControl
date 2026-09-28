@@ -153,12 +153,13 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Évaluation du parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "Affiche la disponibilité du stationnement public dans <toute la ville>.\n" +
-                    "<MAUVAIS> = moins de 15 % libre.\n" +
-                    "<OK> = de 15 % à moins de 30 % libre.\n" +
-                    "<BON> = 30 % ou plus libre.\n" +
-                    "<Public libre> = places publiques actuellement libres.\n" +
-                    "Compte les mêmes parkings que le panneau Stationnement des Routes du jeu."
+                    "Indique le taux de remplissage des <parkings de la ville>.\n" +
+                    "<Stationnés> = places occupées / totales, les mêmes chiffres que l'InfoView stationnement du jeu.\n" +
+                    "Le pourcentage indique combien de ces places restent libres.\n" +
+                    "<POOR> = moins de 15% de libre.\n" +
+                    "<OK> = de 15% à moins de 30% de libre.\n" +
+                    "<GOOD> = 30% ou plus de libre.\n" +
+                    "**Il s'agit de voitures garées dans des parkings, pas dans la rue.**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Position autos" },
@@ -208,7 +209,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} garées | {1}/{2} voies fermées{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} garées | {1}/{2} fermées | {3}/{4} quartiers{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} rue | {1} visibles | {2} intérieur | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, public libre {2}" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1} | Stationnés {2}/{3}" },
                 { ParkingStatusLocale.kShareFormat, "{0} public | {1} bât. | {2} rue | {3} total" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "Manuel uniquement = interdictions ville/quartiers coupées | routes manuelles actives" },
