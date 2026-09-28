@@ -26,13 +26,37 @@ namespace ParkingControl
         /// <returns>A rule that must be disposed when the pass ends.</returns>
         private RoadSizeRule CreateRoadSizeRule()
         {
+            Unity.Entities.BufferLookup<Game.Prefabs.NetGeometrySection> geometrySections =
+                SystemAPI.GetBufferLookup<Game.Prefabs.NetGeometrySection>(true);
+
+            Unity.Entities.BufferLookup<Game.Prefabs.NetSubSection> subSections =
+                SystemAPI.GetBufferLookup<Game.Prefabs.NetSubSection>(true);
+
+            Unity.Entities.BufferLookup<Game.Prefabs.NetSectionPiece> sectionPieces =
+                SystemAPI.GetBufferLookup<Game.Prefabs.NetSectionPiece>(true);
+
+            Unity.Entities.BufferLookup<Game.Prefabs.NetPieceLane> pieceLanes =
+                SystemAPI.GetBufferLookup<Game.Prefabs.NetPieceLane>(true);
+
+            Unity.Entities.ComponentLookup<Game.Prefabs.NetLaneData> laneData =
+                SystemAPI.GetComponentLookup<Game.Prefabs.NetLaneData>(true);
+
+            RoadSizeRule.DefaultCompositionLookups defaultComposition = new()
+            {
+                GeometrySections = geometrySections,
+                SubSections = subSections,
+                SectionPieces = sectionPieces,
+                PieceLanes = pieceLanes,
+                LaneData = laneData,
+            };
+
             return RoadSizeRule.Create(
                 Mod.Settings,
                 SystemAPI.GetComponentLookup<Game.Net.Composition>(true),
                 SystemAPI.GetBufferLookup<Game.Prefabs.NetCompositionLane>(true),
-                SystemAPI.GetBufferLookup<Game.Prefabs.NetGeometryComposition>(true),
                 SystemAPI.GetComponentLookup<Game.Prefabs.PrefabRef>(true),
                 SystemAPI.GetComponentLookup<Game.Prefabs.ParkingLaneData>(true),
+                defaultComposition,
                 Unity.Collections.Allocator.Temp);
         }
 

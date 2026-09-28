@@ -12,7 +12,6 @@ using System;
 using Game.Prefabs;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Mathematics;
 
 namespace ParkingControl
 {
@@ -40,6 +39,18 @@ namespace ParkingControl
     /// </remarks>
     internal struct RoadSizeRule : IDisposable
     {
+        /// <summary>
+        /// Read-only prefab data needed to rebuild the default composition of a road.
+        /// </summary>
+        internal struct DefaultCompositionLookups
+        {
+            internal BufferLookup<NetGeometrySection> GeometrySections;
+            internal BufferLookup<NetSubSection> SubSections;
+            internal BufferLookup<NetSectionPiece> SectionPieces;
+            internal BufferLookup<NetPieceLane> PieceLanes;
+            internal ComponentLookup<NetLaneData> LaneData;
+        }
+
         internal const int kFourLaneRoad = 4;
         internal const int kSixLaneRoad = 6;
 
@@ -68,9 +79,9 @@ namespace ParkingControl
 
         private ComponentLookup<Game.Net.Composition> m_Compositions;
         private BufferLookup<NetCompositionLane> m_CompositionLanes;
-        private BufferLookup<NetGeometryComposition> m_PrefabCompositions;
         private ComponentLookup<PrefabRef> m_PrefabRefs;
         private ComponentLookup<ParkingLaneData> m_ParkingLaneData;
+        private DefaultCompositionLookups m_DefaultComposition;
 
         private bool m_BanFourLaneRoads;
         private bool m_BanSixLaneRoads;
@@ -87,18 +98,18 @@ namespace ParkingControl
         /// <param name="settings">Mod options, or null before options load.</param>
         /// <param name="compositions">Edge composition lookup.</param>
         /// <param name="compositionLanes">Composition lane buffer lookup.</param>
-        /// <param name="prefabCompositions">Road prefab composition list lookup.</param>
         /// <param name="prefabRefs">Prefab reference lookup.</param>
         /// <param name="parkingLaneData">Parking lane prefab data lookup.</param>
+        /// <param name="defaultComposition">Lookups for rebuilding default lanes.</param>
         /// <param name="allocator">Allocator for the caches.</param>
         /// <returns>A rule that must be disposed when the pass ends.</returns>
         internal static RoadSizeRule Create(
             PCSettings? settings,
             ComponentLookup<Game.Net.Composition> compositions,
             BufferLookup<NetCompositionLane> compositionLanes,
-            BufferLookup<NetGeometryComposition> prefabCompositions,
             ComponentLookup<PrefabRef> prefabRefs,
             ComponentLookup<ParkingLaneData> parkingLaneData,
+            DefaultCompositionLookups defaultComposition,
             Allocator allocator)
         {
             RoadSizeRule rule = default;
@@ -107,9 +118,9 @@ namespace ParkingControl
             rule.m_BanSixLaneRoads = settings?.BanSixLaneRoads ?? false;
             rule.m_Compositions = compositions;
             rule.m_CompositionLanes = compositionLanes;
-            rule.m_PrefabCompositions = prefabCompositions;
             rule.m_PrefabRefs = prefabRefs;
             rule.m_ParkingLaneData = parkingLaneData;
+            rule.m_DefaultComposition = defaultComposition;
 
             // Always cached: the log report measures every road even while both
             // toggles are off, and empty maps cost almost nothing.
@@ -183,7 +194,7 @@ namespace ParkingControl
                 return cached;
             }
 
-            int counted = CountBaseDrivingLanes(prefabRef.m_Prefab);
+            int counted = CountDefaultDrivingLanes(prefabRef.m_Prefab);
 
             if (counted == kUnknownLaneCount)
             {
@@ -244,52 +255,75 @@ namespace ParkingControl
         }
 
         /// <summary>
-        /// Counts driving lanes on a road type's plainest edge composition.
+        /// Counts driving lanes on the default composition of a road type.
         /// </summary>
         /// <remarks>
-        /// Every composition the game has generated for a prefab is listed in its
-        /// NetGeometryComposition buffer with the CompositionFlags that produced it
-        /// (Game.Net.CompositionSelectSystem.CreateComposition appends them). Node
-        /// compositions are skipped, and the fewest set flags wins, which is the
-        /// unupgraded ground-level road.
+        /// Rebuilt with the same two calls vanilla uses for net defaults in
+        /// Game.Prefabs.NetInitializeSystem.InitializeNetDefaultsJob: build the pieces
+        /// for an empty CompositionFlags, then turn those pieces into lanes. Reading a
+        /// ready-made composition off the prefab instead would be cheaper but unsafe,
+        /// because compositions are created on demand per built segment, so a road type
+        /// whose every segment carries trams would expose no unupgraded one to read.
         /// </remarks>
         /// <param name="prefab">Road prefab entity.</param>
         /// <returns>Driving lanes, or <see cref="kUnknownLaneCount"/> when unreadable.</returns>
-        private int CountBaseDrivingLanes(Entity prefab)
+        private int CountDefaultDrivingLanes(Entity prefab)
         {
-            if (!m_PrefabCompositions.TryGetBuffer(
+            if (!m_DefaultComposition.GeometrySections.TryGetBuffer(
                     prefab,
-                    out DynamicBuffer<NetGeometryComposition> compositions))
+                    out DynamicBuffer<NetGeometrySection> sections))
             {
                 return kUnknownLaneCount;
             }
 
-            Entity plainest = Entity.Null;
-            int fewestFlags = int.MaxValue;
+            NativeList<NetCompositionPiece> pieces = new(32, Allocator.Temp);
+            NativeList<NetCompositionLane> lanes = new(32, Allocator.Temp);
 
-            foreach (NetGeometryComposition composition in compositions)
+            try
             {
-                if ((composition.m_Mask.m_General &
-                        CompositionFlags.General.Node) != 0)
+                NetCompositionHelpers.GetCompositionPieces(
+                    pieces,
+                    sections.AsNativeArray(),
+                    default,
+                    m_DefaultComposition.SubSections,
+                    m_DefaultComposition.SectionPieces);
+
+                NetCompositionData compositionData = default;
+
+                NetCompositionHelpers.AddCompositionLanes(
+                    Entity.Null,
+                    ref compositionData,
+                    pieces,
+                    lanes,
+                    default,
+                    m_DefaultComposition.LaneData,
+                    m_DefaultComposition.PieceLanes);
+
+                int count = 0;
+
+                foreach (NetCompositionLane lane in lanes)
                 {
-                    continue;
+                    if (IsDrivingLane(lane.m_Flags))
+                    {
+                        count++;
+                    }
                 }
 
-                int flagCount =
-                    math.countbits((uint)composition.m_Mask.m_General) +
-                    math.countbits((uint)composition.m_Mask.m_Left) +
-                    math.countbits((uint)composition.m_Mask.m_Right);
-
-                if (flagCount < fewestFlags)
-                {
-                    fewestFlags = flagCount;
-                    plainest = composition.m_Composition;
-                }
+                return count;
             }
+            finally
+            {
+                pieces.Dispose();
+                lanes.Dispose();
+            }
+        }
 
-            return plainest == Entity.Null
-                ? kUnknownLaneCount
-                : CountDrivingLanes(plainest);
+        private static bool IsDrivingLane(LaneFlags flags)
+        {
+            // Sidewalks, tram tracks, parking lanes and bicycle lanes are not driving
+            // lanes, and Master entries are per-group aggregates rather than lanes.
+            return (flags & kDrivingLaneMask) == LaneFlags.Road &&
+                (flags & kGroupAggregate) == 0;
         }
 
         private int CountDrivingLanes(Entity composition)
@@ -305,18 +339,10 @@ namespace ParkingControl
 
             foreach (NetCompositionLane lane in lanes)
             {
-                if ((lane.m_Flags & kDrivingLaneMask) != LaneFlags.Road)
+                if (IsDrivingLane(lane.m_Flags))
                 {
-                    // Sidewalks, tram tracks, parking lanes and bicycle lanes.
-                    continue;
+                    count++;
                 }
-
-                if ((lane.m_Flags & kGroupAggregate) != 0)
-                {
-                    continue;
-                }
-
-                count++;
             }
 
             return count;

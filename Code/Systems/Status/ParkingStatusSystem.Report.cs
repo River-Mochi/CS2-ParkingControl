@@ -95,6 +95,9 @@ namespace ParkingControl
                 $"SimulationFrame={snapshot.SimulationFrame} (simulation tick when data was collected)");
             text.AppendLine($"ParkingScope={snapshot.Scope}");
             text.AppendLine(
+                $"RoadSizeBans=FourLane:{OnOff(Mod.Settings?.BanFourLaneRoads)}, " +
+                $"SixLane:{OnOff(Mod.Settings?.BanSixLaneRoads)}");
+            text.AppendLine(
                 $"DistrictPolicy=Active in {snapshot.DistrictsWithPolicy}/{snapshot.Districts} districts " +
                 $"(PolicyEntity={FormatEntity(ParkingPolicySystem.PolicyEntity)})");
             ParkingRelocationSystem? relocationSystem =
@@ -517,6 +520,11 @@ namespace ParkingControl
                     $"ParkingDisabled={item.ParkingDisabled} | " +
                     $"StreetParkingState={item.StreetParkingState}");
             }
+        }
+
+        private static string OnOff(bool? value)
+        {
+            return value == true ? "ON" : "OFF";
         }
 
         private string GetDistrictName(Entity district)

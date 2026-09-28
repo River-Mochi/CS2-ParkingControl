@@ -252,6 +252,11 @@ namespace ParkingControl
             m_AppliedBanFourLaneRoads = BanFourLaneRoads;
             m_AppliedBanSixLaneRoads = BanSixLaneRoads;
 
+            LogUtils.Info(
+                $"{Mod.ModTag} Parking rules changed: Scope={m_ParkingScope}, " +
+                $"4-lane={(BanFourLaneRoads ? "ON" : "OFF")}, " +
+                $"6-lane={(BanSixLaneRoads ? "ON" : "OFF")}.");
+
             ParkingPolicySystem.RefreshVisibility();
             NoStreetParkingSystem.RequestReconcile();
             ParkingStatusCache.MarkDirty();
