@@ -55,6 +55,11 @@ namespace ParkingControl
 
             Dictionary<Entity, RoadPrefabParkingStats> byPrefab = new(64);
 
+            // Native container for the Entity set: managed collections keyed by Entity
+            // allocate on the GC heap and cannot be used from jobs at all.
+            using NativeHashSet<Entity> countedRoads =
+                new(Math.Max(1, m_CurbLaneQuery.CalculateEntityCount()), Allocator.Temp);
+
             using (NativeArray<Entity> lanes =
                 m_CurbLaneQuery.ToEntityArray(Allocator.Temp))
             {
@@ -101,7 +106,11 @@ namespace ParkingControl
                     stats.HasBuiltInParkingSpaces |=
                         roadSizeRule.HasBuiltInParkingSpaces(lane);
 
-                    stats.Roads.Add(road);
+                    if (countedRoads.Add(road))
+                    {
+                        stats.Roads++;
+                    }
+
                     stats.CurbLanes++;
 
                     if ((parkingLane.m_Flags &
@@ -161,7 +170,7 @@ namespace ParkingControl
                 text.AppendLine(
                     $"  Lanes={FormatLaneCount(stats.RoadTypeLanes),2} | " +
                     $"AsBuilt={asBuiltText,-8} | " +
-                    $"Roads={stats.Roads.Count,5} | " +
+                    $"Roads={stats.Roads,5} | " +
                     $"CurbLanes={stats.CurbLanes,5} | " +
                     $"Disabled={stats.DisabledCurbLanes,5} | " +
                     $"Prefab={GetRoadPrefabName(item.Key)}{banText}");
@@ -194,6 +203,9 @@ namespace ParkingControl
 
             BufferLookup<Game.Prefabs.NetCompositionLane> compositionLanes =
                 GetBufferLookup<Game.Prefabs.NetCompositionLane>(true);
+
+            ComponentLookup<Game.Prefabs.UtilityLaneData> utilityLaneData =
+                GetComponentLookup<Game.Prefabs.UtilityLaneData>(true);
 
             text.AppendLine();
             text.AppendLine(
@@ -236,12 +248,21 @@ namespace ParkingControl
 
                     foreach (Game.Prefabs.NetCompositionLane lane in lanes)
                     {
+                        // UtilityLaneData is how the game itself identifies water,
+                        // sewage and power lanes, independent of any prefab name.
+                        string utility =
+                            utilityLaneData.TryGetComponent(
+                                lane.m_Lane,
+                                out Game.Prefabs.UtilityLaneData data)
+                                ? $" utility={data.m_UtilityTypes}"
+                                : string.Empty;
+
                         text.AppendLine(
                             $"      idx={lane.m_Index,3} " +
                             $"cw={lane.m_Carriageway,3} " +
                             $"grp={lane.m_Group,3} " +
                             $"x={lane.m_Position.x,7:0.00} " +
-                            $"flags={lane.m_Flags}");
+                            $"flags={lane.m_Flags}{utility}");
                     }
                 }
             }
@@ -470,7 +491,7 @@ namespace ParkingControl
             /// <summary>Gets the distinct as-built counts seen, ascending.</summary>
             internal List<int> EdgeLanes { get; } = new(1);
 
-            internal HashSet<Entity> Roads { get; } = new();
+            internal int Roads { get; set; }
 
             internal int CurbLanes { get; set; }
 
