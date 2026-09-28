@@ -49,6 +49,8 @@ namespace ParkingControl
             internal BufferLookup<NetSectionPiece> SectionPieces;
             internal BufferLookup<NetPieceLane> PieceLanes;
             internal ComponentLookup<NetLaneData> LaneData;
+            internal ComponentLookup<NetPieceData> PieceData;
+            internal ComponentLookup<NetVertexMatchData> VertexMatchData;
         }
 
         internal const int kFourLaneRoad = 4;
@@ -194,13 +196,10 @@ namespace ParkingControl
                 return cached;
             }
 
+            // Deliberately no fallback to the as-built count. If the default cannot be
+            // rebuilt the answer stays unknown and the road is left alone, rather than
+            // being banned on a number that means something different.
             int counted = CountDefaultDrivingLanes(prefabRef.m_Prefab);
-
-            if (counted == kUnknownLaneCount)
-            {
-                // No readable prefab composition list; the built segment is all we have.
-                counted = GetEdgeDrivingLaneCount(road);
-            }
 
             m_RoadTypeLaneCounts.TryAdd(prefabRef.m_Prefab, counted);
 
@@ -258,9 +257,12 @@ namespace ParkingControl
         /// Counts driving lanes on the default composition of a road type.
         /// </summary>
         /// <remarks>
-        /// Rebuilt with the same two calls vanilla uses for net defaults in
+        /// Rebuilt with the same three calls vanilla uses for net defaults in
         /// Game.Prefabs.NetInitializeSystem.InitializeNetDefaultsJob: build the pieces
-        /// for an empty CompositionFlags, then turn those pieces into lanes. Reading a
+        /// for an empty CompositionFlags, calculate the composition data, then turn the
+        /// pieces into lanes. The middle call is not optional, because it writes the
+        /// piece offsets back into the piece list and those offsets position the lanes.
+        /// Reading a
         /// ready-made composition off the prefab instead would be cheaper but unsafe,
         /// because compositions are created on demand per built segment, so a road type
         /// whose every segment carries trams would expose no unupgraded one to read.
@@ -289,6 +291,12 @@ namespace ParkingControl
                     m_DefaultComposition.SectionPieces);
 
                 NetCompositionData compositionData = default;
+
+                NetCompositionHelpers.CalculateCompositionData(
+                    ref compositionData,
+                    pieces.AsArray(),
+                    m_DefaultComposition.PieceData,
+                    m_DefaultComposition.VertexMatchData);
 
                 NetCompositionHelpers.AddCompositionLanes(
                     Entity.Null,

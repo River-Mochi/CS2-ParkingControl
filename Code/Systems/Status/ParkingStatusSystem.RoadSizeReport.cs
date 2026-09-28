@@ -253,8 +253,8 @@ namespace ParkingControl
                         string utility =
                             utilityLaneData.TryGetComponent(
                                 lane.m_Lane,
-                                out Game.Prefabs.UtilityLaneData data)
-                                ? $" utility={data.m_UtilityTypes}"
+                                out Game.Prefabs.UtilityLaneData laneUtility)
+                                ? $" utility={laneUtility.m_UtilityTypes}"
                                 : string.Empty;
 
                         text.AppendLine(
@@ -295,6 +295,12 @@ namespace ParkingControl
             Unity.Entities.ComponentLookup<Game.Prefabs.NetLaneData> laneData =
                 SystemAPI.GetComponentLookup<Game.Prefabs.NetLaneData>(true);
 
+            Unity.Entities.ComponentLookup<Game.Prefabs.NetPieceData> pieceData =
+                SystemAPI.GetComponentLookup<Game.Prefabs.NetPieceData>(true);
+
+            Unity.Entities.ComponentLookup<Game.Prefabs.NetVertexMatchData> vertexMatchData =
+                SystemAPI.GetComponentLookup<Game.Prefabs.NetVertexMatchData>(true);
+
             RoadSizeRule.DefaultCompositionLookups defaultComposition = new()
             {
                 GeometrySections = geometrySections,
@@ -302,6 +308,8 @@ namespace ParkingControl
                 SectionPieces = sectionPieces,
                 PieceLanes = pieceLanes,
                 LaneData = laneData,
+                PieceData = pieceData,
+                VertexMatchData = vertexMatchData,
             };
 
             return RoadSizeRule.Create(
@@ -348,7 +356,7 @@ namespace ParkingControl
             text.AppendLine(
                 "Every road type in the city, including ones that allow no street " +
                 "parking. ParkingLanes counts Parking entries in the edge composition, " +
-                "and Utils is what the road actually carries underground as built.");
+                "and Utils lists the utility types present in the as-built composition.");
 
             Dictionary<Entity, RoadParkingSupport> byPrefab = new(64);
 
@@ -459,7 +467,7 @@ namespace ParkingControl
 
             internal bool HasMarkedBays { get; set; }
 
-            internal Game.Prefabs.UtilityTypes Utilities { get; set; }
+            internal Game.Net.UtilityTypes Utilities { get; set; }
 
             internal void AddEdgeLaneCount(int lanes)
             {

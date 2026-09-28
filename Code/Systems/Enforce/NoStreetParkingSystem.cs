@@ -193,6 +193,10 @@ namespace ParkingControl
 
             Dependency.Complete();
 
+            // One rule for the whole pass. A drag reconciles many roads in turn, and a
+            // per-road rule would throw away the prefab lane-count cache every time.
+            using RoadSizeRule roadSizeRule = CreateRoadSizeRule();
+
             ReconcileResult result = default;
             int prunedManualSides = 0;
 
@@ -205,7 +209,8 @@ namespace ParkingControl
                     ReconcileStreetParking(
                         scope,
                         policyEntity,
-                        fullReconcile: true);
+                        fullReconcile: true,
+                        roadSizeRule);
 
                 result.m_Changed += fullResult.m_Changed;
             }
@@ -221,7 +226,8 @@ namespace ParkingControl
                         ReconcileRoad(
                             requestedRoad,
                             scope,
-                            policyEntity);
+                            policyEntity,
+                            roadSizeRule);
 
                     result.m_Changed += roadResult.m_Changed;
                 }
@@ -246,7 +252,8 @@ namespace ParkingControl
                             ReconcileRoad(
                                 road,
                                 scope,
-                                policyEntity);
+                                policyEntity,
+                                roadSizeRule);
 
                         result.m_Changed += roadResult.m_Changed;
                     }
@@ -263,7 +270,8 @@ namespace ParkingControl
                         ReconcileStreetParking(
                             scope,
                             policyEntity,
-                            fullReconcile: false);
+                            fullReconcile: false,
+                            roadSizeRule);
 
                     result.m_Changed += changedResult.m_Changed;
                 }

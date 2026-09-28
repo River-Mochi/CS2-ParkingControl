@@ -41,6 +41,12 @@ namespace ParkingControl
             Unity.Entities.ComponentLookup<Game.Prefabs.NetLaneData> laneData =
                 SystemAPI.GetComponentLookup<Game.Prefabs.NetLaneData>(true);
 
+            Unity.Entities.ComponentLookup<Game.Prefabs.NetPieceData> pieceData =
+                SystemAPI.GetComponentLookup<Game.Prefabs.NetPieceData>(true);
+
+            Unity.Entities.ComponentLookup<Game.Prefabs.NetVertexMatchData> vertexMatchData =
+                SystemAPI.GetComponentLookup<Game.Prefabs.NetVertexMatchData>(true);
+
             RoadSizeRule.DefaultCompositionLookups defaultComposition = new()
             {
                 GeometrySections = geometrySections,
@@ -48,6 +54,8 @@ namespace ParkingControl
                 SectionPieces = sectionPieces,
                 PieceLanes = pieceLanes,
                 LaneData = laneData,
+                PieceData = pieceData,
+                VertexMatchData = vertexMatchData,
             };
 
             return RoadSizeRule.Create(
@@ -63,7 +71,8 @@ namespace ParkingControl
         private ReconcileResult ReconcileStreetParking(
             PCSettings.ParkingScope scope,
             Unity.Entities.Entity policyEntity,
-            bool fullReconcile)
+            bool fullReconcile,
+            RoadSizeRule roadSizeRule)
         {
             Unity.Entities.ComponentLookup<Game.Net.ParkingLane> parkingLaneLookup =
                 SystemAPI.GetComponentLookup<Game.Net.ParkingLane>();
@@ -107,7 +116,6 @@ namespace ParkingControl
             Unity.Entities.BufferLookup<Game.Policies.Policy> policyLookup =
                 SystemAPI.GetBufferLookup<Game.Policies.Policy>(true);
 
-            using RoadSizeRule roadSizeRule = CreateRoadSizeRule();
 
             Unity.Collections.NativeList<Unity.Entities.Entity> addStateEntities =
                 new(Unity.Collections.Allocator.Temp);
@@ -177,7 +185,8 @@ namespace ParkingControl
         private ReconcileResult ReconcileRoad(
             Unity.Entities.Entity road,
             PCSettings.ParkingScope scope,
-            Unity.Entities.Entity policyEntity)
+            Unity.Entities.Entity policyEntity,
+            RoadSizeRule roadSizeRule)
         {
             ReconcileResult result = default;
 
@@ -231,7 +240,6 @@ namespace ParkingControl
             Unity.Entities.BufferLookup<Game.Policies.Policy> policyLookup =
                 SystemAPI.GetBufferLookup<Game.Policies.Policy>(true);
 
-            using RoadSizeRule roadSizeRule = CreateRoadSizeRule();
 
             Unity.Collections.NativeList<Unity.Entities.Entity> addStateEntities =
                 new(Unity.Collections.Allocator.Temp);
