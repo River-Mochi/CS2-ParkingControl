@@ -253,6 +253,148 @@ namespace ParkingControl
                 Unity.Collections.Allocator.Temp);
         }
 
+        /// <summary>
+        /// Lists every road prefab in the city and whether its lanes support parking.
+        /// </summary>
+        /// <remarks>
+        /// The inventory above is built from parking lanes, so roads that allow no
+        /// street parking never appear there. This walks road edges instead, which
+        /// is the only way to see that a road type has no parking to begin with.
+        /// </remarks>
+        /// <param name="text">Report builder.</param>
+        private void AppendRoadParkingSupport(StringBuilder text)
+        {
+            ComponentLookup<Game.Prefabs.PrefabRef> prefabRefLookup =
+                GetComponentLookup<Game.Prefabs.PrefabRef>(true);
+
+            ComponentLookup<Game.Net.Composition> compositions =
+                GetComponentLookup<Game.Net.Composition>(true);
+
+            ComponentLookup<Game.Prefabs.ParkingLaneData> parkingLaneDataLookup =
+                GetComponentLookup<Game.Prefabs.ParkingLaneData>(true);
+
+            BufferLookup<Game.Prefabs.NetCompositionLane> compositionLanes =
+                GetBufferLookup<Game.Prefabs.NetCompositionLane>(true);
+
+            using RoadSizeRule roadSizeRule = CreateRoadSizeRule();
+
+            text.AppendLine();
+            text.AppendLine(
+                "-------------------- ROAD PARKING SUPPORT --------------------");
+            text.AppendLine(
+                "Every road type in the city, including ones that allow no street " +
+                "parking. ParkingLanes counts Parking entries in the edge composition.");
+
+            Dictionary<Entity, RoadParkingSupport> byPrefab = new(64);
+
+            using (NativeArray<Entity> roads =
+                m_RoadEdgeQuery.ToEntityArray(Allocator.Temp))
+            {
+                foreach (Entity road in roads)
+                {
+                    if (!prefabRefLookup.TryGetComponent(
+                            road,
+                            out Game.Prefabs.PrefabRef prefabRef) ||
+                        !compositions.TryGetComponent(
+                            road,
+                            out Game.Net.Composition composition) ||
+                        !compositionLanes.TryGetBuffer(
+                            composition.m_Edge,
+                            out DynamicBuffer<Game.Prefabs.NetCompositionLane> lanes))
+                    {
+                        continue;
+                    }
+
+                    if (!byPrefab.TryGetValue(
+                            prefabRef.m_Prefab,
+                            out RoadParkingSupport support))
+                    {
+                        support = new RoadParkingSupport();
+                        byPrefab[prefabRef.m_Prefab] = support;
+                    }
+
+                    support.Edges++;
+                    support.AddDrivingLaneCount(
+                        roadSizeRule.GetDrivingLaneCount(road));
+
+                    int parkingLanes = 0;
+                    bool markedBays = false;
+
+                    foreach (Game.Prefabs.NetCompositionLane lane in lanes)
+                    {
+                        if ((lane.m_Flags & Game.Prefabs.LaneFlags.Parking) == 0)
+                        {
+                            continue;
+                        }
+
+                        parkingLanes++;
+
+                        markedBays |=
+                            parkingLaneDataLookup.TryGetComponent(
+                                lane.m_Lane,
+                                out Game.Prefabs.ParkingLaneData parkingLaneData) &&
+                            parkingLaneData.m_SlotInterval != 0f;
+                    }
+
+                    support.MaxParkingLanes =
+                        Math.Max(support.MaxParkingLanes, parkingLanes);
+
+                    support.HasMarkedBays |= markedBays;
+                }
+            }
+
+            if (byPrefab.Count == 0)
+            {
+                text.AppendLine("  <no roads>");
+                return;
+            }
+
+            List<KeyValuePair<Entity, RoadParkingSupport>> ordered = new(byPrefab);
+
+            ordered.Sort(static (left, right) =>
+                right.Value.Edges.CompareTo(left.Value.Edges));
+
+            foreach (KeyValuePair<Entity, RoadParkingSupport> item in ordered)
+            {
+                RoadParkingSupport support = item.Value;
+
+                string lanesText = string.Join(
+                    "/",
+                    support.DrivingLanes.ConvertAll(static lanes =>
+                        lanes == RoadSizeRule.kUnknownLaneCount
+                            ? "?"
+                            : lanes.ToString()));
+
+                text.AppendLine(
+                    $"  Lanes={lanesText,4} | " +
+                    $"Edges={support.Edges,5} | " +
+                    $"ParkingLanes={support.MaxParkingLanes,2} | " +
+                    $"MarkedBays={(support.HasMarkedBays ? "YES" : "no "),3} | " +
+                    $"Prefab={GetRoadPrefabName(item.Key)}");
+            }
+        }
+
+        private sealed class RoadParkingSupport
+        {
+            internal List<int> DrivingLanes { get; } = new(1);
+
+            internal int Edges { get; set; }
+
+            internal int MaxParkingLanes { get; set; }
+
+            internal bool HasMarkedBays { get; set; }
+
+            internal void AddDrivingLaneCount(int lanes)
+            {
+                int index = DrivingLanes.BinarySearch(lanes);
+
+                if (index < 0)
+                {
+                    DrivingLanes.Insert(~index, lanes);
+                }
+            }
+        }
+
         private string GetRoadPrefabName(Entity prefab)
         {
             try
