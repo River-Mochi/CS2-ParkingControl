@@ -41,11 +41,23 @@ namespace ParkingControl
         // A citywide pass is spread over frames. Every lane that starts or stops being
         // restricted is an archetype move, and thousands of those in one frame is what
         // makes a whole-city toggle stutter on a large save.
-        private const int kFullReconcileBatchSize = 128;
+        //
+        // Deliberately small. Parking relocation in this mod already trickles work at 32
+        // lanes per pass, and finishing the flag pass a second or two later is invisible
+        // next to how long cars take to move anyway. MaxBatchMs in the report says
+        // whether this is conservative enough on a given machine.
+        private const int kFullReconcileBatchSize = 64;
 
         private NativeList<Entity> m_FullReconcileLanes;
         private int m_FullReconcileIndex;
         private int m_FullReconcileChanged;
+        private int m_FullReconcileBatches;
+        private double m_FullReconcileMaxMilliseconds;
+
+        /// <summary>
+        /// Gets the slowest citywide reconcile batch since the city loaded, in milliseconds.
+        /// </summary>
+        internal static double MaxReconcileBatchMilliseconds { get; private set; }
 
         private bool m_IsGame;
         private bool m_Initialized;
@@ -158,6 +170,9 @@ namespace ParkingControl
 
             m_FullReconcileIndex = 0;
             m_FullReconcileChanged = 0;
+            m_FullReconcileBatches = 0;
+            m_FullReconcileMaxMilliseconds = 0.0;
+            MaxReconcileBatchMilliseconds = 0.0;
 
             if (m_IsGame)
             {
@@ -353,7 +368,9 @@ namespace ParkingControl
                 CS2Shared.RiverMochi.LogUtils.Info(
                     $"{Mod.ModTag} Street parking reconciled ({scope}{roadSizeText}): " +
                     $"{result.m_Changed} lane flags changed, " +
-                    $"{ownedLanes} lanes owned by Parking Control.");
+                    $"{ownedLanes} lanes owned by Parking Control, " +
+                    $"{m_FullReconcileBatches} batches of {kFullReconcileBatchSize}, " +
+                    $"slowest batch {m_FullReconcileMaxMilliseconds:0.000} ms.");
             }
 #endif
         }

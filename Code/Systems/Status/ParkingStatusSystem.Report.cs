@@ -98,6 +98,11 @@ namespace ParkingControl
                 $"RoadSizeBans=FourLane:{OnOff(Mod.Settings?.BanFourLaneRoads)}, " +
                 $"SixLane:{OnOff(Mod.Settings?.BanSixLaneRoads)}");
             text.AppendLine(
+                $"MaxReconcileBatchMs=" +
+                $"{NoStreetParkingSystem.MaxReconcileBatchMilliseconds:0.000} " +
+                $"(slowest citywide reconcile batch since load; " +
+                $"citywide passes are spread over frames)");
+            text.AppendLine(
                 $"DistrictPolicy=Active in {snapshot.DistrictsWithPolicy}/{snapshot.Districts} districts " +
                 $"(PolicyEntity={FormatEntity(ParkingPolicySystem.PolicyEntity)})");
             ParkingRelocationSystem? relocationSystem =

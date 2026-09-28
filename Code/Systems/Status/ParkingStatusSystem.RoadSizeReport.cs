@@ -34,8 +34,9 @@ namespace ParkingControl
             text.AppendLine(
                 "-------------------- ROAD SIZE INVENTORY --------------------");
             text.AppendLine(
-                "Lanes = driving lanes counted from the road's edge composition, " +
-                "matching the numbers in the player-facing road names.");
+                "Lanes = the road type's own driving-lane count, which is what the bans " +
+                "use and what the player-facing road names show. AsBuilt = the live count " +
+                "for this segment, which upgrades such as tram tracks and bus stops change.");
             text.AppendLine(
                 "Roads with built-in marked parking bays are listed but never banned " +
                 "by road size, because they exist to provide parking.");

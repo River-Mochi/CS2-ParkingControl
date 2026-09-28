@@ -227,6 +227,8 @@ namespace ParkingControl
             m_FullReconcileLanes.Clear();
             m_FullReconcileIndex = 0;
             m_FullReconcileChanged = 0;
+            m_FullReconcileBatches = 0;
+            m_FullReconcileMaxMilliseconds = 0.0;
 
             using Unity.Collections.NativeArray<Unity.Entities.Entity> lanes =
                 m_AllParkingLanesQuery.ToEntityArray(
@@ -253,6 +255,8 @@ namespace ParkingControl
             Unity.Entities.Entity policyEntity,
             RoadSizeRule roadSizeRule)
         {
+            long startedAt = System.Diagnostics.Stopwatch.GetTimestamp();
+
             ReconcileResult batch =
                 ReconcileLaneSlice(
                     m_FullReconcileLanes.AsArray(),
@@ -262,7 +266,24 @@ namespace ParkingControl
                     policyEntity,
                     roadSizeRule);
 
+            // Measured so the batch size can be tuned from real machines rather than
+            // from an estimate. Archetype moves dominate, and their cost varies.
+            double elapsedMilliseconds =
+                (System.Diagnostics.Stopwatch.GetTimestamp() - startedAt) * 1000.0 /
+                System.Diagnostics.Stopwatch.Frequency;
+
+            if (elapsedMilliseconds > m_FullReconcileMaxMilliseconds)
+            {
+                m_FullReconcileMaxMilliseconds = elapsedMilliseconds;
+            }
+
+            if (m_FullReconcileMaxMilliseconds > MaxReconcileBatchMilliseconds)
+            {
+                MaxReconcileBatchMilliseconds = m_FullReconcileMaxMilliseconds;
+            }
+
             m_FullReconcileChanged += batch.m_Changed;
+            m_FullReconcileBatches++;
             m_FullReconcileIndex += kFullReconcileBatchSize;
 
             if (m_FullReconcileIndex < m_FullReconcileLanes.Length)
