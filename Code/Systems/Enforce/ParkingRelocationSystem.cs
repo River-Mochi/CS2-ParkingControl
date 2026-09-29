@@ -48,7 +48,7 @@ namespace ParkingControl
     public sealed partial class ParkingRelocationSystem : GameSystemBase
     {
         // Tuning knobs: keep both PC work and vanilla parking searches spread out.
-        private const uint kRelocationFrameInterval = 256;
+        private const uint kRelocationFrameInterval = 128;
         private const int kLaneRequestsPerPass = 32;
         private const int kCarsPerPass = 64;
         private const uint kDelayedCleanupFrameDelay = 2048;
