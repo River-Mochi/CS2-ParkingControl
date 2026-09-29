@@ -51,34 +51,36 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "Niente parcheggio su strada" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
                     "Scegli:\n" +
-                    "<1. Per distretto>\n" +
-                    "<2. Solo manuale>\n" +
-                    "<3. Intera città>\n" +
-                    "- Le corsie idonee vengono bloccate per impedire nuovi parcheggi su strada.\n" +
+                    "Consigliato: <1. Per distretto> - mostra nel gioco la politica di distretto **[Divieto di parcheggio a bordo strada]**.\n" +
+                    "<2. Solo manuale> - i divieti città/distretto sono tutti DISATTIVATI. Il pulsante manuale [Divieto di sosta] funziona con qualsiasi scelta.\n" +
+                    "<3. Intera città> - vieta il parcheggio su strada in tutta la città. Esclude le strade con posti segnati a spina o perpendicolari.\n" +
+                    "- Le corsie vengono disattivate per impedire nuovi parcheggi su strada.\n" +
                     "- Le auto già parcheggiate si spostano gradualmente dopo il divieto; le aree grandi richiedono più tempo.\n" +
                     "- I parcheggi a pagamento e quelli normali degli edifici restano utilizzabili.\n" +
-                    "**Alcune strade escludono già il parcheggio su strada, come autostrade e piccoli vicoli a doppio senso.**"
+                    "**Alcune strade escludono già il parcheggio su strada, come autostrade, piccoli vicoli a doppio senso e strade asimmetriche a 3 corsie.**"
                 },
+
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. Per distretto" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. Solo manuale" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. Intera città" },
+
                 // Citywide road-size bans.
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "Vieta tutte le strade a 4 corsie" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "Vieta parcheggio su strade a 4 corsie" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanFourLaneRoads)),
-                    "Vieta la sosta su ogni strada a 4 corsie della città, in tutti i quartieri.\n" +
-                    "- Le corsie sono contate sulla strada stessa, quindi anche le strade di altre mod vengono riconosciute.\n" +
-                    "- Si somma al menu sopra e alle strade con <Divieto di sosta> manuale; non annulla mai un divieto esistente.\n" +
-                    "- Le strade con posti auto integrati, come quelle con sosta angolata o a pettine, non vengono toccate.\n" +
-                    "**Le strade senza sosta su strada, come le autostrade, non sono interessate.**"
+                    "Vieta il parcheggio sulla maggior parte delle <strade a 4 corsie> in tutta la città.\n" +
+                    "- Funziona anche con strade personalizzate di Road Builder (RB) con 4 corsie di marcia.\n" +
+                    "- Eccezione: le strade con posti segnati, come parcheggi a spina o perpendicolari, non vengono toccate.\n" +
+                    "- Si somma al menu sopra e alle strade con <Divieto di sosta> manuale; non annulla mai un altro divieto.\n" +
+                    "**Le strade senza parcheggio, come le autostrade, non sono interessate.**"
                 },
 
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "Vieta tutte le strade a 6 corsie" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "Vieta parcheggio su strade a 6 corsie" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanSixLaneRoads)),
-                    "Vieta la sosta su ogni strada a 6 corsie della città, in tutti i quartieri.\n" +
-                    "- Le corsie sono contate sulla strada stessa, quindi anche le strade di altre mod vengono riconosciute.\n" +
-                    "- Si somma al menu sopra e alle strade con <Divieto di sosta> manuale; non annulla mai un divieto esistente.\n" +
-                    "- Le strade con posti auto integrati, come quelle con sosta angolata o a pettine, non vengono toccate.\n" +
-                    "**Le strade senza sosta su strada, come le autostrade, non sono interessate.**"
+                    "Vieta il parcheggio sulla maggior parte delle <strade a 6 corsie> in tutta la città.\n" +
+                    "- Funziona anche con strade personalizzate di Road Builder (RB) con 6 corsie di marcia.\n" +
+                    "- Eccezione: le strade con posti segnati, come parcheggi a spina o perpendicolari, non vengono toccate.\n" +
+                    "- Si somma al menu sopra e alle strade con <Divieto di sosta> manuale; non annulla mai un altro divieto.\n" +
+                    "**Le strade senza parcheggio, come le autostrade, non sono interessate.**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Mostra istruzioni" },
@@ -142,12 +144,12 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Uso parcheggi" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "Mostra l’uso dei parcheggi in <tutta la città>. Non segue l’ambito del divieto Città intera / per distretto.\n" +
+                    "Mostra l’uso dei parcheggi in <tutta la città>. Non segue l’ambito del divieto Intera città / per distretto.\n" +
                     "<Pubblico> = posti occupati / totali nelle strutture pubbliche.\n" +
                     "Usa gli stessi dati del pannello parcheggi di Strade in CS2.\n" +
+                    "<Strada> = auto parcheggiate su strada. Intera città lascia attivi i posti segnati, quindi quelle auto compaiono ancora qui.\n" +
                     "<Edif.> = auto parcheggiate in edifici o garage.\n" +
-                    "<Strada> = auto parcheggiate in strada.\n" +
-                    "<Totale> = auto parcheggiate note in città (strada + pubblico + edificio).\n" +
+                    "<Totale> = auto parcheggiate note in città (pubblico + strada + edificio).\n" +
                     "**Connessioni esterne e aree di attesa sconosciute sono escluse.**"
                 },
 
@@ -210,7 +212,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} in sosta | {1}/{2} chiuse | {3}/{4} distretti{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} strada | {1} visibili | {2} interno | {3} OC" },
                 { ParkingStatusLocale.kSupplyFormat, "{0} = {1} | Parcheggiate {2}/{3}" },
-                { ParkingStatusLocale.kShareFormat, "{0} pubblico | {1} edif. | {2} strada | {3} totale" },
+                { ParkingStatusLocale.kShareFormat, "{0} pubblico | {2} strada | {1} edif. | {3} totale" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "Solo manuale = divieti città/distretto off | strade manuali attive" },
                 { ParkingStatusLocale.kManualNone, "Nessuno" },

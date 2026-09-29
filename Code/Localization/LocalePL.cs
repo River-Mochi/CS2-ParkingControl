@@ -51,34 +51,36 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "Zakaz parkowania przy ulicy" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
                     "Wybierz:\n" +
-                    "<1. Według dzielnic>\n" +
-                    "<2. Tylko ręcznie>\n" +
-                    "<3. Całe miasto>\n" +
-                    "- Odpowiednie pasy są blokowane, aby uniemożliwić nowe parkowanie przy ulicy.\n" +
+                    "Zalecane: <1. Według dzielnic> - pokazuje w grze politykę dzielnicy **[Zakaz parkowania przy drodze]**.\n" +
+                    "<2. Tylko ręcznie> - zakazy miasta/dzielnic są WYŁĄCZONE. Ręczny przycisk [Zakaz parkowania] działa niezależnie od wyboru.\n" +
+                    "<3. Całe miasto> - zakazuje parkowania przy ulicy w całym mieście. Wyjątek: drogi z namalowanymi miejscami skośnymi lub prostopadłymi.\n" +
+                    "- Pasy są wyłączane, aby uniemożliwić nowe parkowanie przy ulicy.\n" +
                     "- Już zaparkowane auta przenoszą się stopniowo po wprowadzeniu zakazu; duże obszary potrzebują więcej czasu.\n" +
                     "- Płatne parkingi i zwykłe miejsca przy budynkach pozostają dostępne.\n" +
-                    "**Niektóre drogi już nie pozwalają na parkowanie przy ulicy, np. autostrady i małe dwukierunkowe alejki.**"
+                    "**Niektóre drogi już nie pozwalają na parkowanie przy ulicy, np. autostrady, małe dwukierunkowe alejki i 3-pasmowe drogi asymetryczne.**"
                 },
+
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. Według dzielnic" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. Tylko ręcznie" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. Całe miasto" },
+
                 // Citywide road-size bans.
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "Zakaz na wszystkich drogach 4-pasmowych" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "Zakaz parkowania na drogach 4-pasmowych" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanFourLaneRoads)),
-                    "Zakazuje parkowania przy krawężniku na każdej 4-pasmowej drodze w mieście, w każdej dzielnicy.\n" +
-                    "- Pasy liczone są na samej drodze, więc drogi z innych modów są dopasowywane po rzeczywistej liczbie pasów.\n" +
-                    "- Działa łącznie z listą powyżej i ręcznym <Zakazem parkowania>; nigdy nie znosi istniejącego zakazu.\n" +
-                    "- Drogi z wbudowanymi miejscami postojowymi, np. z parkowaniem skośnym lub prostopadłym, pozostają nietknięte.\n" +
-                    "**Drogi bez parkowania przy krawężniku, np. autostrady, pozostają bez zmian.**"
+                    "Zakazuje parkowania na większości <dróg 4-pasmowych> w całym mieście.\n" +
+                    "- Działa też na własnych drogach Road Builder (RB), jeśli mają 4 pasy ruchu.\n" +
+                    "- Wyjątek: drogi z namalowanymi miejscami, np. skośnymi lub prostopadłymi, pozostają bez zmian.\n" +
+                    "- Działa łącznie z listą powyżej i ręcznym <Zakazem parkowania>; nigdy nie znosi innego zakazu.\n" +
+                    "**Drogi, które nigdy nie miały parkingu, np. autostrady, pozostają bez zmian.**"
                 },
 
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "Zakaz na wszystkich drogach 6-pasmowych" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "Zakaz parkowania na drogach 6-pasmowych" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanSixLaneRoads)),
-                    "Zakazuje parkowania przy krawężniku na każdej 6-pasmowej drodze w mieście, w każdej dzielnicy.\n" +
-                    "- Pasy liczone są na samej drodze, więc drogi z innych modów są dopasowywane po rzeczywistej liczbie pasów.\n" +
-                    "- Działa łącznie z listą powyżej i ręcznym <Zakazem parkowania>; nigdy nie znosi istniejącego zakazu.\n" +
-                    "- Drogi z wbudowanymi miejscami postojowymi, np. z parkowaniem skośnym lub prostopadłym, pozostają nietknięte.\n" +
-                    "**Drogi bez parkowania przy krawężniku, np. autostrady, pozostają bez zmian.**"
+                    "Zakazuje parkowania na większości <dróg 6-pasmowych> w całym mieście.\n" +
+                    "- Działa też na własnych drogach Road Builder (RB), jeśli mają 6 pasów ruchu.\n" +
+                    "- Wyjątek: drogi z namalowanymi miejscami, np. skośnymi lub prostopadłymi, pozostają bez zmian.\n" +
+                    "- Działa łącznie z listą powyżej i ręcznym <Zakazem parkowania>; nigdy nie znosi innego zakazu.\n" +
+                    "**Drogi, które nigdy nie miały parkingu, np. autostrady, pozostają bez zmian.**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Pokaż instrukcje" },
@@ -145,9 +147,9 @@ namespace ParkingControl
                     "Pokazuje użycie parkingów w <całym mieście>. Nie zależy od zakresu zakazu Całe miasto / według dzielnicy.\n" +
                     "<Publiczne> = zajęte / wszystkie miejsca w parkingach publicznych.\n" +
                     "Używa tych samych danych co panel parkowania Dróg w CS2.\n" +
+                    "<Ulica> = auta zaparkowane na drogach. Całe miasto zostawia namalowane miejsca aktywne, więc te auta nadal są tu liczone.\n" +
                     "<Budynki> = samochody zaparkowane w budynkach lub garażach.\n" +
-                    "<Ulica> = auta zaparkowane na ulicach.\n" +
-                    "<Suma> = znane zaparkowane auta w mieście (ulica + publiczne + budynki).\n" +
+                    "<Suma> = znane zaparkowane auta w mieście (publiczne + ulica + budynki).\n" +
                     "**Połączenia zewnętrzne i nieznane miejsca oczekiwania są wykluczone.**"
                 },
 
@@ -210,7 +212,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} zapark. | {1}/{2} wył. | {3}/{4} dzielnic{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} ulica | {1} widoczne | {2} wewnątrz | {3} OC" },
                 { ParkingStatusLocale.kSupplyFormat, "{0} = {1} | Zaparkowane {2}/{3}" },
-                { ParkingStatusLocale.kShareFormat, "{0} publ. | {1} budynki | {2} ulica | {3} suma" },
+                { ParkingStatusLocale.kShareFormat, "{0} publ. | {2} ulica | {1} budynki | {3} suma" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "Tylko ręcznie = zakazy miasta/dzielnic wył. | ręczne drogi działają" },
                 { ParkingStatusLocale.kManualNone, "Brak" },

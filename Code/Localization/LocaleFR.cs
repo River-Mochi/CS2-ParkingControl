@@ -51,33 +51,35 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "Stationnement sur rue interdit" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
                     "Choisissez :\n" +
-                    "<1. Par quartier>\n" +
-                    "<2. Manuel uniquement>\n" +
-                    "<3. Ville entière>\n" +
-                    "- Les voies admissibles sont bloquées pour empêcher tout nouveau stationnement sur rue.\n" +
+                    "Recommandé : <1. Par quartier> - affiche dans le jeu la politique de quartier **[Interdiction de stationner en bord de route]**.\n" +
+                    "<2. Manuel uniquement> - les interdictions ville/quartiers sont désactivées. Le bouton manuel [Interdiction de stationner] fonctionne avec n’importe quel choix.\n" +
+                    "<3. Ville entière> - interdit le stationnement sur rue dans toute la ville. Les routes avec places peintes en épi ou en bataille sont exclues.\n" +
+                    "- Les voies sont désactivées pour empêcher de nouveaux stationnements sur rue.\n" +
                     "- Les voitures déjà garées se déplacent progressivement après l’interdiction ; les grandes zones prennent plus de temps.\n" +
                     "- Les parkings payants et le stationnement normal des bâtiments restent disponibles.\n" +
-                    "**Certaines routes excluent déjà le stationnement sur rue, comme les autoroutes et les petites ruelles à double sens.**"
+                    "**Certaines routes excluent déjà le stationnement sur rue, comme les autoroutes, les petites ruelles à double sens et les routes asymétriques à 3 voies.**"
                 },
+
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. Par quartier" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. Manuel uniquement" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. Ville entière" },
+
                 // Citywide road-size bans.
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "Interdire toutes les routes à 4 voies" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "Interdire le stationnement sur routes à 4 voies" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanFourLaneRoads)),
-                    "Interdit le stationnement sur toutes les routes à 4 voies de la ville, dans chaque quartier.\n" +
-                    "- Les voies sont comptées sur la route elle-même : les routes d’autres mods sont reconnues par leur nombre réel de voies.\n" +
-                    "- S’ajoute au menu ci-dessus et aux routes <Stationnement interdit> manuelles ; n’annule jamais une interdiction existante.\n" +
-                    "- Les routes avec places de stationnement intégrées, comme celles à stationnement en épi ou en bataille, ne sont pas touchées.\n" +
+                    "Interdit le stationnement sur la plupart des <routes à 4 voies> dans toute la ville.\n" +
+                    "- Fonctionne aussi avec les routes personnalisées de Road Builder (RB) ayant 4 voies de circulation.\n" +
+                    "- Exception : les routes avec places peintes, comme le stationnement en épi ou en bataille, ne sont pas touchées.\n" +
+                    "- S’ajoute au menu ci-dessus et aux routes <Interdiction de stationner> manuelles ; n’annule jamais une autre interdiction.\n" +
                     "**Les routes sans stationnement, comme les autoroutes, ne sont pas concernées.**"
                 },
 
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "Interdire toutes les routes à 6 voies" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "Interdire le stationnement sur routes à 6 voies" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanSixLaneRoads)),
-                    "Interdit le stationnement sur toutes les routes à 6 voies de la ville, dans chaque quartier.\n" +
-                    "- Les voies sont comptées sur la route elle-même : les routes d’autres mods sont reconnues par leur nombre réel de voies.\n" +
-                    "- S’ajoute au menu ci-dessus et aux routes <Stationnement interdit> manuelles ; n’annule jamais une interdiction existante.\n" +
-                    "- Les routes avec places de stationnement intégrées, comme celles à stationnement en épi ou en bataille, ne sont pas touchées.\n" +
+                    "Interdit le stationnement sur la plupart des <routes à 6 voies> dans toute la ville.\n" +
+                    "- Fonctionne aussi avec les routes personnalisées de Road Builder (RB) ayant 6 voies de circulation.\n" +
+                    "- Exception : les routes avec places peintes, comme le stationnement en épi ou en bataille, ne sont pas touchées.\n" +
+                    "- S’ajoute au menu ci-dessus et aux routes <Interdiction de stationner> manuelles ; n’annule jamais une autre interdiction.\n" +
                     "**Les routes sans stationnement, comme les autoroutes, ne sont pas concernées.**"
                 },
 
@@ -142,12 +144,12 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Usage du parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "Affiche l’utilisation du stationnement dans <toute la ville>. Ne suit pas la portée de l’interdiction Toute la ville / par quartier.\n" +
+                    "Affiche l’utilisation du stationnement dans <toute la ville>. Ne suit pas la portée de l’interdiction Ville entière / par quartier.\n" +
                     "<Public> = places occupées / totales dans les parkings publics.\n" +
                     "Utilise les mêmes données que le panneau Stationnement des Routes de CS2.\n" +
+                    "<Rue> = voitures garées sur les routes. Ville entière laisse les places peintes disponibles, donc ces voitures restent comptées ici.\n" +
                     "<Bât.> = voitures garées dans les bâtiments ou garages.\n" +
-                    "<Rue> = voitures garées sur rue.\n" +
-                    "<Total> = voitures garées connues en ville (rue + public + bâtiment).\n" +
+                    "<Total> = voitures garées connues en ville (public + rue + bâtiment).\n" +
                     "**Les connexions extérieures et les zones d’attente inconnues sont exclues.**"
                 },
 
@@ -210,7 +212,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} garées | {1}/{2} fermées | {3}/{4} quartiers{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} rue | {1} visibles | {2} intérieur | {3} OC" },
                 { ParkingStatusLocale.kSupplyFormat, "{0} = {1} | Stationnés {2}/{3}" },
-                { ParkingStatusLocale.kShareFormat, "{0} public | {1} bât. | {2} rue | {3} total" },
+                { ParkingStatusLocale.kShareFormat, "{0} public | {2} rue | {1} bât. | {3} total" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "Manuel uniquement = interdictions ville/quartiers coupées | routes manuelles actives" },
                 { ParkingStatusLocale.kManualNone, "Aucune" },

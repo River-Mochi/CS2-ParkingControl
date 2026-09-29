@@ -51,34 +51,36 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "Sin aparcamiento en calle" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
                     "Elige:\n" +
-                    "<1. Por distrito>\n" +
-                    "<2. Solo manual>\n" +
-                    "<3. Toda la ciudad>\n" +
-                    "- Los carriles aptos se bloquean para impedir nuevos aparcamientos en la calle.\n" +
+                    "Recomendado: <1. Por distrito> - muestra en el juego la política de distrito **[Prohibido aparcar en la calle]**.\n" +
+                    "<2. Solo manual> - las prohibiciones de ciudad/distrito están DESACTIVADAS. El botón manual [Prohibido aparcar] funciona con cualquier opción.\n" +
+                    "<3. Toda la ciudad> - prohíbe aparcar en las calles de toda la ciudad. Excluye vías con plazas pintadas en ángulo o en batería.\n" +
+                    "- Los carriles se desactivan para impedir nuevos aparcamientos en la calle.\n" +
                     "- Los coches ya aparcados se van desplazando tras la prohibición; las zonas grandes tardan más.\n" +
                     "- Los aparcamientos de pago y el aparcamiento normal de edificios siguen disponibles.\n" +
-                    "**Algunas carreteras ya excluyen el aparcamiento en calle, como autopistas y callejones pequeños de doble sentido.**"
+                    "**Algunas vías ya excluyen el aparcamiento en calle, como autopistas, callejones pequeños de doble sentido y vías asimétricas de 3 carriles.**"
                 },
+
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. Por distrito" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. Solo manual" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. Toda la ciudad" },
+
                 // Citywide road-size bans.
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "Prohibir en todas las vías de 4 carriles" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "Prohibir aparcamiento en vías de 4 carriles" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanFourLaneRoads)),
-                    "Prohíbe el estacionamiento en todas las vías de 4 carriles de la ciudad, en cualquier distrito.\n" +
-                    "- Los carriles se cuentan en la propia vía, así que las vías de otros mods coinciden por su número real de carriles.\n" +
+                    "Prohíbe aparcar en la mayoría de las <vías de 4 carriles> de toda la ciudad.\n" +
+                    "- También funciona con vías personalizadas de Road Builder (RB) que tengan 4 carriles de circulación.\n" +
+                    "- Excepción: las vías con plazas pintadas, como las de aparcamiento en ángulo o en batería, no se tocan.\n" +
                     "- Se suma al menú de arriba y a las vías con <Prohibido aparcar> manual; nunca cancela otra prohibición.\n" +
-                    "- Las vías con plazas de aparcamiento marcadas, como las de estacionamiento en ángulo o en batería, no se tocan.\n" +
-                    "**Las vías que nunca tuvieron estacionamiento, como las autopistas, no se ven afectadas.**"
+                    "**Las vías que nunca tuvieron aparcamiento, como las autopistas, no se ven afectadas.**"
                 },
 
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "Prohibir en todas las vías de 6 carriles" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "Prohibir aparcamiento en vías de 6 carriles" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanSixLaneRoads)),
-                    "Prohíbe el estacionamiento en todas las vías de 6 carriles de la ciudad, en cualquier distrito.\n" +
-                    "- Los carriles se cuentan en la propia vía, así que las vías de otros mods coinciden por su número real de carriles.\n" +
+                    "Prohíbe aparcar en la mayoría de las <vías de 6 carriles> de toda la ciudad.\n" +
+                    "- También funciona con vías personalizadas de Road Builder (RB) que tengan 6 carriles de circulación.\n" +
+                    "- Excepción: las vías con plazas pintadas, como las de aparcamiento en ángulo o en batería, no se tocan.\n" +
                     "- Se suma al menú de arriba y a las vías con <Prohibido aparcar> manual; nunca cancela otra prohibición.\n" +
-                    "- Las vías con plazas de aparcamiento marcadas, como las de estacionamiento en ángulo o en batería, no se tocan.\n" +
-                    "**Las vías que nunca tuvieron estacionamiento, como las autopistas, no se ven afectadas.**"
+                    "**Las vías que nunca tuvieron aparcamiento, como las autopistas, no se ven afectadas.**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Mostrar instrucciones" },
@@ -142,12 +144,12 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "Uso de aparcamiento" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "Muestra el uso de aparcamiento de <toda la ciudad>. No sigue el ámbito de prohibición Ciudad completa / por distrito.\n" +
+                    "Muestra el uso de aparcamiento de <toda la ciudad>. No sigue el ámbito de prohibición Toda la ciudad / por distrito.\n" +
                     "<Público> = plazas ocupadas / totales en aparcamientos públicos.\n" +
                     "Usa los mismos datos de aparcamiento que el panel de Carreteras de CS2.\n" +
+                    "<Calle> = coches aparcados en vías. Toda la ciudad deja activas las plazas pintadas, por eso esos coches siguen apareciendo aquí.\n" +
                     "<Edif.> = coches aparcados en edificios o garajes.\n" +
-                    "<Calle> = coches aparcados en calles.\n" +
-                    "<Total> = coches aparcados conocidos en la ciudad (calle + público + edificio).\n" +
+                    "<Total> = coches aparcados conocidos en la ciudad (público + calle + edificio).\n" +
                     "**Se excluyen las conexiones exteriores y la espera de ubicación desconocida.**"
                 },
 
@@ -210,7 +212,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} aparc. | {1}/{2} desact. | {3}/{4} distritos{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} calle | {1} visibles | {2} dentro | {3} OC" },
                 { ParkingStatusLocale.kSupplyFormat, "{0} = {1} | Aparcados {2}/{3}" },
-                { ParkingStatusLocale.kShareFormat, "{0} público | {1} edif. | {2} calle | {3} total" },
+                { ParkingStatusLocale.kShareFormat, "{0} público | {2} calle | {1} edif. | {3} total" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "Solo manual = sin prohibiciones de ciudad/distrito | vías manuales activas" },
                 { ParkingStatusLocale.kManualNone, "Ninguna" },
