@@ -51,33 +51,33 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "禁止路边停车" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
                     "选择：\n" +
-                    "<1. 按行政区>\n" +
-                    "<2. 仅手动>\n" +
-                    "<3. 全城>\n" +
+                    "推荐：<1. 按行政区> - 在游戏中显示行政区政策 **[路边停车禁令]**。\n" +
+                    "<2. 仅手动> - 全城/行政区禁停全部关闭。无论选择哪个模式，手动 [禁止停车] 道路按钮仍可使用。\n" +
+                    "<3. 全城> - 禁止全城道路停车。带划线斜列或垂直停车位的道路除外。\n" +
                     "- 符合条件的车道会被禁用，以阻止新的路边停车。\n" +
                     "- 禁停后，已停放车辆会逐步移走；禁停范围越大，所需时间越长。\n" +
                     "- 收费停车场和普通建筑停车位仍可使用。\n" +
-                    "**有些道路本来就不允许路边停车，例如高速公路和小型双向巷道。**"
+                    "**有些道路本来就不允许路边停车，例如高速公路、小型双向巷道和三车道非对称道路。**"
                 },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. 按行政区" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. 仅手动" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. 全城" },
                 // Citywide road-size bans.
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "禁止所有四车道道路停车" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "禁止四车道道路停车" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanFourLaneRoads)),
-                    "禁止全城所有四车道道路的路边停车，不分辖区。\n" +
-                    "- 车道数直接从道路本身统计，因此其他模组添加的道路也能按真实车道数匹配。\n" +
-                    "- 与上方下拉选项和手动<禁止停车>道路叠加，绝不会取消已设置的禁令。\n" +
-                    "- 自带划线停车位的道路（例如斜列式和垂直式停车道路）不受影响。\n" +
+                    "禁止全城大多数<四车道道路>的路边停车。\n" +
+                    "- 例外：带划线停车位的道路，例如斜列式或垂直式停车道路，不受影响。\n" +
+                    "- 也适用于 Road Builder (RB) 的自定义道路，只要有 4 条行车道。\n" +
+                    "- 与上方下拉选项和手动<禁止停车>道路叠加，不会取消其他禁令。\n" +
                     "**本就没有路边停车的道路（例如高速公路）不受影响。**"
                 },
 
-                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "禁止所有六车道道路停车" },
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "禁止六车道道路停车" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanSixLaneRoads)),
-                    "禁止全城所有六车道道路的路边停车，不分辖区。\n" +
-                    "- 车道数直接从道路本身统计，因此其他模组添加的道路也能按真实车道数匹配。\n" +
-                    "- 与上方下拉选项和手动<禁止停车>道路叠加，绝不会取消已设置的禁令。\n" +
-                    "- 自带划线停车位的道路（例如斜列式和垂直式停车道路）不受影响。\n" +
+                    "禁止全城大多数<六车道道路>的路边停车。\n" +
+                    "- 例外：带划线停车位的道路，例如斜列式或垂直式停车道路，不受影响。\n" +
+                    "- 也适用于 Road Builder (RB) 的自定义道路，只要有 6 条行车道。\n" +
+                    "- 与上方下拉选项和手动<禁止停车>道路叠加，不会取消其他禁令。\n" +
                     "**本就没有路边停车的道路（例如高速公路）不受影响。**"
                 },
 
@@ -145,9 +145,9 @@ namespace ParkingControl
                     "显示<全城>停车使用情况，不随“全城 / 按行政区”禁停范围变化。\n" +
                     "<公共> = 公共停车设施已占用 / 总车位。\n" +
                     "使用与 CS2 道路停车信息面板相同的停车设施数据。\n" +
+                    "<道路> = 停在道路上的车辆。全城禁停会保留划线停车位，因此这些车辆仍会计入这里。\n" +
                     "<建筑> = 停在建筑或车库内的汽车。\n" +
-                    "<道路> = 停在道路上的车辆。\n" +
-                    "<总计> = 城内已知停放车辆总数（道路 + 公共 + 建筑）。\n" +
+                    "<总计> = 城内已知停放车辆总数（公共 + 道路 + 建筑）。\n" +
                     "**外部连接和未知暂存车辆不计入总数。**"
                 },
 
@@ -210,7 +210,7 @@ namespace ParkingControl
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} 已停放 | {1}/{2} 已禁用 | {3}/{4} 行政区{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} 道路 | {1} 可见 | {2} 室内 | {3} OC" },
                 { ParkingStatusLocale.kSupplyFormat, "{0} = {1} | 已停 {2}/{3}" },
-                { ParkingStatusLocale.kShareFormat, "{0} 公共 | {1} 建筑 | {2} 道路 | {3} 总计" },
+                { ParkingStatusLocale.kShareFormat, "{0} 公共 | {2} 道路 | {1} 建筑 | {3} 总计" },
                 { ParkingStatusLocale.kStatusOk, "正常" },
                 { ParkingStatusLocale.kStatusOff, "仅手动 = 全城/行政区禁停关闭 | 手动道路仍生效" },
                 { ParkingStatusLocale.kManualNone, "未设置" },
