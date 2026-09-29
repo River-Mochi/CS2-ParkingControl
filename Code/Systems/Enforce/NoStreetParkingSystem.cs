@@ -48,6 +48,10 @@ namespace ParkingControl
         // whether this is conservative enough on a given machine.
         private const int kFullReconcileBatchSize = 64;
 
+        // Road types never change their default lanes while a city is loaded, so this
+        // cache lives for the session instead of being rebuilt every frame.
+        private NativeHashMap<Entity, int> m_RoadTypeLaneCounts;
+
         private NativeList<Entity> m_FullReconcileLanes;
         private int m_FullReconcileIndex;
         private int m_FullReconcileChanged;
@@ -136,6 +140,7 @@ namespace ParkingControl
                 .Build();
 
             m_FullReconcileLanes = new NativeList<Entity>(Allocator.Persistent);
+            m_RoadTypeLaneCounts = new NativeHashMap<Entity, int>(64, Allocator.Persistent);
         }
 
         /// <inheritdoc/>
@@ -144,6 +149,11 @@ namespace ParkingControl
             if (m_FullReconcileLanes.IsCreated)
             {
                 m_FullReconcileLanes.Dispose();
+            }
+
+            if (m_RoadTypeLaneCounts.IsCreated)
+            {
+                m_RoadTypeLaneCounts.Dispose();
             }
 
             base.OnDestroy();
@@ -166,6 +176,11 @@ namespace ParkingControl
             if (m_FullReconcileLanes.IsCreated)
             {
                 m_FullReconcileLanes.Clear();
+            }
+
+            if (m_RoadTypeLaneCounts.IsCreated)
+            {
+                m_RoadTypeLaneCounts.Clear();
             }
 
             m_FullReconcileIndex = 0;

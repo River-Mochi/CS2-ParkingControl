@@ -302,6 +302,12 @@ namespace ParkingControl
             Unity.Entities.ComponentLookup<Game.Prefabs.NetVertexMatchData> vertexMatchData =
                 SystemAPI.GetComponentLookup<Game.Prefabs.NetVertexMatchData>(true);
 
+            // The report runs once per button press and finishes inside one frame, so a
+            // throwaway Temp cache is right here. Allocator.Temp frees itself at the end
+            // of the frame, which is why this one is not disposed by hand.
+            Unity.Collections.NativeHashMap<Entity, int> roadTypeLaneCounts =
+                new(64, Unity.Collections.Allocator.Temp);
+
             RoadSizeRule.DefaultCompositionLookups defaultComposition = new()
             {
                 GeometrySections = geometrySections,
@@ -320,6 +326,7 @@ namespace ParkingControl
                 SystemAPI.GetComponentLookup<Game.Prefabs.PrefabRef>(true),
                 SystemAPI.GetComponentLookup<Game.Prefabs.ParkingLaneData>(true),
                 defaultComposition,
+                roadTypeLaneCounts,
                 Unity.Collections.Allocator.Temp);
         }
 

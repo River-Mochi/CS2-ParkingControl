@@ -65,6 +65,7 @@ namespace ParkingControl
                 SystemAPI.GetComponentLookup<Game.Prefabs.PrefabRef>(true),
                 SystemAPI.GetComponentLookup<Game.Prefabs.ParkingLaneData>(true),
                 defaultComposition,
+                m_RoadTypeLaneCounts,
                 Unity.Collections.Allocator.Temp);
         }
 

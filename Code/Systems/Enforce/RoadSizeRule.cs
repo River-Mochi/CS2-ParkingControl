@@ -73,6 +73,11 @@ namespace ParkingControl
 
         // Keyed by road prefab. This is what the bans use, and a city has only a few
         // dozen road types, so the map stays tiny however large the city grows.
+        //
+        // Owned by the caller, not by the rule. A citywide pass spans many frames and
+        // builds a fresh rule each one, so a rule-owned map would be thrown away every
+        // frame and every default composition would be rebuilt from scratch again.
+        // A road type's default lanes never change while a city is loaded.
         private NativeHashMap<Entity, int> m_RoadTypeLaneCounts;
 
         // Keyed by composition entity, shared by every edge with the same road type and
@@ -103,8 +108,9 @@ namespace ParkingControl
         /// <param name="prefabRefs">Prefab reference lookup.</param>
         /// <param name="parkingLaneData">Parking lane prefab data lookup.</param>
         /// <param name="defaultComposition">Lookups for rebuilding default lanes.</param>
-        /// <param name="allocator">Allocator for the caches.</param>
-        /// <returns>A rule that must be disposed when the pass ends.</returns>
+        /// <param name="roadTypeLaneCounts">Caller-owned cache that outlives this rule.</param>
+        /// <param name="allocator">Allocator for the rule's own short-lived cache.</param>
+        /// <returns>A rule that must be disposed when the frame's work ends.</returns>
         internal static RoadSizeRule Create(
             PCSettings? settings,
             ComponentLookup<Game.Net.Composition> compositions,
@@ -112,6 +118,7 @@ namespace ParkingControl
             ComponentLookup<PrefabRef> prefabRefs,
             ComponentLookup<ParkingLaneData> parkingLaneData,
             DefaultCompositionLookups defaultComposition,
+            NativeHashMap<Entity, int> roadTypeLaneCounts,
             Allocator allocator)
         {
             RoadSizeRule rule = default;
@@ -124,11 +131,10 @@ namespace ParkingControl
             rule.m_ParkingLaneData = parkingLaneData;
             rule.m_DefaultComposition = defaultComposition;
 
-            // Always cached: the log report measures every road even while both
-            // toggles are off, and empty maps cost almost nothing.
-            rule.m_RoadTypeLaneCounts =
-                new NativeHashMap<Entity, int>(kInitialCacheCapacity, allocator);
+            rule.m_RoadTypeLaneCounts = roadTypeLaneCounts;
 
+            // Only the as-built cache is short-lived. It feeds the diagnostics report,
+            // and edge compositions can change while a city is being edited.
             rule.m_EdgeLaneCounts =
                 new NativeHashMap<Entity, int>(kInitialCacheCapacity, allocator);
 
@@ -242,11 +248,7 @@ namespace ParkingControl
         /// <inheritdoc/>
         public void Dispose()
         {
-            if (m_RoadTypeLaneCounts.IsCreated)
-            {
-                m_RoadTypeLaneCounts.Dispose();
-            }
-
+            // m_RoadTypeLaneCounts belongs to the caller and is deliberately left alone.
             if (m_EdgeLaneCounts.IsCreated)
             {
                 m_EdgeLaneCounts.Dispose();
