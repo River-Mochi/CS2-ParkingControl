@@ -65,8 +65,10 @@ dotnet_code_quality.CA1822.api_surface = private, internal
 
 # Sort usings without adding blank lines between namespace groups.
 dotnet_sort_system_directives_first = true
-# SystemAPI source generators are unreliable when usings sit inside the namespace.
-csharp_using_directive_placement = outside_namespace:suggestion
+# Keeps Code Cleanup from moving usings inside the namespace, which can break the
+# SystemAPI source generator. Silent: the fixer honours it, no IDE message on files
+# that never use SystemAPI.
+csharp_using_directive_placement = outside_namespace:silent
 dotnet_separate_import_directive_groups = false
 
 # Show unused usings, but do not remove them automatically.

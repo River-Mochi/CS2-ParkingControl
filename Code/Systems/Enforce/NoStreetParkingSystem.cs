@@ -172,6 +172,14 @@ namespace ParkingControl
             {
                 m_RoadTypeLaneCounts.Clear();
             }
+
+            // Same reason: the snapshot holds lane entities from the city being left.
+            if (m_FullReconcileLanes.IsCreated)
+            {
+                m_FullReconcileLanes.Clear();
+            }
+
+            m_FullReconcileIndex = 0;
         }
 
         /// <inheritdoc/>
