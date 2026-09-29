@@ -41,6 +41,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kActionsTab), "Дії" },
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kAboutTab), "Про мод" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStreetParkingGroup), "Вуличне паркування" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kRoadSizeGroup), "Усе місто за розміром дороги" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStatusGroup), "Стан особистих авто" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "Інформація про мод" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "Посилання" },
@@ -50,17 +51,36 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "Без вуличного паркування" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
                     "Виберіть:\n" +
-                    "<1. за районами>\n" +
-                    "<2. Лише вручну>\n" +
-                    "<3. Усе місто>\n" +
+                    "Рекомендовано: <1. за районами> - показує в грі районну політику **[Заборона вуличного паркування]**.\n" +
+                    "<2. Лише вручну> - заборони міста/районів ВИМКНЕНО. Ручна кнопка [Стоянку заборонено] працює за будь-якого вибору.\n" +
+                    "<3. Усе місто> - забороняє вуличне паркування по всьому місту. Дороги з розміченими косими або перпендикулярними місцями не зачіпаються.\n" +
                     "- Доступні смуги блокуються для нового вуличного паркування.\n" +
                     "- Уже припарковані авто поступово переміщуються після заборони; великі зони потребують більше часу.\n" +
                     "- Платні паркінги та звичайні місця біля будівель залишаються доступними.\n" +
-                    "**Деякі дороги вже не дозволяють вуличне паркування, наприклад автомагістралі та невеликі двосторонні провулки.**"
+                    "**Деякі дороги вже не дозволяють вуличне паркування, наприклад автомагістралі, невеликі двосторонні провулки та 3-смугові асиметричні дороги.**"
                 },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. за районами" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. Лише вручну" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. Усе місто" },
+                // Citywide road-size bans.
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "Заборонити паркування на 4-смугових дорогах" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanFourLaneRoads)),
+                    "Забороняє паркування на більшості <4-смугових доріг> у всьому місті.\n" +
+                    "- Виняток: дороги з розміченими місцями, як-от косими або перпендикулярними, не змінюються.\n" +
+                    "- Працює і з власними дорогами Road Builder (RB), якщо вони мають 4 смуги руху.\n" +
+                    "- Додається до списку вище та до доріг із ручною <Забороною паркування>; не скасовує інші заборони.\n" +
+                    "**Дороги без паркування, як-от автомагістралі, не зачіпаються.**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "Заборонити паркування на 6-смугових дорогах" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanSixLaneRoads)),
+                    "Забороняє паркування на більшості <6-смугових доріг> у всьому місті.\n" +
+                    "- Виняток: дороги з розміченими місцями, як-от косими або перпендикулярними, не змінюються.\n" +
+                    "- Працює і з власними дорогами Road Builder (RB), якщо вони мають 6 смуг руху.\n" +
+                    "- Додається до списку вище та до доріг із ручною <Забороною паркування>; не скасовує інші заборони.\n" +
+                    "**Дороги без паркування, як-от автомагістралі, не зачіпаються.**"
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Показати інструкції" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
                     "Показує, як користуватися режимом <за районами>."
@@ -101,6 +121,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Вуличне паркування" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "Показує лише вибрану область <Усе місто> або <за районами>. Ручні заборони показуються окремо.\n" +
+                    "Заборони для 4- та 6-смугових доріг також враховано тут.\n" +
                     "<Лише вручну> = заборони міста/районів вимкнено; дороги з ручним <Стоянку заборонено> залишаються активними.\n" +
                     "<Припарковано> = авто, які ще стоять на вулицях вибраної області.\n" +
                     "<Вимкнено> = вимкнені ділянки смуги біля бордюру / цільові ділянки.\n" +
@@ -124,20 +145,21 @@ namespace ParkingControl
                     "Показує використання паркування в <усьому місті>. Не залежить від області заборони Все місто / за районами.\n" +
                     "<Громадські> = зайняті / усі місця на громадських паркінгах.\n" +
                     "Використовує ті самі дані паркінгів, що й панель паркування Доріг у CS2.\n" +
+                    "<Вулиця> = авто, припарковані на вулицях. Усе місто залишає розмічені місця доступними, тому ці авто й далі враховуються тут.\n" +
                     "<Будинки> = авто, припарковані в будівлях або гаражах.\n" +
-                    "<Вулиця> = авто, припарковані на вулицях.\n" +
-                    "<Усього> = відомі припарковані авто в місті (вулиця + громадські + будинки).\n" +
+                    "<Усього> = відомі припарковані авто в місті (громадські + вулиця + будинки).\n" +
                     "**Зовнішні з’єднання та невідомі зони очікування не враховуються.**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Оцінка паркування" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "Показує доступність громадського паркування в <усьому місті>.\n" +
-                    "<ПОГАНО> = вільно менше 15%.\n" +
-                    "<OK> = вільно від 15% до менше 30%.\n" +
-                    "<ДОБРЕ> = вільно 30% або більше.\n" +
-                    "<Громадські вільні> = наразі невикористані громадські паркомісця.\n" +
-                    "Рахує ті самі паркінги, що й панель паркування Доріг у грі."
+                    "Показує, наскільки заповнені <міські паркінги>.\n" +
+                    "<Припарковано> = зайняті / усі місця, ті самі числа, що й у гровому режимі паркування.\n" +
+                    "Відсоток — скільки із них ще вільні.\n" +
+                    "<POOR> = менше 15% вільно.\n" +
+                    "<OK> = від 15% до 30% вільно.\n" +
+                    "<GOOD> = 30% або більше вільно.\n" +
+                    "**Це авто на паркінгах, а не біля узбіччя.**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Розташування авто" },
@@ -187,8 +209,8 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} припарк. | {1}/{2} смуг вимкн.{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} припарк. | {1}/{2} вимкн. | {3}/{4} районів{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} вулиця | {1} видимі | {2} всередині | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, гром. вільно {2}" },
-                { ParkingStatusLocale.kShareFormat, "{0} гром. | {1} буд. | {2} вулиця | {3} усього" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1} | Припарковано {2}/{3}" },
+                { ParkingStatusLocale.kShareFormat, "{0} гром. | {2} вулиця | {1} буд. | {3} усього" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "Лише вручну = заборони міста/районів вимк. | ручні дороги активні" },
                 { ParkingStatusLocale.kManualNone, "Немає" },

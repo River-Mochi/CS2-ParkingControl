@@ -62,6 +62,8 @@ namespace ParkingControl
             Entity policyEntity = ParkingPolicySystem.PolicyEntity;
             PCSettings.ParkingScope scope = snapshot.Scope;
 
+            using RoadSizeRule roadSizeRule = CreateRoadSizeRule();
+
             using NativeArray<Entity> lanes =
                 m_CurbLaneQuery.ToEntityArray(Allocator.Temp);
 
@@ -87,7 +89,7 @@ namespace ParkingControl
                         ownerLookup,
                         manualBanLookup);
 
-                bool scopeTarget =
+              bool scopeTarget =
                     NoStreetParkingSystem.IsScopeRestrictionTarget(
                         lane,
                         parkingLane,
@@ -95,7 +97,12 @@ namespace ParkingControl
                         policyEntity,
                         ownerLookup,
                         borderDistrictLookup,
-                        policyLookup);
+                        policyLookup,
+                        roadSizeRule) ||
+                    NoStreetParkingSystem.IsRoadSizeRestrictionTarget(
+                        lane,
+                        ownerLookup,
+                        roadSizeRule);
 
                 if (!manualTarget && !scopeTarget)
                 {

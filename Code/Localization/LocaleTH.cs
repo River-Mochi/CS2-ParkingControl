@@ -41,6 +41,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kActionsTab), "การทำงาน" },
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kAboutTab), "เกี่ยวกับ" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStreetParkingGroup), "การจอดรถริมถนน" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kRoadSizeGroup), "ทั้งเมืองตามขนาดถนน" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStatusGroup), "สถานะรถส่วนบุคคล" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "ข้อมูลม็อด" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "ลิงก์" },
@@ -50,17 +51,36 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "ห้ามจอดรถริมถนน" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
                     "เลือก:\n" +
-                    "<1. ตามเขต>\n" +
-                    "<2. ตั้งเองเท่านั้น>\n" +
-                    "<3. ทั้งเมือง>\n" +
+                    "แนะนำ: <1. ตามเขต> - แสดงนโยบายเขต **[ห้ามจอดรถริมถนน]** ในเกม\n" +
+                    "<2. ตั้งเองเท่านั้น> - ปิดการห้ามทั้งเมือง/ตามเขต ปุ่ม [ห้ามจอดรถ] แบบกำหนดเองยังใช้ได้ไม่ว่าจะเลือกตัวเลือกใด\n" +
+                    "<3. ทั้งเมือง> - ห้ามจอดรถบนถนนทั่วเมือง ยกเว้นถนนที่มีช่องจอดตีเส้นแบบเฉียงหรือตั้งฉาก\n" +
                     "- ช่องจอดริมถนนที่เข้าเกณฑ์จะถูกปิดเพื่อไม่ให้รถใหม่เข้าจอด\n" +
                     "- รถที่จอดอยู่จะทยอยย้ายหลังเปิดการห้าม พื้นที่ใหญ่ใช้เวลานานกว่า\n" +
                     "- ลานจอดแบบเก็บค่าธรรมเนียมและที่จอดรถของอาคารยังใช้งานได้\n" +
-                    "**ถนนบางประเภทไม่อนุญาตให้จอดริมถนนอยู่แล้ว เช่น ทางหลวงและตรอกเล็กแบบสองทาง**"
+                    "**ถนนบางประเภทไม่อนุญาตให้จอดริมถนนอยู่แล้ว เช่น ทางหลวง ตรอกเล็กแบบสองทาง และถนนอสมมาตร 3 เลน**"
                 },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. ตามเขต" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. ตั้งเองเท่านั้น" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. ทั้งเมือง" },
+                // Citywide road-size bans.
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "ห้ามจอดบนถนน 4 เลน" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanFourLaneRoads)),
+                    "ห้ามจอดรถริมถนนบน<ถนน 4 เลน>ส่วนใหญ่ทั่วเมือง\n" +
+                    "- ข้อยกเว้น: ถนนที่มีช่องจอดตีเส้น เช่น จอดเฉียงหรือตั้งฉาก จะไม่ถูกเปลี่ยน\n" +
+                    "- รองรับถนน Road Builder (RB) แบบกำหนดเองด้วย หากมีช่องจราจร 4 เลน\n" +
+                    "- ทำงานร่วมกับเมนูด้านบนและถนนที่ตั้ง <ห้ามจอด> ด้วยมือ และจะไม่ยกเลิกการห้ามอื่น\n" +
+                    "**ถนนที่ไม่มีที่จอดริมถนนอยู่แล้ว เช่น ทางหลวง จะไม่ได้รับผลกระทบ**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "ห้ามจอดบนถนน 6 เลน" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanSixLaneRoads)),
+                    "ห้ามจอดรถริมถนนบน<ถนน 6 เลน>ส่วนใหญ่ทั่วเมือง\n" +
+                    "- ข้อยกเว้น: ถนนที่มีช่องจอดตีเส้น เช่น จอดเฉียงหรือตั้งฉาก จะไม่ถูกเปลี่ยน\n" +
+                    "- รองรับถนน Road Builder (RB) แบบกำหนดเองด้วย หากมีช่องจราจร 6 เลน\n" +
+                    "- ทำงานร่วมกับเมนูด้านบนและถนนที่ตั้ง <ห้ามจอด> ด้วยมือ และจะไม่ยกเลิกการห้ามอื่น\n" +
+                    "**ถนนที่ไม่มีที่จอดริมถนนอยู่แล้ว เช่น ทางหลวง จะไม่ได้รับผลกระทบ**"
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "แสดงคำแนะนำ" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
                     "แสดงวิธีใช้โหมด <ตามเขต>"
@@ -101,6 +121,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "การจอดรถริมถนน" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "แสดงเฉพาะขอบเขต <ทั้งเมือง> หรือ <ตามเขต> ที่เลือก การห้ามแบบกำหนดเองแสดงแยกกัน\n" +
+                    "การห้ามจอดบนถนน 4 เลนและ 6 เลนทั่วเมืองถูกนับรวมที่นี่ด้วย\n" +
                     "<ตั้งเองเท่านั้น> = ปิดการห้ามทั้งเมือง/ตามเขต แต่ถนนที่ตั้ง <ห้ามจอดรถ> เองยังทำงาน\n" +
                     "<จอดอยู่> = รถที่ยังจอดบนถนนในขอบเขตที่เลือก\n" +
                     "<ปิดใช้งาน> = ส่วนช่องริมขอบทางที่ปิด / ส่วนเป้าหมาย\n" +
@@ -124,20 +145,21 @@ namespace ParkingControl
                     "แสดงการใช้ที่จอดรถของ<ทั้งเมือง> ไม่อิงขอบเขตห้ามจอด ทั้งเมือง / ตามเขต\n" +
                     "<สาธารณะ> = ช่องที่ใช้ / ช่องทั้งหมดในลานจอดสาธารณะ\n" +
                     "ใช้ข้อมูลสถานที่จอดเดียวกับแผงข้อมูลที่จอดรถของถนนใน CS2\n" +
+                    "<ถนน> = รถที่จอดบนถนน โหมดทั้งเมืองยังคงเปิดช่องจอดตีเส้นไว้ รถเหล่านี้จึงยังนับที่นี่\n" +
                     "<อาคาร> = รถยนต์ที่จอดในอาคารหรือโรงจอด\n" +
-                    "<ถนน> = รถที่จอดบนถนน\n" +
-                    "<รวม> = รถที่ทราบว่าจอดอยู่ในเมือง (ถนน + สาธารณะ + อาคาร)\n" +
+                    "<รวม> = รถที่ทราบว่าจอดอยู่ในเมือง (สาธารณะ + ถนน + อาคาร)\n" +
                     "**ไม่รวมจุดเชื่อมต่อนอกเมืองและพื้นที่พักรถที่ไม่ทราบตำแหน่ง**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "ระดับที่จอดรถ" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "แสดงที่จอดสาธารณะที่ว่างของ<ทั้งเมือง>\n" +
-                    "<แย่> = ว่างน้อยกว่า 15%\n" +
+                    "แสดงว่า <ลานจอดรถในเมือง> เต็มแค่ไหน\n" +
+                    "<จอดแล้ว> = ช่องที่ใช้ / ช่องทั้งหมด ตัวเลขเดียวกับ InfoView ที่จอดรถของเกม\n" +
+                    "เปอร์เซ็นต์คือสัดส่วนช่องที่ยังว่าง\n" +
+                    "<POOR> = ว่างน้อยกว่า 15%\n" +
                     "<OK> = ว่าง 15% ถึงน้อยกว่า 30%\n" +
-                    "<ดี> = ว่าง 30% ขึ้นไป\n" +
-                    "<สาธารณะว่าง> = ช่องจอดสาธารณะที่ยังไม่ได้ใช้\n" +
-                    "นับลานจอดเดียวกับแผงข้อมูลที่จอดรถของถนนในเกม"
+                    "<GOOD> = ว่าง 30% ขึ้นไป\n" +
+                    "**นี่คือรถที่จอดในลานจอดรถ ไม่ใช่ที่จอดริมถนน**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "ตำแหน่งรถ" },
@@ -187,8 +209,8 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} จอดอยู่ | ปิด {1}/{2} ช่อง{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} จอดอยู่ | ปิด {1}/{2} | {3}/{4} เขต{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} ถนน | {1} มองเห็น | {2} ภายใน | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, สาธารณะว่าง {2}" },
-                { ParkingStatusLocale.kShareFormat, "{0} สาธารณะ | {1} อาคาร | {2} ถนน | {3} รวม" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1} | จอดแล้ว {2}/{3}" },
+                { ParkingStatusLocale.kShareFormat, "{0} สาธารณะ | {2} ถนน | {1} อาคาร | {3} รวม" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "ตั้งเองเท่านั้น = ไม่ห้ามทั้งเมือง/เขต | ถนนที่ตั้งเองยังทำงาน" },
                 { ParkingStatusLocale.kManualNone, "ยังไม่ได้ตั้ง" },

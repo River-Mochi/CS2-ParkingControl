@@ -46,6 +46,9 @@ namespace ParkingControl
             bool districtScope =
                 snapshot.Scope == PCSettings.ParkingScope.ByDistrict;
 
+            bool wholeCityScope =
+                snapshot.Scope == PCSettings.ParkingScope.WholeCity;
+
             bool offScope =
                 snapshot.Scope == PCSettings.ParkingScope.Off;
 
@@ -53,7 +56,7 @@ namespace ParkingControl
                 offScope && snapshot.TargetCurbLanes > 0;
 
             bool useTargetSubset =
-                districtScope || manualOnlyScope;
+                districtScope || wholeCityScope || manualOnlyScope;
 
             int enforcementCurbLanes =
                 useTargetSubset
@@ -95,6 +98,14 @@ namespace ParkingControl
                 $"SimulationFrame={snapshot.SimulationFrame} (simulation tick when data was collected)");
             text.AppendLine($"ParkingScope={snapshot.Scope}");
             text.AppendLine(
+                $"RoadSizeBans=FourLane:{OnOff(Mod.Settings?.BanFourLaneRoads)}, " +
+                $"SixLane:{OnOff(Mod.Settings?.BanSixLaneRoads)}");
+            text.AppendLine(
+                $"MaxReconcileBatchMs=" +
+                $"{NoStreetParkingSystem.MaxReconcileBatchMilliseconds:0.000} " +
+                $"(slowest citywide reconcile batch since load; " +
+                $"citywide passes are spread over frames)");
+            text.AppendLine(
                 $"DistrictPolicy=Active in {snapshot.DistrictsWithPolicy}/{snapshot.Districts} districts " +
                 $"(PolicyEntity={FormatEntity(ParkingPolicySystem.PolicyEntity)})");
             ParkingRelocationSystem? relocationSystem =
@@ -114,6 +125,9 @@ namespace ParkingControl
                 $"(ParkingControlTracked={snapshot.TrackedCurbLanes}, VanillaOrOther={otherDisabledCurbLanes})");
             text.AppendLine($"EnforcementStatus={enforcementStatus}");
             text.AppendLine($"EnforcementDetails={enforcementDetails}");
+
+            AppendRoadSizeInventory(text);
+            AppendRoadParkingSupport(text);
 
             AppendUnresolvedTargetLanes(text, snapshot, details);
             text.AppendLine(
@@ -434,15 +448,29 @@ namespace ParkingControl
                 "District details (lane counts are roadside parking sections, not individual spaces):");
             foreach (DistrictParkingStats district in districts)
             {
-                bool effective = snapshot.Scope == PCSettings.ParkingScope.WholeCity ||
-                    (snapshot.Scope == PCSettings.ParkingScope.ByDistrict && district.PolicyActive);
+                bool wholeCity =
+                    snapshot.Scope == PCSettings.ParkingScope.WholeCity;
+
+                bool effective =
+                    wholeCity ||
+                    (snapshot.Scope == PCSettings.ParkingScope.ByDistrict &&
+                        district.PolicyActive);
+
+                int statusLanes =
+                    wholeCity ? district.TargetLanes : district.EligibleLanes;
+
+                int statusDisabled =
+                    wholeCity ? district.DisabledTargetLanes : district.DisabledLanes;
+
+                int statusTracked =
+                    wholeCity ? district.TrackedTargetLanes : district.TrackedLanes;
 
                 string status = effective
                     ? GetOwnershipStatus(
                         restrictionEnabled: true,
-                        district.EligibleLanes,
-                        district.DisabledLanes,
-                        district.TrackedLanes)
+                        statusLanes,
+                        statusDisabled,
+                        statusTracked)
                     : "OFF";
 
                 string change = "<first>";
@@ -455,11 +483,15 @@ namespace ParkingControl
                         : "<new>";
                 }
 
+                string disabledText = wholeCity
+                    ? $"{district.DisabledTargetLanes}/{district.TargetLanes}"
+                    : $"{district.DisabledLanes}/{district.EligibleLanes}";
+
                 text.AppendLine(
                     $"  {GetDistrictName(district.District)} [{FormatEntity(district.District)}] | " +
                     $"Policy={(district.PolicyActive ? "ON" : "OFF")} | " +
                     $"{district.StreetCars} parked ({district.OccupiedLanes} lanes) | " +
-                    $"{district.DisabledLanes}/{district.EligibleLanes} disabled | " +
+                    $"{disabledText} disabled | " +
                     $"{status} | Change={change}");
             }
         }
@@ -514,6 +546,11 @@ namespace ParkingControl
                     $"ParkingDisabled={item.ParkingDisabled} | " +
                     $"StreetParkingState={item.StreetParkingState}");
             }
+        }
+
+        private static string OnOff(bool? value)
+        {
+            return value == true ? "ON" : "OFF";
         }
 
         private string GetDistrictName(Entity district)

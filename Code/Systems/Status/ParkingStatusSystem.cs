@@ -33,9 +33,11 @@ namespace ParkingControl
 #endif
         private EntityQuery m_DistrictQuery;
         private EntityQuery m_GarageLaneQuery;
+        private EntityQuery m_RoadEdgeQuery;
         private EntityQuery m_ParkingFacilityQuery;
         private EntityQuery m_PersonalVehicleQuery;
         private Game.UI.NameSystem m_NameSystem = null!;
+        private Game.Prefabs.PrefabSystem m_PrefabSystem = null!;
         private Game.Simulation.SimulationSystem m_SimulationSystem = null!;
         private bool m_HasPreviousReport;
         private bool m_ReportRequested;
@@ -84,6 +86,7 @@ namespace ParkingControl
         {
             base.OnCreate();
             m_NameSystem = World.GetOrCreateSystemManaged<Game.UI.NameSystem>();
+            m_PrefabSystem = World.GetOrCreateSystemManaged<Game.Prefabs.PrefabSystem>();
             m_SimulationSystem =
                 World.GetOrCreateSystemManaged<Game.Simulation.SimulationSystem>();
 
@@ -107,6 +110,12 @@ namespace ParkingControl
 
             m_GarageLaneQuery = SystemAPI.QueryBuilder()
                 .WithAll<Game.Net.GarageLane>()
+                .WithNone<Game.Common.Deleted, Game.Tools.Temp>()
+                .Build();
+
+            // Road edges, including the ones that carry no street parking at all.
+            m_RoadEdgeQuery = SystemAPI.QueryBuilder()
+                .WithAll<Game.Net.Road, Game.Net.Composition, Game.Prefabs.PrefabRef>()
                 .WithNone<Game.Common.Deleted, Game.Tools.Temp>()
                 .Build();
             m_ParkingFacilityQuery = GetEntityQuery(

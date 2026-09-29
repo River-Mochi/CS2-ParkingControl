@@ -15,10 +15,77 @@ namespace ParkingControl
 
     public sealed partial class NoStreetParkingSystem
     {
-        private ReconcileResult ReconcileStreetParking(
+        /// <summary>
+        /// Builds the citywide road-size rule for one pass.
+        /// </summary>
+        /// <remarks>
+        /// Kept in its own method so the SystemAPI source generator never has to
+        /// relocate a method that carries nullable annotations, which would emit
+        /// CS8669 from generated code that has no #nullable directive.
+        /// </remarks>
+        /// <returns>A rule that must be disposed when the pass ends.</returns>
+        private RoadSizeRule CreateRoadSizeRule()
+        {
+            Unity.Entities.BufferLookup<Game.Prefabs.NetGeometrySection> geometrySections =
+                SystemAPI.GetBufferLookup<Game.Prefabs.NetGeometrySection>(true);
+
+            Unity.Entities.BufferLookup<Game.Prefabs.NetSubSection> subSections =
+                SystemAPI.GetBufferLookup<Game.Prefabs.NetSubSection>(true);
+
+            Unity.Entities.BufferLookup<Game.Prefabs.NetSectionPiece> sectionPieces =
+                SystemAPI.GetBufferLookup<Game.Prefabs.NetSectionPiece>(true);
+
+            Unity.Entities.BufferLookup<Game.Prefabs.NetPieceLane> pieceLanes =
+                SystemAPI.GetBufferLookup<Game.Prefabs.NetPieceLane>(true);
+
+            Unity.Entities.ComponentLookup<Game.Prefabs.NetLaneData> laneData =
+                SystemAPI.GetComponentLookup<Game.Prefabs.NetLaneData>(true);
+
+            Unity.Entities.ComponentLookup<Game.Prefabs.NetPieceData> pieceData =
+                SystemAPI.GetComponentLookup<Game.Prefabs.NetPieceData>(true);
+
+            Unity.Entities.ComponentLookup<Game.Prefabs.NetVertexMatchData> vertexMatchData =
+                SystemAPI.GetComponentLookup<Game.Prefabs.NetVertexMatchData>(true);
+
+            RoadSizeRule.DefaultCompositionLookups defaultComposition = new()
+            {
+                GeometrySections = geometrySections,
+                SubSections = subSections,
+                SectionPieces = sectionPieces,
+                PieceLanes = pieceLanes,
+                LaneData = laneData,
+                PieceData = pieceData,
+                VertexMatchData = vertexMatchData,
+            };
+
+            return RoadSizeRule.Create(
+                Mod.Settings,
+                SystemAPI.GetComponentLookup<Game.Net.Composition>(true),
+                SystemAPI.GetBufferLookup<Game.Prefabs.NetCompositionLane>(true),
+                SystemAPI.GetComponentLookup<Game.Prefabs.PrefabRef>(true),
+                SystemAPI.GetComponentLookup<Game.Prefabs.ParkingLaneData>(true),
+                defaultComposition,
+                m_RoadTypeLaneCounts,
+                Unity.Collections.Allocator.Temp);
+        }
+
+        /// <summary>
+        /// Reconciles a slice of parking lanes and applies the resulting changes.
+        /// </summary>
+        /// <param name="lanes">Lanes to consider.</param>
+        /// <param name="startIndex">First lane in this slice.</param>
+        /// <param name="count">How many lanes to take from <paramref name="startIndex"/>.</param>
+        /// <param name="scope">Active scope.</param>
+        /// <param name="policyEntity">District policy prefab entity.</param>
+        /// <param name="roadSizeRule">Road-size rule for this pass.</param>
+        /// <returns>How many lane flags changed.</returns>
+        private ReconcileResult ReconcileLaneSlice(
+            Unity.Collections.NativeArray<Unity.Entities.Entity> lanes,
+            int startIndex,
+            int count,
             PCSettings.ParkingScope scope,
             Unity.Entities.Entity policyEntity,
-            bool fullReconcile)
+            RoadSizeRule roadSizeRule)
         {
             Unity.Entities.ComponentLookup<Game.Net.ParkingLane> parkingLaneLookup =
                 SystemAPI.GetComponentLookup<Game.Net.ParkingLane>();
@@ -62,6 +129,7 @@ namespace ParkingControl
             Unity.Entities.BufferLookup<Game.Policies.Policy> policyLookup =
                 SystemAPI.GetBufferLookup<Game.Policies.Policy>(true);
 
+
             Unity.Collections.NativeList<Unity.Entities.Entity> addStateEntities =
                 new(Unity.Collections.Allocator.Temp);
             Unity.Collections.NativeList<Unity.Entities.Entity> relocationRequestEntities =
@@ -77,18 +145,15 @@ namespace ParkingControl
 
             ReconcileResult result = default;
 
-            Unity.Entities.EntityQuery sourceQuery =
-                fullReconcile
-                    ? m_AllParkingLanesQuery
-                    : m_ChangedParkingLanesQuery;
+            int endIndex = Unity.Mathematics.math.min(
+                startIndex + count,
+                lanes.Length);
 
-            using (Unity.Collections.NativeArray<Unity.Entities.Entity> parkingLaneEntities =
-                sourceQuery.ToEntityArray(Unity.Collections.Allocator.Temp))
             {
-                foreach (Unity.Entities.Entity entity in parkingLaneEntities)
+                for (int index = startIndex; index < endIndex; index++)
                 {
                     ReconcileLane(
-                        entity,
+                        lanes[index],
                         scope,
                         policyEntity,
                         ref parkingLaneLookup,
@@ -105,6 +170,7 @@ namespace ParkingControl
                         updatedLookup,
                         pathfindUpdatedLookup,
                         policyLookup,
+                        roadSizeRule,
                         ref addStateEntities,
                         ref relocationRequestEntities,
                         ref cleanupRequestEntities,
@@ -126,10 +192,117 @@ namespace ParkingControl
             return result;
         }
 
+        /// <summary>
+        /// Reconciles only the lanes the game marked as changed this pass.
+        /// </summary>
+        /// <remarks>
+        /// Bounded by what the player just built or upgraded, so it is not batched.
+        /// </remarks>
+        /// <param name="scope">Active scope.</param>
+        /// <param name="policyEntity">District policy prefab entity.</param>
+        /// <param name="roadSizeRule">Road-size rule for this pass.</param>
+        /// <returns>How many lane flags changed.</returns>
+        private ReconcileResult ReconcileChangedLanes(
+            PCSettings.ParkingScope scope,
+            Unity.Entities.Entity policyEntity,
+            RoadSizeRule roadSizeRule)
+        {
+            using Unity.Collections.NativeArray<Unity.Entities.Entity> lanes =
+                m_ChangedParkingLanesQuery.ToEntityArray(
+                    Unity.Collections.Allocator.Temp);
+
+            return ReconcileLaneSlice(
+                lanes,
+                0,
+                lanes.Length,
+                scope,
+                policyEntity,
+                roadSizeRule);
+        }
+
+        /// <summary>
+        /// Starts a citywide pass by snapshotting every parking lane.
+        /// </summary>
+        private void BeginFullReconcile()
+        {
+            m_FullReconcileLanes.Clear();
+            m_FullReconcileIndex = 0;
+            m_FullReconcileChanged = 0;
+            m_FullReconcileBatches = 0;
+            m_FullReconcileMaxMilliseconds = 0.0;
+
+            using Unity.Collections.NativeArray<Unity.Entities.Entity> lanes =
+                m_AllParkingLanesQuery.ToEntityArray(
+                    Unity.Collections.Allocator.Temp);
+
+            m_FullReconcileLanes.AddRange(lanes);
+        }
+
+        /// <summary>
+        /// Works through the citywide snapshot a slice at a time.
+        /// </summary>
+        /// <remarks>
+        /// Each lane that starts or stops being restricted gains or loses components,
+        /// and every one of those is an archetype move. Doing thousands in one frame
+        /// is what makes a citywide toggle stutter, so the pass is spread out. Lanes
+        /// deleted part way through are skipped by the guards in ReconcileLane.
+        /// </remarks>
+        /// <param name="scope">Active scope.</param>
+        /// <param name="policyEntity">District policy prefab entity.</param>
+        /// <param name="roadSizeRule">Road-size rule for this pass.</param>
+        /// <returns>True once the whole snapshot has been processed.</returns>
+        private bool RunFullReconcileBatch(
+            PCSettings.ParkingScope scope,
+            Unity.Entities.Entity policyEntity,
+            RoadSizeRule roadSizeRule)
+        {
+            long startedAt = System.Diagnostics.Stopwatch.GetTimestamp();
+
+            ReconcileResult batch =
+                ReconcileLaneSlice(
+                    m_FullReconcileLanes.AsArray(),
+                    m_FullReconcileIndex,
+                    kFullReconcileBatchSize,
+                    scope,
+                    policyEntity,
+                    roadSizeRule);
+
+            // Measured so the batch size can be tuned from real machines rather than
+            // from an estimate. Archetype moves dominate, and their cost varies.
+            double elapsedMilliseconds =
+                (System.Diagnostics.Stopwatch.GetTimestamp() - startedAt) * 1000.0 /
+                System.Diagnostics.Stopwatch.Frequency;
+
+            if (elapsedMilliseconds > m_FullReconcileMaxMilliseconds)
+            {
+                m_FullReconcileMaxMilliseconds = elapsedMilliseconds;
+            }
+
+            if (m_FullReconcileMaxMilliseconds > MaxReconcileBatchMilliseconds)
+            {
+                MaxReconcileBatchMilliseconds = m_FullReconcileMaxMilliseconds;
+            }
+
+            m_FullReconcileChanged += batch.m_Changed;
+            m_FullReconcileBatches++;
+            m_FullReconcileIndex += kFullReconcileBatchSize;
+
+            if (m_FullReconcileIndex < m_FullReconcileLanes.Length)
+            {
+                return false;
+            }
+
+            m_FullReconcileLanes.Clear();
+            m_FullReconcileIndex = 0;
+
+            return true;
+        }
+
         private ReconcileResult ReconcileRoad(
             Unity.Entities.Entity road,
             PCSettings.ParkingScope scope,
-            Unity.Entities.Entity policyEntity)
+            Unity.Entities.Entity policyEntity,
+            RoadSizeRule roadSizeRule)
         {
             ReconcileResult result = default;
 
@@ -183,6 +356,7 @@ namespace ParkingControl
             Unity.Entities.BufferLookup<Game.Policies.Policy> policyLookup =
                 SystemAPI.GetBufferLookup<Game.Policies.Policy>(true);
 
+
             Unity.Collections.NativeList<Unity.Entities.Entity> addStateEntities =
                 new(Unity.Collections.Allocator.Temp);
             Unity.Collections.NativeList<Unity.Entities.Entity> relocationRequestEntities =
@@ -228,6 +402,7 @@ namespace ParkingControl
                     updatedLookup,
                     pathfindUpdatedLookup,
                     policyLookup,
+                    roadSizeRule,
                     ref addStateEntities,
                     ref relocationRequestEntities,
                     ref cleanupRequestEntities,
@@ -266,6 +441,7 @@ namespace ParkingControl
             Unity.Entities.ComponentLookup<Game.Common.Updated> updatedLookup,
             Unity.Entities.ComponentLookup<Game.Common.PathfindUpdated> pathfindUpdatedLookup,
             Unity.Entities.BufferLookup<Game.Policies.Policy> policyLookup,
+            RoadSizeRule roadSizeRule,
             ref Unity.Collections.NativeList<Unity.Entities.Entity> addStateEntities,
             ref Unity.Collections.NativeList<Unity.Entities.Entity> relocationRequestEntities,
             ref Unity.Collections.NativeList<Unity.Entities.Entity> cleanupRequestEntities,
@@ -303,7 +479,8 @@ namespace ParkingControl
                     ownerLookup,
                     borderDistrictLookup,
                     manualBanLookup,
-                    policyLookup);
+                    policyLookup,
+                    roadSizeRule);
 
             bool parkingDisabled =
                 (parkingLane.m_Flags &

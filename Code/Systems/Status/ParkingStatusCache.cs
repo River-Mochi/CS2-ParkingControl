@@ -42,9 +42,9 @@ namespace ParkingControl
         private const string kVehicleFormatFallback =
             "{0} street | {1} visible | {2} inside | {3} OC";
         private const string kSupplyFormatFallback =
-            "{0} = {1}, public free {2}";
+            "{0} = {1} | Parked {2}/{3}";
         private const string kShareFormatFallback =
-            "{0} public | {1} bldg | {2} street | {3} total";
+            "{0} public | {2} street | {1} bldg | {3} total";
 
         private static bool s_ForceRefresh = true;
         private static bool s_HasRequestedSimulationFrame;
@@ -344,8 +344,15 @@ namespace ParkingControl
                 Format(snapshot.StreetParked),
                 Format(snapshot.KnownInCityParking));
 
-            string publicFree = snapshot.OfficialParkingCapacity > 0
-                ? Format(Math.Max(0, snapshot.OfficialParkingCapacity - snapshot.OfficialParkingOccupied))
+            bool hasOfficialCapacity = snapshot.OfficialParkingCapacity > 0;
+
+            // Parked used/capacity mirrors the game's own Roads parking InfoView.
+            string parkedOccupied = hasOfficialCapacity
+                ? Format(snapshot.OfficialParkingOccupied)
+                : "--";
+
+            string parkedCapacity = hasOfficialCapacity
+                ? Format(snapshot.OfficialParkingCapacity)
                 : "--";
 
             string parkingRating = ParkingStatusLocale.Format(
@@ -357,7 +364,8 @@ namespace ParkingControl
                 FormatFreePercent(
                     snapshot.OfficialParkingOccupied,
                     snapshot.OfficialParkingCapacity),
-                publicFree);
+                parkedOccupied,
+                parkedCapacity);
 
             string updated = snapshot.CapturedAtLocal.ToString(
                 "HH:mm:ss",

@@ -41,6 +41,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kActionsTab), "Eylemler" },
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kAboutTab), "Hakkında" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStreetParkingGroup), "Yol kenarı parkı" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kRoadSizeGroup), "Yol boyutuna göre tüm şehir" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStatusGroup), "Kişisel araç durumu" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "Mod bilgileri" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "Bağlantılar" },
@@ -50,17 +51,36 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "Yol kenarı park yasağı" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
                     "Seçin:\n" +
-                    "<1. Bölgeye göre>\n" +
-                    "<2. Sadece Elle>\n" +
-                    "<3. Tüm Şehir>\n" +
+                    "Önerilen: <1. Bölgeye göre> - oyunda **[Yol Kenarı Park Yasağı]** bölge politikasını gösterir.\n" +
+                    "<2. Sadece Elle> - şehir/bölge yasakları KAPALI. Elle [Park Yasak] yol düğmesi hangi seçenek seçilirse seçilsin çalışır.\n" +
+                    "<3. Tüm Şehir> - şehir genelinde yol kenarı parkını yasaklar. Boyalı açılı veya dik park yerleri olan yollar hariçtir.\n" +
                     "- Uygun şeritler yeni yol kenarı parkını önlemek için kapatılır.\n" +
                     "- Yasaktan sonra park etmiş araçlar zamanla taşınır; büyük alanlar daha uzun sürer.\n" +
                     "- Ücretli otoparklar ve binaların normal park alanları kullanılabilir kalır.\n" +
-                    "**Otoyollar ve küçük çift yönlü ara sokaklar gibi bazı yollar zaten yol kenarı parkına izin vermez.**"
+                    "**Otoyollar, küçük çift yönlü ara sokaklar ve 3 şeritli asimetrik yollar gibi bazı yollar zaten yol kenarı parkına izin vermez.**"
                 },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. Bölgeye göre" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. Sadece Elle" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. Tüm Şehir" },
+                // Citywide road-size bans.
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "4 şeritli yollarda parkı yasakla" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanFourLaneRoads)),
+                    "Şehir genelindeki <4 şeritli yolların> çoğunda yol kenarı parkını yasaklar.\n" +
+                    "- İstisna: açılı veya dik boyalı park yerleri olan yollara dokunulmaz.\n" +
+                    "- 4 sürüş şeridi olan özel Road Builder (RB) yollarında da çalışır.\n" +
+                    "- Yukarıdaki menüye ve elle ayarlanan <Park Yasak> yollarına eklenir; başka bir yasağı kaldırmaz.\n" +
+                    "**Otoyollar gibi zaten yol kenarı parkı olmayan yollar etkilenmez.**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "6 şeritli yollarda parkı yasakla" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanSixLaneRoads)),
+                    "Şehir genelindeki <6 şeritli yolların> çoğunda yol kenarı parkını yasaklar.\n" +
+                    "- İstisna: açılı veya dik boyalı park yerleri olan yollara dokunulmaz.\n" +
+                    "- 6 sürüş şeridi olan özel Road Builder (RB) yollarında da çalışır.\n" +
+                    "- Yukarıdaki menüye ve elle ayarlanan <Park Yasak> yollarına eklenir; başka bir yasağı kaldırmaz.\n" +
+                    "**Otoyollar gibi zaten yol kenarı parkı olmayan yollar etkilenmez.**"
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Talimatları göster" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
                     "<Bölgeye göre> modunun nasıl kullanılacağını gösterir."
@@ -101,6 +121,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Yol Kenarı Parkı" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "Yalnızca seçilen <Tüm Şehir> veya <Bölgeye göre> yasak kapsamını gösterir. Elle yasaklar ayrı listelenir.\n" +
+                    "Şehir genelindeki 4 ve 6 şeritli yol yasakları da burada sayılır.\n" +
                     "<Sadece Elle> = şehir/bölge yasakları kapalı; elle <Park Yasak> yapılan yollar etkin kalır.\n" +
                     "<Park etmiş> = seçilen kapsamdaki yollarda hâlâ park etmiş araçlar.\n" +
                     "<Devre dışı> = kapalı kaldırım kenarı şerit bölümleri / hedef bölümler.\n" +
@@ -124,20 +145,21 @@ namespace ParkingControl
                     "<Tüm şehir> park kullanımını gösterir. Tüm Şehir / Bölgeye göre yasak kapsamını izlemez.\n" +
                     "<Halka açık> = halka açık park tesislerinde dolu / toplam yer.\n" +
                     "CS2 Yol park bilgi paneliyle aynı park tesisi verilerini kullanır.\n" +
+                    "<Yol> = yollarda park etmiş araçlar. Tüm Şehir, boyalı park yerlerini açık bıraktığı için bu araçlar burada görünmeye devam eder.\n" +
                     "<Bina> = binalarda veya garajlarda park etmiş otomobiller.\n" +
-                    "<Yol> = yollarda park etmiş araçlar.\n" +
-                    "<Toplam> = şehirde bilinen park etmiş araçlar (yol + halka açık + bina).\n" +
+                    "<Toplam> = şehirde bilinen park etmiş araçlar (halka açık + yol + bina).\n" +
                     "**Dış bağlantılar ve bilinmeyen bekleme alanları toplama dahil değildir.**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Park değerlendirmesi" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "<Tüm şehir> halka açık park boşluğunu gösterir.\n" +
-                    "<KÖTÜ> = %15’ten az boş.\n" +
-                    "<OK> = %15 ile %30’dan az boş.\n" +
-                    "<İYİ> = %30 veya daha fazla boş.\n" +
-                    "<Halka açık boş> = şu anda kullanılmayan halka açık park yerleri.\n" +
-                    "Oyunun Yol park bilgi paneliyle aynı tesisleri sayar."
+                    "<Şehirdeki otoparkların> ne kadar dolu olduğunu gösterir.\n" +
+                    "<Park etmiş> = kullanılan / toplam yer; oyunun kendi otopark InfoView'ıyla aynı sayılar.\n" +
+                    "Yüzde, bu yerlerin ne kadarının hâlâ boş olduğunu gösterir.\n" +
+                    "<POOR> = %15'ten az boş.\n" +
+                    "<OK> = %15 ile %30 arası boş.\n" +
+                    "<GOOD> = %30 veya daha fazla boş.\n" +
+                    "**Bunlar otoparklardaki araçlardır, yol kenarındakiler değil.**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Araç Konumları" },
@@ -187,8 +209,8 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} park | {1}/{2} şerit devre dışı{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} park | {1}/{2} devre dışı | {3}/{4} bölge{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} yol | {1} görünür | {2} içeride | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, halka açık boş {2}" },
-                { ParkingStatusLocale.kShareFormat, "{0} halka açık | {1} bina | {2} yol | {3} toplam" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1} | Park etmiş {2}/{3}" },
+                { ParkingStatusLocale.kShareFormat, "{0} halka açık | {2} yol | {1} bina | {3} toplam" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "Sadece Elle = şehir/bölge yasağı yok | elle yollar etkin" },
                 { ParkingStatusLocale.kManualNone, "Ayarlı değil" },

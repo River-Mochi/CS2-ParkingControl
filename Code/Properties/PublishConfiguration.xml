@@ -8,12 +8,11 @@
 <!--Long description of the mod. Single line or multi line. Supports minimal markdown subset-->
 <!--LongDescription Value="No Street Parking" /-->
 <LongDescription>
-
 ## 🅿️ Parking Control (PC)
 
 Want clean curbs without changing your road design?
 
-**New:** You can now ban parking on individual roads, 1-way alleys, with the **No Parking** road button! 🚫
+You can now ban parking on individual roads, 1-way alleys, with the **No Parking** road button! 🚫
 
 - 🚗 Easy to use; prevents cars and motorcycles from choosing public street parking.
 - No need to add grass or wide sidewalks as workarounds.
@@ -23,7 +22,7 @@ Want clean curbs without changing your road design?
 - ✅**by District** - enable **Roadside Parking Ban** in the district policies panel. Manual no-parking button also works even if you have "by Districts" selected.
 - ✅**Manual Only** - use the "No Parking" roads button wherever you want.
 - ✅**Whole City** - prevent street parking city-wide. Make sure the city has enough parking storage off street.
-
+- ✅ NEW 4-lane or 6-lane roads - optional whole city bans for those road types. These work in addition to the choices above and also support custom Road Builder roads.
 
 ### Manual roads 🚫
 
@@ -32,8 +31,7 @@ Use the **No Parking** button next to the crosswalk tool.
 - **Left-click** a road to add No Parking. **Right-click** to remove it.
 
 🚙 Parking lots and building parking stay working normally.
-
-🗒️ Optional Status rows shows parking usage; better details than the game's info view.
+- Optional Status rows show parking usage; better details than the game's info view.
 
 ## Good to know
 - Make sure your city has enough off-street parking. When parking is unavailable, the game may use outside-connection storage/staging as it does in vanilla.
@@ -54,7 +52,7 @@ Use the **No Parking** button next to the crosswalk tool.
 - Dataknase, Maintyper, DragonFire - testing
 - StarQ - no parking icon
 
-12+ Languages: Hello, Hallo, Hola, Bonjour, Ciao, こんにちは, 안녕하세요, Cześć, Olá, สวัสดี, Merhaba, Xin chào, 你好, 你好, Привіт
+15+ Languages: Hello, Hallo, Hola, Bonjour, Ciao, こんにちは, 안녕하세요, Cześć, Olá, สวัสดี, Merhaba, Xin chào, 你好, 你好, Привіт
 
 ## How does it work
 - The mod uses the game’s own ParkingDisabled flag on eligible roads.
@@ -62,7 +60,7 @@ Use the **No Parking** button next to the crosswalk tool.
 - Existing parked cars gradually relocate after parking is banned.
 - New or rebuilt roads may briefly accept a few cars while CS2 updates the parking lanes (timing).
 - Optional:  works with [Mochi's Hover Colors](https://mods.paradoxplaza.com/mods/146044/Windows)  - manual road tool follows MHC's Bulldozer + Roads colors, just like normal road tools.
-
+- Note: manual No Parking ban is set per each road segment. If you draw a road or track perpendicular across a no-parking road, the game splits it into two new segments — re-apply No Parking to the new halves. District and whole-city road-size bans are not affected by splitting.
 
 tags: Disable road parking, clear road side, no cars
 
@@ -80,7 +78,7 @@ tags: Disable road parking, clear road side, no cars
 <!--Link to the forum post where the mod can be discussed-->
 <ForumLink Value="https://forum.paradoxplaza.com/forum/threads/parking-control.1938802/" />
 <!--Version of the mod-->
-<ModVersion Value="0.6.2" />
+<ModVersion Value="0.7.0" />
 <!--Recommended version of the base game to use the mod-->
 <GameVersion Value="1.6.*" />
 <!--Dependency for the mod, can be set multiple times-->
@@ -90,7 +88,11 @@ tags: Disable road parking, clear road side, no cars
 <!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
 <ChangeLog Value="" />
 <ChangeLog>
-- Updated for game patch 1.6.2
+- Added optional 4 Lane and 6 Lane road parking ban option - for whole city.
+- Updated all locales
+- 4/6-lane bans also support custom mod roads like Road Builder.
+- Whole City choice and 4/6-lane bans now does not include roads with painted angled or perpendicular parking spaces.
+- Improved relocation speed after large parking bans.
 </ChangeLog>
 <!--External link, can be set multiple times. supported types are "discord", "github", "youtube", "twitch", "paypal", "patreon", "buymeacoffee", "kofi", "crowdin", "gitlab", "gofundme"-->
 <ExternalLink Type="discord" Url="https://discord.gg/gwXgvtyhjc" />

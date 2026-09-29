@@ -38,9 +38,36 @@ namespace ParkingControl
         private EntityQuery m_ChangedManualRoadBanQuery;
         private EntityQuery m_PolicyModifyQuery;
 
+        // A citywide pass is spread over frames. Every lane that starts or stops being
+        // restricted is an archetype move, and thousands of those in one frame is what
+        // makes a whole-city toggle stutter on a large save.
+        //
+        // Deliberately small. Parking relocation in this mod already trickles work at 32
+        // lanes per pass, and finishing the flag pass a second or two later is invisible
+        // next to how long cars take to move anyway. MaxBatchMs in the report says
+        // whether this is conservative enough on a given machine.
+        private const int kFullReconcileBatchSize = 64;
+
+        // Road types never change their default lanes while a city is loaded, so this
+        // cache lives for the session instead of being rebuilt every frame.
+        private NativeHashMap<Entity, int> m_RoadTypeLaneCounts;
+
+        private NativeList<Entity> m_FullReconcileLanes;
+        private int m_FullReconcileIndex;
+        private int m_FullReconcileChanged;
+        private int m_FullReconcileBatches;
+        private double m_FullReconcileMaxMilliseconds;
+
+        /// <summary>
+        /// Gets the slowest citywide reconcile batch since the city loaded, in milliseconds.
+        /// </summary>
+        internal static double MaxReconcileBatchMilliseconds { get; private set; }
+
         private bool m_IsGame;
         private bool m_Initialized;
         private PCSettings.ParkingScope m_LastScope;
+        private bool m_LastBanFourLaneRoads;
+        private bool m_LastBanSixLaneRoads;
 
         /// <summary>
         /// Requests a full reconciliation during the next modification pass.
@@ -112,6 +139,47 @@ namespace ParkingControl
                 .WithAll<Game.Common.Event, Game.Policies.Modify>()
                 .Build();
 
+            m_FullReconcileLanes = new NativeList<Entity>(Allocator.Persistent);
+            m_RoadTypeLaneCounts = new NativeHashMap<Entity, int>(64, Allocator.Persistent);
+        }
+
+        /// <inheritdoc/>
+        protected override void OnDestroy()
+        {
+            if (m_FullReconcileLanes.IsCreated)
+            {
+                m_FullReconcileLanes.Dispose();
+            }
+
+            if (m_RoadTypeLaneCounts.IsCreated)
+            {
+                m_RoadTypeLaneCounts.Dispose();
+            }
+
+            base.OnDestroy();
+        }
+
+        /// <inheritdoc/>
+        protected override void OnGameLoaded(Colossal.Serialization.Entities.Context serializationContext)
+        {
+            base.OnGameLoaded(serializationContext);
+
+            // Entity-keyed caches must be cleared here, not later. Prefab entities are
+            // rebuilt for every city load and their Index/Version can be reused, so a
+            // cache carried over from the previous city can answer with another city's
+            // numbers. Cleared before anything has a chance to repopulate it.
+            if (m_RoadTypeLaneCounts.IsCreated)
+            {
+                m_RoadTypeLaneCounts.Clear();
+            }
+
+            // Same reason: the snapshot holds lane entities from the city being left.
+            if (m_FullReconcileLanes.IsCreated)
+            {
+                m_FullReconcileLanes.Clear();
+            }
+
+            m_FullReconcileIndex = 0;
         }
 
         /// <inheritdoc/>
@@ -127,6 +195,17 @@ namespace ParkingControl
                     purpose == Colossal.Serialization.Entities.Purpose.LoadGame);
 
             s_RoadReconcileRequests.Clear();
+
+            if (m_FullReconcileLanes.IsCreated)
+            {
+                m_FullReconcileLanes.Clear();
+            }
+
+            m_FullReconcileIndex = 0;
+            m_FullReconcileChanged = 0;
+            m_FullReconcileBatches = 0;
+            m_FullReconcileMaxMilliseconds = 0.0;
+            MaxReconcileBatchMilliseconds = 0.0;
 
             if (m_IsGame)
             {
@@ -147,6 +226,10 @@ namespace ParkingControl
             PCSettings.ParkingScope scope =
                 Mod.Settings?.Scope ?? PCSettings.ParkingScope.Off;
 
+            bool banFourLaneRoads = Mod.Settings?.BanFourLaneRoads ?? false;
+            bool banSixLaneRoads = Mod.Settings?.BanSixLaneRoads ?? false;
+            bool roadSizeActive = banFourLaneRoads || banSixLaneRoads;
+
             Entity policyEntity = ParkingPolicySystem.PolicyEntity;
 
             bool policyChanged =
@@ -158,6 +241,8 @@ namespace ParkingControl
                 s_SaveRecoveryRequested ||
                 !m_Initialized ||
                 scope != m_LastScope ||
+                banFourLaneRoads != m_LastBanFourLaneRoads ||
+                banSixLaneRoads != m_LastBanSixLaneRoads ||
                 policyChanged;
 
             bool changedParkingLanes =
@@ -172,95 +257,117 @@ namespace ParkingControl
             bool hasRequestedRoads =
                 s_RoadReconcileRequests.Count > 0;
 
+            bool fullReconcileRunning =
+                m_FullReconcileLanes.IsCreated &&
+                m_FullReconcileLanes.Length > 0;
+
             if (!fullReconcile &&
+                !fullReconcileRunning &&
                 !hasRequestedRoads &&
                 !changedManualRoads &&
                 (!changedParkingLanes ||
                     (scope == PCSettings.ParkingScope.Off &&
-                        !hasManualRoadBans)))
+                        !hasManualRoadBans &&
+                        !roadSizeActive)))
             {
                 return;
             }
 
             Dependency.Complete();
 
+            // One rule for the whole pass. A drag reconciles many roads in turn, and a
+            // per-road rule would throw away the prefab lane-count cache every time.
+            using RoadSizeRule roadSizeRule = CreateRoadSizeRule();
+
             ReconcileResult result = default;
             int prunedManualSides = 0;
+
+            bool fullReconcileFinished = false;
 
             if (fullReconcile)
             {
                 prunedManualSides =
                     PruneInvalidManualBans(m_ManualRoadBanQuery);
 
-                ReconcileResult fullResult =
-                    ReconcileStreetParking(
+                // Restarting mid-pass is fine: the snapshot is simply retaken.
+                BeginFullReconcile();
+                fullReconcileRunning = m_FullReconcileLanes.Length > 0;
+            }
+
+            if (fullReconcileRunning)
+            {
+                fullReconcileFinished =
+                    RunFullReconcileBatch(
                         scope,
                         policyEntity,
-                        fullReconcile: true);
-
-                result.m_Changed += fullResult.m_Changed;
+                        roadSizeRule);
             }
-            else
+
+            // Incremental work still runs while a citywide pass is in flight, so
+            // roads the player touches mid-pass are not left until it finishes.
+            // Every distinct road touched by the drag gets reconciled.
+            foreach (Entity requestedRoad in s_RoadReconcileRequests)
             {
-                // Every distinct road touched by the drag gets reconciled.
-                foreach (Entity requestedRoad in s_RoadReconcileRequests)
+                prunedManualSides +=
+                    PruneInvalidManualBan(requestedRoad);
+
+                ReconcileResult roadResult =
+                    ReconcileRoad(
+                        requestedRoad,
+                        scope,
+                        policyEntity,
+                        roadSizeRule);
+
+                result.m_Changed += roadResult.m_Changed;
+            }
+
+            if (changedManualRoads)
+            {
+                using NativeArray<Entity> changedRoads =
+                    m_ChangedManualRoadBanQuery
+                        .ToEntityArray(Allocator.Temp);
+
+                foreach (Entity road in changedRoads)
                 {
+                    if (s_RoadReconcileRequests.Contains(road))
+                    {
+                        continue;
+                    }
+
                     prunedManualSides +=
-                        PruneInvalidManualBan(requestedRoad);
+                        PruneInvalidManualBan(road);
 
                     ReconcileResult roadResult =
                         ReconcileRoad(
-                            requestedRoad,
+                            road,
                             scope,
-                            policyEntity);
+                            policyEntity,
+                            roadSizeRule);
 
                     result.m_Changed += roadResult.m_Changed;
                 }
+            }
 
-                if (changedManualRoads)
-                {
-                    using NativeArray<Entity> changedRoads =
-                        m_ChangedManualRoadBanQuery
-                            .ToEntityArray(Allocator.Temp);
+            // Road rebuilds can make vanilla recalculate ParkingDisabled.
+            // Recheck only the lanes that CS2 already marked as changed.
+            if (changedParkingLanes &&
+                (scope != PCSettings.ParkingScope.Off ||
+                    hasManualRoadBans ||
+                    roadSizeActive))
+            {
+                ReconcileResult changedResult =
+                    ReconcileChangedLanes(
+                        scope,
+                        policyEntity,
+                        roadSizeRule);
 
-                    foreach (Entity road in changedRoads)
-                    {
-                        if (s_RoadReconcileRequests.Contains(road))
-                        {
-                            continue;
-                        }
-
-                        prunedManualSides +=
-                            PruneInvalidManualBan(road);
-
-                        ReconcileResult roadResult =
-                            ReconcileRoad(
-                                road,
-                                scope,
-                                policyEntity);
-
-                        result.m_Changed += roadResult.m_Changed;
-                    }
-                }
-
-                // Road rebuilds can make vanilla recalculate ParkingDisabled.
-                // Recheck only the lanes that CS2 already marked as changed.
-                if (changedParkingLanes &&
-                    (scope != PCSettings.ParkingScope.Off ||
-                        hasManualRoadBans))
-                {
-                    ReconcileResult changedResult =
-                        ReconcileStreetParking(
-                            scope,
-                            policyEntity,
-                            fullReconcile: false);
-
-                    result.m_Changed += changedResult.m_Changed;
-                }
+                result.m_Changed += changedResult.m_Changed;
             }
 
             m_Initialized = true;
             m_LastScope = scope;
+            m_LastBanFourLaneRoads = banFourLaneRoads;
+            m_LastBanSixLaneRoads = banSixLaneRoads;
 
             s_ReconcileRequested = false;
             s_SaveRecoveryRequested = false;
@@ -278,15 +385,25 @@ namespace ParkingControl
             }
 
 #if DEBUG
-            if (fullReconcile)
+            if (fullReconcileFinished)
             {
                 int ownedLanes =
                     m_ModifiedParkingLanesQuery.CalculateEntityCount();
 
+                result.m_Changed = m_FullReconcileChanged;
+
+                string roadSizeText =
+                    roadSizeActive
+                        ? $" +RoadSize[{(banFourLaneRoads ? "4" : "-")}" +
+                            $"{(banSixLaneRoads ? "6" : "-")}]"
+                        : string.Empty;
+
                 CS2Shared.RiverMochi.LogUtils.Info(
-                    $"{Mod.ModTag} Street parking reconciled ({scope}): " +
+                    $"{Mod.ModTag} Street parking reconciled ({scope}{roadSizeText}): " +
                     $"{result.m_Changed} lane flags changed, " +
-                    $"{ownedLanes} lanes owned by Parking Control.");
+                    $"{ownedLanes} lanes owned by Parking Control, " +
+                    $"{m_FullReconcileBatches} batches of {kFullReconcileBatchSize}, " +
+                    $"slowest batch {m_FullReconcileMaxMilliseconds:0.000} ms.");
             }
 #endif
         }

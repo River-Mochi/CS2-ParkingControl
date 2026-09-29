@@ -10,6 +10,8 @@
 
 using System.Collections.Generic;
 using Colossal;
+using Game.City;
+using Game.Net;
 
 namespace ParkingControl
 {
@@ -42,6 +44,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kActionsTab), "Actions" },
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kAboutTab), "About" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStreetParkingGroup), "Street parking" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kRoadSizeGroup), "Whole city by road size" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStatusGroup), "Personal vehicle status" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "Mod information" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "Links" },
@@ -53,17 +56,36 @@ namespace ParkingControl
                     "Pick one:\n" +
                     "Recommended: <1. by District> - shows the district policy **[Roadside Parking Ban]** in game.\n" +
                     "<2. Manual Only> - city/district bans are all OFF. Manual [No Parking] road button still works no matter which dropdown you pick.\n" +
-                    "<3. Whole City Ban> - ban parking on all eligible city streets.\n" +
+                    "<3. Whole City Ban> - ban road parking across the city. Excludes roads with painted angled or perpendicular parking spaces.\n" +
 
                     "- Lanes are flagged to prevent new street parking.\n" +
                     "- Parked cars move gradually after parking is banned; large banned areas take longer to clear.\n" +
-                    "- Of Course, Fee-based parking lots and normal building parking remain usable.\n" +
-                    "**Some roads already exclude street parking, like Highways, small 2-way alley roads, 3-lane async roads.**"
+                    "- Fee-based parking lots and normal building parking remain usable.\n" +
+                    "**Some roads already exclude street parking, like Highways, small 2-way alley roads, 3-lane asymmetric roads.**"
                 },
 
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. by District" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. Manual only" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. Whole City ban" },
+
+                // Citywide road-size bans.
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "Ban 4-lane road parking" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanFourLaneRoads)),
+                    "Bans road parking on most <four-lane roads> across the city.\n" +
+                    "- Exception: roads with painted parking spaces, such as angled and perpendicular parking roads, are left alone.\n" +
+                    "- Works with custom Road Builder (RB) roads too, when they have 4 driving lanes.\n" +
+                    "- This is additive: it's in addition to the dropdown above and to <manual No Parking> roads; it never cancels a banned set elsewhere.\n" +
+                    "**Roads that never had parking, like highways, are unaffected.**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "Ban 6-lane road parking" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanSixLaneRoads)),
+                    "Bans roadside parking on most <six-lane roads> across the city.\n" +            
+                    "- Exception: roads with painted parking spaces, e.g., angled and perpendicular parking roads, are left alone.\n" +
+                    "- Works with custom Road Builder (RB) roads too, when they have 6 driving lanes.\n" +
+                    "- This is additive: it's in addition to the dropdown above and to <manual No Parking> roads; it never cancels a ban set elsewhere.\n" +
+                    "**Roads that never had parking, e.g. highways, are unaffected.**"
+                },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "Show instructions" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
@@ -105,6 +127,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "Street Parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "Shows only the selected <Whole City> or <by District> Parking Ban scope. Manual No Parking roads are listed separately.\n" +
+                    "Citywide 4-lane and 6-lane road bans are counted here as well.\n" +
                     "<Manual Only> = Whole City/District bans are disabled; manual <No Parking> road button works.\n" +
                     "<Parked> = cars still parked on streets covered by the selected scope.\n" +
                     "<Disabled> = disabled curb-lane sections / target curb-lane sections.\n" +
@@ -128,20 +151,21 @@ namespace ParkingControl
                     "Shows the <total city> parking use. This does not follow the Whole City / by District Parking Ban scope.\n" +
                     "<Public> = occupied / total spaces in public parking facilities.\n" +
                     "Uses the same parking facility data as CS2's Roads parking InfoView.\n" +
+                    "<Street> = cars parked on roads. Whole City ban leaves painted parking spaces enabled, so those cars still appear here.\n" +
                     "<Bldg> = cars parked at buildings or garages.\n" +
-                    "<Street> = cars parked on streets.\n" +
-                    "<Total> = total known in-city parked cars (street + public + building).\n" +
+                    "<Total> = total known in-city parked cars (public + street + building).\n" +
                     "**Outside connections and unknown staging are excluded from the total.**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "Parking rating" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "Shows the <total city> public parking availability.\n" +
-                    "<POOR> = less than 15% free.\n" +
-                    "<OK> = 15% to less than 30% free.\n" +
-                    "<GOOD> = 30% or more free.\n" +
-                    "<Public free> = currently unused public parking spaces.\n" +
-                    "This counts the same parking facilities as the game's own Roads parking InfoView."
+                    "Shows how full the <city parking facilities and lots> are.\n" +
+                    "<Parked> = spaces in use / total spaces, the same numbers as the game's own Roads parking InfoView.\n" +
+                    "The percentage is how many of those spaces are still open.\n" +
+                    "<POOR> = less than 15% open.\n" +
+                    "<OK> = 15% to less than 30% open.\n" +
+                    "<GOOD> = 30% or more open.\n" +
+                    "**These are cars parked in parking facilities and lots, not on the street.**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "Car Locations" },
@@ -192,9 +216,9 @@ namespace ParkingControl
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} parked | {1}/{2} disabled | {3}/{4} districts{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} street | {1} visible | {2} inside | {3} OC" },
 
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}, {2} public open" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1} | Parked {2}/{3}" },
 
-                { ParkingStatusLocale.kShareFormat, "{0} public | {1} bldg | {2} street | {3} total" },
+                { ParkingStatusLocale.kShareFormat, "{0} public | {2} street | {1} bldg | {3} total" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "Manual Only = all city/District bans disabled | manual roads still work" },
                 { ParkingStatusLocale.kManualNone, "None set" },

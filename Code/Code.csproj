@@ -18,7 +18,7 @@
         <PublishConfigScript>$(MSBuildProjectDirectory)\Scripts\Update-PublishConfig.ps1</PublishConfigScript>
 
         <!-- Versioning: single source of truth -->
-        <Version>0.6.2</Version>
+        <Version>0.7.0</Version>
         <AssemblyVersion>$(Version).0</AssemblyVersion>
         <FileVersion>$(Version).0</FileVersion>
         <GameVersion>1.6.*</GameVersion>
@@ -100,6 +100,7 @@
         <Folder Include="UI\src\panel\parking-fees\" />
         <Folder Include="UI\src\shared\" />
         <Folder Include="UI\src\utils\vanilla\" />
+        <Folder Include="Utils\" />
     </ItemGroup>
 
     <!-- Sync PublishConfiguration.xml and UI/mod.json before each build. -->

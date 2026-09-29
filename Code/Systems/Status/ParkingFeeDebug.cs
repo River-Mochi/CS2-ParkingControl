@@ -22,8 +22,8 @@ namespace ParkingControl
         /// </summary>
         private void WriteParkingFeeDebug()
         {
-            // SystemAPI methods are source-generated. Keep every non-BCL type in this
-            // method fully qualified so the generated partial does not depend on file usings.
+            // SystemAPI methods are source-generated. Keeping all non-BCL type in this
+            // method fully qualified so the gs partial does not depend on file usings.
             Unity.Entities.BufferLookup<Game.Prefabs.DistrictModifierData> modifierLookup =
                 SystemAPI.GetBufferLookup<Game.Prefabs.DistrictModifierData>(true);
             Unity.Entities.BufferLookup<Game.Policies.Policy> policyLookup =

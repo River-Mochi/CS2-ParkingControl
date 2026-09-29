@@ -41,6 +41,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kActionsTab), "操作" },
                 { m_Settings.GetOptionTabLocaleID(PCSettings.kAboutTab), "情報" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStreetParkingGroup), "路上駐車" },
+                { m_Settings.GetOptionGroupLocaleID(PCSettings.kRoadSizeGroup), "道路の大きさで市全体に適用" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kStatusGroup), "自家用車の状態" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutInfoGroup), "MOD情報" },
                 { m_Settings.GetOptionGroupLocaleID(PCSettings.kAboutLinksGroup), "リンク" },
@@ -50,17 +51,38 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.Scope)), "路上駐車禁止" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.Scope)),
                     "選択:\n" +
-                    "<1. 地区ごと>\n" +
-                    "<2. 手動のみ>\n" +
-                    "<3. 市全体>\n" +
-                    "- 対象車線を無効にして、新たな路上駐車を防ぎます。\n" +
+                    "推奨: <1. 地区ごと> - ゲーム内に地区ポリシー **[路上駐車禁止]** を表示します。\n" +
+                    "<2. 手動のみ> - 市全体/地区の禁止はすべてオフ。手動の[駐車禁止]道路ボタンはどの選択でも使えます。\n" +
+                    "<3. 市全体> - 市内全域の路上駐車を禁止します。斜め/直角の区画線付き駐車スペースがある道路は除外されます。\n" +
+                    "- 車線を無効にして、新たな路上駐車を防ぎます。\n" +
                     "- 禁止後、駐車中の車は徐々に移動します。広い禁止区域ほど時間がかかります。\n" +
                     "- 有料駐車場と通常の建物駐車は引き続き利用できます。\n" +
-                    "**高速道路や小型の双方向路地など、一部の道路はもともと路上駐車できません。**"
+                    "**高速道路、小型の双方向路地、3車線の非対称道路など、一部の道路はもともと路上駐車できません。**"
                 },
+
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. 地区ごと" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.Off), "2. 手動のみ" },
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.WholeCity), "3. 市全体" },
+
+                // Citywide road-size bans.
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "4車線道路の駐車を禁止" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanFourLaneRoads)),
+                    "市内のほとんどの<4車線道路>で路上駐車を禁止します。\n" +
+                    "- Road Builder (RB) のカスタム道路も、走行車線が4車線なら対象になります。\n" +
+                    "- 例外: 斜め駐車や直角駐車など、区画線付き駐車スペースがある道路はそのままです。\n" +
+                    "- 上のドロップダウンや手動の<駐車禁止>道路に追加されます。ほかの禁止を解除することはありません。\n" +
+                    "**高速道路など、元から駐車できない道路には影響しません。**"
+                },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "6車線道路の駐車を禁止" },
+                { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanSixLaneRoads)),
+                    "市内のほとんどの<6車線道路>で路上駐車を禁止します。\n" +
+                    "- Road Builder (RB) のカスタム道路も、走行車線が6車線なら対象になります。\n" +
+                    "- 例外: 斜め駐車や直角駐車など、区画線付き駐車スペースがある道路はそのままです。\n" +
+                    "- 上のドロップダウンや手動の<駐車禁止>道路に追加されます。ほかの禁止を解除することはありません。\n" +
+                    "**高速道路など、元から駐車できない道路には影響しません。**"
+                },
+
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShowInstructions)), "手順を表示" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShowInstructions)),
                     "<地区ごと>モードの使い方を表示します。"
@@ -101,6 +123,7 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.EnforcementStatus)), "路上駐車" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.EnforcementStatus)),
                     "選択中の<市全体>または<地区ごと>の禁止範囲だけを表示します。手動の駐車禁止は別表示です。\n" +
+                    "市全体の4車線・6車線道路の禁止もここに含まれます。\n" +
                     "<手動のみ> = 市全体/地区の禁止は無効。手動<駐車禁止>道路は有効のままです。\n" +
                     "<駐車中> = 選択範囲の道路にまだ駐車している車。\n" +
                     "<無効> = 無効な路肩車線区間 / 対象区間。\n" +
@@ -121,23 +144,24 @@ namespace ParkingControl
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.ShareStatus)), "駐車利用" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.ShareStatus)),
-                    "<市全体>の駐車利用状況を表示します。全市 / 地区別の駐車禁止範囲には従いません。\n" +
+                    "<市全体>の駐車利用状況を表示します。市全体 / 地区ごとの駐車禁止範囲には従いません。\n" +
                     "<公共> = 公共駐車施設の使用中 / 総スペース数。\n" +
                     "CS2の道路・駐車情報ビューと同じ駐車施設データを使用します。\n" +
+                    "<路上> = 道路に駐車中。市全体禁止でも区画線付き駐車スペースは利用できるため、その車もここに含まれます。\n" +
                     "<建物> = 建物やガレージに駐車している自動車。\n" +
-                    "<路上> = 道路に駐車している車。\n" +
-                    "<合計> = 市内で把握できる駐車車両の合計（路上 + 公共 + 建物）。\n" +
+                    "<合計> = 市内で把握できる駐車車両の合計（公共 + 路上 + 建物）。\n" +
                     "**外部接続と場所不明の待機車両は合計から除外されます。**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.SupplyStatus)), "駐車評価" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.SupplyStatus)),
-                    "<市全体>の公共駐車場の空き状況を表示します。\n" +
-                    "<不足> = 空き15%未満。\n" +
-                    "<OK> = 空き15%以上30%未満。\n" +
-                    "<良好> = 空き30%以上。\n" +
-                    "<公共空き> = 現在未使用の公共駐車スペース。\n" +
-                    "ゲームの道路・駐車情報ビューと同じ駐車施設を数えます。"
+                    "<市内の駐車場>の混雑度を示します。\n" +
+                    "<駐車> = 使用中 / 総スペース。ゲームの駐車インフォビューと同じ数値です。\n" +
+                    "パーセントは、そのうち空いている割合です。\n" +
+                    "<POOR> = 空き 15% 未満。\n" +
+                    "<OK> = 空き 15% 以上 30% 未満。\n" +
+                    "<GOOD> = 空き 30% 以上。\n" +
+                    "**これは駐車場に止められた車であり、路上駐車ではありません。**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.VehicleStatus)), "車の場所" },
@@ -187,8 +211,8 @@ namespace ParkingControl
                 { ParkingStatusLocale.kManualEnforcementFormat, "{0} 駐車中 | {1}/{2} 車線無効{3}" },
                 { ParkingStatusLocale.kDistrictEnforcementFormat, "{0} 駐車中 | {1}/{2} 無効 | {3}/{4} 地区{5}" },
                 { ParkingStatusLocale.kVehicleFormat, "{0} 路上 | {1} 表示 | {2} 屋内 | {3} OC" },
-                { ParkingStatusLocale.kSupplyFormat, "{0} = {1}、公共空き {2}" },
-                { ParkingStatusLocale.kShareFormat, "{0} 公共 | {1} 建物 | {2} 路上 | {3} 合計" },
+                { ParkingStatusLocale.kSupplyFormat, "{0} = {1} | 駐車 {2}/{3}" },
+                { ParkingStatusLocale.kShareFormat, "{0} 公共 | {2} 路上 | {1} 建物 | {3} 合計" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "手動のみ = 市全体/地区の禁止なし | 手動道路は有効" },
                 { ParkingStatusLocale.kManualNone, "設定なし" },
