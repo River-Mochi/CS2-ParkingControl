@@ -160,6 +160,21 @@ namespace ParkingControl
         }
 
         /// <inheritdoc/>
+        protected override void OnGameLoaded(Colossal.Serialization.Entities.Context serializationContext)
+        {
+            base.OnGameLoaded(serializationContext);
+
+            // Entity-keyed caches must be cleared here, not later. Prefab entities are
+            // rebuilt for every city load and their Index/Version can be reused, so a
+            // cache carried over from the previous city can answer with another city's
+            // numbers. Cleared before anything has a chance to repopulate it.
+            if (m_RoadTypeLaneCounts.IsCreated)
+            {
+                m_RoadTypeLaneCounts.Clear();
+            }
+        }
+
+        /// <inheritdoc/>
         protected override void OnGameLoadingComplete(
             Colossal.Serialization.Entities.Purpose purpose,
             GameMode mode)
@@ -176,11 +191,6 @@ namespace ParkingControl
             if (m_FullReconcileLanes.IsCreated)
             {
                 m_FullReconcileLanes.Clear();
-            }
-
-            if (m_RoadTypeLaneCounts.IsCreated)
-            {
-                m_RoadTypeLaneCounts.Clear();
             }
 
             m_FullReconcileIndex = 0;
