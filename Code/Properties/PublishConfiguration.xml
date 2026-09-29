@@ -12,7 +12,7 @@
 
 Want clean curbs without changing your road design?
 
-**New:** You can now ban parking on individual roads, 1-way alleys, with the **No Parking** road button! 🚫
+You can now ban parking on individual roads, 1-way alleys, with the **No Parking** road button! 🚫
 
 - 🚗 Easy to use; prevents cars and motorcycles from choosing public street parking.
 - No need to add grass or wide sidewalks as workarounds.
@@ -22,7 +22,7 @@ Want clean curbs without changing your road design?
 - ✅**by District** - enable **Roadside Parking Ban** in the district policies panel. Manual no-parking button also works even if you have "by Districts" selected.
 - ✅**Manual Only** - use the "No Parking" roads button wherever you want.
 - ✅**Whole City** - prevent street parking city-wide. Make sure the city has enough parking storage off street.
-
+- ✅ NEW 4-lane or 6-lane roads - optional whole city bans for those road types. These work in addition to the choices above and also support custom Road Builder roads.
 
 ### Manual roads 🚫
 
@@ -89,9 +89,11 @@ tags: Disable road parking, clear road side, no cars
 <!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
 <ChangeLog Value="" />
 <ChangeLog>
-- Added 4 Lane and 6 Lane road parking ban option - for whole city.
-- Excludes 4 or 6 lane roads that come with angled or perpendicular painted parking spaces.
+- Added optional 4 Lane and 6 Lane road parking ban option - for whole city.
 - Updated all locales
+- 4/6-lane bans also support custom mod roads like Road Builder.
+- Whole City choice and 4/6-lane bans now does not include roads with painted angled or perpendicular parking spaces.
+- Improved relocation speed after large parking bans.
 </ChangeLog>
 <!--External link, can be set multiple times. supported types are "discord", "github", "youtube", "twitch", "paypal", "patreon", "buymeacoffee", "kofi", "crowdin", "gitlab", "gofundme"-->
 <ExternalLink Type="discord" Url="https://discord.gg/gwXgvtyhjc" />

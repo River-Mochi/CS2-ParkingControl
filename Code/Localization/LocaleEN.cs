@@ -61,7 +61,7 @@ namespace ParkingControl
                     "- Lanes are flagged to prevent new street parking.\n" +
                     "- Parked cars move gradually after parking is banned; large banned areas take longer to clear.\n" +
                     "- Fee-based parking lots and normal building parking remain usable.\n" +
-                    "**Some roads already exclude street parking, like Highways, small 2-way alley roads, 3-lane async roads.**"
+                    "**Some roads already exclude street parking, like Highways, small 2-way alley roads, 3-lane asymmetric roads.**"
                 },
 
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. by District" },
