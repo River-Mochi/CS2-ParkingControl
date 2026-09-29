@@ -72,17 +72,17 @@ namespace ParkingControl
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "Ban 4-lane road parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanFourLaneRoads)),
                     "Bans road parking on most <four-lane roads> across the city.\n" +
-                    "- Driving lanes are counted from the road itself, so custom roads added by other mods (RB) also could work.\n" +
                     "- Exception: roads with painted parking spaces, such as angled and perpendicular parking roads, are left alone.\n" +
+                    "- Works with custom Road Builder (RB) roads too, when they have 4 driving lanes.\n" +
                     "- This is additive: it's in addition to the dropdown above and to <manual No Parking> roads; it never cancels a banned set elsewhere.\n" +
                     "**Roads that never had parking, like highways, are unaffected.**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "Ban 6-lane road parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanSixLaneRoads)),
-                    "Bans roadside parking on most <six-lane roads> across the city.\n" +
-                    "- Driving lanes are counted from the road itself, so roads added by other mods match on their real lane count.\n" +
+                    "Bans roadside parking on most <six-lane roads> across the city.\n" +            
                     "- Exception: roads with painted parking spaces, e.g., angled and perpendicular parking roads, are left alone.\n" +
+                    "- Works with custom Road Builder (RB) roads too, when they have 6 driving lanes.\n" +
                     "- This is additive: it's in addition to the dropdown above and to <manual No Parking> roads; it never cancels a ban set elsewhere.\n" +
                     "**Roads that never had parking, e.g. highways, are unaffected.**"
                 },
