@@ -10,6 +10,8 @@
 
 using System.Collections.Generic;
 using Colossal;
+using Game.City;
+using Game.Net;
 
 namespace ParkingControl
 {
@@ -54,7 +56,7 @@ namespace ParkingControl
                     "Pick one:\n" +
                     "Recommended: <1. by District> - shows the district policy **[Roadside Parking Ban]** in game.\n" +
                     "<2. Manual Only> - city/district bans are all OFF. Manual [No Parking] road button still works no matter which dropdown you pick.\n" +
-                    "<3. Whole City Ban> - ban parking on all eligible city streets.\n" +
+                    "<3. Whole City Ban> - ban parking on all city streets, except roads with painted angled or perpendicular parking spaces.\n" +
 
                     "- Lanes are flagged to prevent new street parking.\n" +
                     "- Parked cars move gradually after parking is banned; large banned areas take longer to clear.\n" +
