@@ -9,6 +9,7 @@
 // Purpose: Counts driving lanes per road type so citywide road-size bans can target them.
 
 using System;
+using CS2Shared.RiverMochi;
 using Game.Prefabs;
 using Unity.Collections;
 using Unity.Entities;
@@ -205,9 +206,29 @@ namespace ParkingControl
             // Deliberately no fallback to the as-built count. If the default cannot be
             // rebuilt the answer stays unknown and the road is left alone, rather than
             // being banned on a number that means something different.
-            int counted = CountDefaultDrivingLanes(prefabRef.m_Prefab);
+        #if DEBUG
+                    long countStartTimestamp =
+                        System.Diagnostics.Stopwatch.GetTimestamp();
+        #endif
 
-            m_RoadTypeLaneCounts.TryAdd(prefabRef.m_Prefab, counted);
+                    int counted = CountDefaultDrivingLanes(prefabRef.m_Prefab);
+
+        #if DEBUG
+                    double countMilliseconds =
+                        (System.Diagnostics.Stopwatch.GetTimestamp() - countStartTimestamp) *
+                        1000.0 /
+                        System.Diagnostics.Stopwatch.Frequency;
+
+                    if (countMilliseconds >= 2.0)
+                    {
+                        LogUtils.Info(
+                            $"{Mod.ModTag} Slow road-type lane count: " +
+                            $"prefab={prefabRef.m_Prefab.Index}:{prefabRef.m_Prefab.Version}, " +
+                            $"lanes={counted}, time={countMilliseconds:0.###} ms.");
+                    }
+        #endif
+
+                    m_RoadTypeLaneCounts.TryAdd(prefabRef.m_Prefab, counted);
 
             return counted;
         }

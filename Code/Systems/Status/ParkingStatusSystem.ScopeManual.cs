@@ -89,7 +89,7 @@ namespace ParkingControl
                         ownerLookup,
                         manualBanLookup);
 
-                bool scopeTarget =
+              bool scopeTarget =
                     NoStreetParkingSystem.IsScopeRestrictionTarget(
                         lane,
                         parkingLane,
@@ -97,7 +97,8 @@ namespace ParkingControl
                         policyEntity,
                         ownerLookup,
                         borderDistrictLookup,
-                        policyLookup) ||
+                        policyLookup,
+                        roadSizeRule) ||
                     NoStreetParkingSystem.IsRoadSizeRestrictionTarget(
                         lane,
                         ownerLookup,

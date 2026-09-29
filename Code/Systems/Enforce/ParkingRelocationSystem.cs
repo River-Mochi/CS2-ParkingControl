@@ -481,56 +481,67 @@ namespace ParkingControl
             Unity.Entities.BufferLookup<Game.Net.LaneObject> laneObjectLookup =
                 SystemAPI.GetBufferLookup<Game.Net.LaneObject>(true);
 
-            using Unity.Collections.NativeArray<Unity.Entities.Entity> requestLanes =
-                laneQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
+            Unity.Entities.EntityTypeHandle entityTypeHandle =
+                SystemAPI.GetEntityTypeHandle();
 
-            int laneLimit = requestLanes.Length < kLaneRequestsPerPass
-                ? requestLanes.Length
-                : kLaneRequestsPerPass;
+            using Unity.Collections.NativeArray<Unity.Entities.ArchetypeChunk> requestChunks =
+                laneQuery.ToArchetypeChunkArray(Unity.Collections.Allocator.Temp);
 
+            int laneLimit = 0;
             int added = 0;
 
-            for (int i = 0; i < laneLimit; i++)
+            for (int chunkIndex = 0;
+                 chunkIndex < requestChunks.Length && laneLimit < kLaneRequestsPerPass;
+                 chunkIndex++)
             {
-                Unity.Entities.Entity lane = requestLanes[i];
+                Unity.Collections.NativeArray<Unity.Entities.Entity> lanes =
+                    requestChunks[chunkIndex].GetNativeArray(entityTypeHandle);
 
-                // Consume this one-shot request even if the road changed before our interval.
-                if (delayedCleanup)
+                for (int i = 0;
+                     i < lanes.Length && laneLimit < kLaneRequestsPerPass;
+                     i++)
                 {
-                    QueueRemoveCleanupRequest(ref commandBuffer, lane);
-                }
-                else
-                {
-                    QueueRemoveLaneRequest(ref commandBuffer, lane);
-                }
+                    Unity.Entities.Entity lane = lanes[i];
+                    laneLimit++;
 
-                if (!stateLookup.HasComponent(lane) ||
-                    !parkingLaneLookup.TryGetComponent(
-                        lane,
-                        out Game.Net.ParkingLane parkingLane) ||
-                    (parkingLane.m_Flags & Game.Net.ParkingLaneFlags.ParkingDisabled) == 0 ||
-                    !laneObjectLookup.TryGetBuffer(
-                        lane,
-                        out Unity.Entities.DynamicBuffer<Game.Net.LaneObject> laneObjects))
-                {
-                    continue;
-                }
+                    // Consume this one-shot request even if the road changed before our interval.
+                    if (delayedCleanup)
+                    {
+                        QueueRemoveCleanupRequest(ref commandBuffer, lane);
+                    }
+                    else
+                    {
+                        QueueRemoveLaneRequest(ref commandBuffer, lane);
+                    }
 
-                foreach (Game.Net.LaneObject laneObject in laneObjects)
-                {
-                    Unity.Entities.Entity vehicle = laneObject.m_LaneObject;
-
-                    if (fixParkingLookup.HasComponent(vehicle) ||
-                        !parkedCarLookup.TryGetComponent(
-                            vehicle,
-                            out Game.Vehicles.ParkedCar parkedCar) ||
-                        parkedCar.m_Lane != lane)
+                    if (!stateLookup.HasComponent(lane) ||
+                        !parkingLaneLookup.TryGetComponent(
+                            lane,
+                            out Game.Net.ParkingLane parkingLane) ||
+                        (parkingLane.m_Flags & Game.Net.ParkingLaneFlags.ParkingDisabled) == 0 ||
+                        !laneObjectLookup.TryGetBuffer(
+                            lane,
+                            out Unity.Entities.DynamicBuffer<Game.Net.LaneObject> laneObjects))
                     {
                         continue;
                     }
 
-                    m_PendingCars.Enqueue(vehicle);
-                    added++;
+                    foreach (Game.Net.LaneObject laneObject in laneObjects)
+                    {
+                        Unity.Entities.Entity vehicle = laneObject.m_LaneObject;
+
+                        if (fixParkingLookup.HasComponent(vehicle) ||
+                            !parkedCarLookup.TryGetComponent(
+                                vehicle,
+                                out Game.Vehicles.ParkedCar parkedCar) ||
+                            parkedCar.m_Lane != lane)
+                        {
+                            continue;
+                        }
+
+                        m_PendingCars.Enqueue(vehicle);
+                        added++;
+                    }
                 }
             }
 

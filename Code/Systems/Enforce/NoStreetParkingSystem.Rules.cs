@@ -22,7 +22,7 @@ namespace ParkingControl
         /// Returns whether this road side is covered by any Parking Control rule.
         /// </summary>
 
-        internal static bool IsRestrictionTarget(
+       internal static bool IsRestrictionTarget(
             Entity lane,
             ParkingLane parkingLane,
             PCSettings.ParkingScope scope,
@@ -45,7 +45,8 @@ namespace ParkingControl
                     policyEntity,
                     ownerLookup,
                     borderDistrictLookup,
-                    policyLookup) ||
+                    policyLookup,
+                    roadSizeRule) ||
                 IsRoadSizeRestrictionTarget(
                     lane,
                     ownerLookup,
@@ -95,18 +96,21 @@ namespace ParkingControl
             return manualBan.IsBanned(rightSide);
         }
 
-        internal static bool IsScopeRestrictionTarget(
+       internal static bool IsScopeRestrictionTarget(
             Entity lane,
             ParkingLane parkingLane,
             PCSettings.ParkingScope scope,
             Entity policyEntity,
             ComponentLookup<Owner> ownerLookup,
             ComponentLookup<Game.Areas.BorderDistrict> borderDistrictLookup,
-            BufferLookup<Game.Policies.Policy> policyLookup)
+            BufferLookup<Game.Policies.Policy> policyLookup,
+            RoadSizeRule roadSizeRule)
         {
             if (scope == PCSettings.ParkingScope.WholeCity)
             {
-                return true;
+                // Roads built specifically with painted angled/perpendicular parking
+                // spaces keep those spaces under Whole City, just like road-size bans.
+                return !roadSizeRule.HasBuiltInParkingSpaces(lane);
             }
 
             if (scope != PCSettings.ParkingScope.ByDistrict ||
