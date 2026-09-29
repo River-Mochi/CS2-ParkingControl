@@ -31,8 +31,7 @@ Use the **No Parking** button next to the crosswalk tool.
 - **Left-click** a road to add No Parking. **Right-click** to remove it.
 
 🚙 Parking lots and building parking stay working normally.
-
-🗒️ Optional Status rows shows parking usage; better details than the game's info view.
+- Optional Status rows show parking usage; better details than the game's info view.
 
 ## Good to know
 - Make sure your city has enough off-street parking. When parking is unavailable, the game may use outside-connection storage/staging as it does in vanilla.
@@ -53,7 +52,7 @@ Use the **No Parking** button next to the crosswalk tool.
 - Dataknase, Maintyper, DragonFire - testing
 - StarQ - no parking icon
 
-12+ Languages: Hello, Hallo, Hola, Bonjour, Ciao, こんにちは, 안녕하세요, Cześć, Olá, สวัสดี, Merhaba, Xin chào, 你好, 你好, Привіт
+15+ Languages: Hello, Hallo, Hola, Bonjour, Ciao, こんにちは, 안녕하세요, Cześć, Olá, สวัสดี, Merhaba, Xin chào, 你好, 你好, Привіт
 
 ## How does it work
 - The mod uses the game’s own ParkingDisabled flag on eligible roads.
