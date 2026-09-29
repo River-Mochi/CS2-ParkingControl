@@ -235,6 +235,11 @@ namespace ParkingControl
                     if (isTarget)
                     {
                         snapshot.TargetCurbLanes++;
+
+                        if (districtStats != null)
+                        {
+                            districtStats.TargetLanes++;
+                        }
                     }
 
                     bool parkingDisabled =

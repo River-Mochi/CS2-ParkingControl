@@ -44,7 +44,7 @@ namespace ParkingControl
         private const string kSupplyFormatFallback =
             "{0} = {1} | Parked {2}/{3}";
         private const string kShareFormatFallback =
-            "{0} public | {1} bldg | {2} street | {3} total";
+            "{0} public | {2} street | {1} bldg | {3} total";
 
         private static bool s_ForceRefresh = true;
         private static bool s_HasRequestedSimulationFrame;

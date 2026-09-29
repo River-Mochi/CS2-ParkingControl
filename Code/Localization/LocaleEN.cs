@@ -151,9 +151,9 @@ namespace ParkingControl
                     "Shows the <total city> parking use. This does not follow the Whole City / by District Parking Ban scope.\n" +
                     "<Public> = occupied / total spaces in public parking facilities.\n" +
                     "Uses the same parking facility data as CS2's Roads parking InfoView.\n" +
+                    "<Street> = cars parked on roads. Note: Whole City and 4/6-lane bans leave painted angled/perpendicular spaces available, so those cars are included here.\n" +
                     "<Bldg> = cars parked at buildings or garages.\n" +
-                    "<Street> = cars parked on streets.\n" +
-                    "<Total> = total known in-city parked cars (street + public + building).\n" +
+                    "<Total> = total known in-city parked cars (public + street + building).\n" +
                     "**Outside connections and unknown staging are excluded from the total.**"
                 },
 
@@ -218,7 +218,7 @@ namespace ParkingControl
 
                 { ParkingStatusLocale.kSupplyFormat, "{0} = {1} | Parked {2}/{3}" },
 
-                { ParkingStatusLocale.kShareFormat, "{0} public | {1} bldg | {2} street | {3} total" },
+                { ParkingStatusLocale.kShareFormat, "{0} public | {2} street | {1} bldg | {3} total" },
                 { ParkingStatusLocale.kStatusOk, "OK" },
                 { ParkingStatusLocale.kStatusOff, "Manual Only = all city/District bans disabled | manual roads still work" },
                 { ParkingStatusLocale.kManualNone, "None set" },

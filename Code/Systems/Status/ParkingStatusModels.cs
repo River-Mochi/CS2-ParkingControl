@@ -237,6 +237,12 @@ namespace ParkingControl
 
         public int TrackedLanes { get; set; }
 
+        public int TargetLanes { get; set; }
+
+        public int DisabledTargetLanes { get; set; }
+
+        public int TrackedTargetLanes { get; set; }
+
         public int StreetCars { get; set; }
 
         public int OccupiedLanes { get; set; }
