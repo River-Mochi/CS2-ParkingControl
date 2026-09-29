@@ -10,8 +10,6 @@
 
 using System.Collections.Generic;
 using Colossal;
-using Game.City;
-using Game.Net;
 
 namespace ParkingControl
 {
@@ -61,7 +59,7 @@ namespace ParkingControl
                     "- Lanes are flagged to prevent new street parking.\n" +
                     "- Parked cars move gradually after parking is banned; large banned areas take longer to clear.\n" +
                     "- Fee-based parking lots and normal building parking remain usable.\n" +
-                    "**Some roads already exclude street parking, like Highways, small 2-way alley roads, 3-lane asymmetric roads.**"
+                    "**Some roads already exclude street parking, like Highways, small 2-way alley roads, 3-lane small roads.**"
                 },
 
                 { m_Settings.GetEnumValueLocaleID(PCSettings.ParkingScope.ByDistrict), "1. by District" },

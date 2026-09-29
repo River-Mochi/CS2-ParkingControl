@@ -20,28 +20,10 @@ namespace ParkingControl
     /// <summary>
     /// Matches roads by driving-lane count for the citywide road-size parking bans.
     /// </summary>
-    /// <remarks>
-    /// <para>
-    /// Lanes are counted from composition data rather than the prefab name, because
-    /// prefab names do not match the player-facing road names, are not localized, and
-    /// do not exist at all for roads built by mods such as Road Builder.
-    /// </para>
-    /// <para>
-    /// The count comes from the road type's own base composition, not from the segment
-    /// as built. A player who lays a Six-Lane Road and later adds tram tracks still
-    /// calls it a six-lane road, but the tram replaces one driving lane per direction
-    /// and the built segment would measure four. Measuring the road type keeps the ban
-    /// matching the name the player sees and gives one stable answer per road type.
-    /// </para>
-    /// <para>
-    /// Safe to pass by value once created: the caches are native containers whose
-    /// entries are shared by every copy, so cached counts survive the copy.
-    /// </para>
-    /// </remarks>
     internal struct RoadSizeRule : IDisposable
     {
         /// <summary>
-        /// Read-only prefab data needed to rebuild the default composition of a road.
+        /// Lookups needed to rebuild a road prefab's default composition.
         /// </summary>
         internal struct DefaultCompositionLookups
         {
@@ -57,32 +39,20 @@ namespace ParkingControl
         internal const int kFourLaneRoad = 4;
         internal const int kSixLaneRoad = 6;
 
-        /// <summary>Returned when a road has no readable composition.</summary>
+        /// <summary>Represents an unreadable road composition.</summary>
         internal const int kUnknownLaneCount = -1;
 
-        // Vanilla counts a driving lane as a Road lane that is not bicycles-only.
-        // Game.Prefabs.NetCompositionHelpers, where HasForwardRoadLanes and
-        // HasBackwardRoadLanes are set from exactly this test.
         private const LaneFlags kDrivingLaneMask =
             LaneFlags.Road | LaneFlags.BicyclesOnly;
 
-        // One extra Master lane is appended per multi-lane group as a group aggregate.
-        // Counting it would report a Six-Lane Road as eight lanes.
         private const LaneFlags kGroupAggregate = LaneFlags.Master;
 
         private const int kInitialCacheCapacity = 64;
 
-        // Keyed by road prefab. This is what the bans use, and a city has only a few
-        // dozen road types, so the map stays tiny however large the city grows.
-        //
-        // Owned by the caller, not by the rule. A citywide pass spans many frames and
-        // builds a fresh rule each one, so a rule-owned map would be thrown away every
-        // frame and every default composition would be rebuilt from scratch again.
-        // A road type's default lanes never change while a city is loaded.
+        // Caller-owned and keyed by prefab; survives across reconciliation passes.
         private NativeHashMap<Entity, int> m_RoadTypeLaneCounts;
 
-        // Keyed by composition entity, shared by every edge with the same road type and
-        // upgrade combination. Feeds the diagnostics report, not the ban decision.
+        // Per-rule diagnostics cache keyed by the as-built composition.
         private NativeHashMap<Entity, int> m_EdgeLaneCounts;
 
         private ComponentLookup<Game.Net.Composition> m_Compositions;
@@ -94,24 +64,11 @@ namespace ParkingControl
         private bool m_BanFourLaneRoads;
         private bool m_BanSixLaneRoads;
 
-        /// <summary>
-        /// Gets a value indicating whether either road-size ban is switched on.
-        /// </summary>
+        /// <summary>Gets whether either road-size ban is enabled.</summary>
         internal readonly bool IsActive =>
             m_BanFourLaneRoads || m_BanSixLaneRoads;
 
-        /// <summary>
-        /// Creates a rule and its per-pass caches from the current options.
-        /// </summary>
-        /// <param name="settings">Mod options, or null before options load.</param>
-        /// <param name="compositions">Edge composition lookup.</param>
-        /// <param name="compositionLanes">Composition lane buffer lookup.</param>
-        /// <param name="prefabRefs">Prefab reference lookup.</param>
-        /// <param name="parkingLaneData">Parking lane prefab data lookup.</param>
-        /// <param name="defaultComposition">Lookups for rebuilding default lanes.</param>
-        /// <param name="roadTypeLaneCounts">Caller-owned cache that outlives this rule.</param>
-        /// <param name="allocator">Allocator for the rule's own short-lived cache.</param>
-        /// <returns>A rule that must be disposed when the frame's work ends.</returns>
+        /// <summary>Creates a rule for one reconciliation pass.</summary>
         internal static RoadSizeRule Create(
             PCSettings? settings,
             ComponentLookup<Game.Net.Composition> compositions,
@@ -132,24 +89,20 @@ namespace ParkingControl
             rule.m_ParkingLaneData = parkingLaneData;
             rule.m_DefaultComposition = defaultComposition;
 
+            // Native-container storage remains shared when this struct is passed by value.
             rule.m_RoadTypeLaneCounts = roadTypeLaneCounts;
 
-            // Only the as-built cache is short-lived. It feeds the diagnostics report,
-            // and edge compositions can change while a city is being edited.
+            // Edge compositions can change while the city is edited; do not persist this.
             rule.m_EdgeLaneCounts =
                 new NativeHashMap<Entity, int>(kInitialCacheCapacity, allocator);
 
             return rule;
         }
 
-        /// <summary>
-        /// Returns whether a parking lane's road matches an enabled road-size ban.
-        /// </summary>
-        /// <param name="lane">Parking lane being tested.</param>
-        /// <param name="road">Road edge owning the parking lane.</param>
-        /// <returns>True when this road type's lane count is banned citywide.</returns>
+        /// <summary>Checks whether a parking lane matches an enabled road-size ban.</summary>
         internal bool IsRoadSizeTarget(Entity lane, Entity road)
         {
+            // Size bans preserve roads designed around marked parking bays.
             if (!IsActive || HasBuiltInParkingSpaces(lane))
             {
                 return false;
@@ -161,19 +114,10 @@ namespace ParkingControl
                 (m_BanSixLaneRoads && lanes == kSixLaneRoad);
         }
 
-        /// <summary>
-        /// Returns whether this lane is a marked parking bay rather than plain curb parking.
-        /// </summary>
-        /// <remarks>
-        /// Roads such as the Four-Lane Angled Parking Road exist to provide parking, so a
-        /// road-size ban must leave them alone. Their lanes carry a fixed slot interval,
-        /// which is the same test the status probe uses to count fixed-slot curb lanes;
-        /// ordinary parallel curb parking is continuous and has an interval of zero.
-        /// </remarks>
-        /// <param name="lane">Parking lane being tested.</param>
-        /// <returns>True when the lane has built-in marked parking spaces.</returns>
+        /// <summary>Checks whether a lane contains built-in marked parking spaces.</summary>
         internal bool HasBuiltInParkingSpaces(Entity lane)
         {
+            // Marked bays have fixed spacing; ordinary curb parking is continuous.
             return m_PrefabRefs.TryGetComponent(
                     lane,
                     out PrefabRef prefabRef) &&
@@ -183,11 +127,7 @@ namespace ParkingControl
                 parkingLaneData.m_SlotInterval != 0f;
         }
 
-        /// <summary>
-        /// Gets the driving-lane count for a road's type, ignoring segment upgrades.
-        /// </summary>
-        /// <param name="road">Road edge whose type to measure.</param>
-        /// <returns>Driving lanes, or <see cref="kUnknownLaneCount"/> when unreadable.</returns>
+        /// <summary>Gets a road type's default driving-lane count.</summary>
         internal int GetRoadTypeDrivingLaneCount(Entity road)
         {
             if (road == Entity.Null ||
@@ -203,45 +143,35 @@ namespace ParkingControl
                 return cached;
             }
 
-            // Deliberately no fallback to the as-built count. If the default cannot be
-            // rebuilt the answer stays unknown and the road is left alone, rather than
-            // being banned on a number that means something different.
+            // Never substitute the edge count: upgrades can change it.
         #if DEBUG
-                    long countStartTimestamp =
-                        System.Diagnostics.Stopwatch.GetTimestamp();
+            long countStartTimestamp =
+                System.Diagnostics.Stopwatch.GetTimestamp();
         #endif
 
-                    int counted = CountDefaultDrivingLanes(prefabRef.m_Prefab);
+            int counted = CountDefaultDrivingLanes(prefabRef.m_Prefab);
 
         #if DEBUG
-                    double countMilliseconds =
-                        (System.Diagnostics.Stopwatch.GetTimestamp() - countStartTimestamp) *
-                        1000.0 /
-                        System.Diagnostics.Stopwatch.Frequency;
+            double countMilliseconds =
+                (System.Diagnostics.Stopwatch.GetTimestamp() - countStartTimestamp) *
+                1000.0 /
+                System.Diagnostics.Stopwatch.Frequency;
 
-                    if (countMilliseconds >= 2.0)
-                    {
-                        LogUtils.Info(
-                            $"{Mod.ModTag} Slow road-type lane count: " +
-                            $"prefab={prefabRef.m_Prefab.Index}:{prefabRef.m_Prefab.Version}, " +
-                            $"lanes={counted}, time={countMilliseconds:0.###} ms.");
-                    }
+            if (countMilliseconds >= 2.0)
+            {
+                LogUtils.Info(
+                    $"{Mod.ModTag} Slow road-type lane count: " +
+                    $"prefab={prefabRef.m_Prefab.Index}:{prefabRef.m_Prefab.Version}, " +
+                    $"lanes={counted}, time={countMilliseconds:0.###} ms.");
+            }
         #endif
 
-                    m_RoadTypeLaneCounts.TryAdd(prefabRef.m_Prefab, counted);
+            m_RoadTypeLaneCounts.TryAdd(prefabRef.m_Prefab, counted);
 
             return counted;
         }
 
-        /// <summary>
-        /// Gets the driving-lane count of a road segment exactly as it is built.
-        /// </summary>
-        /// <remarks>
-        /// Diagnostics only. Upgrades such as tram tracks change this, which is why the
-        /// bans use <see cref="GetRoadTypeDrivingLaneCount"/> instead.
-        /// </remarks>
-        /// <param name="road">Road edge to measure.</param>
-        /// <returns>Driving lanes, or <see cref="kUnknownLaneCount"/> when unreadable.</returns>
+        /// <summary>Gets the upgraded, as-built lane count used by diagnostics.</summary>
         internal int GetEdgeDrivingLaneCount(Entity road)
         {
             if (road == Entity.Null ||
@@ -250,8 +180,6 @@ namespace ParkingControl
                     out Game.Net.Composition composition) ||
                 composition.m_Edge == Entity.Null)
             {
-                // Nodes and building owners have no edge composition. Street parking
-                // lanes only ever belong to edges, so this is not a miss in practice.
                 return kUnknownLaneCount;
             }
 
@@ -269,29 +197,14 @@ namespace ParkingControl
         /// <inheritdoc/>
         public void Dispose()
         {
-            // m_RoadTypeLaneCounts belongs to the caller and is deliberately left alone.
+            // The caller owns m_RoadTypeLaneCounts.
             if (m_EdgeLaneCounts.IsCreated)
             {
                 m_EdgeLaneCounts.Dispose();
             }
         }
 
-        /// <summary>
-        /// Counts driving lanes on the default composition of a road type.
-        /// </summary>
-        /// <remarks>
-        /// Rebuilt with the same three calls vanilla uses for net defaults in
-        /// Game.Prefabs.NetInitializeSystem.InitializeNetDefaultsJob: build the pieces
-        /// for an empty CompositionFlags, calculate the composition data, then turn the
-        /// pieces into lanes. The middle call is not optional, because it writes the
-        /// piece offsets back into the piece list and those offsets position the lanes.
-        /// Reading a
-        /// ready-made composition off the prefab instead would be cheaper but unsafe,
-        /// because compositions are created on demand per built segment, so a road type
-        /// whose every segment carries trams would expose no unupgraded one to read.
-        /// </remarks>
-        /// <param name="prefab">Road prefab entity.</param>
-        /// <returns>Driving lanes, or <see cref="kUnknownLaneCount"/> when unreadable.</returns>
+        /// <summary>Counts driving lanes in a road prefab's default composition.</summary>
         private int CountDefaultDrivingLanes(Entity prefab)
         {
             if (!m_DefaultComposition.GeometrySections.TryGetBuffer(
@@ -306,6 +219,7 @@ namespace ParkingControl
 
             try
             {
+                // Keep this sequence aligned with vanilla net-default initialization.
                 NetCompositionHelpers.GetCompositionPieces(
                     pieces,
                     sections.AsNativeArray(),
@@ -315,6 +229,7 @@ namespace ParkingControl
 
                 NetCompositionData compositionData = default;
 
+                // Required: this writes the piece offsets used to group lanes.
                 NetCompositionHelpers.CalculateCompositionData(
                     ref compositionData,
                     pieces.AsArray(),
@@ -351,8 +266,7 @@ namespace ParkingControl
 
         private static bool IsDrivingLane(LaneFlags flags)
         {
-            // Sidewalks, tram tracks, parking lanes and bicycle lanes are not driving
-            // lanes, and Master entries are per-group aggregates rather than lanes.
+            // Mirrors vanilla's Road test; Master entries are group totals, not lanes.
             return (flags & kDrivingLaneMask) == LaneFlags.Road &&
                 (flags & kGroupAggregate) == 0;
         }
