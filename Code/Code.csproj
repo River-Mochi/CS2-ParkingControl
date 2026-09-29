@@ -27,7 +27,6 @@
         <RootNamespace>ParkingControl</RootNamespace>
         <AssemblyName>ParkingControl</AssemblyName>
         <AssemblyTitle>Parking Control</AssemblyTitle>
-        <Product>Parking Control</Product>
         <Copyright>Copyright © 2026 River-Mochi</Copyright>
 
         <!-- Code quality -->
