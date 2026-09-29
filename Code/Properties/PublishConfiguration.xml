@@ -90,7 +90,9 @@ tags: Disable road parking, clear road side, no cars
 <!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
 <ChangeLog Value="" />
 <ChangeLog>
-- Updated for game patch 1.6.2
+- Added 4 Lane and 6 Lane road parking ban option - for whole city.
+- Excludes 4 or 6 lane roads that come with angled or perpendicular painted parking spaces.
+- Updated all locales
 </ChangeLog>
 <!--External link, can be set multiple times. supported types are "discord", "github", "youtube", "twitch", "paypal", "patreon", "buymeacoffee", "kofi", "crowdin", "gitlab", "gofundme"-->
 <ExternalLink Type="discord" Url="https://discord.gg/gwXgvtyhjc" />
