@@ -135,7 +135,6 @@ namespace ParkingControl
                         CollectStreetParkedVehicle(
                             ref snapshot,
                             details,
-                            vehicle,
                             parkedLane,
                             scope,
                             policyEntity,
@@ -280,10 +279,9 @@ namespace ParkingControl
             }
         }
 
-        private void CollectStreetParkedVehicle(
+        private static void CollectStreetParkedVehicle(
             ref ParkingSnapshot snapshot,
             ParkingReportDetails? details,
-            Entity vehicle,
             Entity parkedLane,
             PCSettings.ParkingScope scope,
             Entity policyEntity,

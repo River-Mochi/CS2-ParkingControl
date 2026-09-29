@@ -270,43 +270,44 @@ namespace ParkingControl
         }
 #endif
 
-        /// <summary>
-        /// Builds the citywide road-size rule for one pass.
-        /// </summary>
         /// <remarks>
         /// Kept in its own method so the SystemAPI source generator never has to
         /// relocate a method that carries nullable annotations, which would emit
         /// CS8669 from generated code that has no #nullable directive.
         /// </remarks>
         /// <returns>A rule that must be disposed when the pass ends.</returns>
+       /// <summary>
+        /// Builds the citywide road-size rule for one pass.
+        /// </summary>
+        /// <returns>A rule that must be disposed when the pass ends.</returns>
         private RoadSizeRule CreateRoadSizeRule()
         {
-            Unity.Entities.BufferLookup<Game.Prefabs.NetGeometrySection> geometrySections =
-                SystemAPI.GetBufferLookup<Game.Prefabs.NetGeometrySection>(true);
+            BufferLookup<Game.Prefabs.NetGeometrySection> geometrySections =
+                GetBufferLookup<Game.Prefabs.NetGeometrySection>(true);
 
-            Unity.Entities.BufferLookup<Game.Prefabs.NetSubSection> subSections =
-                SystemAPI.GetBufferLookup<Game.Prefabs.NetSubSection>(true);
+            BufferLookup<Game.Prefabs.NetSubSection> subSections =
+                GetBufferLookup<Game.Prefabs.NetSubSection>(true);
 
-            Unity.Entities.BufferLookup<Game.Prefabs.NetSectionPiece> sectionPieces =
-                SystemAPI.GetBufferLookup<Game.Prefabs.NetSectionPiece>(true);
+            BufferLookup<Game.Prefabs.NetSectionPiece> sectionPieces =
+                GetBufferLookup<Game.Prefabs.NetSectionPiece>(true);
 
-            Unity.Entities.BufferLookup<Game.Prefabs.NetPieceLane> pieceLanes =
-                SystemAPI.GetBufferLookup<Game.Prefabs.NetPieceLane>(true);
+            BufferLookup<Game.Prefabs.NetPieceLane> pieceLanes =
+                GetBufferLookup<Game.Prefabs.NetPieceLane>(true);
 
-            Unity.Entities.ComponentLookup<Game.Prefabs.NetLaneData> laneData =
-                SystemAPI.GetComponentLookup<Game.Prefabs.NetLaneData>(true);
+            ComponentLookup<Game.Prefabs.NetLaneData> laneData =
+                GetComponentLookup<Game.Prefabs.NetLaneData>(true);
 
-            Unity.Entities.ComponentLookup<Game.Prefabs.NetPieceData> pieceData =
-                SystemAPI.GetComponentLookup<Game.Prefabs.NetPieceData>(true);
+            ComponentLookup<Game.Prefabs.NetPieceData> pieceData =
+                GetComponentLookup<Game.Prefabs.NetPieceData>(true);
 
-            Unity.Entities.ComponentLookup<Game.Prefabs.NetVertexMatchData> vertexMatchData =
-                SystemAPI.GetComponentLookup<Game.Prefabs.NetVertexMatchData>(true);
+            ComponentLookup<Game.Prefabs.NetVertexMatchData> vertexMatchData =
+                GetComponentLookup<Game.Prefabs.NetVertexMatchData>(true);
 
             // The report runs once per button press and finishes inside one frame, so a
             // throwaway Temp cache is right here. Allocator.Temp frees itself at the end
             // of the frame, which is why this one is not disposed by hand.
-            Unity.Collections.NativeHashMap<Entity, int> roadTypeLaneCounts =
-                new(64, Unity.Collections.Allocator.Temp);
+            NativeHashMap<Entity, int> roadTypeLaneCounts =
+                new(64, Allocator.Temp);
 
             RoadSizeRule.DefaultCompositionLookups defaultComposition = new()
             {
@@ -321,13 +322,13 @@ namespace ParkingControl
 
             return RoadSizeRule.Create(
                 Mod.Settings,
-                SystemAPI.GetComponentLookup<Game.Net.Composition>(true),
-                SystemAPI.GetBufferLookup<Game.Prefabs.NetCompositionLane>(true),
-                SystemAPI.GetComponentLookup<Game.Prefabs.PrefabRef>(true),
-                SystemAPI.GetComponentLookup<Game.Prefabs.ParkingLaneData>(true),
+                GetComponentLookup<Game.Net.Composition>(true),
+                GetBufferLookup<Game.Prefabs.NetCompositionLane>(true),
+                GetComponentLookup<Game.Prefabs.PrefabRef>(true),
+                GetComponentLookup<Game.Prefabs.ParkingLaneData>(true),
                 defaultComposition,
                 roadTypeLaneCounts,
-                Unity.Collections.Allocator.Temp);
+                Allocator.Temp);
         }
 
         /// <summary>
