@@ -56,11 +56,11 @@ namespace ParkingControl
                     "Pick one:\n" +
                     "Recommended: <1. by District> - shows the district policy **[Roadside Parking Ban]** in game.\n" +
                     "<2. Manual Only> - city/district bans are all OFF. Manual [No Parking] road button still works no matter which dropdown you pick.\n" +
-                    "<3. Whole City Ban> - ban parking on all city streets, except roads with painted angled or perpendicular parking spaces.\n" +
+                    "<3. Whole City Ban> - ban road parking across the city. Excludes roads with painted angled or perpendicular parking spaces.\n" +
 
                     "- Lanes are flagged to prevent new street parking.\n" +
                     "- Parked cars move gradually after parking is banned; large banned areas take longer to clear.\n" +
-                    "- Of Course, Fee-based parking lots and normal building parking remain usable.\n" +
+                    "- Fee-based parking lots and normal building parking remain usable.\n" +
                     "**Some roads already exclude street parking, like Highways, small 2-way alley roads, 3-lane async roads.**"
                 },
 
@@ -71,16 +71,16 @@ namespace ParkingControl
                 // Citywide road-size bans.
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanFourLaneRoads)), "Ban 4-lane road parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanFourLaneRoads)),
-                    "Bans roadside parking on most all <four-lane roads> in the whole city, in every district.\n" +
-                    "- Driving lanes are counted from the road itself, so roads added by other mods (RB) match on their real lane count.\n" +
-                    "- Exception: roads with painted parking spaces, e.g. angled and perpendicular parking roads, are left alone.\n" +
+                    "Bans road parking on most <four-lane roads> across the city.\n" +
+                    "- Driving lanes are counted from the road itself, so custom roads added by other mods (RB) also could work.\n" +
+                    "- Exception: roads with painted parking spaces, such as angled and perpendicular parking roads, are left alone.\n" +
                     "- This is additive: it's in addition to the dropdown above and to <manual No Parking> roads; it never cancels a banned set elsewhere.\n" +
                     "**Roads that never had parking, like highways, are unaffected.**"
                 },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(PCSettings.BanSixLaneRoads)), "Ban 6-lane road parking" },
                 { m_Settings.GetOptionDescLocaleID(nameof(PCSettings.BanSixLaneRoads)),
-                    "Bans roadside parking on most all <six-lane roads> in the city, in every district.\n" +
+                    "Bans roadside parking on most <six-lane roads> across the city.\n" +
                     "- Driving lanes are counted from the road itself, so roads added by other mods match on their real lane count.\n" +
                     "- Exception: roads with painted parking spaces, e.g., angled and perpendicular parking roads, are left alone.\n" +
                     "- This is additive: it's in addition to the dropdown above and to <manual No Parking> roads; it never cancels a ban set elsewhere.\n" +
@@ -151,7 +151,7 @@ namespace ParkingControl
                     "Shows the <total city> parking use. This does not follow the Whole City / by District Parking Ban scope.\n" +
                     "<Public> = occupied / total spaces in public parking facilities.\n" +
                     "Uses the same parking facility data as CS2's Roads parking InfoView.\n" +
-                    "<Street> = cars parked on roads. Note: Whole City ban excludes roads with painted or angled parking spaces, so they appear in this count.\n" +
+                    "<Street> = cars parked on roads. Whole City ban leaves painted parking spaces enabled, so those cars still appear here.\n" +
                     "<Bldg> = cars parked at buildings or garages.\n" +
                     "<Total> = total known in-city parked cars (public + street + building).\n" +
                     "**Outside connections and unknown staging are excluded from the total.**"
