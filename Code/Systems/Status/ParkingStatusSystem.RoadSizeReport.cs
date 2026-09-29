@@ -270,16 +270,10 @@ namespace ParkingControl
         }
 #endif
 
-        /// <remarks>
-        /// Kept in its own method so the SystemAPI source generator never has to
-        /// relocate a method that carries nullable annotations, which would emit
-        /// CS8669 from generated code that has no #nullable directive.
-        /// </remarks>
-        /// <returns>A rule that must be disposed when the pass ends.</returns>
-       /// <summary>
-        /// Builds the citywide road-size rule for one pass.
+        /// <summary>
+        /// Builds the citywide road-size rule used by the parking report.
         /// </summary>
-        /// <returns>A rule that must be disposed when the pass ends.</returns>
+        /// <returns>A road-size rule that must be disposed after the report pass.</returns>
         private RoadSizeRule CreateRoadSizeRule()
         {
             BufferLookup<Game.Prefabs.NetGeometrySection> geometrySections =
