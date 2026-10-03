@@ -98,10 +98,10 @@ tags: Disable road parking, clear road side, no cars park parked
 <!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
 <ChangeLog Value="" />
 <ChangeLog>
-- Remove youtube link causing issues for Paradox Mods.
+- Fixed in-game Paradox Mods issue when clicking the mod Thumbnail (it can not handle two bold words with a dash between them).
+- Important updates from 0.7.0:
 - Added optional 4 Lane and 6 Lane road parking ban option - for whole city.
 - Whole City ban choice and 4/6-lane bans: Excludes roads with painted angled or perpendicular parking spaces.
-- Updated all locales
 </ChangeLog>
 <!--External link, can be set multiple times. supported types are "discord", "github", "youtube", "twitch", "paypal", "patreon", "buymeacoffee", "kofi", "crowdin", "gitlab", "gofundme"-->
 <ExternalLink Type="discord" Url="https://discord.gg/gwXgvtyhjc" />
