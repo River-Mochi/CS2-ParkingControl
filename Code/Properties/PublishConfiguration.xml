@@ -12,40 +12,44 @@
 
 Want clean curbs without changing your road design?
 
-* 🚗 Easy to use; prevents cars and motorcycles from choosing public street parking.
+* Easy to use; prevents cars and motorcycles from choosing public street parking.
 * No need to add grass or wide sidewalks as workarounds.
-* Ban parking on single roads, 1-way alleys, with the **No Parking** road button! 🚫
+* Ban parking on single roads, 1-way alleys, with the **No Parking** road button!
+* Manual no parking button is located in Road tools next to the Crosswalks button.
+
+**Mod of the Month**: [video here](https://www.youtube.com/watch?v=keGjw8IzOOA)
 
 ## Choose where
 
-* ✅ **by District** - **Roadside Parking Ban** appears in district policies but nothing is disabled until you select a district and check the box. The manual no-parking button still also works in combination even if you have "by Districts". This is the most versatile and recommended choice.
+Dropdown list in Options menu.
 
-* ✅ **Manual Only** - use the **No Parking** button wherever you want. This choice automatically turns off all district policies you may have enabled, and the district no-parking choice will not appear in the district panel. Note that you can still use the manual button even if you pick **by District**.
+* **by District** recommended and the most versatile. It allows you to pick any whole district you want to ban parking in OR still use the manual no parking button on single roads or multi-selected roads.
 
-* ✅ **Whole City** - prevent street parking city-wide. Make sure the city has enough parking storage off street.
+* **Whole City** prevent street parking city-wide. Make sure the city has enough parking storage off street.
 
-### Manual roads 🚫
+* **Manual Only** allows use of single road **No Parking** button, but removes the district parking policy. Picking this auto-disables any previous district no parking policy you enabled before (this mod's specific district no parking policy does not appear).
 
-Use the **No Parking** button next to the crosswalk tool.
+### Manual single roads
+
+Use the **No Parking** button next to the Crosswalks button.
 
 * **Left-click** a road to add No Parking.
 * **Right-click** to remove it.
 
-🚙 Parking lots and building parking stay working normally.
+Parking lots and building parking stay working normally.
 
-* Optional Status rows show parking usage; better details than the game's info view.
+Optional Status rows show parking usage with more detail than the game's info view.
 
 ## Good to know
 
-* Make sure your city has enough off-street parking. When parking is unavailable, the game may use outside-connection storage/staging as it does in vanilla.
-* Some vanilla roads already don't allow parking, e.g. 3-lane small roads, highways, 2-way alleys.
+* Make sure your city has enough off-street parking. When parking is unavailable, the game may use outside-connection storage or staging as it does in vanilla.
+* Some vanilla roads already don't allow parking, such as 3-lane small roads, highways, and 2-way alleys.
 * New or rebuilt roads may briefly accept a few cars while CS2 updates their parking lanes.
 * Safe to remove anytime and designed to not impact performance.
-* NEW 4-lane or 6-lane road ban toggles. These work in addition to the dropdown choices in the Options menu.
+* Optional 4-lane and 6-lane road parking bans work in addition to the main dropdown choice.
 
 ## Support and Feedback
-
-* Support by clicking Like 👍 (top right); helps people know about the mod.
+* Easiest way to support is click the LIKE 👍 button (top right). No donations requested.
 * Feedback and PRs are welcome through the GitHub and Discord links on the right.
 
 **Planned:** centralized parking-fee controls.
@@ -57,18 +61,19 @@ Use the **No Parking** button next to the crosswalk tool.
 * Dataknase, Maintyper, DragonFire - testing
 * StarQ - no parking icon
 
-15+ Languages: Hello, Hallo, Hola, Bonjour, Ciao, こんにちは, 안녕하세요, Cześć, Olá, สวัสดี, Merhaba, Xin chào, 你好, 你好, Привіт
+## Languages
+English, Deutsch, Español, Français, Italiano, 日本語, 한국어, Polski, Português Brasileiro, ไทย Thai, Türkçe, Tiếng Việt, 简体中文, 繁體中文, Українська
 
 ## How does it work
 
-* The mod uses the game's own `ParkingDisabled` flag on eligible roads.
-* It does not narrow the road, widen the sidewalk, or add a driving lane; the road looks the same.
+* The mod uses the game's own ParkingDisabled flag on eligible roads.
+* It does not narrow the road, widen the sidewalk, or add a driving lane. The road looks the same.
 * Existing parked cars gradually relocate after parking is banned.
 * New or rebuilt roads may briefly accept a few cars while CS2 updates their parking lanes.
-* Optional: works with [Mochi's Hover Colors](https://mods.paradoxplaza.com/mods/146044/Windows) - the manual road tool follows MHC's Bulldozer + Roads colors, just like normal road tools.
+* Optional: works with [Mochi's Hover Colors](https://mods.paradoxplaza.com/mods/146044/Windows). The manual road tool follows MHC's Bulldozer + Roads colors, just like normal road tools.
 * Manual No Parking is set per road segment. If you draw a road or train track perpendicular across a no-parking road, the game splits it into two new segments. Re-apply No Parking to the new halves. District and whole-city road-size bans are not affected by road splits.
 
-tags: Disable road parking, clear road side, no cars
+tags: Disable road parking, clear road side, no cars park parked
 </LongDescription>
 <!--Thumbnail-->
 <Thumbnail Value="Properties/thumbnail-ParkingControl.jpg" />
@@ -83,7 +88,7 @@ tags: Disable road parking, clear road side, no cars
 <!--Link to the forum post where the mod can be discussed-->
 <ForumLink Value="https://forum.paradoxplaza.com/forum/threads/parking-control.1938802/" />
 <!--Version of the mod-->
-<ModVersion Value="0.7.1" />
+<ModVersion Value="0.7.2" />
 <!--Recommended version of the base game to use the mod-->
 <GameVersion Value="1.6.*" />
 <!--Dependency for the mod, can be set multiple times-->
@@ -101,6 +106,7 @@ tags: Disable road parking, clear road side, no cars
 <!--External link, can be set multiple times. supported types are "discord", "github", "youtube", "twitch", "paypal", "patreon", "buymeacoffee", "kofi", "crowdin", "gitlab", "gofundme"-->
 <ExternalLink Type="discord" Url="https://discord.gg/gwXgvtyhjc" />
 <ExternalLink Type="github" Url="https://github.com/River-Mochi/CS2-ParkingControl" />
+<ExternalLink Type="youtube" Url="https://www.youtube.com/watch?v=keGjw8IzOOA" />
 <!--Supported values Public, Private, Unlisted-->
 <AccessLevel Value="Public" />
 </Publish>
