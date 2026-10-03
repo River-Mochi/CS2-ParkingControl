@@ -3,6 +3,7 @@
     <File Path=".editorconfig" />
     <File Path=".gitattributes" />
     <File Path=".gitignore" />
+    <File Path="docs/ROAD-COMPOSITION-NOTES.md" />
     <File Path="LICENSE" />
     <File Path="LICENSE-EXCEPTION" />
     <File Path="README.md" />

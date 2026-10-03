@@ -12,58 +12,63 @@
 
 Want clean curbs without changing your road design?
 
-You can now ban parking on individual roads, 1-way alleys, with the **No Parking** road button! 🚫
-
-- 🚗 Easy to use; prevents cars and motorcycles from choosing public street parking.
-- No need to add grass or wide sidewalks as workarounds.
+* 🚗 Easy to use; prevents cars and motorcycles from choosing public street parking.
+* No need to add grass or wide sidewalks as workarounds.
+* Ban parking on single roads, 1-way alleys, with the **No Parking** road button! 🚫
 
 ## Choose where
 
-- ✅**by District** - enable **Roadside Parking Ban** in the district policies panel. Manual no-parking button also works even if you have "by Districts" selected.
-- ✅**Manual Only** - use the "No Parking" roads button wherever you want.
-- ✅**Whole City** - prevent street parking city-wide. Make sure the city has enough parking storage off street.
-- ✅ NEW 4-lane or 6-lane roads - optional whole city bans for those road types. These work in addition to the choices above and also support custom Road Builder roads.
+* ✅ **by District** - **Roadside Parking Ban** appears in district policies but nothing is disabled until you select a district and check the box. The manual no-parking button still also works in combination even if you have "by Districts". This is the most versatile and recommended choice.
+
+* ✅ **Manual Only** - use the **No Parking** button wherever you want. This choice automatically turns off all district policies you may have enabled, and the district no-parking choice will not appear in the district panel. Note that you can still use the manual button even if you pick **by District**.
+
+* ✅ **Whole City** - prevent street parking city-wide. Make sure the city has enough parking storage off street.
 
 ### Manual roads 🚫
 
 Use the **No Parking** button next to the crosswalk tool.
 
-- **Left-click** a road to add No Parking. **Right-click** to remove it.
+* **Left-click** a road to add No Parking.
+* **Right-click** to remove it.
 
 🚙 Parking lots and building parking stay working normally.
-- Optional Status rows show parking usage; better details than the game's info view.
+
+* Optional Status rows show parking usage; better details than the game's info view.
 
 ## Good to know
-- Make sure your city has enough off-street parking. When parking is unavailable, the game may use outside-connection storage/staging as it does in vanilla.
-- Some vanilla roads already don't allow parking, e.g. 3-lane small roads, highways, 2-way alleys.
-- New or rebuilt roads may briefly accept a few cars while CS2 updates their parking lanes.
-- Safe to remove anytime and designed to not impact performance.
+
+* Make sure your city has enough off-street parking. When parking is unavailable, the game may use outside-connection storage/staging as it does in vanilla.
+* Some vanilla roads already don't allow parking, e.g. 3-lane small roads, highways, 2-way alleys.
+* New or rebuilt roads may briefly accept a few cars while CS2 updates their parking lanes.
+* Safe to remove anytime and designed to not impact performance.
+* NEW 4-lane or 6-lane road ban toggles. These work in addition to the dropdown choices in the Options menu.
 
 ## Support and Feedback
-- Support by clicking Like 👍 (top right); helps people know about the mod.
-- Feedback and PR's are welcome through the GitHub and Discord links (right side icons).
+
+* Support by clicking Like 👍 (top right); helps people know about the mod.
+* Feedback and PRs are welcome through the GitHub and Discord links on the right.
 
 **Planned:** centralized parking-fee controls.
 
 ## Credits and Thanks
 
-- River-mochi - mod author
-- yenyang - technical consultant
-- Dataknase, Maintyper, DragonFire - testing
-- StarQ - no parking icon
+* River-mochi - mod author
+* yenyang - technical consultant
+* Dataknase, Maintyper, DragonFire - testing
+* StarQ - no parking icon
 
 15+ Languages: Hello, Hallo, Hola, Bonjour, Ciao, こんにちは, 안녕하세요, Cześć, Olá, สวัสดี, Merhaba, Xin chào, 你好, 你好, Привіт
 
 ## How does it work
-- The mod uses the game’s own ParkingDisabled flag on eligible roads.
-- It does not narrow the road, widen the sidewalk, or add a driving lane (road looks the same).
-- Existing parked cars gradually relocate after parking is banned.
-- New or rebuilt roads may briefly accept a few cars while CS2 updates the parking lanes (timing).
-- Optional:  works with [Mochi's Hover Colors](https://mods.paradoxplaza.com/mods/146044/Windows)  - manual road tool follows MHC's Bulldozer + Roads colors, just like normal road tools.
-- Note: manual No Parking ban is set per each road segment. If you draw a road or track perpendicular across a no-parking road, the game splits it into two new segments — re-apply No Parking to the new halves. District and whole-city road-size bans are not affected by splitting.
+
+* The mod uses the game's own `ParkingDisabled` flag on eligible roads.
+* It does not narrow the road, widen the sidewalk, or add a driving lane; the road looks the same.
+* Existing parked cars gradually relocate after parking is banned.
+* New or rebuilt roads may briefly accept a few cars while CS2 updates their parking lanes.
+* Optional: works with [Mochi's Hover Colors](https://mods.paradoxplaza.com/mods/146044/Windows) - the manual road tool follows MHC's Bulldozer + Roads colors, just like normal road tools.
+* Manual No Parking is set per road segment. If you draw a road or train track perpendicular across a no-parking road, the game splits it into two new segments. Re-apply No Parking to the new halves. District and whole-city road-size bans are not affected by road splits.
 
 tags: Disable road parking, clear road side, no cars
-
 </LongDescription>
 <!--Thumbnail-->
 <Thumbnail Value="Properties/thumbnail-ParkingControl.jpg" />
@@ -78,7 +83,7 @@ tags: Disable road parking, clear road side, no cars
 <!--Link to the forum post where the mod can be discussed-->
 <ForumLink Value="https://forum.paradoxplaza.com/forum/threads/parking-control.1938802/" />
 <!--Version of the mod-->
-<ModVersion Value="0.7.0" />
+<ModVersion Value="0.7.1" />
 <!--Recommended version of the base game to use the mod-->
 <GameVersion Value="1.6.*" />
 <!--Dependency for the mod, can be set multiple times-->
