@@ -76,8 +76,8 @@ tags: Disable road parking, clear road side, no cars
 <Screenshot Value="Properties/10-image-Options01.jpg" />
 <Screenshot Value="Properties/15-image-DistrictParking.jpg" />
 <Screenshot Value="Properties/20-image-Before-After.jpg" />
+<Screenshot Value="Properties/25-image-4LaneBan.jpg" />
 <Screenshot Value="Properties/30-image-DistrictBeforeAfter.jpg" />
-
 <!--Tag, can be set multiple times-->
 <Tag Value="Code Mod" />
 <!--Link to the forum post where the mod can be discussed-->
@@ -93,11 +93,10 @@ tags: Disable road parking, clear road side, no cars
 <!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
 <ChangeLog Value="" />
 <ChangeLog>
+- Remove youtube link causing issues for Paradox Mods.
 - Added optional 4 Lane and 6 Lane road parking ban option - for whole city.
 - Whole City ban choice and 4/6-lane bans: Excludes roads with painted angled or perpendicular parking spaces.
 - Updated all locales
-- 4/6-lane bans also support custom mod roads like Road Builder.
-- Improved relocation speed after large parking bans.
 </ChangeLog>
 <!--External link, can be set multiple times. supported types are "discord", "github", "youtube", "twitch", "paypal", "patreon", "buymeacoffee", "kofi", "crowdin", "gitlab", "gofundme"-->
 <ExternalLink Type="discord" Url="https://discord.gg/gwXgvtyhjc" />
