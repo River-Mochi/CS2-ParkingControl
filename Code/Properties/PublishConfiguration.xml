@@ -15,7 +15,6 @@ Want clean curbs without changing your road design?
 * Easy to use; prevents cars and motorcycles from choosing public street parking.
 * No need to add grass or wide sidewalks as workarounds.
 * Ban parking on single roads, 1-way alleys, with the **No Parking** road button!
-* Manual no parking button is located in Road tools next to the Crosswalks button.
 
 **Mod of the Month**: [video here](https://www.youtube.com/watch?v=keGjw8IzOOA)
 
@@ -23,11 +22,11 @@ Want clean curbs without changing your road design?
 
 Dropdown list in Options menu.
 
-* **by District** recommended and the most versatile. It allows you to pick any whole district you want to ban parking in OR still use the manual no parking button on single roads or multi-selected roads.
+* **by District** recommended and the most versatile. Ban parking in any district while still using the manual **(P)** button on single roads or multi-selected roads.
 
 * **Whole City** prevent street parking city-wide. Make sure the city has enough parking storage off street.
 
-* **Manual Only** allows use of single road **No Parking** button, but removes the district parking policy. Picking this auto-disables any previous district no parking policy you enabled before (this mod's specific district no parking policy does not appear).
+* **Manual Only** uses the **No Parking** button only. The district parking policy is hidden and any previously enabled district bans from this mod are turned off.
 
 ### Manual single roads
 
@@ -69,9 +68,8 @@ English, Deutsch, Español, Français, Italiano, 日本語, 한국어, Polski, P
 * The mod uses the game's own ParkingDisabled flag on eligible roads.
 * It does not narrow the road, widen the sidewalk, or add a driving lane. The road looks the same.
 * Existing parked cars gradually relocate after parking is banned.
-* New or rebuilt roads may briefly accept a few cars while CS2 updates their parking lanes.
 * Optional: works with [Mochi's Hover Colors](https://mods.paradoxplaza.com/mods/146044/Windows). The manual road tool follows MHC's Bulldozer + Roads colors, just like normal road tools.
-* Manual No Parking is set per road segment. If you draw a road or train track perpendicular across a no-parking road, the game splits it into two new segments. Re-apply No Parking to the new halves. District and whole-city road-size bans are not affected by road splits.
+* Manual No Parking is per road segment. If a crossing road or track splits it, re-apply No Parking to the new segments. District and whole-city bans are unaffected since they update all new segments.
 
 tags: Disable road parking, clear road side, no cars park parked
 </LongDescription>
