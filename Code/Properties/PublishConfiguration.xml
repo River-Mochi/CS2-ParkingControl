@@ -48,7 +48,7 @@ Optional Status rows show parking usage with more detail than the game's info vi
 * Optional 4-lane and 6-lane road parking bans work in addition to the main dropdown choice.
 
 ## Support and Feedback
-* Easiest way to support is click the LIKE 👍 button (top right). No donations requested.
+* Easiest way to support: click the LIKE 👍 button (top right). No donations requested.
 * Feedback and PRs are welcome through the GitHub and Discord links on the right.
 
 **Planned:** centralized parking-fee controls.
@@ -97,7 +97,7 @@ tags: Disable road parking, clear road side, no cars park parked
 <ChangeLog Value="" />
 <ChangeLog>
 - Fixed in-game Paradox Mods issue when clicking the mod Thumbnail (it can not handle two bold words with a dash between them).
-- Important updates from 0.7.0:
+- Important recent updates from 0.7.0:
 - Added optional 4 Lane and 6 Lane road parking ban option - for whole city.
 - Whole City ban choice and 4/6-lane bans: Excludes roads with painted angled or perpendicular parking spaces.
 </ChangeLog>
