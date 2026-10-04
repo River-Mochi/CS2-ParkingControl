@@ -22,18 +22,18 @@ Want clean curbs without changing your road design?
 
 Dropdown list in Options menu.
 
-* **by District** recommended and the most versatile. Ban parking in any district while still using the manual **(P)** button on single roads or multi-selected roads.
+* ☑ **by District** recommended and the most versatile. Ban parking in any district while still using the manual **(P)** button on single roads or multi-selected roads.
 
-* **Whole City** prevents street parking city-wide. Make sure the city has enough parking storage off street.
+* ☑ **Whole City** prevents street parking city-wide. Make sure the city has enough parking storage off street.
 
-* **Manual Only** uses the **No Parking** button only. The district parking policy is hidden and any previously enabled district bans from this mod are turned off.
+* ☑ **Manual Only** uses the **No Parking** button only. The district parking policy is hidden and any previously enabled district bans from this mod are turned off.
 
 ### Manual single roads
 
 Use the **No Parking** button next to the Crosswalks button.
 
-* **Left-click** a road to add No Parking.
-* **Right-click** to remove it.
+* 🖱️ **Left-click** a road to add No Parking.
+* 🖱️ **Right-click** to remove it.
 
 Parking lots and building parking stay working normally.
 
