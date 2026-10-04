@@ -24,7 +24,7 @@ Dropdown list in Options menu.
 
 * ☑ **by District** recommended and the most versatile. Ban parking in any district while still using the manual **(P)** button on single roads or multi-selected roads.
 
-* ☑ **Whole City** prevents street parking city-wide. Make sure the city has enough parking storage off street.
+* ☑ **Whole City** prevents street parking city-wide.
 
 * ☑ **Manual Only** uses the **No Parking** button only. The district parking policy is hidden and any previously enabled district bans from this mod are turned off.
 
@@ -41,7 +41,7 @@ Optional Status rows show parking usage with more detail than the game's info vi
 
 ## Good to know
 
-* Make sure your city has enough off-street parking. When parking is unavailable, the game may use outside-connection storage or staging as it does in vanilla.
+* Make sure your city has enough off-street parking. When parking is unavailable, the game may use outside-connection storage or staging as it does in vanilla. Do this especially if you pick Whole city no street parking.
 * Some vanilla roads already don't allow parking, such as 3-lane small roads, highways, and 2-way alleys.
 * New or rebuilt roads may briefly accept a few cars while CS2 updates their parking lanes.
 * Safe to remove anytime and designed to not impact performance.
